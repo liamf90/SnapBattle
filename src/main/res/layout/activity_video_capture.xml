@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+  		
+    
+		<RelativeLayout
+		    android:id="@+id/cameraLayout"
+		    android:layout_width="fill_parent"
+		    android:layout_height="fill_parent">
+	    	<LinearLayout
+	        android:id="@+id/camera_preview"
+	        android:layout_width="match_parent"
+	        android:layout_height="match_parent"
+	        android:orientation="vertical" />
+
+			<Chronometer
+                android:id="@+id/chronometer"
+				android:layout_centerHorizontal="true"
+				android:layout_alignParentTop="true"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+                android:textColor="@color/primary_text"
+				android:format="%s / 01:00"/>
+	
+	  		 <Button
+	            android:id="@+id/button_ChangeCamera"
+	            android:layout_width="@dimen/change_camera_icon_width"
+	            android:layout_height="@dimen/change_camera_icon_height"
+				android:layout_alignParentTop="true"
+				android:layout_alignParentEnd="true"
+				android:layout_marginEnd="@dimen/change_camera_icon_margin"
+				android:layout_marginTop = "@dimen/change_camera_icon_margin"
+				android:background="@drawable/switch_camera_96px" />
+	        
+	
+	        <Button
+	            android:id="@+id/button_capture"
+	            android:layout_width="@dimen/capture_button_icon_width"
+	            android:layout_height="@dimen/capture_button_icon_height"
+				android:layout_alignParentBottom="true"
+				android:layout_centerHorizontal="true"
+				android:layout_marginBottom="@dimen/capture_button_margin_bottom"
+	            android:background="@drawable/record_button"
+	            android:visibility="invisible"/>
+		</RelativeLayout>
+
+        	<RelativeLayout
+  		    android:id="@+id/rotateMessageLayout"
+  		   
+  		    
+  		    android:layout_width="fill_parent"
+  		    android:layout_height="fill_parent"
+  		    android:elevation="@dimen/rotate_message_elevation"
+  		    android:visibility="invisible"
+  		    android:layout_margin="@dimen/rotate_message_margin"
+  		    android:background="@color/rotate_camera_icon_background"
+  		    android:alpha="0.65">
+	        
+  		    <TextView
+  		        android:id="@+id/rotateDeviceTextView"
+  		        android:layout_width="wrap_content"
+  		        android:layout_height="wrap_content"
+  		        android:layout_centerInParent="true"
+  		        android:textStyle="bold"
+  		        android:text="@string/rotate_device"/>
+  		   
+  		</RelativeLayout>
+		
+
+</FrameLayout>

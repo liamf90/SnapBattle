@@ -1,0 +1,50 @@
+{
+  "buildFiles": [
+    "C:\\Users\\Liam\\StudioProjects\\SnapBattle2\\snapBattle2\\src\\main\\jni\\Android.mk",
+    "C:\\Users\\Liam\\StudioProjects\\SnapBattle2\\snapBattle2\\src\\main\\jni\\Application.mk"
+  ],
+  "cleanCommands": [
+    "C:\\Users\\Liam\\Downloads\\android-ndk-r14b-windows-x86\\android-ndk-r14b\\ndk-build.cmd NDK_PROJECT_PATH\u003dnull APP_BUILD_SCRIPT\u003dC:\\Users\\Liam\\StudioProjects\\SnapBattle2\\snapBattle2\\src\\main\\jni\\Android.mk NDK_APPLICATION_MK\u003dC:\\Users\\Liam\\StudioProjects\\SnapBattle2\\snapBattle2\\src\\main\\jni\\Application.mk APP_ABI\u003darmeabi-v7a NDK_ALL_ABIS\u003darmeabi-v7a NDK_DEBUG\u003d1 APP_PLATFORM\u003dandroid-17 NDK_OUT\u003dC:/Users/Liam/StudioProjects/SnapBattle2/snapBattle2/build/intermediates/ndkBuild/debug/obj NDK_LIBS_OUT\u003dC:\\Users\\Liam\\StudioProjects\\SnapBattle2\\snapBattle2\\build\\intermediates\\ndkBuild\\debug\\lib clean"
+  ],
+  "libraries": {
+    "ARM_ARCH-debug-armeabi-v7a": {
+      "buildCommand": "C:\\Users\\Liam\\Downloads\\android-ndk-r14b-windows-x86\\android-ndk-r14b\\ndk-build.cmd NDK_PROJECT_PATH\u003dnull APP_BUILD_SCRIPT\u003dC:\\Users\\Liam\\StudioProjects\\SnapBattle2\\snapBattle2\\src\\main\\jni\\Android.mk NDK_APPLICATION_MK\u003dC:\\Users\\Liam\\StudioProjects\\SnapBattle2\\snapBattle2\\src\\main\\jni\\Application.mk APP_ABI\u003darmeabi-v7a NDK_ALL_ABIS\u003darmeabi-v7a NDK_DEBUG\u003d1 APP_PLATFORM\u003dandroid-17 NDK_OUT\u003dC:/Users/Liam/StudioProjects/SnapBattle2/snapBattle2/build/intermediates/ndkBuild/debug/obj NDK_LIBS_OUT\u003dC:\\Users\\Liam\\StudioProjects\\SnapBattle2\\snapBattle2\\build\\intermediates\\ndkBuild\\debug\\lib C:/Users/Liam/StudioProjects/SnapBattle2/snapBattle2/build/intermediates/ndkBuild/debug/obj/local/armeabi-v7a/libARM_ARCH.so",
+      "toolchain": "toolchain-armeabi-v7a",
+      "abi": "armeabi-v7a",
+      "artifactName": "ARM_ARCH",
+      "files": [
+        {
+          "src": "C:\\Users\\Liam\\Downloads\\android-ndk-r14b-windows-x86\\android-ndk-r14b\\build\\..\\sources\\android\\cpufeatures\\cpu-features.c",
+          "flags": "\"-gcc-toolchain\" \"C:/Users/Liam/Downloads/android-ndk-r14b-windows-x86/android-ndk-r14b/build//../toolchains/arm-linux-androideabi-4.9/prebuilt/windows-x86_64\" \"-fpic\" \"-ffunction-sections\" \"-funwind-tables\" \"-fstack-protector-strong\" \"-Wno-invalid-command-line-argument\" \"-Wno-unused-command-line-argument\" \"-no-canonical-prefixes\" \"-fno-integrated-as\" \"-g\" \"-target\" \"armv7-none-linux-androideabi\" \"-march\u003darmv7-a\" \"-mfloat-abi\u003dsoftfp\" \"-mfpu\u003dvfpv3-d16\" \"-mthumb\" \"-O0\" \"-UNDEBUG\" \"-fno-limit-debug-info\" \"-IC:/Users/Liam/Downloads/android-ndk-r14b-windows-x86/android-ndk-r14b/build//../sources/android/cpufeatures\" \"-DANDROID\" \"-Wall\" \"-Wextra\" \"-Werror\" \"-Wa,--noexecstack\" \"-Wformat\" \"-Werror\u003dformat-security\" \"--sysroot\" \"C:/Users/Liam/Downloads/android-ndk-r14b-windows-x86/android-ndk-r14b/build//../platforms/android-17/arch-arm\""
+        },
+        {
+          "src": "C:\\Users\\Liam\\StudioProjects\\SnapBattle2\\snapBattle2\\src\\main\\jni\\armArch.c",
+          "flags": "\"-gcc-toolchain\" \"C:/Users/Liam/Downloads/android-ndk-r14b-windows-x86/android-ndk-r14b/build//../toolchains/arm-linux-androideabi-4.9/prebuilt/windows-x86_64\" \"-fpic\" \"-ffunction-sections\" \"-funwind-tables\" \"-fstack-protector-strong\" \"-Wno-invalid-command-line-argument\" \"-Wno-unused-command-line-argument\" \"-no-canonical-prefixes\" \"-fno-integrated-as\" \"-g\" \"-target\" \"armv7-none-linux-androideabi\" \"-march\u003darmv7-a\" \"-mfloat-abi\u003dsoftfp\" \"-mfpu\u003dvfpv3-d16\" \"-mthumb\" \"-O0\" \"-UNDEBUG\" \"-fno-limit-debug-info\" \"-IC:/Users/Liam/Downloads/android-ndk-r14b-windows-x86/android-ndk-r14b/build//../sources/android/cpufeatures\" \"-IC:/Users/Liam/StudioProjects/SnapBattle2/snapBattle2/src/main/jni\" \"-DANDROID\" \"-DHAVE_NEON\u003d1\" \"-Wa,--noexecstack\" \"-Wformat\" \"-Werror\u003dformat-security\" \"--sysroot\" \"C:/Users/Liam/Downloads/android-ndk-r14b-windows-x86/android-ndk-r14b/build//../platforms/android-17/arch-arm\""
+        }
+      ],
+      "output": "C:\\Users\\Liam\\StudioProjects\\SnapBattle2\\snapBattle2\\build\\intermediates\\ndkBuild\\debug\\obj\\local\\armeabi-v7a\\libARM_ARCH.so"
+    },
+    "cpufeatures-debug-armeabi-v7a": {
+      "buildCommand": "C:\\Users\\Liam\\Downloads\\android-ndk-r14b-windows-x86\\android-ndk-r14b\\ndk-build.cmd NDK_PROJECT_PATH\u003dnull APP_BUILD_SCRIPT\u003dC:\\Users\\Liam\\StudioProjects\\SnapBattle2\\snapBattle2\\src\\main\\jni\\Android.mk NDK_APPLICATION_MK\u003dC:\\Users\\Liam\\StudioProjects\\SnapBattle2\\snapBattle2\\src\\main\\jni\\Application.mk APP_ABI\u003darmeabi-v7a NDK_ALL_ABIS\u003darmeabi-v7a NDK_DEBUG\u003d1 APP_PLATFORM\u003dandroid-17 NDK_OUT\u003dC:/Users/Liam/StudioProjects/SnapBattle2/snapBattle2/build/intermediates/ndkBuild/debug/obj NDK_LIBS_OUT\u003dC:\\Users\\Liam\\StudioProjects\\SnapBattle2\\snapBattle2\\build\\intermediates\\ndkBuild\\debug\\lib C:/Users/Liam/StudioProjects/SnapBattle2/snapBattle2/build/intermediates/ndkBuild/debug/obj/local/armeabi-v7a/libcpufeatures.a",
+      "toolchain": "toolchain-armeabi-v7a",
+      "abi": "armeabi-v7a",
+      "artifactName": "cpufeatures",
+      "files": [
+        {
+          "src": "C:\\Users\\Liam\\Downloads\\android-ndk-r14b-windows-x86\\android-ndk-r14b\\build\\..\\sources\\android\\cpufeatures\\cpu-features.c",
+          "flags": "\"-gcc-toolchain\" \"C:/Users/Liam/Downloads/android-ndk-r14b-windows-x86/android-ndk-r14b/build//../toolchains/arm-linux-androideabi-4.9/prebuilt/windows-x86_64\" \"-fpic\" \"-ffunction-sections\" \"-funwind-tables\" \"-fstack-protector-strong\" \"-Wno-invalid-command-line-argument\" \"-Wno-unused-command-line-argument\" \"-no-canonical-prefixes\" \"-fno-integrated-as\" \"-g\" \"-target\" \"armv7-none-linux-androideabi\" \"-march\u003darmv7-a\" \"-mfloat-abi\u003dsoftfp\" \"-mfpu\u003dvfpv3-d16\" \"-mthumb\" \"-O0\" \"-UNDEBUG\" \"-fno-limit-debug-info\" \"-IC:/Users/Liam/Downloads/android-ndk-r14b-windows-x86/android-ndk-r14b/build//../sources/android/cpufeatures\" \"-DANDROID\" \"-Wall\" \"-Wextra\" \"-Werror\" \"-Wa,--noexecstack\" \"-Wformat\" \"-Werror\u003dformat-security\" \"--sysroot\" \"C:/Users/Liam/Downloads/android-ndk-r14b-windows-x86/android-ndk-r14b/build//../platforms/android-17/arch-arm\""
+        }
+      ],
+      "output": "C:\\Users\\Liam\\StudioProjects\\SnapBattle2\\snapBattle2\\build\\intermediates\\ndkBuild\\debug\\obj\\local\\armeabi-v7a\\libcpufeatures.a"
+    }
+  },
+  "toolchains": {
+    "toolchain-armeabi-v7a": {
+      "cCompilerExecutable": "C:\\Users\\Liam\\Downloads\\android-ndk-r14b-windows-x86\\android-ndk-r14b\\build\\..\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\clang.exe"
+    }
+  },
+  "cFileExtensions": [
+    "c"
+  ],
+  "cppFileExtensions": []
+}

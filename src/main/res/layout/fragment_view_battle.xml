@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout 
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+
+		<android.support.constraint.ConstraintLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginStart="@dimen/activity_horizontal_margin"
+			android:layout_marginEnd="16dp"
+			android:layout_marginTop="@dimen/activity_vertical_margin"
+			android:background="@drawable/view_battle_header_background"
+            android:elevation="@dimen/view_battle_header_elevation"
+			android:gravity="center_horizontal"
+			android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/battle_name_TextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/header_element_spacing"
+                android:layout_marginTop="@dimen/header_element_spacing"
+                android:textColor="@android:color/white"
+                android:textSize="25sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+            <TextView
+                android:id="@+id/challenger_name_TextView"
+                android:textStyle="bold"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginEnd="@dimen/header_element_spacing"
+                android:layout_marginStart="@dimen/header_element_spacing"
+                android:layout_marginTop="@dimen/header_element_spacing"
+                android:textColor="@android:color/white"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toStartOf="@+id/vs_TextView"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/voting_length_TextView" />
+
+            <TextView
+                android:id="@+id/vs_TextView"
+                android:visibility="gone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="@dimen/header_element_spacing"
+                android:layout_marginEnd="@dimen/header_element_spacing"
+                android:layout_marginStart="@dimen/header_element_spacing"
+                android:layout_marginTop="@dimen/header_element_spacing"
+                android:text="@string/vs"
+                android:textColor="@android:color/white"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/voting_length_TextView" />
+
+            <TextView
+                android:id="@+id/challenged_name_TextView"
+                android:textStyle="bold"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/header_element_spacing"
+                android:layout_marginStart="@dimen/header_element_spacing"
+                android:layout_marginTop="@dimen/header_element_spacing"
+                android:gravity="end"
+                android:textColor="@android:color/white"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/vs_TextView"
+                app:layout_constraintTop_toBottomOf="@+id/voting_length_TextView" />
+
+            <TextView
+                android:id="@+id/battle_rounds_TextView"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/battle_rounds_textview_height"
+                android:layout_below="@id/battle_name_TextView"
+                android:layout_marginStart="@dimen/header_element_spacing"
+                android:layout_marginTop="@dimen/header_element_spacing"
+                android:textColor="@android:color/white"
+                android:textSize="12sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/battle_name_TextView" />
+
+            <TextView
+                android:id="@+id/voting_type_TextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/header_element_spacing"
+                android:layout_marginTop="@dimen/header_element_spacing"
+                android:textColor="@android:color/white"
+                android:textSize="12sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/battle_name_TextView" />
+
+            <TextView
+                android:id="@+id/voting_length_TextView"
+                android:visibility="gone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/header_element_spacing"
+                android:layout_marginTop="@dimen/header_element_spacing"
+                android:textColor="@android:color/white"
+                android:textSize="12sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/voting_type_TextView" />
+
+            <LinearLayout
+                android:id="@+id/statusTextViewLinearLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/header_element_spacing"
+                android:layout_marginTop="@dimen/header_element_spacing"
+                android:layout_marginBottom="@dimen/header_element_spacing"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/challenged_name_TextView">
+
+                <TextView
+                    android:id="@+id/statusTextView"
+                    android:visibility="gone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/primary_text" />
+
+                <ProgressBar
+                    android:id="@+id/finalTranscodingProgressBar"
+                    android:visibility="gone"
+                    android:layout_width="@dimen/transcoding_progress_spinner_width_height"
+                    android:layout_height="@dimen/transcoding_progress_spinner_width_height"
+                    android:layout_marginStart="@dimen/element_horizontal_spacing_default"
+                    android:theme="@style/MyMaterialTheme.Base" />
+
+            </LinearLayout>
+
+
+            <include
+                layout="@layout/completed_battle_layout"
+                android:layout_marginTop="@dimen/header_element_spacing"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@+id/statusTextViewLinearLayout" />
+		</android.support.constraint.ConstraintLayout>
+
+        <FrameLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" >
+	  <ListView android:id="@android:id/list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/listview_margin_top"
+            android:drawSelectorOnTop="false"
+		  android:divider="@null" />
+   </FrameLayout>
+   </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/current_list_progressContainer"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/progress_container_height"
+        android:clickable="true"
+        android:focusable="true">
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:theme="@style/MyMaterialTheme.Base" />
+
+    </FrameLayout>
+
+  </FrameLayout>

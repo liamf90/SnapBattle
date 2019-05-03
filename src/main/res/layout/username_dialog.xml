@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:paddingBottom="@dimen/dialog_vertical_margin"
+    android:paddingLeft="@dimen/dialog_horizontal_margin"
+    android:paddingRight="@dimen/dialog_horizontal_margin"
+    android:paddingTop="@dimen/dialog_vertical_margin"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal" >
+    <TextView  
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:text="@string/username" />
+    <EditText
+        android:layout_marginStart="@dimen/element_horizontal_spacing_default"
+        android:inputType="text"
+        android:layout_width="@dimen/username_edit_text_width"
+        android:layout_height="wrap_content"
+        android:id="@+id/usernameTextView" />
+    
+    
+
+</LinearLayout>

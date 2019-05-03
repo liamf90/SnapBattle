@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto">
+		<LinearLayout
+		    android:layout_width="match_parent"
+		    android:layout_height="match_parent"
+		    android:orientation="vertical"
+			android:paddingStart="@dimen/activity_horizontal_margin"
+			android:paddingTop="@dimen/activity_vertical_margin"
+			android:paddingEnd="@dimen/activity_horizontal_margin">
+
+			<LinearLayout
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:orientation="horizontal">
+                <android.support.v7.widget.SearchView
+                    android:id="@+id/searchbox"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="@dimen/search_box_height"
+					android:clickable="true"
+					android:focusable="true"
+                    />
+				<Button
+					android:id="@+id/EnterUsernameManuallyButton"
+					android:layout_width = "wrap_content"
+                    android:layout_weight="0"
+					android:layout_height="wrap_content"
+					android:layout_gravity="end"
+					android:text="@string/enter_username"/>
+			</LinearLayout>
+
+			<android.support.design.widget.TabLayout
+				android:id="@+id/opponentSelectorTabLayout"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				app:tabMode="fixed"
+				app:tabGravity="fill"
+				android:layout_marginBottom="@dimen/opponent_select_tab_margin"
+				android:layout_marginTop="@dimen/opponent_select_tab_margin">
+
+				<android.support.design.widget.TabItem
+					android:id="@+id/recentOpponentsTabItem"
+					android:text="@string/recent"
+					android:layout_height="wrap_content"
+					android:layout_width="wrap_content"
+
+					/>
+
+				<android.support.design.widget.TabItem
+					android:id="@+id/followingTabItem"
+					android:text="@string/following"
+					android:layout_height="wrap_content"
+					android:layout_width="wrap_content"
+					/>
+
+
+				<android.support.design.widget.TabItem
+					android:id="@+id/facebookFriendsTabItem"
+					android:text="@string/facebook"
+					android:layout_height="wrap_content"
+					android:layout_width="wrap_content"
+					/>
+
+			</android.support.design.widget.TabLayout>
+
+			<android.support.v7.widget.RecyclerView
+				android:id="@+id/recyclerList"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:divider="@null"
+				android:scrollbars="vertical" />
+
+
+
+		      
+		
+		</LinearLayout>
+
+		<FrameLayout
+		    android:id="@+id/opponent_list_progressContainer"
+		    android:layout_width="match_parent"
+		    android:layout_height="@dimen/progress_container_height"
+		    android:clickable="true"
+			android:focusable="true">
+
+			    <ProgressBar
+					android:theme="@style/MyMaterialTheme.Base"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:layout_gravity="center"/>
+			    
+			</FrameLayout>
+</FrameLayout>

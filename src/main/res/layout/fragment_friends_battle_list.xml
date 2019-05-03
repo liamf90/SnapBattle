@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/swipe_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:divider="@null"
+            android:background="@color/completed_list_background"
+            android:scrollbars="vertical"
+            />
+
+    </android.support.v4.widget.SwipeRefreshLayout>
+    <TextView
+        android:id="@+id/NoBattlesTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical|center_horizontal"
+        android:text="@string/no_battles"
+        android:textColor="@android:color/black"
+        android:visibility="gone"
+        android:textSize="24sp"
+        />
+
+    <FrameLayout
+        android:id="@+id/current_list_progressContainer"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/progress_container_height"
+        android:clickable="true"
+        android:focusable="true"
+        android:visibility="gone">
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:theme="@style/MyMaterialTheme.Base"
+            android:visibility="gone" />
+
+
+
+    </FrameLayout>
+
+</android.support.design.widget.CoordinatorLayout>

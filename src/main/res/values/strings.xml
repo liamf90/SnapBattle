@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="facebook_app_id" translatable="false">1612450192366037</string>
+    <string name="fb_login_protocol_scheme" translatable="false">fb1612450192366037</string>
+    <string name="gcm_defaultSenderId" translatable="false">164351496557</string>
+    <string-array name="VotingEntries">
+        <item>Mutual Facebook Friends Only</item>
+        <item>Public Voting</item>
+        <item>Choose Judges</item>
+    </string-array>
+    <string-array name="VotingLengths">
+        <item>24 Hours</item>
+        <item>3 Days</item>
+        <item>One Week</item>
+        <item>One Month</item>
+    </string-array>
+
+    <string name="title_activity_view_friend_battle">View Friend Battle</string>
+
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="follow">Follow</string>
+    <string name="unfollow">Unfollow</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+    <string name="title_activity_main">MainActivity</string>
+
+    <string name="title_activity_loading">LoadingActivity</string>
+    <string name="dummy_button" translatable="false">Dummy Button</string>
+    <string name="dummy_content" translatable="false">DUMMY\nCONTENT</string>
+
+
+    <!-- Navigation String -->
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="openDrawer">open_drawer</string>
+    <string name="closeDrawer">close_drawer</string>
+
+    <!-- Navigation Drawer menu labels -->
+    <string name="nav_home">Home Feed</string>
+    <string name="nav_current_battles">Current Battles</string>
+    <string name="nav_completed_battles">Completed Battles</string>
+    <string name="nav_logout">Logout</string>
+    <string name="nav_profile">Profile</string>
+    <string name="nav_about_us">About Us</string>
+    <string name="nav_challenges">Challenges</string>
+    <string name="nav_add_followers">Follow Facebook Friends</string>
+    <string name="nav_view_followers">View And Edit Following</string>
+    <string name="nav_create_battle">Create Battle</string>
+
+    <!-- Toolbar titles when navigation menu item is selected -->
+    <string-array name="nav_item_activity_titles">
+        <item>Home Feed</item>
+        <item>Create Battle</item>
+        <item>Current Battles</item>
+        <item>Completed Battles</item>
+        <item>Challenges</item>
+        <item>Profile</item>
+        <item>Follow Facebook Friends</item>
+        <item>View/Add Followers</item>
+        <item>Log Out</item>
+        <item>Notifications</item>
+        <item>Search</item>
+    </string-array>
+
+    <string-array name="nav_create_battle_fragment_titles">
+        <item>Choose Battle Type</item>
+        <item>Choose Opponent</item>
+        <item>Choose Rounds</item>
+        <item>Choose Voting</item>
+        <item>Verify Battle</item>
+    </string-array>
+    <string-array name="startup_activity_titles">
+        <item>Follow Facebook Friends</item>
+        <item>Choose Name</item>
+        <item>Choose Profile Picture</item>
+        <item>Choose Username</item>
+    </string-array>
+
+
+    <string name="comments_fragment_title">Comments</string>
+    <string name="notification_activity_title">Notifications</string>
+    <string name="battles_search_tab_title">BATTLES</string>
+    <string name="users_search_tab_title">USERS</string>
+    <string name="view_battle_title">View Battle</string>
+
+    <string name="upload_to_facebook_activity_title">Upload Full Battle To Facebook</string>
+
+    <string name="description">Description</string>
+    <string name="Notifications">Notifications</string>
+    <string name="activity_title_about_us">About Us</string>
+    <string name="activity_title_privacy_policy">Privacy Policy</string>
+    <string name="action_clear_all">Clear All</string>
+    <string name="action_mark_all_read">Mark All as Read</string>
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="title_activity_main_navigation_drawer">Snap Battle</string>
+
+    <string name="all_battles_tab_title">All Battles</string>
+    <string name="following_battles_tab_title">Following Battles</string>
+
+    <string name="atusername">\@%1$s</string>
+    <string name="view_comments_text"><u>View Comments</u></string>
+
+    <plurals name="rounds">
+        <item quantity="one">%1$d Round</item>
+        <item quantity="other">%1$d Rounds</item>
+    </plurals>
+    <plurals name="battle_count">
+        <item quantity="one">%1$d battle</item>
+        <item quantity="other">%1$d battles</item>
+    </plurals>
+    <string name="battle_name">%1$s Battle</string>
+    <string name="battle_name_plural">%1$s Battles</string>
+    <string name="opponents">%1$s vs %2$s</string>
+    <string name="vsOpponent">vs %1$s</string>
+
+    <plurals name="votes">
+        <item quantity="one">%d vote</item>
+        <item quantity="other">%d votes</item>
+    </plurals>
+
+    <plurals name="likes">
+        <item quantity="one">%d Like</item>
+        <item quantity="other">%d Likes</item>
+    </plurals>
+
+    <plurals name="dislikes">
+        <item quantity="one">%d Dislike</item>
+        <item quantity="other">%d Dislikes</item>
+    </plurals>
+
+
+
+    <string name="have_voted">You have voted</string>
+    <string name="can_vote">You can vote</string>
+    <string name="can_not_vote">You cannot vote</string>
+
+    <string name="voting_time_left">%1$s until voting ends</string>
+
+    <!-- Error strings-->
+    <string name="server_error_toast">An server error has occurred</string>
+    <string name="generic_error_toast">An error has occurred</string>
+    <string name="banned_toast">You have been banned until %1$s</string>
+    <string name="error_already_reported">Battle already reported</string>
+    <string name="error_battle_deleted">This battle has been deleted</string>
+
+
+    <string name="title_activity_reportings">Reportings</string>
+    <string name="rotate_device">Rotate Device</string>
+    <string name="logout_of_facebook">Logout of Facebook</string>
+    <string name="search">Search</string>
+    <string name="choose_battle_type">Choose Battle Type</string>
+    <string name="view_following">View Following</string>
+    <string name="add_followers">Add Followers</string>
+    <string name="view_friends_battles">View Friends Battles</string>
+    <string name="edit_profile">Edit Profile</string>
+    <string name="create_battle">Create Battle</string>
+    <string name="current_battles">Current Battles</string>
+    <string name="completed_battles">Completed Battles</string>
+    <string name="challenges">Challenges</string>
+    <string name="name">Name</string>
+    <string name="set_profile_picture">Set Profile Picture</string>
+    <string name="number_of_rounds">Number of Rounds</string>
+    <string name="choose_voting_type">Choose Voting Type</string>
+
+    <string name="no_voting">No voting</string>
+    <string name="public_voting">Public voting</string>
+    <string name="mutual_facebook_friends">Mutual Facebook friends voting</string>
+    <string name="public_voting_long">Public Voting - Anyone can vote</string>
+    <string name="mutual_facebook_friends_long">Mutual Facebook friends of opponents can only vote</string>
+
+    <string name="voting_length_title_included">Voting Length: %1$s</string>
+
+
+    <string name="voting_length">Voting Length</string>
+    <string name="opponent">Opponent</string>
+    <string name="voting">Voting</string>
+    <string name="send_battle_challenge">Send Battle Challenge</string>
+    <string name="no_battles">There are no battles in your feed</string>
+    <string name="following">Following</string>
+    <string name="recent">Recent</string>
+    <string name="change_profile_picture">Change Profile Picture</string>
+    <string name="save">SAVE</string>
+    <string name="enter_username">Enter Username</string>
+    <string name="done">Done</string>
+    <string name="write_facebook_status">Write Facebook Status</string>
+    <string name="upload_to_facebook">Upload To Facebook</string>
+    <string name="vs">vs</string>
+    <string name="write_a_comment">Write a comment</string>
+    <string name="add_comment">Add Comment</string>
+    <string name="add_follower_by_username">Follow by username</string>
+    <string name="accept">ACCEPT</string>
+    <string name="decline">DECLINE</string>
+    <string name="challenger">Challenger</string>
+    <string name="challenged">Challenged</string>
+    <string name="rounds">Rounds</string>
+    <string name="searching">Searching …</string>
+    <string name="report">Report</string>
+    <string name="vote">Vote</string>
+    <string name="followers">Followers</string>
+    <string name="battles">Battles</string>
+    <string name="username">Username</string>
+    <string name="accepted_the_battle">" accepted the battle"</string>
+    <string name="declined_the_battle">" declined the battle"</string>
+    <string name="name_too_long_toast">Name cannot be longer than 30 characters</string>
+    <string name="enter_username_dialog_title">Enter Username</string>
+    <string name="success_title_message">Success</string>
+    <string name="username_too_long_toast">Username cannot contain more than 25 characters</string>
+    <string name="username_wrong_characters_toast">Username can only contain  letters, numbers, periods and underscores</string>
+    <string name="username_already_exists_toast">The username already exists</string>
+    <plurals name="view_comments_button">
+        <item quantity="one">View %1$d Comment</item>
+        <item quantity="other">View %1$d Comments</item>
+    </plurals>
+    <string name="vote_dialog_title">Vote</string>
+    <string name="round_number">Round %1$d</string>
+    <string name="video_views">%1$d views</string>
+
+
+    <string name="selected_judges">Selected Judges</string>
+    <string name="no_voting_used">No Voting Used</string>
+    <string name="full_video_uploaded_notification_append">Full video uploaded for %1$s Battle</string>
+    <string name="battle_request_notification_append">"Battle request from "</string>
+    <string name="new_comment_notification_append">" commented on your %1$s Battle"</string>
+    <string name="tagged_in_comment_notification_append">" tagged you in a comment in an %1$s Battle"</string>
+
+
+    <string name="new_follower_notification_append">" started following you"</string>
+    <string name="username_not_found_toast_message">Username not found</string>
+    <string name="video_submitted_notification_append">" submitted a new video"</string>
+    <string name="won_battle_notification_message">" won the battle %1$d votes to %2$d</string>
+    <string name="lost_battle_notification_message_part2">" %1$d votes to %2$d"</string>
+    <string name="lost_battle_notification_message_part1">"You lost the battle against "</string>
+    <string name="draw_battle_notification_message_part2">" was a draw with %1$d votes to %2$d"</string>
+    <string name="draw_battle_notification_message_part1">"The battle against "</string>
+    <string name="uploading">Uploading…</string>
+    <string name="voted">Voted</string>
+    <string name="reporting">Reporting …</string>
+    <string name="reported">Reported</string>
+
+    <string name="phone_1_camera_toast">Sorry, your phone has only one camera!</string>
+    <string name="rotate_to_landscape_message">Please Rotate Device to Landscape Mode</string>
+    <string name="rotate_to_portrait_message">Please Rotate Device to Portrait Mode</string>
+    <string name="no_camera_toast">Sorry, your phone does not have a camera!</string>
+    <string name="no_front_camera">No front facing camera found</string>
+
+    <string name="app_permission_cancel">Cancel</string>
+    <string name="app_need_permissions_not_given">This app needs permission to use this feature. You can grant them in app settings</string>
+    <string name="app_permission_goto_settings">Go to Settings</string>
+    <string name="app_permission_dialog_title">Need Permissions</string>
+
+    <string name="no_results">No Results</string>
+    <string name="no_result_toast">No Result</string>
+
+    <string name="ago"> ago</string>
+    <string name="minute"> minute</string>
+    <string name="minutes"> minutes</string>
+    <string name="hour"> hour</string>
+    <string name="hours"> hours</string>
+    <string name="day"> day</string>
+    <string name="days"> days</string>
+    <string name="year"> year</string>
+    <string name="years"> years</string>
+
+    <string name="minute_shorthand"> m</string>
+    <string name="hour_shorthand"> h</string>
+    <string name="days_shorthand"> d</string>
+    <string name="years_shorthand"> y</string>
+
+    <!-- Get VideoLambda Status-->
+    <string name="error">Error</string>
+    <string name="received">Received %1$s</string>
+    <string name="sent">Sent %1$s</string>
+    <string name="your_turn">Your turn</string>
+    <string name="opponent_turn">Opponent\'s turn</string>
+
+    <string name="no_more_battles">No more battles</string>
+    <string name="battle_type_title">Battle Type</string>
+    <string name="no_internet_connection_toast">No Internet Connection</string>
+    <string name="no_current_battles_toast">You have no current battles</string>
+    <string name="no_completed_battles_toast">You have no completed battles</string>
+    <string name="no_challenges_battles_toast">You have no battle challenges</string>
+    <string name="upgrade_required_toast_message">You need to upgrade the app to a newer version</string>
+    <string name="already_following_error">You are already following this user</string>
+
+
+    <string name="other">Other</string>
+    <string name="top_battles">Top Battles</string>
+    <string name="battle_type_hint">ENTER CUSTOM BATTLE NAME OR CHOOSE FROM LIST</string>
+    <string name="battle_type_lowercase">Enter custom battle name or choose from list</string>
+    <string name="recent_battles">Recent Battles</string>
+    <string name="facebook">Facebook</string>
+    <string name="report_comment_title">Report Comment</string>
+    <string name="search_title">Search</string>
+    <string name="next_item_title">next</string>
+    <string name="skip_menu_item_title">skip</string>
+    <string name="next_menu_item_title">next</string>
+
+
+    <string name="username_updated_snackbar_message">Username Updated</string>
+    <string name="name_updated_snackbar_message">Name Updated</string>
+
+    <string name="no_comments">No Comments</string>
+    <string name="comment_deleted">comment deleted</string>
+    <string name="not_enough_facebook_friends_toast">You need atleast 100 facebook friends to write comments</string>
+    \
+    <string name="not_authorised_delete_comment_toast">Not authorised to delete comment</string>
+    <string name="comment_already_reported_toast">Comment already reported</string>
+    <string name="comment_reported_toast">Comment Reported</string>
+    <string name="battle_removed_error_toast">Battle has been removed</string>
+    <string name="battle_name_too_long_toast">Battle Name is Too Long</string>
+    <string name="incorrect_rounds_toast">Incorrect amount of rounds chosen</string>
+    <string name="not_long_enough_wait_challenge_opponent_toast">You need to wait 5 minutes between challenging the same opponent</string>
+    <string name="battle_request_sent_snackbar_message">Battle Request Sent</string>
+    <string name="winner">Winner</string>
+    <string name="loser">Loser</string>
+    <string name="draw">Draw</string>
+
+    <string name="battle_challenged_ago">Battle challenged %1$s</string>
+    <string name="last_video_updated_time_ago">Last video uploaded %1$s</string>
+    <string name="title_activity_about_us">AboutUsActivity</string>
+    <string name="about_us">Designed and developed by Liam Farrell</string>
+    <string name="about_us_email">Contact snapbattleapp1@gmail.com</string>
+    <string name="final_video_transcoding_status_message">Full video transcoding…</string>
+    <string name="declined_battle_status_message">%1$s declined the battle</string>
+
+    <string name="video_saved_to_device">Video saved to device</string>
+    <string name="crop_image_menu_crop">Accept</string>
+    <string name="need_accept_permission_user_friends">You need to let the app access your friends list to use this feature</string>
+
+
+</resources>

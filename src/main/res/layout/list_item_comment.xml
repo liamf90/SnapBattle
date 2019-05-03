@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/viewHolder"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/profilePicSmall"
+        android:src="@drawable/default_profile_pic100x100"
+        android:layout_gravity="center_vertical|center_horizontal"
+        android:layout_width="@dimen/profile_pic_small_width"
+        android:layout_height="@dimen/profile_pic_small_height" />
+
+
+    <LinearLayout
+        android:layout_marginStart="@dimen/list_item_elements_default_spacing"
+        android:layout_marginTop="@dimen/listview_margin_top"
+        android:padding="@dimen/comments_box_padding"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/comment_background"
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/secondary_text_dark"
+            android:maxLines="12"
+            android:id="@+id/commentTextView"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="10sp"
+            android:id="@+id/timeSinceTextView"/>
+    </LinearLayout>
+
+</LinearLayout>

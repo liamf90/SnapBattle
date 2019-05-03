@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:orientation="vertical"
+	android:paddingBottom="@dimen/row_vertical_padding"
+	android:paddingLeft="@dimen/activity_horizontal_margin"
+	android:paddingRight="@dimen/activity_horizontal_margin"
+	android:paddingTop="@dimen/row_vertical_padding">
+
+	<de.hdodenhof.circleimageview.CircleImageView
+		android:id="@+id/profilePic"
+		android:layout_width="@dimen/profile_pic_challenges_list_width"
+		android:layout_height="@dimen/profile_pic_challenges_list_height"
+		android:layout_marginTop="@dimen/list_item_elements_default_spacing"
+		android:layout_marginEnd="@dimen/list_item_elements_default_spacing"
+		android:layout_marginBottom="@dimen/list_item_elements_default_spacing"
+		android:src="@drawable/default_profile_pic100x100"
+		app:layout_constraintBottom_toTopOf="@+id/linearLayout3"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintTop_toTopOf="parent" />
+
+	<TextView
+		android:id="@+id/battle_list_item_battle_name_TextView"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_gravity="start"
+		android:layout_marginStart="@dimen/list_item_elements_default_spacing"
+		android:textColor="@color/secondary_text_dark"
+		android:textSize="20sp"
+		android:textStyle="bold"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toTopOf="parent" />
+
+	<TextView
+		android:id="@+id/battle_list_item_opponent_name_TextView"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginStart="@dimen/list_item_elements_default_spacing"
+		android:layout_marginTop="@dimen/list_item_elements_default_spacing"
+		android:textSize="20sp"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toBottomOf="@+id/battle_list_item_battle_name_TextView" />
+
+	<LinearLayout
+		android:id="@+id/linearLayout3"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_marginStart="@dimen/list_item_elements_default_spacing"
+		android:layout_marginTop="@dimen/list_item_elements_default_spacing"
+		android:orientation="vertical"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toBottomOf="@+id/battle_list_item_opponent_name_TextView">
+
+		<TextView
+			android:id="@+id/chosenVotingTextView"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textSize="18sp" />
+
+		<LinearLayout
+			android:id="@+id/votingLengthLayout"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="@dimen/list_item_elements_default_spacing"
+			android:orientation="horizontal"
+			android:visibility="visible">
+
+			<TextView
+				android:id="@+id/votingLengthTitleTextView"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="@string/voting_length"
+				android:textSize="18sp"
+				android:textStyle="bold"
+				android:visibility="visible" />
+
+			<TextView
+				android:id="@+id/votingLengthTextView"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginStart="@dimen/element_horizontal_spacing_default"
+				android:textSize="18sp"
+				android:visibility="visible" />
+		</LinearLayout>
+
+	</LinearLayout>
+
+
+	<LinearLayout
+		android:id="@+id/linearLayout4"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginStart="@dimen/list_item_elements_default_spacing"
+		android:layout_marginTop="@dimen/list_item_elements_default_spacing"
+		android:orientation="horizontal"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toBottomOf="@+id/linearLayout3">
+
+		<TextView
+			android:id="@+id/battle_rounds_TextView"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center_vertical"
+			android:textSize="16sp" />
+
+		<TextView
+			android:id="@+id/battle_status_TextView"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center_vertical"
+			android:layout_marginStart="@dimen/element_horizontal_spacing_default"
+			android:textSize="14sp" />
+	</LinearLayout>
+
+
+
+
+	<Button
+		android:id="@+id/battle_list_item_accept_button"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginStart="@dimen/list_item_elements_default_spacing"
+		android:layout_marginTop="@dimen/element_vertical_spacing_default"
+		android:layout_marginBottom="@dimen/list_item_elements_default_spacing"
+		android:background="@drawable/button_shape"
+		android:text="@string/accept"
+		android:textColor="@color/secondary_text_light"
+		app:layout_constraintBottom_toBottomOf="parent"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toBottomOf="@+id/linearLayout4" />
+
+	<Button
+
+		android:id="@+id/battle_list_item_decline_button"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginEnd="@dimen/list_item_elements_default_spacing"
+		android:background="@drawable/button_shape"
+		android:text="@string/decline"
+		android:textColor="@color/secondary_text_light"
+		app:layout_constraintBaseline_toBaselineOf="@+id/battle_list_item_accept_button"
+		app:layout_constraintEnd_toEndOf="parent" />
+
+
+</android.support.constraint.ConstraintLayout>
+
+
+
+

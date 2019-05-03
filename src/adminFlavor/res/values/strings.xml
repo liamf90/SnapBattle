@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Navigation Drawer menu labels -->
+
+    <string name="nav_admin_reportings">View Reportings</string>
+
+
+    <string-array name="ReportingTabsTitles">
+        <item>COMMENTS</item>
+        <item>BATTLES</item>
+    </string-array>
+    <string name="no_result">No Result</string>
+    <string name="not_authorised_delete_comment">Not authorised to delete comment</string>
+    <string name="not_authorised_ignore_comment">Not authorised to ignore comment</string>
+
+    <string name="not_authorised_delete_battle">"Not authorised to delete battle</string>
+    <string name="not_authorised_ignore_battle">"Not authorised to ignore battle</string>
+
+
+    <string name="no_ban_days_entered_toast">You must enter a ban days amount</string>
+    <string name="ban_days_greater_0_toast">Ban Days cannot be less than or equal to 0</string>
+    <string name="battle_ignored">Battle Ignored</string>
+    <string name="battle_deleted">Battle Deleted</string>
+    <string name="challenger_name">Challenger Name:</string>
+    <string name="battle_name_reportings_title">Battle Name:</string>
+    <string name="challenger_username">Challenger Username:</string>
+    <string name="challenged_name">Challenged Name:</string>
+    <string name="challenged_username">Challenged Username:</string>
+    <string name="delete_battle">Delete Battle</string>
+    <string name="ignore_battle_report">Ignore Battle Report</string>
+    <string name="ban_days_length">Ban Days Length</string>
+    <string name="ban_challenger">Ban Challenger</string>
+    <string name="ban_challenged">Ban Challenged</string>
+    <string name="load_more_battles">load more battles</string>
+    <string name="challenger_user_banned">Challenger User Banned</string>
+    <string name="challenged_user_banned">Challenged User Banned</string>
+    <string name="name_title">Name:</string>
+    <string name="username_title">Username:</string>
+    <string name="delete_comment">Delete Comment</string>
+    <string name="ban_user">Ban User</string>
+    <string name="ignore_comment_report">Ignore Comment Report</string>
+    <string name="load_more_comments">load more comments</string>
+    <string name="user_banned">User Banned</string>
+    <string name="comment_ignored">Comment Ignored</string>
+    <string name="comment_title">Comment:</string>
+    <string name="nav_reportings">Reportings</string>
+
+</resources>

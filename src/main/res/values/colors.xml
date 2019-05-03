@@ -1,0 +1,52 @@
+<resources>
+<color name="colorPrimary">#00BCD4</color>
+<color name="colorPrimaryDark">#0097A7</color>
+<color name="colorLoginBackground">#42a5f5</color>
+<color name="primary_light">#B2EBF2</color>
+<color name="colorAccent">#607D8B</color>
+<color name="primary_text">#FFFFFF</color>
+<color name="secondary_text_light">#757575</color>
+<color name="secondary_text_dark">#000000</color>
+<color name="icons">#FFFFFF</color>
+<color name="divider">#BDBDBD</color>
+<color name="black_overlay">#66000000</color>
+<color name="windowBackground">#FFFFFF</color>
+
+<color name="your_turn_background">#ffffff</color>
+<color name="opponent_turn_background">#e0e0e0</color>
+
+<color name="dark_gray">#cfd8dc</color>
+<color name="vote_disabled">#e0e0e0</color>
+<color name="vote_enabled">#FFFFFF</color>
+<color name="logo_tint">#FFFFFF</color>
+<color name="completed_list_background">#cfd8dc</color>
+
+<color name="profile_pic_border">#FF000000</color>
+<color name="add_comment_margin_color">#9e9e9e</color>
+<color name="rotate_camera_icon_background">#000000</color>
+<color name="like_button_tint">#000000</color>
+<color name="video_player_background">#000000</color>
+
+<color name="media_controller_background">#47000000</color>
+<color name="media_controller_progress_background_tint">#cfd8dc</color>
+<color name="media_controler_secondary_progress_tint">#9498a7</color>
+
+    <!-- DRAWABLES -->
+<color name="vote_button">#FFFFFF</color>
+    <color name="battle_video_view_user_background">#A2F393</color>
+    <color name="battle_video_view_opponent_background">#8EE3F1</color>
+    <color name="battle_video_view_text_color">#4D4D4D</color>
+
+    <color name="battle_video_view_future_background">#eeeeee</color>
+    <color name="thumb_path_fillcolor">#000</color>
+    <color name="stop_button">#000000</color>
+    <color name="stop_button_margin">#ffffff</color>
+    <color name="save_to_device_path">#FFFFFF</color>
+    <color name="report_button_stroke">#FFFFFF</color>
+    <color name="record_button_margin">#6f0000</color>
+    <color name="floating_plus_icon_color">#000</color>
+    <color name="media_buttons">#FFFFFF</color>
+    <color name="comment_background">#dcdcdc</color>
+
+
+</resources>

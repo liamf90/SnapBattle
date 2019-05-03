@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<android.support.design.widget.CoordinatorLayout
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:paddingTop="@dimen/activity_vertical_margin"
+	android:paddingBottom="@dimen/activity_vertical_margin"
+	android:paddingLeft="@dimen/activity_horizontal_margin"
+	android:paddingRight="@dimen/activity_horizontal_margin"
+	xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:orientation="vertical"
+		 >
+		<LinearLayout
+			android:layout_width = "match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="vertical">
+			<TextView
+				android:text="@string/battle_type_title"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:textStyle = "bold"/>
+			<TextView
+				android:id="@+id/battleName"
+				android:layout_height="wrap_content"
+				android:layout_width="match_parent"
+				android:textSize="18sp"
+				/>
+		</LinearLayout>
+		<LinearLayout
+			android:layout_width = "match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="vertical"
+			android:layout_marginTop="@dimen/element_vertical_spacing_default">
+			 <TextView
+				android:text="@string/number_of_rounds"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				 android:textStyle = "bold"/>
+			<TextView
+				android:id="@+id/numberOfRounds"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:textSize="18sp"/>
+		  </LinearLayout>
+		 <LinearLayout
+			 android:layout_width = "match_parent"
+			 android:layout_height="wrap_content"
+			 android:orientation="vertical"
+             android:layout_marginTop="@dimen/element_vertical_spacing_default">
+			 <TextView
+				 android:text="@string/opponent"
+				 android:layout_width="wrap_content"
+				 android:layout_height="wrap_content"
+				 android:textStyle = "bold"/>
+			<TextView
+				android:id="@+id/chosenOpponent"
+			   android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:textSize="18sp"/>
+
+		</LinearLayout>
+		 <LinearLayout
+			 android:layout_width = "match_parent"
+			 android:layout_height="wrap_content"
+			 android:orientation="vertical"
+             android:layout_marginTop="@dimen/element_vertical_spacing_default">
+			 <TextView
+				 android:text="@string/voting"
+				 android:layout_width="wrap_content"
+				 android:layout_height="wrap_content"
+				 android:textStyle = "bold"/>
+			<TextView
+				android:id="@+id/chosenVotingTextView"
+			   android:layout_width="wrap_content"
+			   android:layout_height="wrap_content"
+				android:textSize="18sp"/>
+
+		</LinearLayout>
+
+		 <LinearLayout
+			 android:id="@+id/votingLengthLinearLayout"
+			 android:layout_width="match_parent"
+             android:layout_marginTop="@dimen/element_vertical_spacing_default"
+			 android:layout_height="wrap_content"
+			 android:orientation="vertical">
+			 <TextView
+				 android:layout_width= "wrap_content"
+				 android:layout_height="wrap_content"
+				 android:textStyle = "bold"
+				 android:text="@string/voting_length"/>
+			 <TextView
+				 android:id="@+id/votingLengthTextView"
+				 android:layout_width="wrap_content"
+				 android:layout_height="wrap_content"
+				 android:textSize="18sp"/>
+		  </LinearLayout>
+		 <Button
+			 android:id="@+id/sendBattleRequest"
+			 android:text="@string/send_battle_challenge"
+			 android:layout_width = "wrap_content"
+			 android:layout_height="wrap_content"
+			 android:layout_gravity="bottom|end"
+			 android:layout_marginBottom="@dimen/activity_vertical_margin"
+			 android:layout_marginEnd="@dimen/activity_horizontal_margin"/>
+
+	</LinearLayout>
+	<FrameLayout
+	android:id="@+id/progressContainer"
+        android:visibility="gone"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:clickable="true"
+	android:focusable="true">
+	<ProgressBar
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_gravity="center"
+		android:theme="@style/MyMaterialTheme.Base"
+		/>
+
+	</FrameLayout>
+</android.support.design.widget.CoordinatorLayout>
+

@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+    <RelativeLayout
+        android:paddingStart="@dimen/activity_horizontal_margin"
+        android:paddingEnd="@dimen/activity_horizontal_margin"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="2.5"
+        android:layout_gravity="bottom"
+        android:orientation="horizontal"
+        android:background="@color/add_comment_margin_color"
+        >
+        <TextView
+            android:id="@+id/battle_type_hint_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textStyle="bold"
+            android:textSize="12sp"
+            android:textColor="@color/secondary_text_dark"
+            android:labelFor="@id/battleTypeEditText"
+            android:text="@string/battle_type_hint"/>
+
+        <LinearLayout
+            android:id="@+id/battle_name_linear_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:padding="8dp"
+            android:layout_below="@id/battle_type_hint_text_view"
+            android:background="@drawable/battle_name_entry_border"
+
+            android:orientation="horizontal">
+            <android.support.v7.widget.AppCompatAutoCompleteTextView
+                android:id="@+id/battleTypeEditText"
+                android:padding="0dp"
+                android:text=""
+                android:textColorHint="#000000"
+                android:singleLine="true"
+                android:textSize="36sp"
+                android:inputType="textCapWords"
+                android:minWidth="32dp"
+                android:dropDownAnchor="@id/battle_name_linear_layout"
+                android:dropDownWidth="300dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:textColor="@color/secondary_text_dark"
+                android:textSize="36sp"
+                android:text=" Battle"/>
+        </LinearLayout>
+
+    </RelativeLayout>
+    <TextView
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:text="@string/top_battles"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        />
+    <ProgressBar
+        android:id="@+id/topBattlesLoadingProgressBar"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:theme="@style/MyMaterialTheme.Base" />
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="4"
+        >
+        <org.apmem.tools.layouts.FlowLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="top"
+          >
+
+            <TextView
+                android:id="@+id/topBattleTextView1"
+                style="@style/battleTypeSuggestionTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+
+                android:fontFamily="sans-serif" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/battleTypeSuggestionTextView"
+                android:id="@+id/topBattleTextView2"
+
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/topBattleTextView3"
+                style="@style/battleTypeSuggestionTextView"
+
+               />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/battleTypeSuggestionTextView"
+                android:id="@+id/topBattleTextView4"
+
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/topBattleTextView5"
+                style="@style/battleTypeSuggestionTextView"
+
+               />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/topBattleTextView6"
+                style="@style/battleTypeSuggestionTextView"
+
+               />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/battleTypeSuggestionTextView"
+                android:id="@+id/topBattleTextView7"
+
+               />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/battleTypeSuggestionTextView"
+                android:id="@+id/topBattleTextView8"
+
+               />
+
+        </org.apmem.tools.layouts.FlowLayout>
+        <View style="@style/Divider"
+            android:layout_gravity="bottom"/>
+    </FrameLayout>
+    <TextView
+        android:id="@+id/recent_batles_title"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginTop="@dimen/element_vertical_spacing_default"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:text="@string/recent_battles"
+        android:textSize="20sp"
+        android:textStyle="bold"/>
+    <ProgressBar
+        android:id="@+id/recentBattlesLoadingProgressBar"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:theme="@style/MyMaterialTheme.Base" />
+<FrameLayout
+    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+    android:layout_marginRight="@dimen/activity_horizontal_margin"
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:layout_weight="4">
+        <org.apmem.tools.layouts.FlowLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="top"
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/battleTypeSuggestionTextView"
+                android:id="@+id/recentBattleTextView1"
+               />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/battleTypeSuggestionTextView"
+                android:id="@+id/recentBattleTextView2"
+               />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/battleTypeSuggestionTextView"
+                android:id="@+id/recentBattleTextView3"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/battleTypeSuggestionTextView"
+                android:id="@+id/recentBattleTextView4"
+               />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/battleTypeSuggestionTextView"
+                android:id="@+id/recentBattleTextView5"
+               />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/battleTypeSuggestionTextView"
+                android:id="@+id/recentBattleTextView6"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/battleTypeSuggestionTextView"
+                android:id="@+id/recentBattleTextView7"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/battleTypeSuggestionTextView"
+                android:id="@+id/recentBattleTextView8"
+
+               />
+
+        </org.apmem.tools.layouts.FlowLayout>
+    <View style="@style/Divider"
+        android:layout_gravity="bottom"/>
+</FrameLayout>
+
+
+
+
+</LinearLayout>
