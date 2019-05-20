@@ -8,7 +8,7 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <android.support.v7.widget.CardView
+    <androidx.cardview.widget.CardView
         android:id="@+id/card_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -48,7 +48,7 @@
                 android:src= "@drawable/placeholder1440x750"
                />
 
-            <android.support.constraint.ConstraintLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -107,9 +107,9 @@
                     card_view:layout_constraintStart_toEndOf="@+id/vs_TextView"
                     card_view:layout_constraintTop_toTopOf="parent" />
 
-            </android.support.constraint.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <android.support.constraint.ConstraintLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/votingLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -192,14 +192,14 @@
                     card_view:layout_constraintTop_toBottomOf="@+id/voting_type_TextView" />
 
 
-            </android.support.constraint.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
 
 
 
 
 
-            <android.support.constraint.ConstraintLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/list_item_elements_default_spacing">
@@ -219,7 +219,7 @@
                     tools:text="round2" />
 
 
-                <android.support.constraint.ConstraintLayout
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/constraintLayout"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -254,7 +254,7 @@
                         card_view:layout_constraintEnd_toEndOf="parent"
                         tools:text="2 dislikes" />
 
-                </android.support.constraint.ConstraintLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <TextView
                     android:id="@+id/battle_status_TextView"
@@ -282,11 +282,11 @@
                     card_view:layout_constraintStart_toEndOf="@+id/constraintLayout"
                     card_view:layout_constraintTop_toTopOf="parent" />
 
-            </android.support.constraint.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
 
         </LinearLayout>
-    </android.support.v7.widget.CardView>
+    </androidx.cardview.widget.CardView>
     <FrameLayout android:id="@+id/loadMoreBattlesLayout"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"

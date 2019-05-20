@@ -6,11 +6,10 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import com.liamfarrell.android.snapbattle.activity.createbattle.ChooseVotingFragment;
+import com.liamfarrell.android.snapbattle.ui.createbattle.ChooseVotingFragment;
 import com.liamfarrell.android.snapbattle.model.Battle;
 import com.liamfarrell.android.snapbattle.model.Video;
 import com.liamfarrell.android.snapbattle.model.Voting;
-import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.deserializers.JSONDeserializerHelperMethods;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;

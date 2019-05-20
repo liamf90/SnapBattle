@@ -1,76 +1,93 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_height="match_parent"
-    android:layout_width="match_parent"
-    android:background="#ffffff">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <LinearLayout
-        android:orientation="vertical"
+    <data>
+        <import type="android.view.View"/>
+        <variable
+            name="viewModel"
+            type="com.liamfarrell.android.snapbattle.viewmodels.CommentViewModel"/>
+    </data>
+
+
+    <FrameLayout
+
         android:layout_height="match_parent"
-        android:layout_width="match_parent">
-        <android.support.v7.widget.RecyclerView
-            android:layout_weight="1"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:paddingLeft="@dimen/activity_horizontal_margin"
-            android:paddingRight="@dimen/activity_horizontal_margin"
-            android:id="@+id/commentsList">
-
-        </android.support.v7.widget.RecyclerView>
+        android:layout_width="match_parent"
+        android:background="#ffffff">
 
         <LinearLayout
-            android:paddingStart="@dimen/activity_horizontal_margin"
-            android:paddingTop="@dimen/comments_box_padding"
-            android:paddingBottom="@dimen/comments_box_padding"
-            android:layout_weight="0"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:background="@color/add_comment_margin_color">
-
-            <EditText
-                android:paddingStart="@dimen/comments_edit_text_padding_start"
-                android:id="@+id/commentEditText"
-                android:hint="@string/write_a_comment"
-                android:layout_height="wrap_content"
-                android:layout_width="0dp"
+            android:orientation="vertical"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent">
+            <androidx.recyclerview.widget.RecyclerView
                 android:layout_weight="1"
-                android:height="@dimen/comments_edit_text_height"
-                android:background="@drawable/add_comment_background"
-                />
-            <ProgressBar
-                android:id="@+id/addCommentProgressBar"
-                android:theme="@style/MyMaterialTheme.Base"
-                android:visibility="gone"
-                android:padding="@dimen/add_comment_button_padding"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_gravity="end"/>
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                android:id="@+id/commentsList">
 
-            <ImageButton
-                android:id="@+id/addACommentButton"
-                android:padding="@dimen/add_comment_button_padding"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_gravity="end"
-                android:src="@android:drawable/ic_menu_send"
-                android:text="@string/add_comment" />
+            </androidx.recyclerview.widget.RecyclerView>
+
+            <LinearLayout
+                android:paddingStart="@dimen/activity_horizontal_margin"
+                android:paddingTop="@dimen/comments_box_padding"
+                android:paddingBottom="@dimen/comments_box_padding"
+                android:layout_weight="0"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:background="@color/add_comment_margin_color">
+
+                <EditText
+                    android:paddingStart="@dimen/comments_edit_text_padding_start"
+                    android:id="@+id/commentEditText"
+                    android:hint="@string/write_a_comment"
+                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:height="@dimen/comments_edit_text_height"
+                    android:background="@drawable/add_comment_background"
+                    />
+                <ProgressBar
+                    android:id="@+id/addCommentProgressBar"
+                    android:theme="@style/MyMaterialTheme.Base"
+                    android:visibility="gone"
+                    android:padding="@dimen/add_comment_button_padding"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="end"/>
+
+                <ImageButton
+                    android:id="@+id/addACommentButton"
+                    android:padding="@dimen/add_comment_button_padding"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="end"
+                    android:src="@android:drawable/ic_menu_send"
+                    android:text="@string/add_comment" />
+            </LinearLayout>
+
         </LinearLayout>
+        <FrameLayout
+        android:id="@+id/progressContainer"
+            app:showProgress="@{safeUnbox(viewModel.spinner)}"
 
-    </LinearLayout>
-    <FrameLayout
-    android:id="@+id/progressContainer"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:clickable="true">
-    <ProgressBar
-        android:theme="@style/MyMaterialTheme.Base"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"/>
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="true"
+        android:focusable="true">
+        <ProgressBar
+            android:theme="@style/MyMaterialTheme.Base"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"/>
+        </FrameLayout>
+
+
     </FrameLayout>
 
-
-</FrameLayout>
+</layout>

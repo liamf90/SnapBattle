@@ -1,5 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="comment"
+            type="com.liamfarrell.android.snapbattle.model.Comment"/>
+        <import
+            type="com.liamfarrell.android.snapbattle.model.Video" />
+    </data>
+
+
+    <LinearLayout
     android:id="@+id/viewHolder"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -7,8 +19,8 @@
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/profilePicSmall"
-        android:src="@drawable/default_profile_pic100x100"
         android:layout_gravity="center_vertical|center_horizontal"
+        app:profileImage="@{comment.commenterProfilePicCount != 0 ? comment.commenterProfilePicSmallSignedUrl : null}"
         android:layout_width="@dimen/profile_pic_small_width"
         android:layout_height="@dimen/profile_pic_small_height" />
 
@@ -26,12 +38,15 @@
             android:layout_height="wrap_content"
             android:textColor="@color/secondary_text_dark"
             android:maxLines="12"
+            app:commentText="@{comment}"
             android:id="@+id/commentTextView"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="10sp"
+            android:textSize="12sp"
+            android:text="@{Video.getTimeSinceShorthand(comment.time)}"
             android:id="@+id/timeSinceTextView"/>
     </LinearLayout>
 
 </LinearLayout>
+</layout>

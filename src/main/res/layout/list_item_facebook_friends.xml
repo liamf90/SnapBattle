@@ -25,7 +25,7 @@
         android:id="@+id/facebookUsernameTextView" />
 
 
-    <android.support.v7.widget.AppCompatButton
+    <androidx.appcompat.widget.AppCompatButton
         app:backgroundTint="@color/colorPrimary"
         android:textColor="@color/primary_text"
         android:layout_marginStart="@dimen/list_item_elements_default_spacing"

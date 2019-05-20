@@ -7,13 +7,10 @@ import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
 
-import com.liamfarrell.android.snapbattle.activity.FullBattleVideoPlayerActivity;
+import com.liamfarrell.android.snapbattle.ui.FullBattleVideoPlayerActivity;
 import com.liamfarrell.android.snapbattle.app.App;
 import com.liamfarrell.android.snapbattle.R;
-import com.liamfarrell.android.snapbattle.activity.ViewBattleActivity;
-import com.liamfarrell.android.snapbattle.activity.ViewBattleFragment;
 import com.liamfarrell.android.snapbattle.model.Battle;
-import com.liamfarrell.android.snapbattle.util.UserFollowingChecker;
 
 public class TaggedInCommentNotification extends Notification {
     private String mOpponentCognitoId;

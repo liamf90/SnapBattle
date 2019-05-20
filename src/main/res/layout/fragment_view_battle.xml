@@ -11,7 +11,7 @@
     android:orientation="vertical">
 
 
-		<android.support.constraint.ConstraintLayout
+		<androidx.constraintlayout.widget.ConstraintLayout
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:layout_marginStart="@dimen/activity_horizontal_margin"
@@ -152,7 +152,7 @@
                 android:layout_height="wrap_content"
                 android:visibility="gone"
                 app:layout_constraintTop_toBottomOf="@+id/statusTextViewLinearLayout" />
-		</android.support.constraint.ConstraintLayout>
+		</androidx.constraintlayout.widget.ConstraintLayout>
 
         <FrameLayout
     android:layout_width="match_parent"

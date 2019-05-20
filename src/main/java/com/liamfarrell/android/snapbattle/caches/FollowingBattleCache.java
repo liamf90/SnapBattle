@@ -18,7 +18,7 @@ import com.facebook.AccessToken;
 import com.liamfarrell.android.snapbattle.model.Battle;
 import com.liamfarrell.android.snapbattle.model.BattleIDSave;
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.LambdaFunctionsInterface;
-import com.liamfarrell.android.snapbattle.activity.FacebookLoginFragment;
+import com.liamfarrell.android.snapbattle.ui.FacebookLoginFragment;
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.deserializers.CustomLambdaDataBinder;
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.GetFriendsBattlesResponse;
 import com.liamfarrell.android.snapbattle.model.lambda_function_request_objects.GetFriendsBattlesRequest;

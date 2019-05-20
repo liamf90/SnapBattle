@@ -1,13 +1,12 @@
 package com.liamfarrell.android.snapbattle.caches;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.util.Log;
 
 import com.facebook.AccessToken;
 import com.google.gson.Gson;
-import com.liamfarrell.android.snapbattle.activity.FacebookLoginFragment;
-import com.liamfarrell.android.snapbattle.model.Battle;
+import com.liamfarrell.android.snapbattle.ui.FacebookLoginFragment;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
@@ -18,19 +17,11 @@ import org.json.JSONObject;
 
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutput;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.io.Writer;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**

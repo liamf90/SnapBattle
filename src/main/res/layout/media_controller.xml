@@ -97,7 +97,7 @@
 
         -->
 
-        <android.support.v7.widget.AppCompatSeekBar
+        <androidx.appcompat.widget.AppCompatSeekBar
             android:id="@+id/mediacontroller_progress"
             style="?android:attr/progressBarStyleHorizontal"
 

@@ -5,6 +5,7 @@ import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserializat
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.AddDislikeRequest;
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.BanUserRequest;
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.CompletedBattlesRequest;
+import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.GetCommentsRequest;
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.GetUsersBattlesRequest;
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.BanUserResponse;
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.BattleRequest;
@@ -67,7 +68,6 @@ import com.liamfarrell.android.snapbattle.model.lambda_function_request_objects.
 import com.liamfarrell.android.snapbattle.model.lambda_function_request_objects.CurrentBattlesRequest;
 import com.liamfarrell.android.snapbattle.model.lambda_function_request_objects.DoVoteRequest;
 import com.liamfarrell.android.snapbattle.model.lambda_function_request_objects.GetBattlesByNameRequest;
-import com.liamfarrell.android.snapbattle.model.lambda_function_request_objects.GetCommentsRequest;
 import com.liamfarrell.android.snapbattle.model.lambda_function_request_objects.GetFriendsBattlesRequest;
 import com.liamfarrell.android.snapbattle.model.lambda_function_request_objects.RemoveFollowerRequest;
 import com.liamfarrell.android.snapbattle.model.lambda_function_request_objects.SignedUrlsRequest;

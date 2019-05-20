@@ -15,7 +15,7 @@ import com.amazonaws.services.dynamodbv2.model.GetItemRequest;
 import com.amazonaws.services.dynamodbv2.model.GetItemResult;
 import com.amazonaws.services.dynamodbv2.model.UpdateItemRequest;
 import com.facebook.AccessToken;
-import com.liamfarrell.android.snapbattle.activity.FacebookLoginFragment;
+import com.liamfarrell.android.snapbattle.ui.FacebookLoginFragment;
 import com.liamfarrell.android.snapbattle.notifications.BattleAcceptedNotification;
 import com.liamfarrell.android.snapbattle.notifications.FullVideoUploadedNotification;
 import com.liamfarrell.android.snapbattle.notifications.NewBattleRequestNotification;

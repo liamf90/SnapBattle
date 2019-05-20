@@ -37,7 +37,7 @@
 
     </LinearLayout>
 
-    <android.support.v7.widget.AppCompatButton
+    <androidx.appcompat.widget.AppCompatButton
         android:text="@string/unfollow"
         app:backgroundTint="@color/colorPrimary"
         android:textColor="@color/primary_text"

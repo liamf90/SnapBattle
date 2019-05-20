@@ -48,7 +48,7 @@
             android:resource="@array/preloaded_fonts" />
 
         <activity
-            android:name=".activity.FacebookLoginActivity"
+            android:name=".ui.FacebookLoginActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -58,53 +58,53 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.VideoRecordActivity"
+            android:name=".ui.VideoRecordActivity"
             android:label="@string/app_name"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
         <activity
-            android:name=".activity.ViewBattleActivity"
+            android:name=".ui.ViewBattleActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.createbattle.CreateBattleActivity"
+            android:name=".ui.createbattle.CreateBattleActivity"
             android:label="Create Battle"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.BattleChallengesListActivity"
+            android:name=".ui.BattleChallengesListActivity"
             android:label="Battle Challenges"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.VideoViewActivity"
+            android:name=".ui.VideoViewActivity"
             android:label="@string/app_name" />
         <activity
-            android:name=".activity.ViewFollowingActivity"
+            android:name=".ui.ViewFollowingActivity"
             android:label="View Following"
             android:screenOrientation="portrait" />
         <activity
             android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
             android:theme="@style/Base.Theme.AppCompat" />
         <activity
-            android:name=".activity.UsersBattlesActivity"
+            android:name=".ui.UsersBattlesActivity"
             android:label="User Battles"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.SearchUsersAndBattlesActivity"
+            android:name=".ui.SearchUsersAndBattlesActivity"
             android:label="User Battles"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.ViewBattlesFromNameActivity"
+            android:name=".ui.ViewBattlesFromNameActivity"
             android:label="View Battles"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.NotificationListActivity"
+            android:name=".ui.NotificationListActivity"
             android:label="Notifications"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.startup.StartupActivity"
+            android:name=".ui.startup.StartupActivity"
             android:label="Startup"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.FullBattleVideoPlayerActivity"
+            android:name=".ui.FullBattleVideoPlayerActivity"
             android:configChanges="orientation|screenSize"
             android:label="Video" />
         <activity
@@ -178,12 +178,12 @@
             android:screenOrientation="portrait"
             android:theme="@style/MyMaterialTheme.NoActionBar" />
         <activity
-            android:name=".activity.ViewCommentsActivity"
+            android:name=".ui.ViewCommentsActivity"
             android:label="View Comments"
             android:screenOrientation="portrait"
             android:theme="@style/MyMaterialTheme" />
         <activity
-            android:name=".activity.AboutUsActivity"
+            android:name=".ui.AboutUsActivity"
             android:label="@string/title_activity_about_us"
             android:theme="@style/MyMaterialTheme.NoActionBar" />
     </application>

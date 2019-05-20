@@ -6,8 +6,8 @@ import android.text.SpannableStringBuilder;
 
 import com.liamfarrell.android.snapbattle.app.App;
 import com.liamfarrell.android.snapbattle.R;
-import com.liamfarrell.android.snapbattle.activity.ViewBattleActivity;
-import com.liamfarrell.android.snapbattle.activity.ViewBattleFragment;
+import com.liamfarrell.android.snapbattle.ui.ViewBattleActivity;
+import com.liamfarrell.android.snapbattle.ui.ViewBattleFragment;
 
 /**
  * Created by Liam on 10/11/2017.

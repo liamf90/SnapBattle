@@ -9,7 +9,7 @@ import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
 
 import com.liamfarrell.android.snapbattle.app.App;
-import com.liamfarrell.android.snapbattle.activity.BattleChallengesListActivity;
+import com.liamfarrell.android.snapbattle.ui.BattleChallengesListActivity;
 import com.liamfarrell.android.snapbattle.R;
 
 /**

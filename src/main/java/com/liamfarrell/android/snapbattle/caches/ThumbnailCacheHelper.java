@@ -5,7 +5,7 @@ import android.util.Log;
 
 import com.facebook.AccessToken;
 import com.google.gson.Gson;
-import com.liamfarrell.android.snapbattle.activity.FacebookLoginFragment;
+import com.liamfarrell.android.snapbattle.ui.FacebookLoginFragment;
 
 import org.apache.commons.io.FileUtils;
 import org.json.JSONException;
@@ -13,15 +13,10 @@ import org.json.JSONObject;
 
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutput;
-import java.io.ObjectOutputStream;
 import java.io.Writer;
-import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**

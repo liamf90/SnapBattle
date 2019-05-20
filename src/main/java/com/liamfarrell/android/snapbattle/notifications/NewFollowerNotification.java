@@ -9,7 +9,7 @@ import android.text.style.StyleSpan;
 
 import com.liamfarrell.android.snapbattle.app.App;
 import com.liamfarrell.android.snapbattle.R;
-import com.liamfarrell.android.snapbattle.activity.UsersBattlesActivity;
+import com.liamfarrell.android.snapbattle.ui.UsersBattlesActivity;
 
 public class NewFollowerNotification extends Notification {
     private String mOpponentCognitoId;

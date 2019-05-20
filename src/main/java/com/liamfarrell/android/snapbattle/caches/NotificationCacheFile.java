@@ -12,7 +12,7 @@ import android.util.Log;
 import com.facebook.AccessToken;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.liamfarrell.android.snapbattle.activity.FacebookLoginFragment;
+import com.liamfarrell.android.snapbattle.ui.FacebookLoginFragment;
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.deserializers.RuntimeTypeAdapterFactory;
 import com.liamfarrell.android.snapbattle.notifications.BattleAcceptedNotification;
 import com.liamfarrell.android.snapbattle.notifications.FullVideoUploadedNotification;

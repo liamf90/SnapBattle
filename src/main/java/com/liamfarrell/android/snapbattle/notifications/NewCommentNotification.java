@@ -9,8 +9,8 @@ import android.text.style.StyleSpan;
 
 import com.liamfarrell.android.snapbattle.app.App;
 import com.liamfarrell.android.snapbattle.R;
-import com.liamfarrell.android.snapbattle.activity.ViewBattleActivity;
-import com.liamfarrell.android.snapbattle.activity.ViewBattleFragment;
+import com.liamfarrell.android.snapbattle.ui.ViewBattleActivity;
+import com.liamfarrell.android.snapbattle.ui.ViewBattleFragment;
 
 public class NewCommentNotification extends Notification {
     private String mOpponentCognitoId;

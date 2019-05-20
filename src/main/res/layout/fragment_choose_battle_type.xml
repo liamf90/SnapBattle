@@ -36,7 +36,7 @@
             android:background="@drawable/battle_name_entry_border"
 
             android:orientation="horizontal">
-            <android.support.v7.widget.AppCompatAutoCompleteTextView
+            <androidx.appcompat.widget.AppCompatAutoCompleteTextView
                 android:id="@+id/battleTypeEditText"
                 android:padding="0dp"
                 android:text=""
