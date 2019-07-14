@@ -23,6 +23,7 @@ import com.amazonaws.regions.Regions;
 import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
+import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.ResponseFollowing;
 import com.liamfarrell.android.snapbattle.ui.FollowFacebookFriendsFragment;
 import com.liamfarrell.android.snapbattle.caches.FollowingUserCache;
 import com.liamfarrell.android.snapbattle.model.AsyncTaskResult;
@@ -192,7 +193,7 @@ public class AddFacebookFriendsAsFollowersStartupFragment extends Fragment {
             new AddFollowersTask(getActivity(), this).execute(addFollowerRequest);
         }
 
-        private static class AddFollowersTask extends AsyncTask<FollowUserWithFacebookIDsRequest, Void, AsyncTaskResult<DefaultResponse>>
+        private static class AddFollowersTask extends AsyncTask<FollowUserWithFacebookIDsRequest, Void, AsyncTaskResult<ResponseFollowing>>
         {
             private WeakReference<Activity> activityReference;
             private WeakReference<AddFacebookFriendsAsFollowersStartupFragment> fragmentReference;
@@ -205,7 +206,7 @@ public class AddFacebookFriendsAsFollowersStartupFragment extends Fragment {
 
 
             @Override
-            protected  AsyncTaskResult<DefaultResponse> doInBackground(FollowUserWithFacebookIDsRequest... params) {
+            protected  AsyncTaskResult<ResponseFollowing> doInBackground(FollowUserWithFacebookIDsRequest... params) {
 
             // Create a LambdaInvokerFactory, to be used to instantiate the Lambda proxy
                 // Create a LambdaInvokerFactory, to be used to instantiate the Lambda proxy
@@ -216,7 +217,7 @@ public class AddFacebookFriendsAsFollowersStartupFragment extends Fragment {
 
             final LambdaFunctionsInterface lambdaFunctionsInterface = factory.build(LambdaFunctionsInterface.class);
                     try {
-                        DefaultResponse response =   lambdaFunctionsInterface.AddFollower(params[0]);
+                        ResponseFollowing response =   lambdaFunctionsInterface.AddFollower (params[0]);
                         return new AsyncTaskResult<>(response);
                     } catch (LambdaFunctionException lfe) {
                         Log.i("ERROR", lfe.getDetails());
@@ -237,7 +238,7 @@ public class AddFacebookFriendsAsFollowersStartupFragment extends Fragment {
                 }
 
                 @Override
-                protected void onPostExecute(AsyncTaskResult<DefaultResponse> asyncResult)  {
+                protected void onPostExecute(AsyncTaskResult<ResponseFollowing> asyncResult)  {
                     // get a reference to the activity and fragment if it is still there
                     AddFacebookFriendsAsFollowersStartupFragment fragment = fragmentReference.get();
                     Activity activity = activityReference.get();

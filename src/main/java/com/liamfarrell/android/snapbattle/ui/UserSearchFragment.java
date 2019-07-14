@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+
+import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -20,6 +22,7 @@ import com.amazonaws.mobileconnectors.lambdainvoker.LambdaFunctionException;
 import com.amazonaws.mobileconnectors.lambdainvoker.LambdaInvokerFactory;
 import com.amazonaws.regions.Regions;
 import com.google.gson.JsonParser;
+import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.UsersSearchRequest;
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.GetSignedUrlsResponse;
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.LambdaFunctionsInterface;
 import com.liamfarrell.android.snapbattle.R;
@@ -29,13 +32,14 @@ import com.liamfarrell.android.snapbattle.model.User;
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.GetNewSignedUrlResponse;
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.GetUsersResponse;
 import com.liamfarrell.android.snapbattle.model.lambda_function_request_objects.SignedUrlsRequest;
-import com.liamfarrell.android.snapbattle.model.lambda_function_request_objects.UsersSearchRequest;
 import com.liamfarrell.android.snapbattle.util.HandleLambdaError;
 import com.liamfarrell.android.snapbattle.views.SimpleDividerItemDecoration;
 import com.liamfarrell.android.snapbattle.model.AsyncTaskResult;
 import com.liamfarrell.android.snapbattle.model.FollowingSort;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -46,6 +50,9 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class UserSearchFragment extends Fragment implements androidx.appcompat.widget.SearchView.OnQueryTextListener
 {
     private static String TAG = "OpponentList";
+
+
+
     public enum State
     {
         LOADING,
@@ -69,7 +76,7 @@ public class UserSearchFragment extends Fragment implements androidx.appcompat.w
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
-        searchView = ((SearchUsersAndBattlesActivity)getActivity()).getSearchView();
+        //searchView = ((SearchUsersAndBattlesActivity)getActivity()).getSearchView();
         mUserList = new ArrayList<>();
         mAdapter = new UserSearchAdapter(mUserList);
 
@@ -95,12 +102,11 @@ public class UserSearchFragment extends Fragment implements androidx.appcompat.w
         return view;
     }
 
-    public void setQueryChangeListener(androidx.appcompat.widget.SearchView searchView)
-    {
-            searchView.setOnQueryTextListener( this);
+
+
+    public void setOnQueryChangedListener(@NotNull SearchView searchView) {
+        searchView.setOnQueryTextListener( this);
     }
-
-
 
     private void loadFollowingList()
     {

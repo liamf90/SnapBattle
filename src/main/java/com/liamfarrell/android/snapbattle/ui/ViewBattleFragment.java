@@ -53,13 +53,14 @@ import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserializat
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.BattleRequest;
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.LambdaFunctionsInterface;
 import com.liamfarrell.android.snapbattle.R;
+import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.VideoSubmittedRequest;
+import com.liamfarrell.android.snapbattle.mvvm_ui.ViewCommentsFragment;
 import com.liamfarrell.android.snapbattle.ui.createbattle.ChooseVotingFragment;
 import com.liamfarrell.android.snapbattle.model.AsyncTaskResult;
 import com.liamfarrell.android.snapbattle.model.Battle;
 import com.liamfarrell.android.snapbattle.model.Video;
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.ResponseBattle;
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.VideoSubmittedResponse;
-import com.liamfarrell.android.snapbattle.model.lambda_function_request_objects.VideoSubmittedRequest;
 import com.liamfarrell.android.snapbattle.service.MyGcmListenerService;
 import com.liamfarrell.android.snapbattle.util.HandleLambdaError;
 
@@ -178,7 +179,7 @@ public class ViewBattleFragment extends ListFragment
 
 		mProgressContainer = v.findViewById(R.id.current_list_progressContainer);
 		BattleNameTextView = v.findViewById(R.id.battle_name_TextView);
-		RoundsTextView =v.findViewById(R.id.battle_rounds_TextView);
+		RoundsTextView = v.findViewById(R.id.battle_rounds_TextView);
         vsTextView = v.findViewById(R.id.vs_TextView);
         mCompletedConstraintLayout = v.findViewById(R.id.completed_battle_constraint_layout);
 		play_whole_battleButton = v.findViewById(R.id.play_whole_battleButton);
@@ -187,8 +188,6 @@ public class ViewBattleFragment extends ListFragment
 			@Override
 			public void onClick(View v) 
 			{
-
-
 				//check if the file is stored, otherwise stream it
                 File file = new File( getActivity().getFilesDir().getAbsolutePath() + "/" + mBattle.getFinalVideoFilename());
 				if (file.exists())
@@ -217,7 +216,7 @@ public class ViewBattleFragment extends ListFragment
 
 						}
 					};
-					mBattle.getSignedUrlFromServer(filepath, getActivity(),callback);
+					Battle.getSignedUrlFromServer(filepath, getActivity(),callback);
 
                     mProgressContainer.setVisibility(View.VISIBLE);
 
@@ -718,7 +717,7 @@ public class ViewBattleFragment extends ListFragment
 			votingLengthTextView.setText(getString(R.string.voting_length_title_included, mBattle.getVoting().getVotingLength().toString(getActivity())));
 		}
 
-        if (!mBattle.isBattleAccepted()) {
+        if (!mBattle.getIsBattleAccepted()) {
             statusTextView.setVisibility(View.VISIBLE);
             statusTextView.setText(getResources().getString(R.string.declined_battle_status_message, mBattle.getChallengedUsername()));
 
@@ -728,7 +727,7 @@ public class ViewBattleFragment extends ListFragment
         {
 
 			statusTextView.setVisibility(View.VISIBLE);
-            if (!mBattle.isFinalVideoReady()) {
+            if (!mBattle.getIsFinalVideoReady()) {
                 statusTextView.setText(R.string.final_video_transcoding_status_message);
                 mFinalVideoTranscodingProgressBar.setVisibility(View.VISIBLE);
             }
@@ -798,7 +797,7 @@ public class ViewBattleFragment extends ListFragment
 
         //Get array of videos
         videos.clear();
-        if (mBattle.isBattleAccepted()) {
+        if (mBattle.getIsBattleAccepted()) {
 			videos.addAll(mBattle.getVideos());
 		}
 

@@ -24,6 +24,12 @@ public class Voting implements Serializable {
         CHALLENGER,
         CHALLENGED
     }
+    public enum VotingState{
+        NO_VOTING,
+        VOTING_NOT_YET_BEGUN,
+        VOTING_STILL_GOING,
+        VOTING_FINISHED
+    }
 
     public interface MutualFriendCallbacks
     {
@@ -108,6 +114,22 @@ public class Voting implements Serializable {
 
     }
 
+
+    public VotingState getVotingState(){
+        if (mVotingChoice == ChooseVotingFragment.VotingChoice.NONE){
+            return VotingState.NO_VOTING;
+        }
+
+        if (mVotingTimeEnd == null){
+            return VotingState.VOTING_NOT_YET_BEGUN;
+        }
+
+        if (mVotingTimeEnd.after(new Date(System.currentTimeMillis()))){
+            return VotingState.VOTING_STILL_GOING;
+        } else {
+            return VotingState.VOTING_FINISHED;
+        }
+    }
     public void canUserVote(String currentUserCognitoId, String challengerCognitoId, String challengedCognitoId, String challengerFacebookId, String challengedFacebookId, Voting.MutualFriendCallbacks callback)
     {
 

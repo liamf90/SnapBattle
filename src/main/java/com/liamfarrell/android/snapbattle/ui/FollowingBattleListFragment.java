@@ -565,7 +565,7 @@ public class FollowingBattleListFragment extends Fragment
                         holder.canVoteTextView.setVisibility(View.VISIBLE);
                         holder.canVoteTextView.setText("");
 
-                        if (b.hasUserVoted() != null && b.hasUserVoted()){
+                        if (b.getUserHasVoted() != null && b.getUserHasVoted()){
                             holder.canVoteTextView.setText(res.getText(R.string.have_voted));
                         } else {
                             b.getVoting().canUserVote(FacebookLoginFragment.getCredentialsProvider(getActivity()).getCachedIdentityId(), b.getChallengerCognitoID(), b.getChallengedCognitoID(), b.getChallengerFacebookUserId(), b.getChallengedFacebookUserId(), new Voting.MutualFriendCallbacks() {

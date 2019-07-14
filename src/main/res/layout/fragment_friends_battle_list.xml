@@ -1,54 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    >
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/swipe_container"
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/parentCoordinatorLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_view"
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swipe_container"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:divider="@null"
-            android:background="@color/completed_list_background"
-            android:scrollbars="vertical"
-            />
+            android:layout_height="match_parent">
 
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-    <TextView
-        android:id="@+id/NoBattlesTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical|center_horizontal"
-        android:text="@string/no_battles"
-        android:textColor="@android:color/black"
-        android:visibility="gone"
-        android:textSize="24sp"
-        />
 
-    <FrameLayout
-        android:id="@+id/current_list_progressContainer"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/progress_container_height"
-        android:clickable="true"
-        android:focusable="true"
-        android:visibility="gone">
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recycler_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="763dp"
+                    android:background="@color/completed_list_background"
+                    android:divider="@null"
+                    android:scrollbars="vertical"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-        <ProgressBar
+        <FrameLayout
+            android:id="@+id/current_list_progressContainer"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/progress_container_height"
+            android:clickable="true"
+            android:focusable="true"
+            android:visibility="gone">
+            <ProgressBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:theme="@style/MyMaterialTheme.Base"
+                android:visibility="gone" />
+        </FrameLayout>
+
+
+        <TextView
+            android:id="@+id/NoBattlesTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:theme="@style/MyMaterialTheme.Base"
-            android:visibility="gone" />
+            android:layout_gravity="center_vertical|center_horizontal"
+            android:text="@string/no_battles"
+            android:textColor="@android:color/black"
+            android:visibility="gone"
+            android:textSize="24sp"
+            />
+        <TextView
+            android:visibility="gone"
+            android:textStyle="bold"
+            android:layout_gravity="center_vertical|center_horizontal"
+            android:id="@+id/noMoreBattlesTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/no_more_battles"
+            />
+        <FrameLayout
+            android:visibility="gone"
+            android:id="@+id/loadMorebattlesProgressContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:clickable="true"
+            android:focusable="true">
+            <ProgressBar
+                android:theme="@style/MyMaterialTheme.Base"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                />
+        </FrameLayout>
 
-
-
-    </FrameLayout>
-
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</layout>

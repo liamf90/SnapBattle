@@ -1,321 +1,371 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/parentLinearLayout"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/card_view"
+    <data>
+        <import type="android.view.View"/>
+
+        <variable
+            name="viewModel"
+            type="com.liamfarrell.android.snapbattle.viewmodels.BattleViewModel"/>
+
+        <import type="com.liamfarrell.android.snapbattle.model.Voting.VotingState"
+                alias="VotingState"/>
+        <import
+            alias = "UtilFunctions"
+            type="com.liamfarrell.android.snapbattle.util.UtilFunctionsKt" />
+
+        <variable
+            name="thumbnailClickListener"
+            type="android.view.View.OnClickListener"/>
+        <variable
+            name="challengerUsernameClickListener"
+            type="android.view.View.OnClickListener"/>
+        <variable
+            name="challengedUsernameClickListener"
+            type="android.view.View.OnClickListener"/>
+        <variable
+            name="battle"
+            type="com.liamfarrell.android.snapbattle.model.Battle"/>
+    </data>
+
+
+    <LinearLayout
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/parentLinearLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:elevation="@dimen/card_view_elevation"
-        android:paddingTop="@dimen/row_vertical_padding"
-        android:paddingBottom="@dimen/row_vertical_padding"
-        android:paddingLeft="@dimen/card_view_padding"
-        android:paddingRight="@dimen/card_view_padding"
-        android:layout_marginBottom="@dimen/card_view_margin"
-        card_view:cardCornerRadius="@dimen/card_view_corner_radius">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-        <LinearLayout
+        <androidx.cardview.widget.CardView
+            android:id="@+id/card_view"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            >
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:elevation="@dimen/card_view_elevation"
+            android:paddingTop="@dimen/row_vertical_padding"
+            android:paddingBottom="@dimen/row_vertical_padding"
+            android:paddingLeft="@dimen/card_view_padding"
+            android:paddingRight="@dimen/card_view_padding"
+            android:layout_marginBottom="@dimen/card_view_margin"
+            card_view:cardCornerRadius="@dimen/card_view_corner_radius">
 
-            <TextView
-                android:id="@+id/battle_list_item_battle_name_TextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/list_item_elements_default_spacing"
-                android:layout_marginEnd="@dimen/list_item_elements_default_spacing"
-                android:layout_marginStart="@dimen/list_item_elements_default_spacing"
-                android:layout_marginTop="@dimen/list_item_elements_default_spacing"
-                android:textColor="@color/secondary_text_dark"
-                android:textSize="20sp"
-
-                android:textStyle="bold" />
-            <ImageView
-                android:id="@+id/thumbnailImageView"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:scaleType="fitXY"
-                android:adjustViewBounds="true"
-                android:src= "@drawable/placeholder1440x750"
-               />
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:orientation="vertical"
+                >
 
                 <TextView
-                    android:id="@+id/challenger_name_TextView"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginEnd="@dimen/list_item_elements_default_spacing"
-                    android:layout_marginStart="@dimen/list_item_elements_default_spacing"
-                    android:layout_marginTop="@dimen/list_item_elements_default_spacing"
-                    android:textColor="@android:color/black"
-                    android:fontFamily="sans-serif-medium "
-                    android:textStyle="bold"
-                    android:textSize="14sp"
-                    card_view:layout_constraintEnd_toStartOf="@+id/vs_TextView"
-                    card_view:layout_constraintStart_toStartOf="parent"
-                    card_view:layout_constraintTop_toTopOf="parent" />
-
-                <TextView
-                    android:id="@+id/vs_TextView"
+                    android:id="@+id/battle_list_item_battle_name_TextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
                     android:layout_marginBottom="@dimen/list_item_elements_default_spacing"
                     android:layout_marginEnd="@dimen/list_item_elements_default_spacing"
                     android:layout_marginStart="@dimen/list_item_elements_default_spacing"
                     android:layout_marginTop="@dimen/list_item_elements_default_spacing"
-
-                    android:textStyle="normal"
-                    android:text="@string/vs"
-                    android:textColor="@android:color/black"
-                    android:textSize="14sp"
-                    card_view:layout_constraintBottom_toBottomOf="parent"
-                    card_view:layout_constraintEnd_toEndOf="parent"
-                    card_view:layout_constraintStart_toStartOf="parent"
-                    card_view:layout_constraintTop_toTopOf="parent"
-                    card_view:layout_constraintVertical_bias="0.0" />
-
-                <TextView
-                    android:id="@+id/challenged_name_TextView"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="@dimen/list_item_elements_default_spacing"
-                    android:layout_marginStart="@dimen/list_item_elements_default_spacing"
-
-                    android:layout_marginTop="@dimen/list_item_elements_default_spacing"
+                    android:textColor="@color/secondary_text_dark"
+                    android:textSize="20sp"
                     android:textStyle="bold"
-                    android:gravity="end"
-                    android:textColor="@android:color/black"
-                    android:textSize="14sp"
-                    android:fontFamily="sans-serif-medium "
-
-
-                    card_view:layout_constraintEnd_toEndOf="parent"
-                    card_view:layout_constraintStart_toEndOf="@+id/vs_TextView"
-                    card_view:layout_constraintTop_toTopOf="parent" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/votingLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingBottom="8dp"
-                android:background="@drawable/border">
-
-                <TextView
-                    android:id="@+id/challenged_result_TextView"
-                    android:layout_width="wrap_content"
+                    android:text="@{@string/battle_name(battle.battleName)}"
+                    />
+                <ImageView
+                    android:id="@+id/thumbnailImageView"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginEnd="8dp"
-                    android:fontFamily="sans-serif"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    card_view:layout_constraintBottom_toBottomOf="parent"
-                    card_view:layout_constraintEnd_toStartOf="@+id/challenged_votes_TextView"
-                    card_view:layout_constraintTop_toBottomOf="@+id/voting_type_TextView"
-                    card_view:layout_constraintVertical_bias="0.0" />
-
-                <TextView
-                    android:id="@+id/challenger_result_TextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    card_view:layout_constraintBaseline_toBaselineOf="@+id/challenger_votes_TextView"
-                    card_view:layout_constraintStart_toStartOf="parent" />
-
-                <TextView
-                    android:id="@+id/challenged_votes_TextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="15dp"
-                    android:layout_marginEnd="8dp"
-                    android:textSize="14sp"
-                    card_view:layout_constraintBaseline_toBaselineOf="@+id/challenged_result_TextView"
-                    card_view:layout_constraintEnd_toEndOf="parent" />
-
-                <TextView
-                    android:id="@+id/challenger_votes_TextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/list_item_elements_default_spacing"
-                    android:textSize="14sp"
-                    card_view:layout_constraintBaseline_toBaselineOf="@+id/challenged_result_TextView"
-                    card_view:layout_constraintStart_toEndOf="@+id/challenger_result_TextView" />
-
-
-                <TextView
-                    android:id="@+id/voting_type_TextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/list_item_elements_default_spacing"
-                    android:layout_marginTop="@dimen/list_item_elements_default_spacing"
-                    android:layout_marginEnd="@dimen/list_item_elements_default_spacing"
-                    android:textSize="14sp"
-                    card_view:layout_constraintEnd_toEndOf="parent"
-                    card_view:layout_constraintStart_toStartOf="parent"
-                    card_view:layout_constraintTop_toTopOf="parent" />
-
-                <TextView
-                    android:id="@+id/can_vote_TextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/list_item_elements_default_spacing"
-                    card_view:layout_constraintBaseline_toBaselineOf="@+id/time_until_vote_endsTextView"
-                    card_view:layout_constraintStart_toStartOf="parent" />
-
-                <TextView
-                    android:id="@+id/time_until_vote_endsTextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginEnd="8dp"
-                    android:textSize="12sp"
-                    android:visibility="gone"
-                    card_view:layout_constraintBottom_toBottomOf="parent"
-                    card_view:layout_constraintEnd_toEndOf="parent"
-                    card_view:layout_constraintTop_toBottomOf="@+id/voting_type_TextView" />
-
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-
-
-
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/list_item_elements_default_spacing">
-
-                <TextView
-                    android:id="@+id/battle_rounds_TextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/list_item_elements_default_spacing"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginEnd="8dp"
-                    android:textSize="16sp"
-                    card_view:layout_constraintEnd_toStartOf="@+id/constraintLayout"
-                    card_view:layout_constraintHorizontal_bias="0.0"
-                    card_view:layout_constraintStart_toStartOf="parent"
-                    card_view:layout_constraintTop_toTopOf="parent"
-                    tools:text="round2" />
-
+                    android:scaleType="fitXY"
+                    android:adjustViewBounds="true"
+                    android:onClick="@{thumbnailClickListener}"
+                    app:battleThumbnail="@{battle.signedThumbnailUrl}"
+                   />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/constraintLayout"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="@dimen/list_item_elements_default_spacing"
-                    android:layout_marginEnd="8dp"
-                    card_view:layout_constraintEnd_toEndOf="parent"
-                    card_view:layout_constraintStart_toStartOf="parent"
-                    card_view:layout_constraintTop_toTopOf="parent">
-
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
                     <TextView
-                        android:id="@+id/likeCountTextView"
+                        android:id="@+id/challenger_name_TextView"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginEnd="@dimen/list_item_elements_default_spacing"
+                        android:layout_marginStart="@dimen/list_item_elements_default_spacing"
+                        android:layout_marginTop="@dimen/list_item_elements_default_spacing"
+                        android:textColor="@android:color/black"
+                        android:fontFamily="sans-serif-medium "
+                        android:textStyle="bold"
+                        android:textSize="14sp"
+                        android:text="@{battle.challengerUsername}"
+                        android:onClick="@{challengerUsernameClickListener}"
+                        card_view:layout_constraintEnd_toStartOf="@+id/vs_TextView"
+                        card_view:layout_constraintStart_toStartOf="parent"
+                        card_view:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/vs_TextView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginBottom="@dimen/list_item_elements_default_spacing"
+                        android:layout_marginEnd="@dimen/list_item_elements_default_spacing"
                         android:layout_marginStart="@dimen/list_item_elements_default_spacing"
-                        android:layout_marginEnd="16dp"
+                        android:layout_marginTop="@dimen/list_item_elements_default_spacing"
+                        android:textStyle="normal"
+                        android:text="@string/vs"
+                        android:textColor="@android:color/black"
+                        android:textSize="14sp"
                         card_view:layout_constraintBottom_toBottomOf="parent"
+                        card_view:layout_constraintEnd_toEndOf="parent"
                         card_view:layout_constraintStart_toStartOf="parent"
                         card_view:layout_constraintTop_toTopOf="parent"
-                        card_view:layout_constraintEnd_toStartOf="@id/dislikeCountTextView"
-                        card_view:layout_constraintVertical_bias="0.0"
-                        tools:text="1 like" />
+                        card_view:layout_constraintVertical_bias="0.0" />
 
                     <TextView
-                        android:id="@+id/dislikeCountTextView"
-                        android:layout_width="wrap_content"
+                        android:id="@+id/challenged_name_TextView"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        card_view:layout_constraintBottom_toBottomOf="parent"
-                        card_view:layout_constraintTop_toTopOf="parent"
+                        android:layout_marginEnd="@dimen/list_item_elements_default_spacing"
+                        android:layout_marginStart="@dimen/list_item_elements_default_spacing"
+                        android:layout_marginTop="@dimen/list_item_elements_default_spacing"
+                        android:textStyle="bold"
+                        android:gravity="end"
+                        android:textColor="@android:color/black"
+                        android:textSize="14sp"
+                        android:fontFamily="sans-serif-medium "
+                        android:text="@{battle.challengedUsername}"
+                        android:onClick="@{challengedUsernameClickListener}"
+
                         card_view:layout_constraintEnd_toEndOf="parent"
-                        tools:text="2 dislikes" />
+                        card_view:layout_constraintStart_toEndOf="@+id/vs_TextView"
+                        card_view:layout_constraintTop_toTopOf="parent" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <TextView
-                    android:id="@+id/battle_status_TextView"
-                    android:layout_width="wrap_content"
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/votingLayout"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:paddingBottom="8dp"
+                    android:background="@drawable/border">
 
-                    android:layout_marginStart="@dimen/list_item_elements_default_spacing"
-                    android:layout_marginTop="@dimen/list_item_elements_default_spacing"
-                    android:layout_marginBottom="@dimen/list_item_elements_default_spacing"
-                    android:textStyle="bold"
-                    card_view:layout_constraintBottom_toBottomOf="parent"
-                    card_view:layout_constraintStart_toStartOf="parent"
-                    card_view:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
+                    <TextView
+                        android:id="@+id/challenged_result_TextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginEnd="8dp"
+                        android:fontFamily="sans-serif"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:text="@{battle.voting.votingState == VotingState.VOTING_FINISHED ? battle.voting.challengedVotingResult : null}"
+                        android:visibility="@{battle.voting.votingState == VotingState.VOTING_FINISHED ? View.VISIBLE : View.GONE}"
+                        card_view:layout_constraintBottom_toBottomOf="parent"
+                        card_view:layout_constraintEnd_toStartOf="@+id/challenged_votes_TextView"
+                        card_view:layout_constraintTop_toBottomOf="@+id/voting_type_TextView"
+                        card_view:layout_constraintVertical_bias="0.0" />
 
-                <TextView
-                    android:id="@+id/videoViewCountTextView"
-                    android:layout_width="wrap_content"
+                    <TextView
+                        android:id="@+id/challenger_result_TextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:text="@{battle.voting.votingState == VotingState.VOTING_FINISHED ? battle.voting.challengerVotingResult : null}"
+                        android:visibility="@{battle.voting.votingState == VotingState.VOTING_FINISHED ? View.VISIBLE : View.GONE}"
+                        card_view:layout_constraintBaseline_toBaselineOf="@+id/challenger_votes_TextView"
+                        card_view:layout_constraintStart_toStartOf="parent" />
+
+                    <TextView
+                        android:id="@+id/challenged_votes_TextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="15dp"
+                        android:layout_marginEnd="8dp"
+                        android:textSize="14sp"
+                        android:text="@{battle.voting.votingState == VotingState.VOTING_FINISHED ? @plurals/votes(battle.voting.voteChallenged, battle.voting.voteChallenged) : null}"
+                        android:visibility="@{battle.voting.votingState == VotingState.VOTING_FINISHED ? View.VISIBLE : View.GONE}"
+                        card_view:layout_constraintBaseline_toBaselineOf="@+id/challenged_result_TextView"
+                        card_view:layout_constraintEnd_toEndOf="parent" />
+
+                    <TextView
+                        android:id="@+id/challenger_votes_TextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/list_item_elements_default_spacing"
+                        android:textSize="14sp"
+                        android:text="@{battle.voting.votingState == VotingState.VOTING_FINISHED ? @plurals/votes(battle.voting.voteChallenger, battle.voting.voteChallenger) : null}"
+                        android:visibility="@{battle.voting.votingState == VotingState.VOTING_FINISHED ? View.VISIBLE : View.GONE}"
+                        card_view:layout_constraintBaseline_toBaselineOf="@+id/challenged_result_TextView"
+                        card_view:layout_constraintStart_toEndOf="@+id/challenger_result_TextView" />
+
+
+                    <TextView
+                        android:id="@+id/voting_type_TextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/list_item_elements_default_spacing"
+                        android:layout_marginTop="@dimen/list_item_elements_default_spacing"
+                        android:layout_marginEnd="@dimen/list_item_elements_default_spacing"
+                        android:textSize="14sp"
+                        android:text="@{battle.voting.votingChoice.longStyle}"
+                        card_view:layout_constraintEnd_toEndOf="parent"
+                        card_view:layout_constraintStart_toStartOf="parent"
+                        card_view:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/can_vote_TextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/list_item_elements_default_spacing"
+                        android:visibility="@{viewModel.canVote != null ? View.VISIBLE : View.GONE}"
+                        android:text="@{safeUnbox(viewModel.canVote) ? @string/can_vote : @string/can_not_vote}"
+                        card_view:layout_constraintBaseline_toBaselineOf="@+id/time_until_vote_endsTextView"
+                        card_view:layout_constraintStart_toStartOf="parent" />
+
+                    <TextView
+                        android:id="@+id/time_until_vote_endsTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginEnd="8dp"
+                        android:textSize="12sp"
+                        android:text="@{battle.voting.votingState == VotingState.VOTING_STILL_GOING ? UtilFunctions.getTimeUntil(battle.voting.votingTimeEnd) : null}"
+                        android:visibility="@{battle.voting.votingState == VotingState.VOTING_STILL_GOING ? View.VISIBLE : View.GONE}"
+                        card_view:layout_constraintBottom_toBottomOf="parent"
+                        card_view:layout_constraintEnd_toEndOf="parent"
+                        card_view:layout_constraintTop_toBottomOf="@+id/voting_type_TextView" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/list_item_elements_default_spacing"
-                    android:layout_marginTop="@dimen/list_item_elements_default_spacing"
-                    android:layout_marginEnd="@dimen/list_item_elements_default_spacing"
-                    android:textSize="16sp"
-                    card_view:layout_constraintEnd_toEndOf="parent"
-                    card_view:layout_constraintHorizontal_bias="1.0"
-                    card_view:layout_constraintStart_toEndOf="@+id/constraintLayout"
-                    card_view:layout_constraintTop_toTopOf="parent" />
+                    android:layout_marginTop="@dimen/list_item_elements_default_spacing">
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                    <TextView
+                        android:id="@+id/battle_rounds_TextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/list_item_elements_default_spacing"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginEnd="8dp"
+                        android:textSize="16sp"
+                        android:text="@{@plurals/rounds(battle.rounds, battle.rounds)}"
+                        card_view:layout_constraintEnd_toStartOf="@+id/constraintLayout"
+                        card_view:layout_constraintHorizontal_bias="0.0"
+                        card_view:layout_constraintStart_toStartOf="parent"
+                        card_view:layout_constraintTop_toTopOf="parent"
+                        tools:text="round2" />
 
 
-        </LinearLayout>
-    </androidx.cardview.widget.CardView>
-    <FrameLayout android:id="@+id/loadMoreBattlesLayout"
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:visibility="gone">
-        <TextView
-            android:visibility="gone"
-            android:textStyle="bold"
-            android:layout_gravity="center_vertical|center_horizontal"
-            android:id="@+id/loadMoreBattlesTextView"
-            android:layout_width="wrap_content"
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/constraintLayout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="@dimen/list_item_elements_default_spacing"
+                        android:layout_marginEnd="8dp"
+                        card_view:layout_constraintEnd_toEndOf="parent"
+                        card_view:layout_constraintStart_toStartOf="parent"
+                        card_view:layout_constraintTop_toTopOf="parent">
+
+
+                        <TextView
+                            android:id="@+id/likeCountTextView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/list_item_elements_default_spacing"
+                            android:layout_marginEnd="16dp"
+                            android:text="@{@plurals/likes(battle.likeCount, battle.likeCount)}"
+                            card_view:layout_constraintBottom_toBottomOf="parent"
+                            card_view:layout_constraintStart_toStartOf="parent"
+                            card_view:layout_constraintTop_toTopOf="parent"
+                            card_view:layout_constraintEnd_toStartOf="@id/dislikeCountTextView"
+                            card_view:layout_constraintVertical_bias="0.0"
+                            tools:text="1 like" />
+
+                        <TextView
+                            android:id="@+id/dislikeCountTextView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@{@plurals/dislikes(battle.dislikeCount, battle.dislikeCount)}"
+                            card_view:layout_constraintBottom_toBottomOf="parent"
+                            card_view:layout_constraintTop_toTopOf="parent"
+                            card_view:layout_constraintEnd_toEndOf="parent"
+                            tools:text="2 dislikes" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <TextView
+                        android:id="@+id/battle_status_TextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/list_item_elements_default_spacing"
+                        android:layout_marginTop="@dimen/list_item_elements_default_spacing"
+                        android:layout_marginBottom="@dimen/list_item_elements_default_spacing"
+                        android:textStyle="bold"
+                        android:text="@{battle.completedBattleStatus}"
+                        card_view:layout_constraintBottom_toBottomOf="parent"
+                        card_view:layout_constraintStart_toStartOf="parent"
+                        card_view:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
+
+                    <TextView
+                        android:id="@+id/videoViewCountTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/list_item_elements_default_spacing"
+                        android:layout_marginTop="@dimen/list_item_elements_default_spacing"
+                        android:layout_marginEnd="@dimen/list_item_elements_default_spacing"
+                        android:textSize="16sp"
+                        android:text="@{@string/video_views(battle.videoViewCount)}"
+                        card_view:layout_constraintEnd_toEndOf="parent"
+                        card_view:layout_constraintHorizontal_bias="1.0"
+                        card_view:layout_constraintStart_toEndOf="@+id/constraintLayout"
+                        card_view:layout_constraintTop_toTopOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+
+
+        <FrameLayout android:id="@+id/loadMoreBattlesLayout"
             android:layout_height="wrap_content"
-            android:text="@string/no_more_battles"/>
-        <FrameLayout
-            android:visibility="gone"
-            android:id="@+id/loadMorebattlesProgressContainer"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:clickable="true"
-            android:focusable="true">
-            <ProgressBar
-                android:theme="@style/MyMaterialTheme.Base"
+            android:visibility="gone">
+            <TextView
+                android:visibility="gone"
+                android:textStyle="bold"
+                android:layout_gravity="center_vertical|center_horizontal"
+                android:id="@+id/loadMoreBattlesTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                />
+                android:text="@string/no_more_battles"/>
+            <FrameLayout
+                android:visibility="gone"
+                android:id="@+id/loadMorebattlesProgressContainer"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clickable="true"
+                android:focusable="true">
+                <ProgressBar
+                    android:theme="@style/MyMaterialTheme.Base"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    />
+
+            </FrameLayout>
+
 
         </FrameLayout>
 
+    </LinearLayout>
 
-    </FrameLayout>
-
-</LinearLayout>
+</layout>

@@ -4,6 +4,7 @@ import androidx.fragment.app.Fragment;
 import android.view.MenuItem;
 
 import com.liamfarrell.android.snapbattle.R;
+import com.liamfarrell.android.snapbattle.mvvm_ui.ViewCommentsFragment;
 
 public class ViewCommentsActivity extends SingleFragmentAppCompatToolbarActivity {
 

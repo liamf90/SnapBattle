@@ -22,6 +22,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.liamfarrell.android.snapbattle.R;
+import com.liamfarrell.android.snapbattle.ui.AllBattlesListFragment;
+import com.liamfarrell.android.snapbattle.mvvm_ui.FollowingBattlesFeedFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +31,7 @@ import java.util.List;
 public class HomeFeedFragment extends Fragment {
 
     private AllBattlesListFragment mAllBattlesListFragment;
-    private FollowingBattleListFragment mFollowingBattlesListFragment;
+    private FollowingBattlesFeedFragment mFollowingBattlesListFragment;
     private TabLayout tabLayout;
 
     @Override
@@ -41,7 +43,7 @@ public class HomeFeedFragment extends Fragment {
             mAllBattlesListFragment = new AllBattlesListFragment();
         }
         if (mFollowingBattlesListFragment == null) {
-            mFollowingBattlesListFragment = new FollowingBattleListFragment();
+            mFollowingBattlesListFragment = new FollowingBattlesFeedFragment();
         }
 
         ViewPager viewPager = view.findViewById(R.id.viewpager);
@@ -88,13 +90,13 @@ public class HomeFeedFragment extends Fragment {
                 {
                     Log.i("HomeFeed", "TAB 0 selected");
                     //Full Feed
-                    mAllBattlesListFragment.updateAllBattlesList();
+                   // mAllBattlesListFragment.updateAllBattlesList();
                 }
                 else if (position == 1)
                 {
                     //Following Feed
                     Log.i("HomeFeed", "TAB 1 selected");
-                    mFollowingBattlesListFragment.updateFollowingList();
+                    //mFollowingBattlesListFragment.updateFollowingList();
 
 
                 }

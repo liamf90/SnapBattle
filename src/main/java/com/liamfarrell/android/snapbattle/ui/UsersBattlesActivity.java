@@ -24,8 +24,9 @@ import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserializat
 import com.liamfarrell.android.snapbattle.R;
 import com.liamfarrell.android.snapbattle.model.AsyncTaskResult;
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.AddFollowerRequestWithCognitoIDs;
+import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.RemoveFollowerRequest;
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.DefaultResponse;
-import com.liamfarrell.android.snapbattle.model.lambda_function_request_objects.RemoveFollowerRequest;
+import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.ResponseFollowing;
 import com.liamfarrell.android.snapbattle.util.HandleLambdaError;
 import com.squareup.picasso.Picasso;
 
@@ -172,7 +173,7 @@ public class UsersBattlesActivity extends AppCompatActivity {
         new FollowUserTask(this).execute(request);
     }
 
-    private static class FollowUserTask extends AsyncTask<AddFollowerRequestWithCognitoIDs, Void,AsyncTaskResult<DefaultResponse>>
+    private static class FollowUserTask extends AsyncTask<AddFollowerRequestWithCognitoIDs, Void,AsyncTaskResult<ResponseFollowing>>
     {
         private WeakReference<Activity> activityReference;
 
@@ -182,7 +183,7 @@ public class UsersBattlesActivity extends AppCompatActivity {
         }
 
         @Override
-        protected AsyncTaskResult<DefaultResponse> doInBackground(AddFollowerRequestWithCognitoIDs... params) {
+        protected AsyncTaskResult<ResponseFollowing> doInBackground(AddFollowerRequestWithCognitoIDs... params) {
         // Create a LambdaInvokerFactory, to be used to instantiate the Lambda proxy
         LambdaInvokerFactory factory = new LambdaInvokerFactory(
                 activityReference.get(),
@@ -191,7 +192,7 @@ public class UsersBattlesActivity extends AppCompatActivity {
 
          final LambdaFunctionsInterface lambdaFunctionsInterface = factory.build(LambdaFunctionsInterface.class);
                 try {
-                    DefaultResponse response =  lambdaFunctionsInterface.AddFollower(params[0]);
+                    ResponseFollowing response =  lambdaFunctionsInterface.AddFollower(params[0]);
                     return new AsyncTaskResult<>(response);
 
                 } catch (LambdaFunctionException lfe) {
@@ -214,7 +215,7 @@ public class UsersBattlesActivity extends AppCompatActivity {
             }
 
             @Override
-            protected void onPostExecute(AsyncTaskResult<DefaultResponse> asyncResult)
+            protected void onPostExecute(AsyncTaskResult<ResponseFollowing> asyncResult)
             {
             // get a reference to the activity if it is still there
                 UsersBattlesActivity activity = (UsersBattlesActivity)activityReference.get();

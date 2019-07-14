@@ -151,8 +151,12 @@
     <!-- username dialog -->
     <dimen name="username_edit_text_width">120dp</dimen>
 
-
-
+    <!-- video battle list item -->
+    <dimen name="left_margin_current_user">32dp</dimen>
+    <dimen name="right_margin_current_user">8dp</dimen>
+    <dimen name="left_margin_opponent">8dp</dimen>
+    <dimen name="right_margin_opponent">32dp</dimen>
+    <dimen name="appbar_padding">16dp</dimen>
 
 
 </resources>

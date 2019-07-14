@@ -17,32 +17,28 @@ import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserializat
 import com.liamfarrell.android.snapbattle.R;
 import com.liamfarrell.android.snapbattle.model.AsyncTaskResult;
 import com.liamfarrell.android.snapbattle.model.Battle;
+import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.GetBattlesByNameRequest;
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.GetBattlesByNameResponse;
-import com.liamfarrell.android.snapbattle.model.lambda_function_request_objects.GetBattlesByNameRequest;
 import com.liamfarrell.android.snapbattle.util.HandleLambdaError;
 
 import java.lang.ref.WeakReference;
 
 public class ViewBattlesFromNameFragment extends BattleCompletedListFragment
 {
-    public static final String EXTRA_BATTLE_NAME = "com.liamfarrell.android.snapbattle.battlename";
-
-
-
 
 
     @Override
     protected void getBattles() {
         GetBattlesByNameRequest request = new GetBattlesByNameRequest();
-        request.setBattleName(getActivity().getIntent().getStringExtra(EXTRA_BATTLE_NAME));
+        request.setBattleName(getActivity().getIntent().getStringExtra(ViewBattlesFromNameActivity.EXTRA_BATTLE_NAME));
         request.setFetchLimit(BATTLES_PER_FETCH);
         if (mBattles.size() > 0)
         {
-            request.setGetAfterBattleID(mBattles.get(mBattles.size() - 1).getBattleId());
+            request.setAfterBattleID(mBattles.get(mBattles.size() - 1).getBattleId());
         }
         else
         {
-            request.setGetAfterBattleID(-1);
+            request.setAfterBattleID(-1);
         }
         new GetBattlesTask(getActivity(), this).execute(request);
 

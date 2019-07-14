@@ -46,7 +46,7 @@ public class BattleDeserializer implements JsonDeserializer<Battle> {
             b.setChallengedUsername(jsonObject.get("challenged_username").getAsString());
         }
         if (jsonObject.has("final_video_ready")) {
-            b.setFinalVideoReady(JSONDeserializerHelperMethods.getBooleanFromMysqlBool(jsonObject.get("final_video_ready").getAsInt()));
+            b.setIsFinalVideoReady(JSONDeserializerHelperMethods.getBooleanFromMysqlBool(jsonObject.get("final_video_ready").getAsInt()));
         }
 
         if (jsonObject.has("video_number_recorded")) {
@@ -155,7 +155,7 @@ public class BattleDeserializer implements JsonDeserializer<Battle> {
                 String creatorCognitoId = videoJsonObject.get("creator_cognito_id").getAsString();
                 Boolean uploaded = JSONDeserializerHelperMethods.getBooleanFromMysqlBool(videoJsonObject.get("uploaded").getAsInt());
                 Date dateUploaded = JSONDeserializerHelperMethods.getDateFromString(videoJsonObject.get("date_uploaded").getAsString());
-                Video vid = new Video(videoID, dateUploaded, videoNumber, creatorCognitoId, videoCreatorName, uploaded);
+                Video vid = new Video(b.getBattleID(), videoID, dateUploaded, videoNumber, creatorCognitoId, videoCreatorName, uploaded);
                 videoList.add(vid);
             }
             b.setVideos(videoList);

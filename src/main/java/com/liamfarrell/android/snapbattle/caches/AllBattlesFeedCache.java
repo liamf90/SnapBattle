@@ -16,10 +16,10 @@ import com.amazonaws.services.dynamodbv2.model.GetItemRequest;
 import com.amazonaws.services.dynamodbv2.model.GetItemResult;
 import com.liamfarrell.android.snapbattle.model.Battle;
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.LambdaFunctionsInterface;
+import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.GetFriendsBattlesRequestOld;
 import com.liamfarrell.android.snapbattle.ui.FacebookLoginFragment;
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.deserializers.CustomLambdaDataBinder;
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.GetFriendsBattlesResponse;
-import com.liamfarrell.android.snapbattle.model.lambda_function_request_objects.GetFriendsBattlesRequest;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -301,7 +301,7 @@ public class AllBattlesFeedCache {
         // LambdaDataBinder
         final LambdaFunctionsInterface lambdaFunctionsInterface = factory.build(LambdaFunctionsInterface.class,  new CustomLambdaDataBinder());
         if (battleIDList.size() > 0) {
-            GetFriendsBattlesRequest battle = new GetFriendsBattlesRequest();
+            GetFriendsBattlesRequestOld battle = new GetFriendsBattlesRequestOld();
             battle.setBattleIDList(battleIDList);
             if (mLastTimeUpdated != null) {
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -389,7 +389,7 @@ public class AllBattlesFeedCache {
             // You can provide your own data binder by implementing
             // LambdaDataBinder
             final LambdaFunctionsInterface lambdaFunctionsInterface = factory.build(LambdaFunctionsInterface.class, new CustomLambdaDataBinder());
-            GetFriendsBattlesRequest battle = new GetFriendsBattlesRequest();
+            GetFriendsBattlesRequestOld battle = new GetFriendsBattlesRequestOld();
             battle.setBattleIDList(battleIDList);
             try {
                 GetFriendsBattlesResponse response =  lambdaFunctionsInterface.GetFriendsBattles(battle);
@@ -494,7 +494,7 @@ public class AllBattlesFeedCache {
         // You can provide your own data binder by implementing
         // LambdaDataBinder
         final LambdaFunctionsInterface lambdaFunctionsInterface = factory.build(LambdaFunctionsInterface.class, new CustomLambdaDataBinder());
-        GetFriendsBattlesRequest battle = new GetFriendsBattlesRequest();
+        GetFriendsBattlesRequestOld battle = new GetFriendsBattlesRequestOld();
         battle.setBattleIDList(battleIDList);
 
         try {

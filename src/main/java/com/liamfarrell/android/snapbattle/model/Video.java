@@ -7,6 +7,10 @@ import android.content.res.Resources;
 import android.media.MediaMetadataRetriever;
 import android.util.Log;
 
+import androidx.room.Entity;
+import androidx.room.ForeignKey;
+import androidx.room.PrimaryKey;
+
 import com.liamfarrell.android.snapbattle.app.App;
 import com.liamfarrell.android.snapbattle.R;
 
@@ -17,16 +21,31 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
+import static androidx.room.ForeignKey.CASCADE;
+
+@Entity(foreignKeys = {
+		@ForeignKey(
+				entity = Battle.class,
+				parentColumns = "mBattleId",
+				childColumns = "mBattleId",
+				onDelete = CASCADE
+		)
+})
+
+
 public class Video 
 {
-	private int mVideoID;
+	@PrimaryKey private int mVideoID;
+	private int mBattleId;
 	private Date mDateUploaded;
 	private int mVideoNumber;
 	private String mCreatorCognito_id;
 	private String mCreatorName;
 	private boolean mUploaded;
 
-	public Video(int videoID, Date dateUploaded, int videoNumber, String creatorCognito_id, String creatorName, boolean uploaded) {
+
+	public Video(int battleId, int videoID, Date dateUploaded, int videoNumber, String creatorCognito_id, String creatorName, boolean uploaded) {
+		mBattleId = battleId;
 		mVideoID = videoID;
 		mDateUploaded = dateUploaded;
 		mVideoNumber = videoNumber;
@@ -35,7 +54,33 @@ public class Video
 		mUploaded = uploaded;
 	}
 
-	
+	public int getBattleId() {
+		return mBattleId;
+	}
+
+	public void setBattleId(int battleId) {
+		mBattleId = battleId;
+	}
+
+	public Date getDateUploaded() {
+		return mDateUploaded;
+	}
+
+	public void setDateUploaded(Date dateUploaded) {
+		mDateUploaded = dateUploaded;
+	}
+
+	public String getCreatorName() {
+		return mCreatorName;
+	}
+
+	public void setCreatorName(String creatorName) {
+		mCreatorName = creatorName;
+	}
+
+	public void setUploaded(boolean uploaded) {
+		mUploaded = uploaded;
+	}
 
 	public static String getTimeSince(Date dateBeforeNow)
 	{
@@ -295,12 +340,12 @@ public class Video
 	}
 	
 	
-	public boolean displayPlayButton(Activity activity)
+	public boolean displayPlayButton(Context context)
 	{
 		//Display play button if video has been completed.
 		//If the video has no filename, it has not been completed
 		
-		File file  = new File(activity.getFilesDir().getAbsolutePath() + "/" + getVideoFilename());
+		File file  = new File(context.getFilesDir().getAbsolutePath() + "/" + getVideoFilename());
 		Log.i("Round", "DISPLAY PLAY BUTTON. File exists: " + file.exists());
 		//The mIslocal boolean here so we can notifydatasetchanged after we record a video
 		//this enabled us to display the play button after a video is recorded as the data actually changes.
@@ -333,11 +378,11 @@ public class Video
 		}
 	}
 	
-	public boolean displaySubmitButton(Activity activity, int battleVideoNumberCompleted, String currentUserCognitoID)
+	public boolean displaySubmitButton(Context context, int battleVideoNumberCompleted, String currentUserCognitoID)
 	{
 		//Display submit button if the video is next video and is current users video
 		//and if it has just been recorded.
-		File file  = new File(activity.getFilesDir().getAbsolutePath() +  "/"   + getVideoFilename());
+		File file  = new File(context.getFilesDir().getAbsolutePath() +  "/"   + getVideoFilename());
 		return (mVideoNumber == (battleVideoNumberCompleted + 1))
 				&& mCreatorCognito_id.equals(currentUserCognitoID)
 				&& file.exists();

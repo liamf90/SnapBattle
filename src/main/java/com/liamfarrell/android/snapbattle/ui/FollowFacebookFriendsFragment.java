@@ -139,12 +139,12 @@ public class FollowFacebookFriendsFragment extends Fragment
             holder.circleImageView.setImageResource(R.drawable.default_profile_pic100x100);
             getFriendProfilePicture(follower.getFacebookUserId(), holder.circleImageView);
             holder.tv.setText(follower.getFacebookName());
-            Log.i(TAG, "Name: " + follower.getFacebookName()+ ",  Following: " + follower.isFollowing());
-            if (!follower.isFollowing())
+            Log.i(TAG, "Name: " + follower.getFacebookName()+ ",  Following: " + follower.getIsFollowing());
+            if (!follower.getIsFollowing())
             {
                 holder.modifyFollowerButton.setText(R.string.follow);
             }
-            if (follower.isFollowing())
+            if (follower.getIsFollowing())
             {
                 holder.modifyFollowerButton.setText(R.string.unfollow);
             }
@@ -154,12 +154,12 @@ public class FollowFacebookFriendsFragment extends Fragment
                 public void onClick(View v)
                 {
                     holder.modifyFollowerButton.setEnabled(false);
-                    if (follower.isFollowing())
+                    if (follower.getIsFollowing())
                     {
 
                         removeFollower(follower.getFacebookUserId(), holder);
                     }
-                    else if (!follower.isFollowing())
+                    else if (!follower.getIsFollowing())
                     {
 
                         followUser(follower.getFacebookUserId(), holder);
@@ -180,6 +180,7 @@ public class FollowFacebookFriendsFragment extends Fragment
 
     private void fillFriendsList()
     {
+
         /* make the API call */
         new GraphRequest(
                 AccessToken.getCurrentAccessToken(),
@@ -309,7 +310,7 @@ public class FollowFacebookFriendsFragment extends Fragment
             for (User u : fullFollowingList)
             {
                 if (u.getFacebookUserId().equals(facebookFriendsList.get(i).getFacebookUserId())){
-                    facebookFriendsList.get(i).setFollowing(true);
+                    facebookFriendsList.get(i).setIsFollowing(true);
                 }
             }
         }
@@ -440,7 +441,7 @@ public class FollowFacebookFriendsFragment extends Fragment
         new FollowUserTask(getActivity(), this, facebookId, holder).execute();
     }
 
-    private static class FollowUserTask extends AsyncTask<Void, Void,AsyncTaskResult<DefaultResponse>>
+    private static class FollowUserTask extends AsyncTask<Void, Void,AsyncTaskResult<ResponseFollowing>>
     {
         private WeakReference<Activity> activityReference;
         private WeakReference<FollowFacebookFriendsFragment> fragmentReference;
@@ -456,7 +457,7 @@ public class FollowFacebookFriendsFragment extends Fragment
 
         }
 
-        protected AsyncTaskResult<DefaultResponse> doInBackground(Void... params) {
+        protected AsyncTaskResult<ResponseFollowing> doInBackground(Void... params) {
 
             // Create a LambdaInvokerFactory, to be used to instantiate the Lambda proxy
             LambdaInvokerFactory factory = new LambdaInvokerFactory(
@@ -471,28 +472,28 @@ public class FollowFacebookFriendsFragment extends Fragment
             addFollowerRequest.setFacebookFriendIdList(facebookUserIdarrayList);
 
             try {
-                DefaultResponse response = lambdaFunctionsInterface.AddFollower(addFollowerRequest);
-                return new AsyncTaskResult<DefaultResponse>(response);
+                ResponseFollowing response = lambdaFunctionsInterface.AddFollower(addFollowerRequest);
+                return new AsyncTaskResult<ResponseFollowing>(response);
             } catch (LambdaFunctionException lfe) {
                 Log.i("ERROR", lfe.getDetails());
                 Log.i("ERROR",lfe.getStackTrace().toString());
                 lfe.printStackTrace();
 
-                return new AsyncTaskResult<DefaultResponse>(lfe);
+                return new AsyncTaskResult<ResponseFollowing>(lfe);
             }
             catch (AmazonServiceException ase) {
                 // invalid credentials, incorrect AWS signature, etc
-                return new AsyncTaskResult<DefaultResponse>(ase);
+                return new AsyncTaskResult<ResponseFollowing>(ase);
             }
             catch (AmazonClientException ace) {
                 // Network issue
                 Log.i("ERROR", ace.toString());
-                return new AsyncTaskResult<DefaultResponse>(ace);
+                return new AsyncTaskResult<ResponseFollowing>(ace);
             }
         }
 
         @Override
-        protected void onPostExecute(AsyncTaskResult<DefaultResponse> asyncResult) {
+        protected void onPostExecute(AsyncTaskResult<ResponseFollowing> asyncResult) {
 
             // get a reference to the activity if it is still there
             Log.i(TAG, "On post execute");
@@ -511,7 +512,7 @@ public class FollowFacebookFriendsFragment extends Fragment
             //Update following user cache
             FollowingUserCache.get(activity.getApplicationContext(), null).updateCache(activity.getApplicationContext(),null);;
 
-            fragment.facebookFriendsList.get(holder.getAdapterPosition()).setFollowing(true);
+            fragment.facebookFriendsList.get(holder.getAdapterPosition()).setIsFollowing(true);
             holder.modifyFollowerButton.setEnabled(true);
             holder.modifyFollowerButton.setText(R.string.unfollow);
 
@@ -588,7 +589,7 @@ public class FollowFacebookFriendsFragment extends Fragment
                 //Update following user cache
                 FollowingUserCache.get(activity.getApplicationContext(), null).updateCache(activity.getApplicationContext(),null);;
 
-                fragment.facebookFriendsList.get(holder.getAdapterPosition()).setFollowing(false);
+                fragment.facebookFriendsList.get(holder.getAdapterPosition()).setIsFollowing(false);
                 holder.modifyFollowerButton.setEnabled(true);
                 holder.modifyFollowerButton.setText(R.string.follow);
             }

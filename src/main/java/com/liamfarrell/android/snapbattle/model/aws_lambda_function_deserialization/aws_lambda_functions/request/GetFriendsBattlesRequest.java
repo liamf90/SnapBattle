@@ -1,11 +1,12 @@
-package com.liamfarrell.android.snapbattle.model.lambda_function_request_objects;
+package com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request;
 
+import java.util.Date;
 import java.util.List;
 
 public class GetFriendsBattlesRequest
 {
     private List<Integer> battleIDList;
-    private String lastUpdatedDate;
+    private Date lastUpdatedDate;
 
     public List<Integer> getBattleIDList() {
         return battleIDList;
@@ -15,11 +16,11 @@ public class GetFriendsBattlesRequest
         this.battleIDList = battleIDList;
     }
 
-    public String getLastUpdatedDate() {
+    public Date getLastUpdatedDate() {
         return lastUpdatedDate;
     }
 
-    public void setLastUpdatedDate(String lastUpdatedDate) {
+    public void setLastUpdatedDate(Date lastUpdatedDate) {
         this.lastUpdatedDate = lastUpdatedDate;
     }
 }

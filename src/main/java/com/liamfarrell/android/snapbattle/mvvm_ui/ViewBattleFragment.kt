@@ -1,0 +1,301 @@
+package com.liamfarrell.android.snapbattle.mvvm_ui
+
+import android.Manifest
+import android.app.Activity
+import android.content.*
+import android.content.pm.PackageManager
+import android.net.Uri
+import android.os.Build
+import android.os.Bundle
+import android.provider.Settings
+import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.View.OnClickListener
+import android.view.ViewGroup
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
+import androidx.core.content.PermissionChecker.checkSelfPermission
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
+import com.google.android.material.snackbar.Snackbar
+import com.karumi.dexter.Dexter
+import com.karumi.dexter.MultiplePermissionsReport
+import com.karumi.dexter.PermissionToken
+import com.karumi.dexter.listener.DexterError
+import com.karumi.dexter.listener.PermissionRequest
+import com.karumi.dexter.listener.PermissionRequestErrorListener
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener
+import com.liamfarrell.android.snapbattle.R
+import com.liamfarrell.android.snapbattle.adapters.AllBattlesFeedPagingListAdapter
+import com.liamfarrell.android.snapbattle.adapters.BattleVideoAdapter
+import com.liamfarrell.android.snapbattle.databinding.FragmentFriendsBattleListBinding
+import com.liamfarrell.android.snapbattle.databinding.FragmentViewBattleBinding
+import com.liamfarrell.android.snapbattle.di.*
+import com.liamfarrell.android.snapbattle.model.Battle
+import com.liamfarrell.android.snapbattle.model.Video
+import com.liamfarrell.android.snapbattle.service.MyGcmListenerService
+import com.liamfarrell.android.snapbattle.ui.FacebookLoginFragment
+import com.liamfarrell.android.snapbattle.ui.VideoRecordActivity
+import com.liamfarrell.android.snapbattle.ui.VideoViewActivity
+import com.liamfarrell.android.snapbattle.ui.VideoViewFragment
+import com.liamfarrell.android.snapbattle.util.downloadFileFromURL
+import com.liamfarrell.android.snapbattle.viewmodels.ViewOwnBattleViewModel
+import kotlinx.android.synthetic.main.fragment_view_comments.*
+import java.io.File
+
+class ViewBattleFragment : Fragment(){
+
+    companion object{
+        const val BATTLE_ID_EXTRA = "com.liamfarrell.android.snapbattle.battle_id_extra"
+        const val VIDEO_ID_EXTRA = "com.liamfarrell.android.snapbattle.videoidextra"
+        const val VIDEO_FILEPATH_EXTRA = "com.liamfarrell.android.snapbattle.videofilepathextra"
+        const val USER_BANNED_ERROR = "USER_BANNED_ERROR"
+        const val WRITE_EXTERNAL_REQUEST_CODE = 30 }
+
+
+    private lateinit var viewModel: ViewOwnBattleViewModel
+    private lateinit var battle : Battle
+    private lateinit var adapter : BattleVideoAdapter
+    private var battleID : Int = -1
+
+
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val binding = FragmentViewBattleBinding.inflate(inflater, container, false)
+        binding.lifecycleOwner = viewLifecycleOwner
+        battleID = activity?.intent?.getIntExtra(BATTLE_ID_EXTRA, -1) ?: -1
+
+        val appComponent = DaggerOwnBattleComponent.builder()
+                .aWSLambdaModule(AWSLambdaModule(requireContext()))
+                .viewOwnBattleViewModelFactoryModule(ViewOwnBattleViewModelFactoryModule(battleID))
+                .build()
+
+
+        adapter = BattleVideoAdapter(battle, ::getRecordButtonOnClick, appComponent.getUsersBattleRepository())
+        viewModel = ViewModelProviders.of(this, appComponent.getViewOwnBattleViewModelFactory()).get(ViewOwnBattleViewModel::class.java)
+        binding.battle = viewModel.battle
+        binding.recyclerView.adapter = adapter
+        binding.included.saveToDeviceButton.setOnClickListener({onSaveToDeviceButtonClicked()})
+        binding.included.playWholeBattleButton.setOnClickListener({onPlayButtonClicked()})
+        adapter.notifyDataSetChanged()
+
+
+
+
+        registerReceiver()
+        subscribeUi(adapter)
+        return binding.root
+    }
+
+    private fun subscribeUi(adapter : BattleVideoAdapter) {
+        viewModel.battle.observe(viewLifecycleOwner, Observer {
+            battle = it
+            adapter.submitList(it.videos)
+        })
+
+        viewModel.errorMessage.observe(viewLifecycleOwner, Observer {
+            Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+        })
+
+        viewModel.snackBarMessage.observe(viewLifecycleOwner, Observer {snackBarMessage ->
+            Snackbar.make(parentCoordinatorLayout, snackBarMessage, Snackbar.LENGTH_LONG).show()
+        })
+    }
+
+    override fun onDestroy() {
+        destroyRegister()
+        super.onDestroy()
+    }
+
+
+    /**
+     * Called after returned from [VideoRecordActivity].
+     * Update the views if a new video has been recorded
+     */
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (resultCode == Activity.RESULT_CANCELED) {
+            //this is called when an error has occurred. video file may be deleted. reload list to disable play button
+            adapter.notifyDataSetChanged()
+        }
+        if (requestCode == 100) {
+            if (data == null) {
+                return }
+
+            if (data.getStringExtra(VideoRecordActivity.EXTRA_ORIENTATION_LOCK) != null) {
+                if (data.getStringExtra(VideoRecordActivity.EXTRA_ORIENTATION_LOCK) == Battle.ORIENTATION_LOCK_PORTRAIT) {
+                    battle.setOrientationLock(Battle.ORIENTATION_LOCK_PORTRAIT)
+                }
+                if (data.getStringExtra(VideoRecordActivity.EXTRA_ORIENTATION_LOCK) == Battle.ORIENTATION_LOCK_LANDSCAPE) {
+                    battle.setOrientationLock(Battle.ORIENTATION_LOCK_LANDSCAPE)
+                }
+            }
+            viewModel.getBattle()
+        }
+    }
+
+    /**
+     * When a video is submitted by the opponent, a GCM is sent to the user and a broadcast is sent out.
+     * Receivers are used by this fragment to receive the broadcast and update the fragment
+     */
+    private fun registerReceiver() {
+        //register receivers to update the list when a video is submitted (if fragment are still visible)
+        val filter = IntentFilter()
+        filter.addAction(MyGcmListenerService.ACTION_VIDEO_SUBMITTED)
+        filter.addAction(MyGcmListenerService.ACTION_FULL_VIDEO_FINISHED)
+        activity?.registerReceiver(mOnShowNotification, filter, MyGcmListenerService.PERM_PRIVATE, null)
+    }
+
+
+    private fun destroyRegister() {
+        activity?.unregisterReceiver(mOnShowNotification)
+    }
+
+    private val mOnShowNotification = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            if (intent.getStringExtra(MyGcmListenerService.TYPE_INTENT_EXTRA) == MyGcmListenerService.TYPE_VIDEO_SUBMITTED && intent.getIntExtra(MyGcmListenerService.BATTLE_ID_INTENT_EXTRA, -1) == battle.getBattleId()) {
+                // TODO If we receive this, we're visible, so cancel the notification
+                //setResultCode(Activity.RESULT_CANCELED);
+                viewModel.getBattle()
+            } else if (intent.getStringExtra(MyGcmListenerService.TYPE_INTENT_EXTRA) == MyGcmListenerService.UPLOAD_FULL_VIDEO && intent.getIntExtra(MyGcmListenerService.BATTLE_ID_INTENT_EXTRA, -1) == battle.getBattleId()) {
+                viewModel.getBattle()
+            }
+        }
+    }
+
+
+
+    private fun onSaveToDeviceButtonClicked(){
+        if (isStoragePermissionGranted()) {
+            saveFileToDevice()
+        }
+    }
+
+    private fun isStoragePermissionGranted(): Boolean {
+        return context?.let {
+            if (Build.VERSION.SDK_INT >= 23) {
+                if (checkSelfPermission(it, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                    return true
+                } else {
+                    requestPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), WRITE_EXTERNAL_REQUEST_CODE)
+                    return false
+                }
+            } else { //permission is automatically granted on sdk<23 upon installation
+                return true
+            }
+        } ?: false
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == WRITE_EXTERNAL_REQUEST_CODE && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            //resume tasks needing this permission
+            saveFileToDevice()
+        }
+    }
+
+
+    private fun saveFileToDevice() {
+        val filepath = battle.getServerFinalVideoUrl(FacebookLoginFragment.getCredentialsProvider(activity).identityId)
+        val callback = Battle.SignedUrlCallback { signedUrl ->
+            context?.let{downloadFileFromURL(it, signedUrl, battle.finalVideoFilename, null, battle.battleName)}
+
+        }
+        Battle.getSignedUrlFromServer(filepath, context, callback)
+    }
+
+    private fun onPlayButtonClicked() {
+        //check if the file is stored, otherwise stream it
+        activity?.let {
+            val file = File(it.filesDir.absolutePath + "/" + battle.getFinalVideoFilename())
+            if (file.exists()) {
+                //Play the file
+                val intent = Intent(it, VideoViewActivity::class.java)
+                intent.putExtra(VIDEO_FILEPATH_EXTRA, file.getAbsolutePath())
+                intent.putExtra(VideoViewFragment.VIDEO_TYPE_EXTRA, VideoViewFragment.VIDEO_TYPE_LOCAL)
+                intent.putExtra(VideoViewFragment.VIDEO_ROTATION_LOCK_EXTRA, battle.getOrientationLock())
+                startActivity(intent)
+            } else {
+                //Stream the file
+                val filepath = battle.getServerFinalVideoUrl(FacebookLoginFragment.getCredentialsProvider(activity).identityId)
+                val callback = Battle.SignedUrlCallback { signedUrl ->
+                    //progressContainer.setVisibility(View.INVISIBLE)
+                    val intent = Intent(it, VideoViewActivity::class.java)
+                    intent.putExtra(ViewBattleFragment.VIDEO_FILEPATH_EXTRA, signedUrl)
+                    intent.putExtra(VideoViewFragment.VIDEO_TYPE_EXTRA, VideoViewFragment.VIDEO_TYPE_STREAM)
+                    intent.putExtra(VideoViewFragment.VIDEO_ROTATION_LOCK_EXTRA, battle.getOrientationLock())
+                    startActivity(intent)
+                }
+                Battle.getSignedUrlFromServer(filepath, it, callback)
+                //mProgressContainer.setVisibility(View.VISIBLE)
+            }
+
+            //createMovie  create = new createMovie(false);
+            //create.start();
+        }
+
+    }
+
+    private fun getRecordButtonOnClick(video: Video){
+            Dexter.withActivity(activity)
+                    .withPermissions(
+                            android.Manifest.permission.CAMERA,
+                            android.Manifest.permission.RECORD_AUDIO
+                    )
+                    .withListener(object : MultiplePermissionsListener {
+                        override fun onPermissionsChecked(report: MultiplePermissionsReport) {
+                            // check if all permissions are granted
+                            if (report.areAllPermissionsGranted()) {
+                                val i = Intent(activity, VideoRecordActivity::class.java)
+                                i.putExtra(VIDEO_ID_EXTRA, video.getVideoID())
+                                if (video.getVideoNumber() == 1) {
+                                    i.putExtra(VideoRecordActivity.EXTRA_ORIENTATION_LOCK, Battle.ORIENTATION_LOCK_UNDEFINED)
+                                } else {
+                                    i.putExtra(VideoRecordActivity.EXTRA_ORIENTATION_LOCK, battle.getOrientationLock())
+                                }
+                                startActivityForResult(i, 100)
+                            }
+                            // check for permanent denial of any permission
+                            if (report.isAnyPermissionPermanentlyDenied) {
+                                // permission is denied permenantly, navigate user to app settings
+                                // check for permanent denial of permission
+                                showSettingsDialog() }
+                        }
+                        override fun onPermissionRationaleShouldBeShown(permissions: List<PermissionRequest>, token: PermissionToken) {
+                            token.continuePermissionRequest()
+                        }
+                    })
+                    .withErrorListener { context?.let{Toast.makeText(it.applicationContext, R.string.generic_error_toast, Toast.LENGTH_SHORT).show()} }
+                    .onSameThread()
+                    .check()
+        }
+
+
+    /**
+     * Showing Alert Dialog with Settings option
+     * Navigates user to app settings
+     * NOTE: Keep proper title and messageTextView depending on your app
+     */
+    private fun showSettingsDialog() {
+        val builder = AlertDialog.Builder(activity!!)
+        builder.setTitle(R.string.app_permission_dialog_title)
+        builder.setMessage(R.string.app_need_permissions_not_given)
+        builder.setPositiveButton(R.string.app_permission_goto_settings) { dialog, which ->
+            dialog.cancel()
+            openSettings()
+        }
+        builder.setNegativeButton(R.string.app_permission_cancel) { dialog, which -> dialog.cancel() }
+        builder.show()
+
+    }
+
+    // navigating user to app settings
+    private fun openSettings() {
+        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+        val uri = Uri.fromParts("package", activity!!.packageName, null)
+        intent.data = uri
+        startActivityForResult(intent, 101)
+    }
+
+}

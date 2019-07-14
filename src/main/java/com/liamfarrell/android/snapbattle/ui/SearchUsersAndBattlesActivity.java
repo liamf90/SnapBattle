@@ -107,7 +107,7 @@ public class SearchUsersAndBattlesActivity extends AppCompatActivity {
                 else if (position == 1)
                 {
                     //User Search
-                    mUserSearchFragment.setQueryChangeListener(mSearchView);
+                    //mUserSearchFragment.setQueryChangeListener(mSearchView);
                     mUserSearchFragment.onQueryTextChange("");
 
                 }

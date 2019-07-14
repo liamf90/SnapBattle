@@ -4,6 +4,12 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import androidx.room.ColumnInfo;
+import androidx.room.Embedded;
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
+
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.mobileconnectors.lambdainvoker.LambdaFunctionException;
@@ -14,13 +20,14 @@ import com.liamfarrell.android.snapbattle.ui.FacebookLoginFragment;
 import com.liamfarrell.android.snapbattle.app.App;
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.LambdaFunctionsInterface;
 import com.liamfarrell.android.snapbattle.model.lambda_function_request_objects.UrlLambdaRequest;
+import com.liamfarrell.android.snapbattle.ui.createbattle.ChooseVotingFragment;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 
 
-
+@Entity(tableName = "all_battles")
 public class Battle implements Serializable
 {
 	public static final String ORIENTATION_LOCK_PORTRAIT = "PORTRAIT";
@@ -30,11 +37,13 @@ public class Battle implements Serializable
 	private static final String TAG = "Battle";
 
 
-    private int mBattleID;
+    @PrimaryKey
+    @ColumnInfo(name = "battle_id")
+    private Integer mBattleID;
     private String mBattleName;
     private String mChallengerCognitoId;
     private String mChallengedCognitoId;
-    private int mRounds;
+    private Integer mRounds;
 
     private String mChallengerFacebookUserId;
     private String mChallengedFacebookUserId;
@@ -47,9 +56,11 @@ public class Battle implements Serializable
     private String mChallengedName;
 
     private Date mLastVideoUploadTime;
-    private int mVideosUploaded;
+    private Integer mVideosUploaded;
+    @Ignore
     private ArrayList<Video> mVideos;
     private Integer mVideoViewCount;
+    @Embedded
     private Voting mVoting;
     private int mLikeCount;
     private int mDislikeCount;
@@ -79,7 +90,7 @@ public class Battle implements Serializable
         return Video.getTimeSince(mLastVideoUploadTime);
     }
 
-    public Boolean hasUserVoted() {
+    public Boolean getUserHasVoted() {
         return mUserHasVoted;
     }
 
@@ -87,7 +98,7 @@ public class Battle implements Serializable
         mUserHasVoted = userHasVoted;
     }
 
-    public boolean isBattleAccepted() {
+    public boolean getIsBattleAccepted() {
         return mBattleAccepted;
     }
 
@@ -99,11 +110,11 @@ public class Battle implements Serializable
         mDeleted = deleted;
     }
 
-    public boolean isFinalVideoReady() {
+    public boolean getIsFinalVideoReady() {
         return mIsFinalVideoReady;
     }
 
-    public void setFinalVideoReady(boolean finalVideoReady) {
+    public void setIsFinalVideoReady(boolean finalVideoReady) {
         mIsFinalVideoReady = finalVideoReady;
     }
 
@@ -129,7 +140,7 @@ public class Battle implements Serializable
         mVoting = voting;
     }
 
-    public int getLikeCount() {
+    public Integer getLikeCount() {
         return mLikeCount;
     }
 
@@ -137,7 +148,7 @@ public class Battle implements Serializable
         mLikeCount = likeCount;
     }
 
-    public int getDislikeCount() {
+    public Integer getDislikeCount() {
         return mDislikeCount;
     }
 
@@ -145,7 +156,7 @@ public class Battle implements Serializable
         mDislikeCount = dislikeCount;
     }
 
-    public int getCommentCount() {
+    public Integer getCommentCount() {
         return mCommentCount;
     }
 
@@ -166,11 +177,11 @@ public class Battle implements Serializable
         return Video.getTimeSince(mChallengedTime);
     }
 
-    public int getChallengerProfilePicCount() {
+    public Integer getChallengerProfilePicCount() {
         return mChallengerProfilePicCount;
     }
 
-    public void setChallengerProfilePicCount(int challengerProfilePicCount) {
+    public void setChallengerProfilePicCount(Integer challengerProfilePicCount) {
         mChallengerProfilePicCount = challengerProfilePicCount;
     }
 
@@ -300,7 +311,7 @@ public class Battle implements Serializable
         return  timeSinceString;
     }
 
-    public int getOpponentProfilePicCount(String cogntitoIDcurrent)
+    public Integer getOpponentProfilePicCount(String cogntitoIDcurrent)
     {
         if (mChallengerCognitoId.equals(cogntitoIDcurrent))
         {
@@ -332,7 +343,7 @@ public class Battle implements Serializable
         mVideos = videos;
     }
 
-    public int getBattleID() {
+    public Integer getBattleID() {
         return mBattleID;
     }
 
@@ -367,7 +378,7 @@ public class Battle implements Serializable
         mBattleName = battleName;
     }
 
-    public Date getLastVideoUploadedTime()
+    public Date getLastVideoUploadTime()
 	 {
 		 return mLastVideoUploadTime;
 	 }
@@ -375,6 +386,7 @@ public class Battle implements Serializable
     public void setLastVideoUploadTime(Date lastVideoUploadTime) {
         mLastVideoUploadTime = lastVideoUploadTime;
     }
+
 
     public String getProfilePicSmallSignedUrl() {
         return mProfilePicSmallSignedUrl;
@@ -384,7 +396,7 @@ public class Battle implements Serializable
         mProfilePicSmallSignedUrl = profilePicSmallSignedUrl;
     }
 
-    public int getVideosUploaded() {
+    public Integer getVideosUploaded() {
 		return mVideosUploaded;
 	}
 	private String getThumbnailFilename()
@@ -462,7 +474,7 @@ public class Battle implements Serializable
 	}
 
 
-	public int getRounds() {
+	public Integer getRounds() {
 		return mRounds;
 	}
 	public ArrayList<Video> getVideos() {
@@ -477,6 +489,8 @@ public class Battle implements Serializable
 	{
 		return mVideosUploaded == (mRounds * 2);
 	}
+
+
 
 
 	public String getFinalVideoFilename()

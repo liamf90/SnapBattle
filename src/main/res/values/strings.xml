@@ -132,7 +132,6 @@
     </plurals>
 
 
-
     <string name="have_voted">You have voted</string>
     <string name="can_vote">You can vote</string>
     <string name="can_not_vote">You cannot vote</string>
@@ -329,6 +328,9 @@
     <string name="video_saved_to_device">Video saved to device</string>
     <string name="crop_image_menu_crop">Accept</string>
     <string name="need_accept_permission_user_friends">You need to let the app access your friends list to use this feature</string>
+    <string name="title_activity_search_users_and_battles">SearchUsersAndBattlesActivity</string>
+    <string name="tab_text_1">Tab 1</string>
+    <string name="tab_text_2">Tab 2</string>
 
 
 </resources>

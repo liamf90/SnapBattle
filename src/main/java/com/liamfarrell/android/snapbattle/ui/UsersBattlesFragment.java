@@ -165,8 +165,8 @@ public class UsersBattlesFragment extends BattleCompletedListFragment
                 ((UsersBattlesActivity) activity).setCognitoId(user.getCognitoId());
 
                 //check if user is following
-                fragment.mIsFollowing = user.isFollowing();
-                Log.i(TAG, "Is Following: " + user.isFollowing());
+                fragment.mIsFollowing = user.getIsFollowing();
+                Log.i(TAG, "Is Following: " + user.getIsFollowing());
                 ((UsersBattlesActivity) activity).setIsFollowing(fragment.mIsFollowing);
                 ((UsersBattlesActivity) activity).setIsFollowing(fragment.mIsFollowing);
 

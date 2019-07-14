@@ -437,7 +437,7 @@ public class AllBattlesListFragment extends Fragment
                 holder.dislikeCountTextView.setText(res.getQuantityString(R.plurals.dislikes, b.getDislikeCount(), b.getDislikeCount()));
                 holder.videoViewCountTextView.setText(res.getString(R.string.video_views, b.getVideoViewCount()));
                 holder.votingTypeTextView.setText(b.getVoting().getVotingChoice().getLongStyle());
-                holder.noMoreBattlesView.setVisibility(View.GONE);
+                holder.noMoreBattlesView.setVisibility(View.GONE); ////TODO
                 holder.challengerUsernameTextView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -458,6 +458,7 @@ public class AllBattlesListFragment extends Fragment
 
                 if (b.getVoting().getVotingChoice() == ChooseVotingFragment.VotingChoice.NONE)
                 {
+                    //NO VOTING
                     holder.votingLayout.setVisibility(View.VISIBLE);
                     holder.challengerResultTextView.setVisibility(View.GONE);
                     holder.challengedResultTextView.setVisibility(View.GONE);
@@ -486,7 +487,7 @@ public class AllBattlesListFragment extends Fragment
                         holder.challengedVotesTextView.setVisibility(View.GONE);
                         holder.canVoteTextView.setVisibility(View.VISIBLE);
 
-                        if (b.hasUserVoted() != null && b.hasUserVoted()){
+                        if (b.getUserHasVoted() != null && b.getUserHasVoted()){
                             holder.canVoteTextView.setText(res.getText(R.string.have_voted));
                         } else {
                             b.getVoting().canUserVote(FacebookLoginFragment.getCredentialsProvider(getActivity()).getCachedIdentityId(), b.getChallengerCognitoID(), b.getChallengedCognitoID(), b.getChallengerFacebookUserId(), b.getChallengedFacebookUserId(), new Voting.MutualFriendCallbacks() {

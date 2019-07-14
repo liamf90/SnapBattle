@@ -18,10 +18,11 @@ import com.facebook.AccessToken;
 import com.liamfarrell.android.snapbattle.model.Battle;
 import com.liamfarrell.android.snapbattle.model.BattleIDSave;
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.LambdaFunctionsInterface;
+import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.GetFriendsBattlesRequest;
+import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.GetFriendsBattlesRequestOld;
 import com.liamfarrell.android.snapbattle.ui.FacebookLoginFragment;
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.deserializers.CustomLambdaDataBinder;
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.GetFriendsBattlesResponse;
-import com.liamfarrell.android.snapbattle.model.lambda_function_request_objects.GetFriendsBattlesRequest;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -329,7 +330,7 @@ public class FollowingBattleCache {
 		// LambdaDataBinder
 		final LambdaFunctionsInterface lambdaFunctionsInterface = factory.build(LambdaFunctionsInterface.class,  new CustomLambdaDataBinder());
 		if (battleIDList.size() > 0) {
-			GetFriendsBattlesRequest battle = new GetFriendsBattlesRequest();
+			GetFriendsBattlesRequestOld battle = new GetFriendsBattlesRequestOld();
 			List<Integer> justBattleIDList = new ArrayList<Integer>();
 			for (BattleIDSave b : battleIDList){
 			    justBattleIDList.add(b.getBattleID());

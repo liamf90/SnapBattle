@@ -4,6 +4,9 @@
 
     <data>
         <variable
+            name="clickListener"
+            type="android.view.View.OnClickListener"/>
+        <variable
             name="comment"
             type="com.liamfarrell.android.snapbattle.model.Comment"/>
         <import
@@ -15,6 +18,7 @@
     android:id="@+id/viewHolder"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+     android:onClick="@{clickListener}"
     android:orientation="horizontal">
 
     <de.hdodenhof.circleimageview.CircleImageView

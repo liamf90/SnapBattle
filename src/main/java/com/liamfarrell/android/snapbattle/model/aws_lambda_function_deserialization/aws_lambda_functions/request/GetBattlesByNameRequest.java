@@ -1,4 +1,4 @@
-package com.liamfarrell.android.snapbattle.model.lambda_function_request_objects;
+package com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request;
 
 public class GetBattlesByNameRequest
 {
@@ -23,11 +23,11 @@ public class GetBattlesByNameRequest
         this.fetchLimit = fetchLimit;
     }
 
-    public int getGetAfterBattleID() {
+    public int getAfterBattleID() {
         return getAfterBattleID;
     }
 
-    public void setGetAfterBattleID(int getAfterBattleID) {
-        this.getAfterBattleID = getAfterBattleID;
+    public void setAfterBattleID(int afterBattleID) {
+        this.getAfterBattleID = afterBattleID;
     }
 }

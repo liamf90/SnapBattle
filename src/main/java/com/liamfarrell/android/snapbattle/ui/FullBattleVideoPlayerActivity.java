@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import android.view.WindowManager;
 
 import com.liamfarrell.android.snapbattle.R;
+import com.liamfarrell.android.snapbattle.mvvm_ui.ViewCommentsFragment;
 
 /**
  * Created by Liam on 20/01/2018.

@@ -33,6 +33,7 @@ import com.liamfarrell.android.snapbattle.R;
 import com.liamfarrell.android.snapbattle.caches.OtherUsersProfilePicCacheManager;
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.AddFollowerRequestWithUsername;
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.FollowingRequest;
+import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.RemoveFollowerRequest;
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.DefaultResponse;
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.ResponseFollowing;
 import com.liamfarrell.android.snapbattle.util.HandleLambdaError;
@@ -46,7 +47,7 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class ViewFollowingFragment extends Fragment
+public class ViewFollowingFragmentOld extends Fragment
 {
 	private static final String TAG = "ViewFollowingFragment";
     private View mProgressContainer;
@@ -76,9 +77,9 @@ public class ViewFollowingFragment extends Fragment
     private static class GetFollowingTask extends AsyncTask<FollowingRequest, Void, AsyncTaskResult<ResponseFollowing>>
     {
         private WeakReference<Activity> activityReference;
-        private WeakReference<ViewFollowingFragment> fragmentReference;
+        private WeakReference<ViewFollowingFragmentOld> fragmentReference;
 
-        GetFollowingTask(Activity activity, ViewFollowingFragment fragment) {
+        GetFollowingTask(Activity activity, ViewFollowingFragmentOld fragment) {
         fragmentReference = new WeakReference<>(fragment);
         activityReference = new WeakReference<>(activity);
         }
@@ -130,7 +131,7 @@ public class ViewFollowingFragment extends Fragment
             @Override
             protected void onPostExecute(AsyncTaskResult<ResponseFollowing> asyncResult) {
 
-                ViewFollowingFragment fragment = fragmentReference.get();
+                ViewFollowingFragmentOld fragment = fragmentReference.get();
                 Activity activity = activityReference.get();
                 if (fragment == null || fragment.isRemoving()) return;
                 if (activity == null || activity.isFinishing()) return;
@@ -182,11 +183,8 @@ public class ViewFollowingFragment extends Fragment
 						.setTitle(R.string.enter_username_dialog_title)
 						.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int which) {
-								Log.i(TAG, "Username: " + usernameEditText.getText().toString());
 								dialog.cancel();
-								addFollowerFromUsername(usernameEditText.getText().toString());
-
-							}
+								addFollowerFromUsername(usernameEditText.getText().toString()); }
 						})
 						.create().show();
 			}
@@ -196,23 +194,23 @@ public class ViewFollowingFragment extends Fragment
 	}
 
     private void removeFollower(String cognitoIDUnfollow) {
-        com.liamfarrell.android.snapbattle.model.lambda_function_request_objects.RemoveFollowerRequest request = new com.liamfarrell.android.snapbattle.model.lambda_function_request_objects.RemoveFollowerRequest();
+        RemoveFollowerRequest request = new RemoveFollowerRequest();
         request.setCognitoIDUnfollow(cognitoIDUnfollow);
         new RemoveFollowerTask(getActivity(), this).execute(request);
     }
 
-    private static class RemoveFollowerTask extends  AsyncTask<com.liamfarrell.android.snapbattle.model.lambda_function_request_objects.RemoveFollowerRequest, Void, AsyncTaskResult<DefaultResponse>>
+    private static class RemoveFollowerTask extends  AsyncTask<RemoveFollowerRequest, Void, AsyncTaskResult<DefaultResponse>>
     {
         private WeakReference<Activity> activityReference;
-        private WeakReference<ViewFollowingFragment> fragmentReference;
+        private WeakReference<ViewFollowingFragmentOld> fragmentReference;
 
-        public RemoveFollowerTask(Activity activity, ViewFollowingFragment  fragment) {
+        public RemoveFollowerTask(Activity activity, ViewFollowingFragmentOld fragment) {
             this.activityReference = new WeakReference<>(activity);
             this.fragmentReference = new WeakReference<>(fragment);
         }
 
         @Override
-        protected  AsyncTaskResult<DefaultResponse> doInBackground(com.liamfarrell.android.snapbattle.model.lambda_function_request_objects.RemoveFollowerRequest... params) {
+        protected  AsyncTaskResult<DefaultResponse> doInBackground(RemoveFollowerRequest... params) {
             // Create a LambdaInvokerFactory, to be used to instantiate the Lambda proxy
             LambdaInvokerFactory factory = new LambdaInvokerFactory(
                     activityReference.get().getApplicationContext(),
@@ -244,7 +242,7 @@ public class ViewFollowingFragment extends Fragment
         @Override
         protected void onPostExecute(AsyncTaskResult<DefaultResponse> asyncResult)
         {
-            ViewFollowingFragment fragment = fragmentReference.get();
+            ViewFollowingFragmentOld fragment = fragmentReference.get();
             Activity activity = activityReference.get();
             if (fragment == null || fragment.isRemoving()) return;
             if (activity == null || activity.isFinishing()) return;
@@ -269,19 +267,19 @@ public class ViewFollowingFragment extends Fragment
         new addFollowerFromUsernameTask(getActivity(), this).execute(request);
 	}
 
-	private static class addFollowerFromUsernameTask extends AsyncTask<AddFollowerRequestWithUsername, Void, AsyncTaskResult<DefaultResponse>>
+	private static class addFollowerFromUsernameTask extends AsyncTask<AddFollowerRequestWithUsername, Void, AsyncTaskResult<ResponseFollowing>>
 	{
 
         private WeakReference<Activity> activityReference;
-        private WeakReference<ViewFollowingFragment> fragmentReference;
+        private WeakReference<ViewFollowingFragmentOld> fragmentReference;
 
-        public addFollowerFromUsernameTask(Activity activity, ViewFollowingFragment  fragment) {
+        public addFollowerFromUsernameTask(Activity activity, ViewFollowingFragmentOld fragment) {
             this.activityReference = new WeakReference<>(activity);
             this.fragmentReference = new WeakReference<>(fragment);
         }
 
         @Override
-		protected AsyncTaskResult<DefaultResponse> doInBackground(AddFollowerRequestWithUsername... params)
+		protected AsyncTaskResult<ResponseFollowing> doInBackground(AddFollowerRequestWithUsername... params)
 		{
 		// Create a LambdaInvokerFactory, to be used to instantiate the Lambda proxy
 		LambdaInvokerFactory factory = new LambdaInvokerFactory(
@@ -296,33 +294,33 @@ public class ViewFollowingFragment extends Fragment
 				// invoke "echo" method. In case it fails, it will throw a
 				// LambdaFunctionException.
 				try {
-                    DefaultResponse response = lambdaFunctionsInterface.AddFollower(params[0]);
-                    return new AsyncTaskResult<DefaultResponse>(response);
+                    ResponseFollowing response = lambdaFunctionsInterface.AddFollower(params[0]);
+                    return new AsyncTaskResult<ResponseFollowing>(response);
 
 				} catch (LambdaFunctionException lfe) {
 					Log.i("ERROR", lfe.getDetails());
 					Log.i("ERROR",lfe.getStackTrace().toString());
 					lfe.printStackTrace();
 
-                    return new AsyncTaskResult<DefaultResponse>(lfe);
+                    return new AsyncTaskResult<ResponseFollowing>(lfe);
 				}
 				catch (AmazonServiceException ase) {
 					// invalid credentials, incorrect AWS signature, etc
 					Log.i("ERROR", ase.getErrorMessage());
-                    return new AsyncTaskResult<DefaultResponse>(ase);
+                    return new AsyncTaskResult<ResponseFollowing>(ase);
 				}
 				catch (AmazonClientException ace) {
 					// Network issue
 					Log.i("ERROR", ace.toString());
-                    return new AsyncTaskResult<DefaultResponse>(ace);
+                    return new AsyncTaskResult<ResponseFollowing>(ace);
 				}
 			}
 
 			@Override
-			protected void onPostExecute(AsyncTaskResult<DefaultResponse> asyncResult)
+			protected void onPostExecute(AsyncTaskResult<ResponseFollowing> asyncResult)
 			{
 
-                ViewFollowingFragment fragment = fragmentReference.get();
+                ViewFollowingFragmentOld fragment = fragmentReference.get();
                 Activity activity = activityReference.get();
                 if (fragment == null || fragment.isRemoving()) return;
                 if (activity == null || activity.isFinishing()) return;

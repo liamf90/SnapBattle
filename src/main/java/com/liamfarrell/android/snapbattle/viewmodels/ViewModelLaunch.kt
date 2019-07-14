@@ -10,33 +10,28 @@ import androidx.lifecycle.Transformations.switchMap
 import com.amazonaws.AmazonClientException
 import com.amazonaws.AmazonServiceException
 import com.amazonaws.mobileconnectors.lambdainvoker.LambdaFunctionException
+import com.facebook.internal.Mutable
 import com.google.gson.JsonParser
 import com.liamfarrell.android.snapbattle.R
+import com.liamfarrell.android.snapbattle.app.App
+import com.liamfarrell.android.snapbattle.model.AsyncTaskResult
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.LambdaFunctionsInterface
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
+import com.liamfarrell.android.snapbattle.util.HandleLambdaError.ALREADY_FOLLOWING_ERROR
+import kotlinx.coroutines.*
+import java.lang.Exception
 
 
 open class ViewModelLaunch : ViewModel() {
 
-    /**
-     * Request a toast to display a string.
-     *
-     * This variable is private because we don't want to expose MutableLiveData
-     *
-     * MutableLiveData allows anyone to set a value, and MainViewModel is the only
-     * class that should be setting values.
-     */
-    private val _errorMessage = MutableLiveData<String>()
-    /**
-     * Request a Toast to display a string.
-     */
-    val errorMessage: LiveData<String>
-        get() = _errorMessage
 
-    private val _spinner = MutableLiveData<Boolean>()
+
+    protected val _spinner = MutableLiveData<Boolean>()
 
     val spinner : LiveData<Boolean> = _spinner
+
+
+    protected val _snackBarMessage = MutableLiveData<String>()
+    val snackBarMessage : LiveData<String> = _snackBarMessage
 
 
 
@@ -52,46 +47,26 @@ open class ViewModelLaunch : ViewModel() {
      *              spinner will stop
      * @param showSpinner show spinner during async execution
      */
-    protected fun AWSFunctionCall(showSpinner: Boolean, block: suspend () -> Unit): Job {
+    protected fun awsLambdaFunctionCall(showSpinner: Boolean, block: suspend () -> Unit): Job {
         return viewModelScope.launch {
-            try {
+
                 if (showSpinner) _spinner.value = true
-                block()
-            } catch (error: Error) {
-                _errorMessage.value = error.message
-            } finally {
+                    block()
                 if (showSpinner) _spinner.value = false
-            }
         }
     }
 
-    fun handleError(context: Context, error: Error) {
-        if (error is AmazonServiceException) {
-            _errorMessage.value = context.getString(R.string.server_error_toast)
-        } else if (error is LambdaFunctionException) {
-            val parser = JsonParser()
-            if (parser.parse(error.details).asJsonObject.get("errorType") != null) {
-                val errorType = parser.parse(error.details).asJsonObject.get("errorType").asString
-                if (errorType == LambdaFunctionsInterface.UPGRADE_REQUIRED_ERROR_MESSAGE) {
-                    _errorMessage.value = context.getString(R.string.upgrade_required_toast_message)
-                } else if (errorType == ALREADY_FOLLOWING_ERROR) {
-                    _errorMessage.value = context.getString(R.string.already_following_error)
-                } else {
-                    _errorMessage.value = context.getString(R.string.server_error_toast)
-                }
-            } else {
-                _errorMessage.value = context.getString(R.string.server_error_toast)
-            }
-        } else if (error is AmazonClientException) {
-            _errorMessage.value = context.getString(R.string.no_internet_connection_toast)
-        }
+    /**
+     * Cancel all coroutines when the ViewModel is cleared.
+     */
+    @ExperimentalCoroutinesApi
+    override fun onCleared() {
+        super.onCleared()
+        viewModelScope.cancel()
     }
 
 
 
-    companion object {
-        val ALREADY_FOLLOWING_ERROR = "ALREADY_FOLLOWING_USER_ERROR"
-    }
 
 }
 
@@ -103,3 +78,4 @@ fun bindProgressBar(progressLayout: FrameLayout, showSpinner: Boolean) {
         progressLayout.visibility = View.GONE
     }
 }
+

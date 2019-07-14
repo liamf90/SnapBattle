@@ -39,10 +39,10 @@ import com.liamfarrell.android.snapbattle.caches.OtherUsersProfilePicCacheManage
 import com.liamfarrell.android.snapbattle.caches.ThumbnailCacheHelper;
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.LambdaFunctionsInterface;
 import com.liamfarrell.android.snapbattle.R;
+import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.CreateUserRequest;
 import com.liamfarrell.android.snapbattle.ui.startup.StartupActivity;
 import com.liamfarrell.android.snapbattle.model.AsyncTaskResult;
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.CreateUserResponse;
-import com.liamfarrell.android.snapbattle.model.lambda_function_request_objects.CreateUserRequest;
 import com.liamfarrell.android.snapbattle.service.RegistrationIntentService;
 import com.liamfarrell.android.snapbattle.util.HandleLambdaError;
 
@@ -255,8 +255,6 @@ public class FacebookLoginFragment extends Fragment
 	{
 		 super.onActivityResult(requestCode, resultCode, data);
 		mCallbackManager.onActivityResult(requestCode, resultCode, data);
-
-
 	}
 
     @Override

@@ -12,12 +12,14 @@ import com.liamfarrell.android.snapbattle.model.Comment
 import androidx.appcompat.widget.PopupMenu
 import com.liamfarrell.android.snapbattle.R
 import com.liamfarrell.android.snapbattle.ui.FacebookLoginFragment
+import com.liamfarrell.android.snapbattle.viewmodels.CommentViewModel
+import kotlinx.android.synthetic.main.media_controller_battle.view.*
 
 
 /**
  * Adapter for the [RecyclerView] in [ViewCommentsFragment].
  */
-class CommentsListAdapter :
+class CommentsListAdapter (private  val viewModel : CommentViewModel, val viewHolderOnClick : (String) -> Unit ) :
         ListAdapter<Comment, CommentsListAdapter.ViewHolder>(CommentDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -32,18 +34,50 @@ class CommentsListAdapter :
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val comment = getItem(position)
         holder.apply {
-            //bind(createOnClickListener(plant.plantId), comment)
             bind(comment)
             itemView.tag = comment
             //TODO CHANGE cached identity idTO DAGGER
+            holder.itemView.setOnClickListener{viewHolderOnClick(comment.username)}
             if (comment.cognitoIdCommenter == FacebookLoginFragment.getCredentialsProvider(holder.itemView.context).cachedIdentityId){
-                holder.itemView.setOnLongClickListener(getOnLongClickListenerOwnComment())
+                holder.itemView.setOnLongClickListener(getOnLongClickListenerOwnComment(comment.commentId))
             } else{
-                holder.itemView.setOnLongClickListener(getOnLongClickListenerNotOwnComment())
+                holder.itemView.setOnLongClickListener(getOnLongClickListenerNotOwnComment(comment.commentId))
             }
 
         }
     }
+    private fun getOnLongClickListenerOwnComment(commentID: Int): View.OnLongClickListener {
+        return View.OnLongClickListener {
+            //Creating the instance of PopupMenu
+            val popup = PopupMenu(it.context, it)
+            //Inflating the Popup using xml file
+            popup.getMenuInflater().inflate(R.menu.comment_delete_popup_menu, popup.getMenu())
+            //registering popup with OnMenuItemClickListener
+            popup.setOnMenuItemClickListener {
+                viewModel.deleteComment(commentID)
+                true
+            }
+            popup.show()//showing popup menu
+            true
+        }
+    }
+
+    private fun getOnLongClickListenerNotOwnComment(commentID: Int): View.OnLongClickListener {
+        return View.OnLongClickListener {
+            //Creating the instance of PopupMenu
+            val popup = PopupMenu(it.context, it)
+            //Inflating the Popup using xml file
+            popup.getMenuInflater().inflate(R.menu.comment_report_popup_menu, popup.getMenu())
+            //registering popup with OnMenuItemClickListener
+            popup.setOnMenuItemClickListener {
+                viewModel.reportComment(commentID)
+                true
+            }
+            popup.show()//showing popup menu
+            true
+        }
+    }
+
 
     class ViewHolder(
             private val binding: ListItemCommentBinding
@@ -52,53 +86,11 @@ class CommentsListAdapter :
         fun bind(item: Comment) {
             with(binding) {
                 comment = item
-
-                //clickListener = listener
                 executePendingBindings()
             }
         }
     }
 }
-
-
-   private fun getOnLongClickListenerOwnComment(): View.OnLongClickListener {
-       return View.OnLongClickListener {
-           //Creating the instance of PopupMenu
-           val popup = PopupMenu(it.context, it)
-           //Inflating the Popup using xml file
-           popup.getMenuInflater().inflate(R.menu.comment_delete_popup_menu, popup.getMenu())
-           //registering popup with OnMenuItemClickListener
-           popup.setOnMenuItemClickListener {
-               //TODO DELETE COMMENT
-               //deleteComment(commentsList.get(position).getCommentId())
-               true
-           }
-           popup.show()//showing popup menu
-           true
-       }
-   }
-
-    private fun getOnLongClickListenerNotOwnComment(): View.OnLongClickListener {
-    return View.OnLongClickListener {
-        //Creating the instance of PopupMenu
-        val popup = PopupMenu(it.context, it)
-        //Inflating the Popup using xml file
-        popup.getMenuInflater().inflate(R.menu.comment_report_popup_menu, popup.getMenu())
-        //registering popup with OnMenuItemClickListener
-        popup.setOnMenuItemClickListener {
-            //TODO REPORT COMMENT
-            //reportComment(commentsList.get(position).getCommentId(), position);
-            true
-        }
-        popup.show()//showing popup menu
-        true
-        }
-    }
-
-
-
-
-
 
 
 private class CommentDiffCallback : DiffUtil.ItemCallback<Comment>() {

@@ -1,21 +1,29 @@
 package com.liamfarrell.android.snapbattle.model;
 
+import androidx.annotation.NonNull;
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
+
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
+import java.util.Objects;
 
+@Entity(tableName = "user")
 public class User implements Serializable {
-    @SerializedName("CognitoId")  private String mCognitoId;
+
+    @NonNull @PrimaryKey @SerializedName("CognitoId")  private String mCognitoId;
     @SerializedName("battle_count") private int mBattleCount;
     @SerializedName("following_count")  private int mFollowingCount;
     @SerializedName("Username") private String mUsername;
     @SerializedName("Facebook_Name") private String mFacebookName;
     @SerializedName("FacebookUserId") private String mFacebookUserId;
     @SerializedName("ProfilePicCount") private int mProfilePicCount;
-    @SerializedName("isFollowing") private boolean mIsFollowing;
+    @SerializedName("IsFollowing") private boolean mIsFollowing;
     @SerializedName("profile_pic_small_signed_url") private String mProfilePicSignedUrl;
 
-    public User(String cognitoId, String username, String facebookName, int profilePicCount, String profilePicSignedUrl) {
+    public User(@NonNull String cognitoId, String username, String facebookName, int profilePicCount, String profilePicSignedUrl) {
         mCognitoId = cognitoId;
         mUsername = username;
         mFacebookName = facebookName;
@@ -23,10 +31,15 @@ public class User implements Serializable {
         mProfilePicSignedUrl = profilePicSignedUrl;
     }
 
+    @Ignore
     public User(String facebookName, String facebookUserId)
     {
         mFacebookName = facebookName;
         mFacebookUserId = facebookUserId;
+    }
+
+    public void setCognitoId(String cognitoId) {
+        mCognitoId = cognitoId;
     }
 
     public String getFacebookUserId() {
@@ -61,7 +74,7 @@ public class User implements Serializable {
         return mProfilePicCount;
     }
 
-    public boolean isFollowing() {
+    public boolean getIsFollowing() {
         return mIsFollowing;
     }
 
@@ -77,7 +90,7 @@ public class User implements Serializable {
         mFollowingCount = followingCount;
     }
 
-    public void setFollowing(boolean following) {
+    public void setIsFollowing(boolean following) {
         mIsFollowing = following;
     }
 
@@ -96,4 +109,17 @@ public class User implements Serializable {
     public void setFacebookName(String facebookName) {
         mFacebookName = facebookName;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return mBattleCount == user.mBattleCount &&
+                mFollowingCount == user.mFollowingCount &&
+                mProfilePicCount == user.mProfilePicCount &&
+                mIsFollowing == user.mIsFollowing;
+    }
+
+
 }

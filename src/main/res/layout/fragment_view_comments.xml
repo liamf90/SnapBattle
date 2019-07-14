@@ -11,8 +11,9 @@
     </data>
 
 
-    <FrameLayout
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
 
+        android:id="@+id/parentCoordinatorLayout"
         android:layout_height="match_parent"
         android:layout_width="match_parent"
         android:background="#ffffff">
@@ -42,7 +43,7 @@
                 android:orientation="horizontal"
                 android:background="@color/add_comment_margin_color">
 
-                <EditText
+                <com.google.android.material.textfield.TextInputEditText
                     android:paddingStart="@dimen/comments_edit_text_padding_start"
                     android:id="@+id/commentEditText"
                     android:hint="@string/write_a_comment"
@@ -55,7 +56,7 @@
                 <ProgressBar
                     android:id="@+id/addCommentProgressBar"
                     android:theme="@style/MyMaterialTheme.Base"
-                    android:visibility="gone"
+                    app:showProgressAddComment="@{safeUnbox(viewModel.showAddCommentProgressBar)}"
                     android:padding="@dimen/add_comment_button_padding"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
@@ -74,8 +75,7 @@
         </LinearLayout>
         <FrameLayout
         android:id="@+id/progressContainer"
-            app:showProgress="@{safeUnbox(viewModel.spinner)}"
-
+        app:showProgress="@{safeUnbox(viewModel.spinner)}"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clickable="true"
@@ -88,6 +88,6 @@
         </FrameLayout>
 
 
-    </FrameLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 </layout>

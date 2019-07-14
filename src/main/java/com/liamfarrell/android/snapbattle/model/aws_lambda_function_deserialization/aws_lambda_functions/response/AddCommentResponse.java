@@ -2,13 +2,14 @@ package com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserializa
 
 import com.liamfarrell.android.snapbattle.model.Comment;
 
+import java.util.Date;
 import java.util.List;
 
 public class AddCommentResponse
 {
     private List<Comment> sql_result;
     private String error;
-    private String time_ban_ends;
+    private Date time_ban_ends;
     private static final String USER_NOT_MINIMUM_FRIENDS_ERROR = "USER_NOT_MINIMUM_FRIENDS";
     private static final String USER_BANNED_ERROR = "USER_BANNED_ERROR";
 
@@ -36,11 +37,11 @@ public class AddCommentResponse
         this.error = error;
     }
 
-    public String getTimeBanEnds() {
+    public Date getTimeBanEnds() {
         return time_ban_ends;
     }
 
-    public void setTimeBanEnds(String time_ban_ends) {
+    public void setTimeBanEnds(Date time_ban_ends) {
         this.time_ban_ends = time_ban_ends;
     }
 }

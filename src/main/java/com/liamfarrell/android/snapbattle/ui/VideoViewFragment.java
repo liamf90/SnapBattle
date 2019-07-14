@@ -21,6 +21,7 @@ public class VideoViewFragment extends VideoPlayerAbstractFragment
 
 	public static final String VIDEO_TYPE_EXTRA = "com.liamfarrell.android.snapbattle.videoviewfragment.video_type_extra";
 	public static final String VIDEO_ROTATION_LOCK_EXTRA = "com.liamfarrell.android.snapbattle.videoviewfragment.rotation_lock_extra";
+    public static final String VIDEO_FILEPATH_EXTRA = "com.liamfarrell.android.snapbattle.videoviewfragment.video_filepath_extra";
 
 	public static final int VIDEO_TYPE_LOCAL = 1;
 	public static final int VIDEO_TYPE_STREAM = 2;
@@ -32,7 +33,7 @@ public class VideoViewFragment extends VideoPlayerAbstractFragment
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        filepath = getActivity().getIntent().getStringExtra(ViewBattleFragment.VIDEO_FILEPATH_EXTRA);
+        filepath = getActivity().getIntent().getStringExtra(VIDEO_FILEPATH_EXTRA);
     }
 
 

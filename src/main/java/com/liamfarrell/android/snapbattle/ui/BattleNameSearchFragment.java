@@ -21,9 +21,9 @@ import com.amazonaws.mobileconnectors.lambdainvoker.LambdaInvokerFactory;
 import com.amazonaws.regions.Regions;
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.LambdaFunctionsInterface;
 import com.liamfarrell.android.snapbattle.R;
+import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.BattleTypeSuggestionsSearchRequest;
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.BattleTypeSuggestionsSearchResponse;
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.SuggestionsResponse;
-import com.liamfarrell.android.snapbattle.model.lambda_function_request_objects.BattleTypeSuggestionsSearchRequest;
 import com.liamfarrell.android.snapbattle.util.HandleLambdaError;
 import com.liamfarrell.android.snapbattle.views.SimpleDividerItemDecoration;
 import com.liamfarrell.android.snapbattle.model.AsyncTaskResult;
@@ -358,7 +358,7 @@ public class BattleNameSearchFragment extends Fragment implements androidx.appco
                         public void onClick(View view) {
                             SuggestionsResponse chosenBattleName = (SuggestionsResponse) mBattleList.get(position);
                             Intent i = new Intent(getActivity(), ViewBattlesFromNameActivity.class);
-                            i.putExtra(ViewBattlesFromNameFragment.EXTRA_BATTLE_NAME, chosenBattleName.getBattleName());
+                            i.putExtra(ViewBattlesFromNameActivity.EXTRA_BATTLE_NAME, chosenBattleName.getBattleName());
                             startActivity(i);
 
                         }

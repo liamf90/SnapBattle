@@ -1,0 +1,77 @@
+package com.liamfarrell.android.snapbattle.mvvm_ui
+
+import android.app.AlertDialog
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.EditText
+import android.widget.Toast
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
+import com.liamfarrell.android.snapbattle.R
+import com.liamfarrell.android.snapbattle.adapters.FollowingListAdapter
+import com.liamfarrell.android.snapbattle.databinding.FragmentViewFollowersBinding
+import com.liamfarrell.android.snapbattle.di.AWSLambdaModule
+import com.liamfarrell.android.snapbattle.di.DaggerFollowingComponent
+import com.liamfarrell.android.snapbattle.di.FollowingViewModelFactoryModule
+import com.liamfarrell.android.snapbattle.viewmodels.FollowingViewModel
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.DividerItemDecoration
+
+
+
+class ViewFollowingFragment : Fragment() {
+
+
+    private lateinit var viewModel: FollowingViewModel
+
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+
+        val binding = FragmentViewFollowersBinding.inflate(inflater, container, false)
+        binding.lifecycleOwner = viewLifecycleOwner
+
+
+        val appComponent = DaggerFollowingComponent.builder()
+                .aWSLambdaModule(AWSLambdaModule(requireContext()))
+                .followingViewModelFactoryModule(FollowingViewModelFactoryModule())
+                .build()
+
+        viewModel = ViewModelProviders.of(this, appComponent.getFollowingViewModelFactory()).get(FollowingViewModel::class.java)
+        val adapter = FollowingListAdapter(viewModel)
+        binding.recyclerList.adapter = adapter
+        binding.recyclerList.addItemDecoration(DividerItemDecoration(context, LinearLayoutManager.VERTICAL))
+        binding.EnterUsernameManuallyButton.setOnClickListener{launchEnterUsernameDialog()}
+        binding.viewModel = viewModel
+
+        subscribeUi(adapter)
+        return binding.root
+    }
+
+    private fun subscribeUi(adapter: FollowingListAdapter) {
+        viewModel.following.observe(viewLifecycleOwner, Observer { followingList ->
+            adapter.submitList(followingList)
+        })
+
+        viewModel.errorMessage.observe(viewLifecycleOwner, Observer {
+            Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+        })
+    }
+
+    private fun launchEnterUsernameDialog() {
+            val v2 = activity!!.layoutInflater.inflate(R.layout.username_dialog, null)
+             val usernameEditText = v2.findViewById<View>(R.id.usernameTextView) as EditText
+            AlertDialog.Builder(activity)
+                    .setView(v2)
+                    .setTitle(R.string.enter_username_dialog_title)
+                    .setPositiveButton(android.R.string.ok) { dialog, _ ->
+                        dialog.cancel()
+                        viewModel.addFollowing(usernameEditText.text.toString())
+                    }
+                    .create().show()
+    }
+
+
+}
