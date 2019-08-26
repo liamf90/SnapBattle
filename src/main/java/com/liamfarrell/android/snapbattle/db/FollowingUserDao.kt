@@ -17,7 +17,7 @@ import com.liamfarrell.android.snapbattle.model.User
 interface FollowingUserDao {
 
     @Query("SELECT * FROM user")
-    fun getAllFollowingUsers(): List<User>
+    suspend fun getAllFollowingUsers(): List<User>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(users: List<User>)
@@ -26,6 +26,6 @@ interface FollowingUserDao {
     suspend fun deleteFromUser(userCognitoID: String)
 
     @Query("SELECT * FROM user WHERE LOWER(mUsername) LIKE LOWER(:searchQuery) || '%' OR LOWER(mFacebookName) LIKE LOWER(:searchQuery) || '%'")
-    fun searchUsersInCache(searchQuery: String): List<User>
+    suspend fun searchUsersInCache(searchQuery: String): List<User>
 
 }

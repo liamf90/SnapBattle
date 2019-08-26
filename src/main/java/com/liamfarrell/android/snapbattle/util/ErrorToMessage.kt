@@ -6,7 +6,6 @@ import com.amazonaws.AmazonServiceException
 import com.amazonaws.mobileconnectors.lambdainvoker.LambdaFunctionException
 import com.google.gson.JsonParser
 import com.liamfarrell.android.snapbattle.R
-import com.liamfarrell.android.snapbattle.app.App
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.LambdaFunctionsInterface
 import com.liamfarrell.android.snapbattle.util.HandleLambdaError.ALREADY_FOLLOWING_ERROR
 import java.util.*

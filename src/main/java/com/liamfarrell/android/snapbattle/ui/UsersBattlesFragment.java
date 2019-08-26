@@ -143,7 +143,7 @@ public class UsersBattlesFragment extends BattleCompletedListFragment
                 }
 
                 int oldLastIndex =  fragment.mBattles.size();
-                Log.i(TAG, "users battles received");
+                Log.i(TAG, "users topBattles received");
                 for (Battle bat: result.getUser_battles())
                 {
                     //Log.i(TAG, "Add BattlePOJO: " + bat.battleid);

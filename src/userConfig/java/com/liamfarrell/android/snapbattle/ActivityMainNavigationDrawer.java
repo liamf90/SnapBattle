@@ -10,6 +10,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
+
+import com.amazonaws.mobile.auth.core.IdentityManager;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
@@ -39,7 +41,6 @@ import com.liamfarrell.android.snapbattle.ui.HomeFeedFragment;
 import com.liamfarrell.android.snapbattle.ui.LogoutFragment;
 import com.liamfarrell.android.snapbattle.ui.NotificationListActivity;
 import com.liamfarrell.android.snapbattle.ui.ProfileFragment;
-import com.liamfarrell.android.snapbattle.mvvm_ui.SearchUsersAndBattlesActivity;
 import com.liamfarrell.android.snapbattle.mvvm_ui.ViewFollowingFragment;
 import com.liamfarrell.android.snapbattle.ui.createbattle.CreateBattleActivity;
 import com.liamfarrell.android.snapbattle.ui.createbattle.VerifyBattleFragment;
@@ -105,6 +106,8 @@ public class ActivityMainNavigationDrawer extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,
                 new IntentFilter(ChooseProfilePictureStartupFragment.PROFILE_PIC_UPDATED_BROADCAST));
+
+        //Log.i("MAINACTIVITAY", "COgnitoID: " +  IdentityManager.getDefaultIdentityManager().getCachedUserID());
 
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
         setContentView(R.layout.content_activity_main_navigation_drawer);
@@ -581,8 +584,8 @@ public class ActivityMainNavigationDrawer extends AppCompatActivity {
             return true;
         } else if (id == R.id.action_search) {
 
-            Intent intent = new Intent(this, SearchUsersAndBattlesActivity.class);
-            startActivity(intent);
+            //Intent intent = new Intent(this, SearchUsersAndBattlesActivity.class);
+            //startActivity(intent);
             //navItemIndex = 10;
             // CURRENT_TAG = TAG_SEARCH;
             //loadHomeFragment();

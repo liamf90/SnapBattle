@@ -2,24 +2,40 @@ package com.liamfarrell.android.snapbattle.data
 
 import androidx.lifecycle.LiveData
 import com.liamfarrell.android.snapbattle.db.FollowingUserDao
+import com.liamfarrell.android.snapbattle.db.FollowingUserDynamoCount
 import com.liamfarrell.android.snapbattle.db.FollowingUserDynamoDataDao
 import com.liamfarrell.android.snapbattle.model.AsyncTaskResult
 import com.liamfarrell.android.snapbattle.model.User
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class FollowingUserCacheManager @Inject constructor(
-        private val followingDynamodbRepository: UserFollowingDynamodbRepository,
-        private val userDao: FollowingUserDao,
-        private val followingUserFollowingRepository: UserFollowingRepository,
-        private val followingUserDynamoDataDao: FollowingUserDynamoDataDao)
+         val followingDynamodbRepository: UserFollowingDynamodbRepository,
+         val userDao: FollowingUserDao,
+         val followingUserFollowingRepository: UserFollowingRepository,
+         val followingUserDynamoDataDao: FollowingUserDynamoDataDao)
 {
 
 
 
 
-    suspend fun checkForUpdates() : Unit {
+    suspend fun loadFromScratch(){
+        val usersFollowing = followingUserFollowingRepository.getFollowing()
+        val usersFollowingDynamoDbCount = followingDynamodbRepository.getFollowingUpdateCountDynamo()
+        if (usersFollowing.error != null){
+            throw usersFollowing.error
+        } else{
+            withContext(Dispatchers.IO) {
+                userDao.insertAll(usersFollowing.result.sqlResult)
+                followingUserDynamoDataDao.insert(FollowingUserDynamoCount(usersFollowingDynamoDbCount))
+            }
+        }
+    }
+
+    suspend fun checkForUpdates() {
         val followingUpdateCountServer = followingDynamodbRepository.getFollowingUpdateCountDynamo()
         val followingUpdateCountCache = followingUserDynamoDataDao.getDynamoCount()
 
@@ -47,7 +63,7 @@ class FollowingUserCacheManager @Inject constructor(
         }
     }
 
-     fun getUsersInCache() : List<User> {
+     suspend fun getUsersInCache() : List<User> {
         return userDao.getAllFollowingUsers()
     }
 

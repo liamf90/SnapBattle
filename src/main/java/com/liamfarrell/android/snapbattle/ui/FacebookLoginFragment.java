@@ -493,28 +493,29 @@ public class FacebookLoginFragment extends Fragment
 	{
 		//IF CREDENTIALS PROVIDER IS NULL MAKE A NEW ONE
 
-		if (sCredentialsProvider == null)
-		{
-            Log.i(TAG, "Creating the credentials provider");
-			sCredentialsProvider = new CognitoCachingCredentialsProvider(
-					context,    /* get the context for the current activity */
-					"us-east-1:e6478f31-2dbe-4ad8-aadd-b4964691350c",    /* Identity Pool ID */
-					Regions.US_EAST_1          /* Region for your identity pool--US_EAST_1 or EU_WEST_1*/
-			);
-            if (!sCredentialsProvider.getLogins().containsKey("graph.facebook.com"))
-            {
-                Log.i(TAG, "No facebook credentials hooked up to cognito");
-            }
-
-            if (AccessToken.getCurrentAccessToken() != null)
-            {
-                Log.i(TAG, "Access token != null");
-                Map<String, String> logins = new HashMap<String, String>();
-                logins.put("graph.facebook.com", AccessToken.getCurrentAccessToken().getToken());
-                sCredentialsProvider.setLogins(logins);
-            }
-		}
-
-		return sCredentialsProvider;
+        throw new Error("Cannot access this");
+//		if (sCredentialsProvider == null)
+//		{
+//            Log.i(TAG, "Creating the credentials provider");
+//			sCredentialsProvider = new CognitoCachingCredentialsProvider(
+//					context,    /* get the context for the current activity */
+//					"us-east-1:e6478f31-2dbe-4ad8-aadd-b4964691350c",    /* Identity Pool ID */
+//					Regions.US_EAST_1          /* Region for your identity pool--US_EAST_1 or EU_WEST_1*/
+//			);
+//            if (!sCredentialsProvider.getLogins().containsKey("graph.facebook.com"))
+//            {
+//                Log.i(TAG, "No facebook credentials hooked up to cognito");
+//            }
+//
+//            if (AccessToken.getCurrentAccessToken() != null)
+//            {
+//                Log.i(TAG, "Access token != null");
+//                Map<String, String> logins = new HashMap<String, String>();
+//                logins.put("graph.facebook.com", AccessToken.getCurrentAccessToken().getToken());
+//                sCredentialsProvider.setLogins(logins);
+//            }
+//		}
+//
+//		return sCredentialsProvider;
 	}
 }

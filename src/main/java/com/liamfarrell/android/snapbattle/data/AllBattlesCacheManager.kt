@@ -3,6 +3,8 @@ package com.liamfarrell.android.snapbattle.data
 import androidx.lifecycle.MutableLiveData
 import com.liamfarrell.android.snapbattle.db.AllBattlesDynamoDataDao
 import com.liamfarrell.android.snapbattle.db.BattleDao
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -60,20 +62,20 @@ class AllBattlesCacheManager @Inject constructor(
         val battleCountDynamo = allBattlesDynamoRepository.getBattlesCountDynamo()
         val lastAllBattlesDynamoCount = allBattlesDynamoInfoDao.getDynamoCount()
 
-        //if there is more battles to be loaded from server to cache, get new ones then update old ones, else just update old ones
+        //if there is more topBattles to be loaded from server to cache, get new ones then update old ones, else just update old ones
         if (battleCountDynamo == lastAllBattlesDynamoCount) {
                 val oldBattlesList =  battleDao.getAllBattleIDs()
-                // Update old battles
+                // Update old topBattles
                 updateBattles(oldBattlesList)
 
 
         } else {
             loadingNewBattles.postValue(true)
 
-            // to update list = old battles minus new battles
+            // to update list = old topBattles minus new topBattles
             val oldBattlesList = battleDao.getAllBattleIDs()
 
-            // new battles list
+            // new topBattles list
             val startIndex = 0
 
             val endIndex = if (lastAllBattlesDynamoCount == 0){
@@ -97,7 +99,7 @@ class AllBattlesCacheManager @Inject constructor(
                 //ERROR
             }
 
-            // Update old battles
+            // Update old topBattles
             updateBattles(oldBattlesList)
         }
 
@@ -122,6 +124,14 @@ class AllBattlesCacheManager @Inject constructor(
                 //ERROR
             }
         }
+    }
+
+    suspend fun deleteBattles(){
+        withContext(Dispatchers.IO) {
+            allBattlesDynamoInfoDao.insert(AllBattlesDynamoCount())
+            battleDao.deleteAllBattles()
+        }
+
     }
 
     companion object {

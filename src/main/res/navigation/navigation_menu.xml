@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/bottomNavigationDrawerFragment">
+
+
+    <fragment
+        android:id="@+id/bottomNavigationDrawerFragment"
+        android:name="com.liamfarrell.android.snapbattle.BottomNavigationDrawerFragment"
+        android:label="BottomNavigationDrawerFragment" >
+        <action
+            android:id="@+id/action_bottomNavigationDrawerFragment_to_battleCurrentListFragment"
+            app:destination="@id/battleCurrentListFragment" />
+        <action
+            android:id="@+id/action_bottomNavigationDrawerFragment_to_battleCompletedListFragment"
+            app:destination="@id/battleCompletedListFragment" />
+        <action
+            android:id="@+id/action_bottomNavigationDrawerFragment_to_battleChallengesListFragment"
+            app:destination="@id/battleChallengesListFragment" />
+        <action
+            android:id="@+id/action_bottomNavigationDrawerFragment_to_followFacebookFriendsFragment"
+            app:destination="@id/followFacebookFriendsFragment" />
+        <action
+            android:id="@+id/action_bottomNavigationDrawerFragment_to_viewFollowingFragment"
+            app:destination="@id/viewFollowingFragment" />
+        <action
+            android:id="@+id/action_bottomNavigationDrawerFragment_to_chooseBattleTypeFragment"
+            app:destination="@+id/chooseBattleTypeFragment" />
+        <action
+            android:id="@+id/action_bottomNavigationDrawerFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/battleCurrentListFragment"
+        android:name="com.liamfarrell.android.snapbattle.mvvm_ui.BattleCurrentListFragment"
+        android:label="BattleCurrentListFragment" />
+    <fragment
+        android:id="@+id/battleCompletedListFragment"
+        android:name="com.liamfarrell.android.snapbattle.mvvm_ui.BattleCompletedListFragment"
+        android:label="BattleCompletedListFragment" />
+    <fragment
+        android:id="@+id/battleChallengesListFragment"
+        android:name="com.liamfarrell.android.snapbattle.mvvm_ui.BattleChallengesListFragment"
+        android:label="BattleChallengesListFragment" />
+    <fragment
+        android:id="@+id/followFacebookFriendsFragment"
+        android:name="com.liamfarrell.android.snapbattle.mvvm_ui.FollowFacebookFriendsFragment"
+        android:label="FollowFacebookFriendsFragment" />
+    <fragment
+        android:id="@+id/viewFollowingFragment"
+        android:name="com.liamfarrell.android.snapbattle.mvvm_ui.ViewFollowingFragment"
+        android:label="ViewFollowingFragment" />
+    <fragment
+        android:id="@+id/chooseBattleTypeFragment"
+        android:name="com.liamfarrell.android.snapbattle.mvvm_ui.create_battle.ChooseBattleTypeFragment"
+        android:label="ChooseBattleTypeFragment" >
+        <action
+            android:id="@+id/action_chooseBattleTypeFragment_to_chooseOpponentFragment"
+            app:destination="@+id/chooseOpponentFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/chooseOpponentFragment"
+        android:name="com.liamfarrell.android.snapbattle.mvvm_ui.create_battle.ChooseOpponentFragment"
+        android:label="ChooseOpponentFragment" >
+        <action
+            android:id="@+id/action_chooseOpponentFragment_to_chooseRoundsFragment"
+            app:destination="@id/chooseRoundsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/chooseRoundsFragment"
+        android:name="com.liamfarrell.android.snapbattle.mvvm_ui.create_battle.ChooseRoundsFragment"
+        android:label="ChooseRoundsFragment" >
+        <action
+            android:id="@+id/action_chooseRoundsFragment_to_chooseVotingFragment"
+            app:destination="@id/chooseVotingFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/chooseVotingFragment"
+        android:name="com.liamfarrell.android.snapbattle.mvvm_ui.create_battle.ChooseVotingFragment"
+        android:label="ChooseVotingFragment" >
+        <action
+            android:id="@+id/action_chooseVotingFragment_to_verifyBattleFragment"
+            app:destination="@id/verifyBattleFragment" />
+
+    </fragment>
+    <fragment
+        android:id="@+id/verifyBattleFragment"
+        android:name="com.liamfarrell.android.snapbattle.mvvm_ui.create_battle.VerifyBattleFragment"
+        android:label="VerifyBattleFragment" >
+        <action
+            android:id="@+id/action_verifyBattleFragment_to_bottomNavigationDrawerFragment"
+            app:destination="@id/bottomNavigationDrawerFragment" />
+        <argument
+            android:name="battleName"
+            app:argType="string" />
+        <argument
+            android:name="opponentCognitoId"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="opponentFacebookId"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="votingType"
+            app:argType="string" />
+        <argument
+            android:name="votingLength"
+            app:argType="string"
+            app:nullable="true"/>
+        <argument
+            android:name="rounds"
+            app:argType="integer" />
+    </fragment>
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.liamfarrell.android.snapbattle.mvvm_ui.ProfileFragment"
+        android:label="ProfileFragment" />
+</navigation>

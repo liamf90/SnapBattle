@@ -9,6 +9,7 @@ import java.util.Map;
 
 
 import com.amazonaws.AmazonClientException;
+import com.amazonaws.mobile.auth.core.IdentityManager;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.GetItemRequest;
@@ -255,11 +256,11 @@ public class NotificationCache {
         private int getNotificationsCountDynamo(Context context) throws AmazonClientException {
             Log.i(TAG, "Getting notifications count dynamo");
             AmazonDynamoDBClient ddbClient = new AmazonDynamoDBClient(
-                    FacebookLoginFragment.getCredentialsProvider(context));
+                    IdentityManager.getDefaultIdentityManager().getCredentialsProvider());
 
             Map<String, AttributeValue> key = new HashMap<String, AttributeValue>();
             AttributeValue val = new AttributeValue();
-            val.setS(FacebookLoginFragment.getCredentialsProvider(context).getIdentityId());
+            val.setS(IdentityManager.getDefaultIdentityManager().getCachedUserID());
             key.put("CognitoID", val);
             String projectionExpression = "notification_count";
             GetItemRequest spec = new GetItemRequest()
@@ -300,11 +301,11 @@ public class NotificationCache {
                 if (!mHasAllNotificationsSeen)
                 {
                     AmazonDynamoDBClient ddbClient = new AmazonDynamoDBClient(
-                            FacebookLoginFragment.getCredentialsProvider(context));
+                            IdentityManager.getDefaultIdentityManager().getCredentialsProvider());
 
                     Map<String, AttributeValue> key = new HashMap<String, AttributeValue>();
                     AttributeValue val = new AttributeValue();
-                    val.setS(FacebookLoginFragment.getCredentialsProvider(context).getIdentityId());
+                    val.setS(IdentityManager.getDefaultIdentityManager().getCachedUserID());
                     key.put("CognitoID", val);
 
                     Map<String, AttributeValue> notificationSeenAttribute = new HashMap<String, AttributeValue>();
@@ -341,11 +342,11 @@ public class NotificationCache {
         //So we know weather to display the unseen notification red dot or not
 
         AmazonDynamoDBClient ddbClient = new AmazonDynamoDBClient(
-                FacebookLoginFragment.getCredentialsProvider(context));
+                IdentityManager.getDefaultIdentityManager().getCredentialsProvider());
 
         Map<String, AttributeValue> key = new HashMap<String, AttributeValue>();
         AttributeValue val = new AttributeValue();
-        val.setS(FacebookLoginFragment.getCredentialsProvider(context).getIdentityId());
+        val.setS(IdentityManager.getDefaultIdentityManager().getCachedUserID());
         key.put("CognitoID", val);
         String projectionExpression = "notifications_seen";
         GetItemRequest spec = new GetItemRequest()
@@ -381,13 +382,13 @@ public class NotificationCache {
                 return notificationList;
             }
             AmazonDynamoDBClient ddbClient = new AmazonDynamoDBClient(
-                    FacebookLoginFragment.getCredentialsProvider(context));
+                    IdentityManager.getDefaultIdentityManager().getCredentialsProvider());
 
             // DynamoDBMapper mapper = new DynamoDBMapper(ddbClient);
             // NotificationFeed selectedNotification = mapper.load(NotificationFeed.class, "45");
             Map<String, AttributeValue> key = new HashMap<String, AttributeValue>();
             AttributeValue val = new AttributeValue();
-            val.setS(FacebookLoginFragment.getCredentialsProvider(context).getIdentityId());
+            val.setS(IdentityManager.getDefaultIdentityManager().getCachedUserID());
             key.put("CognitoID", val);
             Log.i(TAG, "Facebook_User_ID: "
                     + AccessToken.getCurrentAccessToken().getUserId());
@@ -430,7 +431,7 @@ public class NotificationCache {
                                     String cognitoIdChallenger = notificationsDynamo.get(i).getM().get("COGNITO_ID_CHALLENGER").getS();
                                     String challengerName = notificationsDynamo.get(i).getM().get("CHALLENGER_NAME").getS();
 
-                                    notification = new NewBattleRequestNotification(battleId, cognitoIdChallenger, challengerName);
+                                    notification = new NewBattleRequestNotification(-1,battleId, cognitoIdChallenger, challengerName);
                                     notificationList.add(notification);
                                     break;
                                }
@@ -439,7 +440,7 @@ public class NotificationCache {
                                   String cognitoIdChallenger = notificationsDynamo.get(i).getM().get("COGNITO_ID_OPPONENT").getS();
                                   String challengerName = notificationsDynamo.get(i).getM().get("OPPONENT_NAME").getS();
 
-                                  notification = new VideoSubmittedNotification(battleId, cognitoIdChallenger, challengerName);
+                                  notification = new VideoSubmittedNotification(-1,battleId, cognitoIdChallenger, challengerName);
                                   notificationList.add(notification);
                                   break;
                               }
@@ -449,14 +450,14 @@ public class NotificationCache {
                                 String opponentName = notificationsDynamo.get(i).getM().get("OPPONENT_NAME").getS();
                                 boolean battleAccepted = notificationsDynamo.get(i).getM().get("ACCEPTED").getBOOL();
 
-                                notification = new BattleAcceptedNotification(battleId, cognitoIdOpponent, opponentName, battleAccepted);
+                                notification = new BattleAcceptedNotification(-1,battleId, cognitoIdOpponent, opponentName, battleAccepted);
                                 notificationList.add(notification);
                                 break;
                             }
                             case FULL_VIDEO_CREATED: {
                                 int battleId = Integer.parseInt(notificationsDynamo.get(i).getM().get("BATTLE_ID").getN());
                                 String battleName = notificationsDynamo.get(i).getM().get("BATTLE_NAME").getS();
-                                notification = new FullVideoUploadedNotification(battleId, battleName);
+                                notification = new FullVideoUploadedNotification(-1,battleId, battleName);
                                 notificationList.add(notification);
                                 break;
                             }
@@ -466,7 +467,7 @@ public class NotificationCache {
                                 String battleName = notificationsDynamo.get(i).getM().get("BATTLE_NAME").getS();
                                 String cognitoIdCommenter = notificationsDynamo.get(i).getM().get("COGNITO_ID_COMMENTER").getS();
                                 String commenterName = notificationsDynamo.get(i).getM().get("COMMENTER_NAME").getS();
-                                notification = new NewCommentNotification(battleID, battleName, cognitoIdCommenter, commenterName);
+                                notification = new NewCommentNotification(-1,battleID, battleName, cognitoIdCommenter, commenterName);
                                 notificationList.add(notification);
                                 break;
                             }
@@ -479,14 +480,14 @@ public class NotificationCache {
                                 String cognitoIdChallenged =  notificationsDynamo.get(i).getM().get("COGNITO_ID_CHALLENGED").getS();
                                 String usernameChallenger =  notificationsDynamo.get(i).getM().get("USERNAME_CHALLENGER").getS();
                                 String usernameChallenged =  notificationsDynamo.get(i).getM().get("USERNAME_CHALLENGED").getS();
-                                notification = new TaggedInCommentNotification(battleID, battleName, cognitoIdCommenter, commenterName,usernameChallenger,usernameChallenged, cognitoIdChallenger, cognitoIdChallenged  );
+                                notification = new TaggedInCommentNotification(-1,battleID, battleName, cognitoIdCommenter, commenterName,usernameChallenger,usernameChallenged, cognitoIdChallenger, cognitoIdChallenged  );
                                 notificationList.add(notification);
                                 break;
                             }
                             case NEW_FOLLOWER : {
                                 String cognitoIdFollower = notificationsDynamo.get(i).getM().get("COGNITO_ID_FOLLOWER").getS();
                                 String followerName = notificationsDynamo.get(i).getM().get("FOLLOWER_NAME").getS();
-                                notification = new NewFollowerNotification(cognitoIdFollower, followerName);
+                                notification = new NewFollowerNotification(-1, cognitoIdFollower, followerName);
                                 notificationList.add(notification);
                                 break;
                             }
@@ -497,7 +498,7 @@ public class NotificationCache {
                                 int vote = Integer.parseInt(notificationsDynamo.get(i).getM().get("VOTE").getN());
                                 int voteOpponent = Integer.parseInt(notificationsDynamo.get(i).getM().get("VOTE_OPPONENT").getN());
                                 String votingResult = notificationsDynamo.get(i).getM().get("RESULT").getS();
-                                notification = new VotingCompleteNotification(battleid, cognitoIdOpponent, opponentName, vote, voteOpponent, votingResult);
+                                notification = new VotingCompleteNotification(-1,battleid, cognitoIdOpponent, opponentName, vote, voteOpponent, votingResult);
                                 notificationList.add(notification);
                                 break;
                             }

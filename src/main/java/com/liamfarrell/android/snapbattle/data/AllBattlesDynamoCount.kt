@@ -7,7 +7,7 @@ import java.util.*
 
 
 /*
-This class stores a single value indicating the total amount of battles in the all battles feed stored on the server.
+This class stores a single value indicating the total amount of topBattles in the all topBattles feed stored on the server.
 This value can be compared with updated battle counts to get the correct indexes to load
  */
 @Entity(tableName = "all_battles_info")

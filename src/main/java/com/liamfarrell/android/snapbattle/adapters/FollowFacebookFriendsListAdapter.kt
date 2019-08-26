@@ -62,7 +62,7 @@ class FollowFacebookFriendsListAdapter(val viewModel: FollowFacebookFriendsViewM
 }
 
 
-private class UserFacebookFriendDiffCallback : DiffUtil.ItemCallback<User>() {
+class UserFacebookFriendDiffCallback : DiffUtil.ItemCallback<User>() {
 
     override fun areItemsTheSame(oldItem: User, newItem: User): Boolean {
         return oldItem.facebookUserId == newItem.facebookUserId

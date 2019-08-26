@@ -1,14 +1,13 @@
 package com.liamfarrell.android.snapbattle.viewmodels
 
+import android.app.Application
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.viewModelScope
-import com.liamfarrell.android.snapbattle.app.App
+import com.liamfarrell.android.snapbattle.app.SnapBattleApp
 import com.liamfarrell.android.snapbattle.data.FollowingUserCacheManager
-import com.liamfarrell.android.snapbattle.data.UserFollowingRepository
 import com.liamfarrell.android.snapbattle.data.UserSearchRepository
-import com.liamfarrell.android.snapbattle.db.FollowingUserDao
 import com.liamfarrell.android.snapbattle.model.AsyncTaskResult
 import com.liamfarrell.android.snapbattle.model.User
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.GetUsersResponse
@@ -18,9 +17,9 @@ import kotlinx.coroutines.*
 
 
 /**
- * The ViewModel used in [BattleNameSearchFragment].
+ * The ViewModel used in [UserSearchFragment].
  */
-class UserSearchViewModel @Inject constructor(private val searchRepository: UserSearchRepository,
+class UserSearchViewModel @Inject constructor(private val context: Application, private val searchRepository: UserSearchRepository,
                                               private val followingUserCacheManager: FollowingUserCacheManager
                                                  ) : ViewModelLaunch() {
 
@@ -36,7 +35,7 @@ class UserSearchViewModel @Inject constructor(private val searchRepository: User
 
     val errorMessage : LiveData<String?> = Transformations.map(searchResultResponse) { asyncResult ->
         if (asyncResult.error != null){
-        getErrorMessage(App.getContext(), asyncResult.error)}
+        getErrorMessage(context, asyncResult.error)}
         else null
     }
 
@@ -59,7 +58,7 @@ class UserSearchViewModel @Inject constructor(private val searchRepository: User
         doServerSearchOverride = false
         searchQueryCurrent = searchQuery
         //clear the list
-        searchResultResponse.value = null
+        searchResultResponse.value?.result?.sqlResult?.clear()
 
         if (searchQuery.isEmpty()){return}
 

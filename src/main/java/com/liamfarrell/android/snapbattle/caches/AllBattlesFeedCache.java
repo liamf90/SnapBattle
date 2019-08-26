@@ -42,7 +42,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * An Singleton cache for filling and updating the All Battles Feed.
- * This class gets the battle id list of the all battles feed from the dynamo server, and then retrieves the battles from the mysql server.
+ * This class gets the battle id list of the all topBattles feed from the dynamo server, and then retrieves the topBattles from the mysql server.
  * Checking for updates is done by comparing the last battle count on the aws dynamo table to the stored battle count.
  * The cache is stored using AllBattlesFeedCacheFile which serializes the data using normal java serialization file saving
  */
@@ -242,7 +242,7 @@ public class AllBattlesFeedCache {
                 try {
                         if (!isThereMoreBattles(context)) {
                             // NO NEW BATTLES
-                            Log.i(TAG, "No more battles from cache to dynamo list");
+                            Log.i(TAG, "No more topBattles from cache to dynamo list");
                             // callback.OnNoNewBattles();
 
                             updateBattlesFromSQL(context, mBattleIDList,
@@ -250,8 +250,8 @@ public class AllBattlesFeedCache {
 
                         } else {
                             Log.i(TAG,
-                                    "More battles from dynamo list. Getting these..");
-                            // to update list = old battles minus new battles
+                                    "More topBattles from dynamo list. Getting these..");
+                            // to update list = old topBattles minus new topBattles
                             List<Integer> oldBattlesList = mBattleIDList;
 
                             // NEW BATTLES
@@ -269,7 +269,7 @@ public class AllBattlesFeedCache {
                                     battlesCountDynamo, null, callback);
 
 
-                            // Update old battles
+                            // Update old topBattles
                             updateBattlesFromSQL(context, oldBattlesList,
                                     callback);
 
@@ -395,13 +395,13 @@ public class AllBattlesFeedCache {
                 GetFriendsBattlesResponse response =  lambdaFunctionsInterface.GetFriendsBattles(battle);
                 final ArrayList<Battle> resultList = getBattleListFromSQLResult(response);
 
-                // add battles to map
+                // add topBattles to map
                 for (int i = 0; i < resultList.size(); i++) {
                     mAllBattlesMap.put(resultList.get(i).getBattleId(),
                             resultList.get(i));
 
                 }
-                // add battles to start of battle id
+                // add topBattles to start of battle id
                 for (int i = battleIDList.size() - 1; i >= 0; i--) {
 
                     mBattleIDList.addFirst(battleIDList
@@ -501,7 +501,7 @@ public class AllBattlesFeedCache {
             GetFriendsBattlesResponse response =  lambdaFunctionsInterface.GetFriendsBattles(battle);
             ArrayList<Battle> resultList = getBattleListFromSQLResult(response);
 
-            // add battles to map
+            // add topBattles to map
             for (int i = 0; i < resultList.size(); i++) {
                 mAllBattlesMap.put(resultList.get(i).getBattleId(),
                         resultList.get(i));
@@ -510,7 +510,7 @@ public class AllBattlesFeedCache {
             mBattleIDList.addAll(battleIDList);
 
 
-            Log.i(TAG, "More battles loaded. " + mBattleIDList.toString());
+            Log.i(TAG, "More topBattles loaded. " + mBattleIDList.toString());
             Log.i(TAG, "F Map: " + mAllBattlesMap.toString());
             mainHandler.post(new Runnable() {
                 @Override
@@ -547,7 +547,7 @@ public class AllBattlesFeedCache {
 
 
     private boolean isThereMoreBattles(Context context) throws AmazonClientException {
-        Log.i(TAG, "Getting battles count dynamo");
+        Log.i(TAG, "Getting topBattles count dynamo");
 
 
         int battlesCountDynamo = getBattlesCountDynamo(context);
@@ -682,8 +682,8 @@ public class AllBattlesFeedCache {
                 try {
                     boolean noMoreBattles = false;
 
-                    Log.i(TAG, "Loading more battles.. mlastbattlecount = " + mLastAllBattleCount + ", " +
-                            "battles count dynamo" + getBattlesCountDynamo(context) + ", mbattlesize: " + mBattleIDList.size());
+                    Log.i(TAG, "Loading more topBattles.. mlastbattlecount = " + mLastAllBattleCount + ", " +
+                            "topBattles count dynamo" + getBattlesCountDynamo(context) + ", mbattlesize: " + mBattleIDList.size());
 
                     int totalBattlesCountDynamo = getBattlesCountDynamo(context);
 

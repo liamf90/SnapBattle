@@ -1,12 +1,14 @@
 package com.liamfarrell.android.snapbattle.model;
 
+import android.content.Context;
+
 import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.HttpMethod;
 import com.liamfarrell.android.snapbattle.R;
-import com.liamfarrell.android.snapbattle.ui.createbattle.ChooseVotingFragment;
-import com.liamfarrell.android.snapbattle.app.App;
+import com.liamfarrell.android.snapbattle.app.SnapBattleApp;
+import com.liamfarrell.android.snapbattle.mvvm_ui.create_battle.ChooseVotingFragment;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -72,33 +74,33 @@ public class Voting implements Serializable {
         return mVoteChallenged;
     }
 
-    public String getChallengerVotingResult()
+    public String getChallengerVotingResult(Context context)
     {
         if (getVoteChallenger() > getVoteChallenged())
         {
-            return App.getContext().getResources().getString(R.string.winner);
+            return context.getResources().getString(R.string.winner);
         }
         else if (getVoteChallenger() < getVoteChallenged())
         {
-            return App.getContext().getResources().getString(R.string.loser);
+            return context.getResources().getString(R.string.loser);
         }
         else
         {
-            return App.getContext().getResources().getString(R.string.draw);
+            return context.getResources().getString(R.string.draw);
         }
     }
-    public String getChallengedVotingResult()
+    public String getChallengedVotingResult(Context context)
     {
         if (getVoteChallenged() > getVoteChallenger())
         {
-            return App.getContext().getResources().getString(R.string.winner);		}
+            return context.getResources().getString(R.string.winner);		}
         else if (getVoteChallenged() < getVoteChallenger())
         {
-            return App.getContext().getResources().getString(R.string.loser);
+            return context.getResources().getString(R.string.loser);
         }
         else
         {
-            return App.getContext().getResources().getString(R.string.draw);
+            return context.getResources().getString(R.string.draw);
         }
     }
 

@@ -22,7 +22,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.liamfarrell.android.snapbattle.R;
-import com.liamfarrell.android.snapbattle.ui.AllBattlesListFragment;
+import com.liamfarrell.android.snapbattle.mvvm_ui.AllBattlesFragment;
 import com.liamfarrell.android.snapbattle.mvvm_ui.FollowingBattlesFeedFragment;
 
 import java.util.ArrayList;
@@ -30,7 +30,7 @@ import java.util.List;
 
 public class HomeFeedFragment extends Fragment {
 
-    private AllBattlesListFragment mAllBattlesListFragment;
+    private AllBattlesFragment mAllBattlesListFragment;
     private FollowingBattlesFeedFragment mFollowingBattlesListFragment;
     private TabLayout tabLayout;
 
@@ -40,7 +40,7 @@ public class HomeFeedFragment extends Fragment {
 
         Log.i("HomeFeed", "On Create View");
         if (mAllBattlesListFragment == null) {
-            mAllBattlesListFragment = new AllBattlesListFragment();
+            mAllBattlesListFragment = new AllBattlesFragment();
         }
         if (mFollowingBattlesListFragment == null) {
             mFollowingBattlesListFragment = new FollowingBattlesFeedFragment();

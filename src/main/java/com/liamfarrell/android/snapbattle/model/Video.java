@@ -1,7 +1,5 @@
 package com.liamfarrell.android.snapbattle.model;
 
-import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
 import android.media.MediaMetadataRetriever;
@@ -11,12 +9,10 @@ import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.PrimaryKey;
 
-import com.liamfarrell.android.snapbattle.app.App;
+import com.liamfarrell.android.snapbattle.app.SnapBattleApp;
 import com.liamfarrell.android.snapbattle.R;
 
 import java.io.File;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
@@ -82,31 +78,31 @@ public class Video
 		mUploaded = uploaded;
 	}
 
-	public static String getTimeSince(Date dateBeforeNow)
+	public static String getTimeSince( Context context, Date dateBeforeNow)
 	{
 		Calendar cal = Calendar.getInstance();
 		cal.setTimeZone(TimeZone.getTimeZone("UTC"));
 		Date timeNow = cal.getTime();
-		return getTimeBetween(dateBeforeNow, timeNow, false) + " " +  App.getContext().getResources().getText(R.string.ago);
+		return getTimeBetween(context, dateBeforeNow, timeNow, false) + " " +  context.getResources().getText(R.string.ago);
 	}
-	public static String getTimeSinceShorthand(Date dateBeforeNow)
+	public static String getTimeSinceShorthand(Context context, Date dateBeforeNow)
 	{
 		Calendar cal = Calendar.getInstance();
 		cal.setTimeZone(TimeZone.getTimeZone("UTC"));
 		Date timeNow = cal.getTime();
-		return getTimeBetween(dateBeforeNow, timeNow, true) + " ";
+		return getTimeBetween(context, dateBeforeNow, timeNow, true) + " ";
 	}
 	//TimeBefore and TimeAfter
-	public static String getTimeUntil(Date dateAfterNow)
+	public static String getTimeUntil(Context context, Date dateAfterNow)
 	{
 		Calendar cal = Calendar.getInstance();
 		cal.setTimeZone(TimeZone.getTimeZone("UTC"));
 		Date timeNow = cal.getTime();
 		
-		return getTimeBetween(timeNow, dateAfterNow, false);
+		return getTimeBetween(context, timeNow, dateAfterNow, false);
 	}
 
-	private static String getTimeBetween(Date before, Date after, boolean shortHandVersion)
+	private static String getTimeBetween(Context context, Date before, Date after, boolean shortHandVersion)
 	{
 		if (after == null || before == null)
 		{
@@ -137,7 +133,7 @@ public class Video
  
         long elapsedMinutes = timeDifference / minutesInMilli;
         String timeSinceString = "";
-		Resources res = App.getContext().getResources();
+		Resources res = context.getResources();
         
         if (totalMinutes ==1 )
         {
@@ -206,9 +202,9 @@ public class Video
         return timeSinceString;
 	}
 	
-	public String getTimeSinceUploaded()
+	public String getTimeSinceUploaded(Context context)
 	{
-		return getTimeSince(mDateUploaded);
+		return getTimeSince(context, mDateUploaded);
 
 	}
 	

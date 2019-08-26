@@ -7,8 +7,8 @@ import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
 
+import com.liamfarrell.android.snapbattle.app.SnapBattleApp;
 import com.liamfarrell.android.snapbattle.ui.FullBattleVideoPlayerActivity;
-import com.liamfarrell.android.snapbattle.app.App;
 import com.liamfarrell.android.snapbattle.R;
 import com.liamfarrell.android.snapbattle.model.Battle;
 
@@ -21,9 +21,9 @@ public class TaggedInCommentNotification extends Notification {
     private String mChallengerCognitoId;
     private String mChallengedCognitoId;
 
-    public TaggedInCommentNotification(int battleID , String battleName, String opponent_cognito_id, String opponentName, String challengerUsername, String challengedUsername, String challengerCognitoId, String challengedCognitoId)
+    public TaggedInCommentNotification(int notificationIndex, int battleID , String battleName, String opponent_cognito_id, String opponentName, String challengerUsername, String challengedUsername, String challengerCognitoId, String challengedCognitoId)
     {
-        super(battleID);
+        super(notificationIndex,battleID);
         mOpponentCognitoId = opponent_cognito_id;
         mOpponentName = opponentName;
         mBattleName = battleName;
@@ -45,12 +45,12 @@ public class TaggedInCommentNotification extends Notification {
     }
 
     @Override
-    public SpannableStringBuilder getMessage() {
+    public SpannableStringBuilder getMessage(Context context) {
         SpannableStringBuilder longDescription = new SpannableStringBuilder();
         longDescription.append(mOpponentName);
         longDescription.setSpan(new ForegroundColorSpan(0xFFCC5500), 0, longDescription.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         longDescription.setSpan(new StyleSpan(android.graphics.Typeface.BOLD), 0, longDescription.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        longDescription.append(App.getContext().getResources().getString(R.string.tagged_in_comment_notification_append, mBattleName));
+        longDescription.append(context.getResources().getString(R.string.tagged_in_comment_notification_append, mBattleName));
 
         return longDescription;
     }
@@ -58,5 +58,29 @@ public class TaggedInCommentNotification extends Notification {
     @Override
     public String getOpponentCognitoId() {
         return mOpponentCognitoId;
+    }
+
+    public String getOpponentName() {
+        return mOpponentName;
+    }
+
+    public String getBattleName() {
+        return mBattleName;
+    }
+
+    public String getChallengerUsername() {
+        return mChallengerUsername;
+    }
+
+    public String getChallengedUsername() {
+        return mChallengedUsername;
+    }
+
+    public String getChallengerCognitoId() {
+        return mChallengerCognitoId;
+    }
+
+    public String getChallengedCognitoId() {
+        return mChallengedCognitoId;
     }
 }

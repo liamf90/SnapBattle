@@ -1,97 +1,121 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="@dimen/user_info_header_height"
-    android:layout_gravity="bottom"
-    android:layout_marginBottom="@dimen/activity_vertical_margin"
-    app:layout_collapseMode="none">
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/profileImageView"
-        android:layout_width="@dimen/user_info_header_profile_pic_width"
-        android:layout_height="@dimen/user_info_header_profile_pic_height"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginStart="@dimen/user_info_header_profile_pic_margin_start"
-        android:layout_marginTop="@dimen/user_info_header_margins_default"
-        android:paddingBottom="@dimen/user_info_header_margins_default"
-        android:src="@drawable/default_profile_pic"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+<layout>
+    <data>
+        <variable
+            name="user"
+            type="com.liamfarrell.android.snapbattle.model.User" />
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/addOrRemoveFollowButton"
-        app:backgroundTint="@color/secondary_text_light"
-        android:textColor="@color/primary_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/user_info_header_margins_default"
-        android:layout_marginTop="@dimen/user_info_header_margins_default"
-        android:layout_toEndOf="@id/profileImageView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        <import type="android.view.View"/>
+        <variable
+            name="unfollowUserClickListener"
+            type="android.view.View.OnClickListener"/>
+        <variable
+            name="followUserClickListener"
+            type="android.view.View.OnClickListener"/>
+    </data>
 
-    <TextView
-        android:id="@+id/nameTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/user_info_header_margins_default"
-        android:layout_marginTop="@dimen/name_text_view_margin_top"
-        android:textSize="14sp"
-        app:layout_constraintStart_toEndOf="@+id/profileImageView"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout2" />
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/user_info_header_height"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        app:layout_collapseMode="none">
 
-    <LinearLayout
-        android:id="@+id/followersLinearLayout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="@dimen/user_info_header_margins_default"
-        android:gravity="center_horizontal"
-        android:orientation="vertical"
-        app:layout_constraintStart_toEndOf="@+id/linearLayout2"
-        app:layout_constraintTop_toTopOf="parent">
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/profileImageView"
+            android:layout_width="@dimen/user_info_header_profile_pic_width"
+            android:layout_height="@dimen/user_info_header_profile_pic_height"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginStart="@dimen/user_info_header_profile_pic_margin_start"
+            android:layout_marginTop="@dimen/user_info_header_margins_default"
+            android:paddingBottom="@dimen/user_info_header_margins_default"
+            android:src="@drawable/default_profile_pic"
+            app:profileImage="@{user.profilePicCount != 0 ? user.profilePicSignedUrl : null}"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/addOrRemoveFollowButton"
+            app:backgroundTint="@color/secondary_text_light"
+            android:textColor="@color/primary_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/followers"
-            android:textColor="@android:color/white"
-            android:textStyle="bold" />
+            android:layout_marginEnd="@dimen/user_info_header_margins_default"
+            android:layout_marginTop="@dimen/user_info_header_margins_default"
+            android:layout_toEndOf="@id/profileImageView"
+            android:onClick="@{user.isFollowing ? unfollowUserClickListener : followUserClickListener}"
+            android:text="@{user.isFollowing ? @string/unfollow : @string/follow}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/followers_count_text_view"
+            android:id="@+id/nameTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@android:color/white" />
+            android:layout_marginStart="@dimen/user_info_header_margins_default"
+            android:layout_marginTop="@dimen/name_text_view_margin_top"
+            android:text="@{user.facebookName}"
+            android:textSize="14sp"
+            app:layout_constraintStart_toEndOf="@+id/profileImageView"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout2" />
 
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/linearLayout2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/user_info_header_margins_default"
-        android:layout_marginTop="@dimen/user_info_header_margins_default"
-        android:gravity="center_horizontal"
-        android:orientation="vertical"
-        app:layout_constraintStart_toEndOf="@+id/profileImageView"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <TextView
-            android:id="@+id/textView4"
+        <LinearLayout
+            android:id="@+id/followersLinearLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/battles"
-            android:textColor="@android:color/white"
-            android:textStyle="bold" />
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="@dimen/user_info_header_margins_default"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            app:layout_constraintStart_toEndOf="@+id/linearLayout2"
+            app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/battles_count_textview"
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/followers"
+                android:textColor="@android:color/white"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/followers_count_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{Integer.toString(user.followingCount)}"
+                android:textColor="@android:color/white" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linearLayout2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@android:color/white" />
-    </LinearLayout>
-</androidx.constraintlayout.widget.ConstraintLayout>
+            android:layout_marginStart="@dimen/user_info_header_margins_default"
+            android:layout_marginTop="@dimen/user_info_header_margins_default"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            app:layout_constraintStart_toEndOf="@+id/profileImageView"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/textView4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/battles"
+                android:textColor="@android:color/white"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/battles_count_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/white"
+                android:text="@{Integer.toString(user.battleCount)}"
+                />
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

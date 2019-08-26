@@ -1,116 +1,145 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-	android:layout_marginTop="@dimen/activity_vertical_margin"
-	android:layout_marginLeft="@dimen/activity_horizontal_margin"
-    android:id="@+id/coordinatorLayout"
-     >
+<layout>
 
-<LinearLayout
+	<data>
+		<import type="android.view.View" />
 
-	android:layout_width="match_parent"
-	android:layout_height="wrap_content"
-	android:orientation="vertical">
+		<variable
+			name="updateNameOnClickListener"
+			type="android.view.View.OnClickListener" />
 
-	<de.hdodenhof.circleimageview.CircleImageView
+		<variable
+			name="updateUsernameOnClickListener"
+			type="android.view.View.OnClickListener" />
 
-		xmlns:app="http://schemas.android.com/apk/res-auto"
-		android:id="@+id/profileImageView"
-		android:layout_width="@dimen/profile_pic_fragment_profile_width"
-		android:layout_height="@dimen/profile_pic_fragment_profile_height"
-		app:civ_border_width="@dimen/profile_pic_border_width"
-		app:civ_border_color="@color/profile_pic_border"
-		android:layout_gravity="center_horizontal"
-		android:src="@drawable/default_profile_pic"
-		/>
+		<variable
+			name="updateProfilePicOnClickListener"
+			type="android.view.View.OnClickListener" />
+
+
+		<variable
+			name="viewModel"
+			type="com.liamfarrell.android.snapbattle.viewmodels.ProfileViewModel" />
+
+	</data>
 
 
 
-    <Button
-        android:id="@+id/changeProfilePictureButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        style="@style/transparent"
-        android:textColor="@color/secondary_text_dark"
-        android:text="@string/change_profile_picture"/>
-    
-    
-    <LinearLayout
-        android:layout_marginTop="@dimen/profile_pic_bottom_margin"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-    	android:orientation="vertical">
-    	<TextView
-        	android:layout_width="wrap_content"
-        	android:layout_height="wrap_content"
-			android:textColor="@android:color/darker_gray"
-			android:textSize="12sp"
-        	android:text="@string/username"/>
-    	<EditText
-			android:maxLines="1"
-    	    android:id="@+id/usernameEditText"
-            android:inputType="text"
-            android:imeOptions="actionDone"
-    	    android:layout_width="match_parent"
-    	    android:layout_height="wrap_content" />
-        <Button
-            android:visibility="gone"
-            android:id="@+id/changeUsernameButton"
-            android:textColor="@color/secondary_text_dark"
-            android:text="@string/save"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"/>
+	<androidx.coordinatorlayout.widget.CoordinatorLayout
+		xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:android="http://schemas.android.com/apk/res/android"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:id="@+id/coordinatorLayout">
 
-
-   	</LinearLayout>
 	<LinearLayout
-		android:layout_marginTop="@dimen/element_vertical_spacing_default"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
+		android:layout_marginTop="@dimen/activity_vertical_margin"
+		android:layout_marginStart="@dimen/activity_horizontal_margin"
 		android:orientation="vertical">
-		<TextView
+
+		<de.hdodenhof.circleimageview.CircleImageView
+			xmlns:app="http://schemas.android.com/apk/res-auto"
+			android:id="@+id/profileImageView"
+			android:layout_width="@dimen/profile_pic_fragment_profile_width"
+			android:layout_height="@dimen/profile_pic_fragment_profile_height"
+			app:civ_border_width="@dimen/profile_pic_border_width"
+			app:civ_border_color="@color/profile_pic_border"
+			android:layout_gravity="center_horizontal"
+			/>
+
+		<Button
+			android:id="@+id/changeProfilePictureButton"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:textColor="@android:color/darker_gray"
-			android:textSize="12sp"
-			android:text="@string/name"/>
-		<EditText
-			android:maxLines="1"
-            android:imeOptions="actionDone"
-            android:inputType="text"
-			android:id="@+id/nameEditText"
+			android:layout_gravity="center_horizontal"
+			style="@style/transparent"
+			android:onClick="@{updateProfilePicOnClickListener}"
+			android:textColor="@color/secondary_text_dark"
+			android:text="@string/change_profile_picture"/>
+
+
+		<LinearLayout
+			android:layout_marginTop="@dimen/profile_pic_bottom_margin"
 			android:layout_width="match_parent"
-			android:layout_height="wrap_content" />
-        <Button
-            android:visibility="gone"
-            android:id="@+id/changeNameButton"
-            android:text="@string/save"
-            android:textColor="@color/secondary_text_dark"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"/>
+			android:layout_height="wrap_content"
+			android:orientation="vertical">
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:textColor="@android:color/darker_gray"
+				android:textSize="12sp"
+				android:text="@string/username"/>
+			<EditText
+				android:maxLines="1"
+				android:id="@+id/usernameEditText"
+				android:inputType="text"
+				android:text="@{viewModel.profile.username}"
+				android:imeOptions="actionDone"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content" />
+			<Button
+				android:visibility="gone"
+				android:id="@+id/changeUsernameButton"
+				android:textColor="@color/secondary_text_dark"
+				android:text="@string/save"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_gravity="center_horizontal"
+				android:onClick="@{updateUsernameOnClickListener}"
+				/>
+
+
+		</LinearLayout>
+		<LinearLayout
+			android:layout_marginTop="@dimen/element_vertical_spacing_default"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="vertical">
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:textColor="@android:color/darker_gray"
+				android:textSize="12sp"
+				android:text="@string/name"/>
+			<EditText
+				android:maxLines="1"
+				android:imeOptions="actionDone"
+				android:inputType="text"
+				android:id="@+id/nameEditText"
+				android:text="@{viewModel.profile.facebookName}"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content" />
+			<Button
+				android:visibility="gone"
+				android:id="@+id/changeNameButton"
+				android:text="@string/save"
+				android:textColor="@color/secondary_text_dark"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_gravity="center_horizontal"
+				android:onClick="@{updateNameOnClickListener}"
+				/>
+
+
+		</LinearLayout>
 
 
 	</LinearLayout>
+		<FrameLayout
+			android:id="@+id/progressContainer"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			app:showProgress="@{safeUnbox(viewModel.spinner)}"
+			android:clickable="true"
+			android:focusable="true">
+			<ProgressBar
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_gravity="center"
+				android:theme="@style/MyMaterialTheme.Base"
+				/>
 
-
-</LinearLayout>
-	<FrameLayout
-		android:id="@+id/progressContainer"
-		android:layout_width="match_parent"
-		android:layout_height="match_parent"
-		android:clickable="true"
-		android:focusable="true">
-		<ProgressBar
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_gravity="center"
-			android:theme="@style/MyMaterialTheme.Base"
-			/>
-
-	</FrameLayout>
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+		</FrameLayout>
+	</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</layout>

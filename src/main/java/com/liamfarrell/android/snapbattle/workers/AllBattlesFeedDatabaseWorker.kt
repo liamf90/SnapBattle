@@ -5,7 +5,7 @@ import android.util.Log
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.liamfarrell.android.snapbattle.data.AllBattlesDynamoCount
-import com.liamfarrell.android.snapbattle.db.AllBattlesDatabase
+import com.liamfarrell.android.snapbattle.db.SnapBattleDatabase
 import kotlinx.coroutines.coroutineScope
 
 class AllBattlesFeedDatabaseWorker(
@@ -18,7 +18,7 @@ class AllBattlesFeedDatabaseWorker(
     override suspend fun doWork(): Result = coroutineScope {
 
         try {
-            val database = AllBattlesDatabase.getInstance(applicationContext)
+            val database = SnapBattleDatabase.getInstance(applicationContext)
             database.allBattlesDynamoDataDao().insert(AllBattlesDynamoCount())
             Result.success()
             }

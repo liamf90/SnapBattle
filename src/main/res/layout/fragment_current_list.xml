@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-     >
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	xmlns:app="http://schemas.android.com/apk/res-auto">
     
       <androidx.recyclerview.widget.RecyclerView
 		  android:id="@+id/recyclerList"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:drawSelectorOnTop="false"
-            />
+		  app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+		  />
 	<FrameLayout
 	    android:id="@+id/current_list_progressContainer"
 	    android:layout_width="match_parent"

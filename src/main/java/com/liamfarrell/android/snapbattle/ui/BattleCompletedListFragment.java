@@ -27,7 +27,7 @@ import com.amazonaws.regions.Regions;
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.deserializers.CustomLambdaDataBinder;
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.LambdaFunctionsInterface;
 import com.liamfarrell.android.snapbattle.R;
-import com.liamfarrell.android.snapbattle.ui.createbattle.ChooseVotingFragment;
+import com.liamfarrell.android.snapbattle.mvvm_ui.create_battle.ChooseVotingFragment;
 import com.liamfarrell.android.snapbattle.model.AsyncTaskResult;
 import com.liamfarrell.android.snapbattle.model.Battle;
 import com.liamfarrell.android.snapbattle.model.Video;
@@ -315,14 +315,14 @@ public class BattleCompletedListFragment extends Fragment
 			Picasso.get().cancelRequest(holder.thumbnailImageView);
 			holder.thumbnailImageView.setImageResource(R.drawable.placeholder1440x750);
 			holder.battleNameTextView.setText(res.getString(R.string.battle_name, battleName));
-			holder.battleStatusTextView.setText(b.getCompletedBattleStatus());
+			holder.battleStatusTextView.setText(b.getCompletedBattleStatus(getContext()));
 			holder.battleRoundsTextView.setText(res.getQuantityString(R.plurals.rounds, b.getRounds(), b.getRounds()));
 			holder.likeCountTextView.setText(res.getQuantityString(R.plurals.likes, b.getLikeCount(), b.getLikeCount()));
 			holder.dislikeCounTextView.setText(res.getQuantityString(R.plurals.dislikes, b.getDislikeCount(), b.getDislikeCount()));
 			holder.challengerUsernameTextView.setText(b.getChallengerUsername());
 			holder.challengedUsernameTextView.setText(b.getChallengedUsername());
 			holder.videoViewCountTextView.setText(res.getString(R.string.video_views, b.getVideoViewCount()));
-            holder.votingTypeTextView.setText(b.getVoting().getVotingChoice().getLongStyle());
+            holder.votingTypeTextView.setText(b.getVoting().getVotingChoice().toLongStyleString(getContext()));
 
             holder.challengerUsernameTextView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -393,7 +393,7 @@ public class BattleCompletedListFragment extends Fragment
 
 
 					holder.timeUntilVoteEndsTextView.setVisibility(View.VISIBLE);
-					holder.timeUntilVoteEndsTextView.setText(res.getString(R.string.voting_time_left, Video.getTimeUntil(b.getVoting().getVotingTimeEnd())));
+					holder.timeUntilVoteEndsTextView.setText(res.getString(R.string.voting_time_left, Video.getTimeUntil(getContext(), b.getVoting().getVotingTimeEnd())));
 				} else if (b.getVoting().getVotingTimeEnd() != null && !b.getVoting().getVotingTimeEnd().after(new Date(System.currentTimeMillis())))
 				{
 					//voting has finished
@@ -404,8 +404,8 @@ public class BattleCompletedListFragment extends Fragment
 					holder.challengedResultTextView.setVisibility(View.VISIBLE);
 					holder.challengerVotesTextView.setVisibility(View.VISIBLE);
 					holder.challengedVotesTextView.setVisibility(View.VISIBLE);
-					holder.challengerResultTextView.setText(b.getVoting().getChallengerVotingResult());
-					holder.challengedResultTextView.setText(b.getVoting().getChallengedVotingResult());
+					holder.challengerResultTextView.setText(b.getVoting().getChallengerVotingResult(getContext()));
+					holder.challengedResultTextView.setText(b.getVoting().getChallengedVotingResult(getContext()));
 					holder.challengerVotesTextView.setText(res.getQuantityString(R.plurals.votes, b.getVoting().getVoteChallenger(), b.getVoting().getVoteChallenger()));
 					holder.challengedVotesTextView.setText(res.getQuantityString(R.plurals.votes, b.getVoting().getVoteChallenged(), b.getVoting().getVoteChallenged()));
 				}

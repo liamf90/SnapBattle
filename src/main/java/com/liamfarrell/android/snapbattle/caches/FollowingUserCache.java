@@ -41,9 +41,9 @@ import java.util.concurrent.ConcurrentHashMap;
  * The cache updates subsequently by comparing the caches saved following updated count to the aws dynamo nosql field 'Following_updated_count' for the CognitoId of the user.
  * If there is a difference the cache retrieves the commands to ADD, REMOVE, UPDATE_USERNAME or UPDATE_NAME for users
  *
- * This cache is used to check if the user is still following an opponent on the following battles feed. For example if an user unfollows someone, this cache will update and remove
+ * This cache is used to check if the user is still following an opponent on the following topBattles feed. For example if an user unfollows someone, this cache will update and remove
  * the user from the following cache.
- * and an check will be done when looking at the following battles feed if the user is still following the user, since they are not following anymore, the battle will not be shown.
+ * and an check will be done when looking at the following topBattles feed if the user is still following the user, since they are not following anymore, the battle will not be shown.
  *
  * The cache is stored using FollowerFile which serializes the data using normal java serialization file saving
  */

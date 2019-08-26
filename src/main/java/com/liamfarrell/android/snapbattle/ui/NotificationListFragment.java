@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
+import com.amazonaws.mobile.auth.core.IdentityManager;
 import com.amazonaws.mobileconnectors.lambdainvoker.LambdaFunctionException;
 import com.amazonaws.mobileconnectors.lambdainvoker.LambdaInvokerFactory;
 import com.amazonaws.regions.Regions;
@@ -196,7 +197,7 @@ public class NotificationListFragment extends Fragment
         LambdaInvokerFactory factory = new LambdaInvokerFactory(
                 activityReference.get().getApplicationContext(),
                 Regions.US_EAST_1,
-                FacebookLoginFragment.getCredentialsProvider(activityReference.get().getApplicationContext()));
+                IdentityManager.getDefaultIdentityManager().getCredentialsProvider());
 
         // Create the Lambda proxy object with default Json data binder.
         // You can provide your own data binder by implementing
@@ -261,7 +262,7 @@ public class NotificationListFragment extends Fragment
 
                         for (int i = 0; i < fragment.mNotifications.size(); i++) {
                             Notification n = fragment.mNotifications.get(i);
-                            Log.i("Notification", n.getMessage().toString() + ", signed url: " + newSignedUrl.getNewSignedUrl());
+                            Log.i("Notification", n.getMessage(activityReference.get()).toString() + ", signed url: " + newSignedUrl.getNewSignedUrl());
                             if (    n.getOpponentCognitoId().equals(newSignedUrl.getCognitoId()) &&
                                     (n.getSignedUrlProfilePicOpponent() == null || newSignedUrl.getProfilePicCount() > n.getOpponentProfilePicCount()))
                                     {
@@ -328,7 +329,7 @@ public class NotificationListFragment extends Fragment
                     startActivity(n.getIntent(getActivity()));
                 }
             });
-            holder.messageTextView.setText(n.getMessage());
+            holder.messageTextView.setText(n.getMessage(getContext()));
             //Cancel the previous set profile pic request, if it exists
             Picasso.get().cancelRequest(holder.profiePic);
             holder.profiePic.setImageResource(R.drawable.default_profile_pic100x100);

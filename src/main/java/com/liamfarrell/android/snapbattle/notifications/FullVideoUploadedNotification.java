@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.text.SpannableStringBuilder;
 
-import com.liamfarrell.android.snapbattle.app.App;
+import com.liamfarrell.android.snapbattle.app.SnapBattleApp;
 import com.liamfarrell.android.snapbattle.R;
 import com.liamfarrell.android.snapbattle.ui.ViewBattleActivity;
 import com.liamfarrell.android.snapbattle.ui.ViewBattleFragment;
@@ -15,9 +15,9 @@ import com.liamfarrell.android.snapbattle.ui.ViewBattleFragment;
 
 public class FullVideoUploadedNotification extends Notification {
     private String mBattleName;
-    public FullVideoUploadedNotification(int battleID, String battleName)
+    public FullVideoUploadedNotification(int notificationIndex,int battleID, String battleName)
     {
-        super(battleID);
+        super(notificationIndex, battleID);
         mBattleName = battleName;
 
     }
@@ -30,10 +30,10 @@ public class FullVideoUploadedNotification extends Notification {
     }
 
     @Override
-    public SpannableStringBuilder getMessage()
+    public SpannableStringBuilder getMessage(Context context)
     {
         SpannableStringBuilder longDescription = new SpannableStringBuilder();
-        longDescription.append(App.getContext().getResources().getString(R.string.full_video_uploaded_notification_append, mBattleName));
+        longDescription.append(context.getResources().getString(R.string.full_video_uploaded_notification_append, mBattleName));
         return longDescription;
     }
 
@@ -42,4 +42,7 @@ public class FullVideoUploadedNotification extends Notification {
         return null;
     }
 
+    public String getBattleName() {
+        return mBattleName;
+    }
 }

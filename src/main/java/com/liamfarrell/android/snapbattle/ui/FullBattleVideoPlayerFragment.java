@@ -42,7 +42,7 @@ import com.liamfarrell.android.snapbattle.model.lambda_function_request_objects.
 import com.liamfarrell.android.snapbattle.model.lambda_function_request_objects.UndoLikeRequest;
 import com.liamfarrell.android.snapbattle.util.HandleLambdaError;
 import com.liamfarrell.android.snapbattle.views.VideoControllerView;
-import com.liamfarrell.android.snapbattle.ui.createbattle.ChooseVotingFragment;
+import com.liamfarrell.android.snapbattle.mvvm_ui.create_battle.ChooseVotingFragment;
 import com.liamfarrell.android.snapbattle.model.AsyncTaskResult;
 import com.liamfarrell.android.snapbattle.model.Battle;
 

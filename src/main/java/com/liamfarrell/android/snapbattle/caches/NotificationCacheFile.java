@@ -9,6 +9,8 @@ import java.io.Writer;
 import java.util.LinkedList;
 import android.content.Context;
 import android.util.Log;
+
+import com.amazonaws.mobile.auth.core.IdentityManager;
 import com.facebook.AccessToken;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -80,7 +82,7 @@ public class NotificationCacheFile {
 
     private String getFilename()
     {
-        return  FacebookLoginFragment.getCredentialsProvider(context).getIdentityId() + "-" + "NotificationsJson";
+        return  IdentityManager.getDefaultIdentityManager().getCachedUserID() + "-" + "NotificationsJson";
     }
 
 

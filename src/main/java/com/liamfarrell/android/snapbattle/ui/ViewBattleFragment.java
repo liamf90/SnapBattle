@@ -35,6 +35,7 @@ import android.widget.Toast;
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
+import com.amazonaws.mobile.auth.core.IdentityManager;
 import com.amazonaws.mobileconnectors.lambdainvoker.LambdaFunctionException;
 import com.amazonaws.mobileconnectors.lambdainvoker.LambdaInvokerFactory;
 import com.amazonaws.regions.Regions;
@@ -55,7 +56,7 @@ import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserializat
 import com.liamfarrell.android.snapbattle.R;
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.VideoSubmittedRequest;
 import com.liamfarrell.android.snapbattle.mvvm_ui.ViewCommentsFragment;
-import com.liamfarrell.android.snapbattle.ui.createbattle.ChooseVotingFragment;
+import com.liamfarrell.android.snapbattle.mvvm_ui.create_battle.ChooseVotingFragment;
 import com.liamfarrell.android.snapbattle.model.AsyncTaskResult;
 import com.liamfarrell.android.snapbattle.model.Battle;
 import com.liamfarrell.android.snapbattle.model.Video;
@@ -450,10 +451,10 @@ public class ViewBattleFragment extends ListFragment
 			
 			switch(video.getVideoStatus(mBattle.getVideosUploaded(), FacebookLoginFragment.getCredentialsProvider(getActivity()).getIdentityId())) {
                 case RECEIVED:
-                    name1TextView.setText(getActivity().getResources().getString(R.string.received, video.getTimeSinceUploaded()));
+                    name1TextView.setText(getActivity().getResources().getString(R.string.received, video.getTimeSinceUploaded(getContext())));
                     break;
                 case SENT:
-                    name1TextView.setText(getActivity().getResources().getString(R.string.sent, video.getTimeSinceUploaded()));
+                    name1TextView.setText(getActivity().getResources().getString(R.string.sent, video.getTimeSinceUploaded(getContext())));
                     break;
                 case YOUR_TURN:
                     name1TextView.setText(R.string.your_turn);
@@ -734,7 +735,7 @@ public class ViewBattleFragment extends ListFragment
             else{
                 mCompletedConstraintLayout.setVisibility(View.VISIBLE);
                 mFinalVideoTranscodingProgressBar.setVisibility(View.GONE);
-                statusTextView.setText(mBattle.getCompletedBattleStatus());
+                statusTextView.setText(mBattle.getCompletedBattleStatus(getContext()));
 
                 mLikeCountTextView.setText(Integer.toString(mBattle.getLikeCount()));
                 mDislikeCountTextView.setText(Integer.toString(mBattle.getDislikeCount()));
@@ -768,13 +769,13 @@ public class ViewBattleFragment extends ListFragment
                         challengedResultTextView.setVisibility(View.GONE);
                         challengerVotesTextView.setVisibility(View.GONE);
                         challengedVotesTextView.setVisibility(View.GONE);
-                        timeUntilVoteEndsTextView.setText(res.getString(R.string.voting_time_left, Video.getTimeUntil(mBattle.getVoting().getVotingTimeEnd())));
+                        timeUntilVoteEndsTextView.setText(res.getString(R.string.voting_time_left, Video.getTimeUntil(getContext(), mBattle.getVoting().getVotingTimeEnd())));
                     } else if (mBattle.getVoting().getVotingTimeEnd() != null && !mBattle.getVoting().getVotingTimeEnd().after(new Date(System.currentTimeMillis())))
                     {
                         //voting has finished
                         timeUntilVoteEndsTextView.setVisibility(View.GONE);
-                        challengerResultTextView.setText(mBattle.getVoting().getChallengerVotingResult());
-                        challengedResultTextView.setText(mBattle.getVoting().getChallengedVotingResult());
+                        challengerResultTextView.setText(mBattle.getVoting().getChallengerVotingResult(getContext()));
+                        challengedResultTextView.setText(mBattle.getVoting().getChallengedVotingResult(getContext()));
                         challengerVotesTextView.setText(res.getQuantityString(R.plurals.votes, mBattle.getVoting().getVoteChallenger(), mBattle.getVoting().getVoteChallenger()));
                         challengedVotesTextView.setText(res.getQuantityString(R.plurals.votes,mBattle.getVoting().getVoteChallenged(), mBattle.getVoting().getVoteChallenged()));
                     }
@@ -875,7 +876,7 @@ public class ViewBattleFragment extends ListFragment
             LambdaInvokerFactory factory = new LambdaInvokerFactory(
                     contextReference.get().getApplicationContext(),
                     Regions.US_EAST_1,
-                    FacebookLoginFragment.getCredentialsProvider(contextReference.get()));
+					IdentityManager.getDefaultIdentityManager().getCredentialsProvider());
 		    final LambdaFunctionsInterface lambdaFunctionsInterface = factory.build(LambdaFunctionsInterface.class, new CustomLambdaDataBinder());
 				try {
                     VideoSubmittedResponse response= lambdaFunctionsInterface.VideoSubmitted(params[0]);
@@ -974,17 +975,17 @@ public class ViewBattleFragment extends ListFragment
 			@Override
 			protected  Void doInBackground(final String... params) {
 
-					final AmazonS3 s3 = new AmazonS3Client(FacebookLoginFragment.getCredentialsProvider(contextReference.get()));
+					final AmazonS3 s3 = new AmazonS3Client( IdentityManager.getDefaultIdentityManager().getCredentialsProvider());
 					final Battle b = fragmentReference.get().mBattle;
 					final String bucketName = "snapbattlevideos";
-                    String CognitoID =  FacebookLoginFragment.getCredentialsProvider(contextReference.get()).getIdentityId();
+                    String CognitoID =  IdentityManager.getDefaultIdentityManager().getCachedUserID();
                     File file = new File(contextReference.get().getFilesDir().getAbsolutePath() + "/" + params[0]);
                     final String fileName = params[0];
                     final String key = CognitoID + "/" + file.getName();
 
                     final String cognitoIDOpponent = params[1];
                     final String videoID = params[2];
-                    final String CognitoIDUser = FacebookLoginFragment.getCredentialsProvider(contextReference.get()).getIdentityId();
+                    final String CognitoIDUser =  IdentityManager.getDefaultIdentityManager().getCachedUserID();
                      final String orientationLock = Video.orientationHintToLock(Integer.parseInt(Video.getVideoRotation(contextReference.get(), b.getVideos().get(b.getVideosUploaded()))));
 
 

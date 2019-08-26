@@ -7,7 +7,7 @@ import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
 
-import com.liamfarrell.android.snapbattle.app.App;
+import com.liamfarrell.android.snapbattle.app.SnapBattleApp;
 import com.liamfarrell.android.snapbattle.R;
 import com.liamfarrell.android.snapbattle.ui.ViewBattleActivity;
 import com.liamfarrell.android.snapbattle.ui.ViewBattleFragment;
@@ -19,9 +19,9 @@ import com.liamfarrell.android.snapbattle.ui.ViewBattleFragment;
 public class VideoSubmittedNotification extends Notification {
     private String mOpponentCognitoId;
     private String mOpponentName;
-    public VideoSubmittedNotification(int battleID, String opponent_cognito_id, String opponentName)
+    public VideoSubmittedNotification(int notificationIndex, int battleID, String opponent_cognito_id, String opponentName)
     {
-        super(battleID);
+        super(notificationIndex,battleID);
         mOpponentCognitoId = opponent_cognito_id;
         mOpponentName = opponentName;
     }
@@ -34,13 +34,13 @@ public class VideoSubmittedNotification extends Notification {
     }
 
     @Override
-    public SpannableStringBuilder getMessage()
+    public SpannableStringBuilder getMessage(Context context)
     {
         SpannableStringBuilder longDescription = new SpannableStringBuilder();
         longDescription.append(mOpponentName);
         longDescription.setSpan(new ForegroundColorSpan(0xFFCC5500), 0, longDescription.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         longDescription.setSpan(new StyleSpan(android.graphics.Typeface.BOLD), 0, longDescription.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        longDescription.append(App.getContext().getResources().getString(R.string.video_submitted_notification_append));
+        longDescription.append(context.getResources().getString(R.string.video_submitted_notification_append));
         return longDescription;
 
     }
@@ -50,5 +50,7 @@ public class VideoSubmittedNotification extends Notification {
         return mOpponentCognitoId;
     }
 
-
+    public String getOpponentName() {
+        return mOpponentName;
+    }
 }

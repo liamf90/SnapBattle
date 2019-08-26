@@ -28,6 +28,10 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
+        debug {
+            minifyEnabled false
+            debuggable true
+        }
     }
     flavorDimensions "mode"
 
@@ -76,10 +80,15 @@ dependencies {
     implementation 'androidx.multidex:multidex:2.0.1'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.1.1'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.1.1'
-    implementation 'com.google.dagger:dagger:2.16'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
-    kapt 'com.google.dagger:dagger-compiler:2.16'
-    annotationProcessor 'com.google.dagger:dagger-compiler:2.16'
+    implementation 'com.jakewharton.timber:timber:4.7.1'
+    implementation "com.google.dagger:dagger:2.16"
+    implementation "com.google.dagger:dagger-android:2.16"
+    implementation "com.google.dagger:dagger-android-support:2.16"
+    kapt "com.google.dagger:dagger-compiler:2.16"
+    kapt "com.google.dagger:dagger-android-processor:2.16"
+    kapt "com.google.dagger:dagger-android-support:2.16"
+
 
 
     implementation "androidx.work:work-runtime-ktx:$rootProject.workVersion"
@@ -96,6 +105,9 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-livedata:$rootProject.lifecycleVersion"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$rootProject.lifecycleVersion"
     implementation 'com.github.markomilos:paginate:0.5.1'
+    // Kotlin
+    implementation "androidx.navigation:navigation-fragment-ktx:$nav_version_ktx"
+    implementation "androidx.navigation:navigation-ui-ktx:$nav_version_ktx"
 
 
     //compile fileTree(dir: 'libs', include: ['.so'])
@@ -122,14 +134,13 @@ dependencies {
     // compile files('libs/aws-android-sdk-ddb-mapper-2.3.9.jar')
     //compile files('libs/aws-android-sdk-s3-2.2.5.jar')
     // compile files('libs/aws-android-sdk-lambda-2.3.9.jar')
-    implementation 'com.amazonaws:aws-android-sdk-core:2.8.2'
+    implementation 'com.amazonaws:aws-android-sdk-core:2.13.7'
     implementation 'com.amazonaws:aws-android-sdk-s3:2.6.31'
     implementation 'com.amazonaws:aws-android-sdk-ddb:2.2.22'
     implementation 'com.amazonaws:aws-android-sdk-cognito:2.6.31'
     implementation 'com.amazonaws:aws-android-sdk-lambda:2.2.22'
     // Mobile Client for initializing the SDK
     implementation('com.amazonaws:aws-android-sdk-mobile-client:2.7.+@aar') { transitive = true }
-
 
     // Sign in UI Library
     implementation 'com.android.support:appcompat-v7:28.0.0'

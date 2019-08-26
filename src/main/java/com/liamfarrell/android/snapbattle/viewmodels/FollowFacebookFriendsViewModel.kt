@@ -1,37 +1,30 @@
 package com.liamfarrell.android.snapbattle.viewmodels
 
-import android.view.View
-import android.widget.Toast
+import android.app.Application
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.viewModelScope
-import com.amazonaws.AmazonClientException
 import com.facebook.AccessToken
-import com.facebook.FacebookException
-import com.facebook.FacebookRequestError
-import com.google.android.gms.tasks.Tasks.await
 import com.liamfarrell.android.snapbattle.R
-import com.liamfarrell.android.snapbattle.app.App
+import com.liamfarrell.android.snapbattle.app.SnapBattleApp
 import com.liamfarrell.android.snapbattle.caches.FollowingUserCache
-import com.liamfarrell.android.snapbattle.data.CommentRepository
 import com.liamfarrell.android.snapbattle.data.FollowingRepository
 import com.liamfarrell.android.snapbattle.model.AsyncTaskResult
-import com.liamfarrell.android.snapbattle.model.Comment
 import com.liamfarrell.android.snapbattle.model.User
 import com.liamfarrell.android.snapbattle.util.getErrorMessage
 import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 /**
  * The ViewModel used in [FollowFacebookFriendsFragment].
  */
-class FollowFacebookFriendsViewModel(val followingRepository : FollowingRepository, val requestFacebookFriendsPermission :()->Unit ) : ViewModelLaunch() {
+class FollowFacebookFriendsViewModel @Inject constructor(private val context: Application, private val followingRepository : FollowingRepository) : ViewModelLaunch() {
 
     private val followingUsers = MutableLiveData<AsyncTaskResult<MutableList<User>>>()
 
     val errorMessage : LiveData<String?> = Transformations.map(followingUsers) { asyncResult ->
-        getErrorMessage(App.getContext(), asyncResult.error)
+        getErrorMessage(context, asyncResult.error)
     }
 
     val following : LiveData<MutableList<User>>  =  Transformations.map (followingUsers) { asyncResult ->
@@ -40,10 +33,9 @@ class FollowFacebookFriendsViewModel(val followingRepository : FollowingReposito
 
     init {
         followingUsers.value = AsyncTaskResult(null)
-        getFacebookFriends()
     }
 
-    fun getFacebookFriends(){
+    fun getFacebookFriends(requestFacebookFriendsPermission :()->Unit){
 
                 val facebookFriendsDeferred = viewModelScope.async{followingRepository.getFacebookFriends()}
                 val followingUsersDeferred = viewModelScope.async{followingRepository.getFollowing()}
@@ -64,10 +56,10 @@ class FollowFacebookFriendsViewModel(val followingRepository : FollowingReposito
                         followingUsersResult.result.find { it.facebookUserId == facebookFriend.facebookUserId }.let { facebookFriend.isFollowing = true }
                     }
 
-                    //if the user_friends permission has not been approved by the user, the returned reponse will have 0 friends.
+                    //if the user_friends permission has not been approved by the user, the returned response will have 0 friends.
                     //so if the response has 0 friends check if the user_friends permission has not been approved and ask the user if they would like to accept it.
                     if (facebookFriends.result.isEmpty() && !doesUserHaveUserFriendsPermission()) {
-                        _snackBarMessage.value = App.getContext().getString(R.string.need_accept_permission_user_friends)
+                        _snackBarMessage.value = context.getString(R.string.need_accept_permission_user_friends)
                         requestFacebookFriendsPermission()
                     }
 
@@ -86,7 +78,7 @@ class FollowFacebookFriendsViewModel(val followingRepository : FollowingReposito
                         followingUsers.value?.result?.remove(followingUsers.value?.result?.find { it.cognitoId == cognitoIDUnfollow })
 
                         //Update following user cache
-                        FollowingUserCache.get(App.getContext(), null).updateCache(App.getContext(), null)
+                        FollowingUserCache.get(context, null).updateCache(context, null)
                     }}}
     }
 
@@ -97,6 +89,7 @@ class FollowFacebookFriendsViewModel(val followingRepository : FollowingReposito
                     val asyncResult = followingRepository.addFollowing(username)
 
                     if (asyncResult.error != null){
+                        ///change it to like startup
                         followingUsers.value?.error = asyncResult.error
                     } else {
                         //Add the added user to the list
@@ -104,7 +97,7 @@ class FollowFacebookFriendsViewModel(val followingRepository : FollowingReposito
                             followingUsers.value?.result?.add(it) }
 
                         //Update following user cache
-                        FollowingUserCache.get(App.getContext(), null).updateCache(App.getContext(), null)
+                        FollowingUserCache.get(context, null).updateCache(context, null)
                     }
                 }
 

@@ -1,21 +1,17 @@
 package com.liamfarrell.android.snapbattle.viewmodels
 
 import android.content.Context
-import android.view.View
 import androidx.databinding.ObservableField
 import androidx.databinding.ObservableInt
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
+import com.amazonaws.mobile.auth.core.IdentityManager
 import com.liamfarrell.android.snapbattle.R
-import com.liamfarrell.android.snapbattle.app.App
 import com.liamfarrell.android.snapbattle.data.UsersBattleRepository
-import com.liamfarrell.android.snapbattle.model.AsyncTaskResult
 import com.liamfarrell.android.snapbattle.model.Battle
 import com.liamfarrell.android.snapbattle.model.Video
-import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.VideoSubmittedResponse
-import com.liamfarrell.android.snapbattle.ui.FacebookLoginFragment
 import com.liamfarrell.android.snapbattle.util.getErrorMessage
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -28,12 +24,12 @@ class BattleVideoItemViewModel(val context: Context, val battle: Battle, _video:
     }
 
     val video = ObservableField<Video>(_video)
-    val isCurrentUser = ObservableField<Boolean>(_video.isCurrentUser(FacebookLoginFragment.getCredentialsProvider(context).cachedIdentityId))
+    val isCurrentUser = ObservableField<Boolean>(_video.isCurrentUser(IdentityManager.getDefaultIdentityManager().cachedUserID))
     val videosUploaded = ObservableInt(battle.videosUploaded)
     val videoStatus = ObservableField<String>(getVideoStatus(battle.videosUploaded, _video, context))
-    val displayRecordButton = ObservableField<Boolean>(_video.displayRecordButton(battle.videosUploaded, FacebookLoginFragment.getCredentialsProvider(context).cachedIdentityId))
+    val displayRecordButton = ObservableField<Boolean>(_video.displayRecordButton(battle.videosUploaded, IdentityManager.getDefaultIdentityManager().cachedUserID))
     val displayPlayButton = ObservableField<Boolean>(_video.displayPlayButton(context))
-    val displaySubmitButton = ObservableField<Boolean>(_video.displaySubmitButton(context, battle.videosUploaded, FacebookLoginFragment.getCredentialsProvider(context).cachedIdentityId ))
+    val displaySubmitButton = ObservableField<Boolean>(_video.displaySubmitButton(context, battle.videosUploaded, IdentityManager.getDefaultIdentityManager().cachedUserID))
     val nameText = ObservableField<String>(videoStatus.get())
     val submitButtonEnabled = ObservableField<Boolean>(true)
 
@@ -52,7 +48,7 @@ class BattleVideoItemViewModel(val context: Context, val battle: Battle, _video:
         GlobalScope.launch {
             suspend {
                 val asyncResult = video.get()?.let{usersBattleRepository.uploadVideo(context, battle, it.videoFilename,
-                        battle.getOpponentCognitoID(FacebookLoginFragment.getCredentialsProvider(context).cachedIdentityId), it.videoID)}
+                        battle.getOpponentCognitoID(IdentityManager.getDefaultIdentityManager().cachedUserID), it.videoID)}
                 if (asyncResult?.error != null){
                     _error.value = asyncResult.error }
             }
@@ -61,9 +57,9 @@ class BattleVideoItemViewModel(val context: Context, val battle: Battle, _video:
 
 
      fun getVideoStatus(videosUploaded: Int, video: Video, context: Context) : String {
-        return when (video.getVideoStatus(videosUploaded, FacebookLoginFragment.getCredentialsProvider(context).cachedIdentityId)) {
-            Video.videoStatus.RECEIVED -> context.resources.getString(R.string.received, video.getTimeSinceUploaded())
-            Video.videoStatus.SENT -> context.resources.getString(R.string.sent, video.getTimeSinceUploaded())
+        return when (video.getVideoStatus(videosUploaded, IdentityManager.getDefaultIdentityManager().cachedUserID)) {
+            Video.videoStatus.RECEIVED -> context.resources.getString(R.string.received, video.getTimeSinceUploaded(context))
+            Video.videoStatus.SENT -> context.resources.getString(R.string.sent, video.getTimeSinceUploaded(context))
             Video.videoStatus.YOUR_TURN -> context.resources.getString(R.string.your_turn)
             Video.videoStatus.OPPONENT_TURN -> context.resources.getString(R.string.opponent_turn)
             Video.videoStatus.OPPONENT_FUTURE -> ""

@@ -14,6 +14,7 @@ import org.json.JSONObject;
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
+import com.amazonaws.mobile.auth.core.IdentityManager;
 import com.amazonaws.mobileconnectors.lambdainvoker.LambdaFunctionException;
 import com.amazonaws.mobileconnectors.lambdainvoker.LambdaInvokerFactory;
 import com.amazonaws.regions.Regions;
@@ -23,6 +24,7 @@ import com.facebook.GraphResponse;
 import com.liamfarrell.android.snapbattle.model.User;
 import com.liamfarrell.android.snapbattle.model.AsyncTaskResult;
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.LambdaFunctionsInterface;
+import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.UsernameToFacebookIDRequest;
 import com.liamfarrell.android.snapbattle.ui.FollowFacebookFriendsFragment;
 import com.liamfarrell.android.snapbattle.ui.FacebookLoginFragment;
 import com.liamfarrell.android.snapbattle.ui.UsersBattlesActivity;
@@ -31,7 +33,6 @@ import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserializat
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.GetUsersResponse;
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.ResponseFollowing;
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.UsernameToFacebookIDResponse;
-import com.liamfarrell.android.snapbattle.model.lambda_function_request_objects.UsernameToFacebookIDRequest;
 import com.liamfarrell.android.snapbattle.util.HandleLambdaError;
 import com.liamfarrell.android.snapbattle.views.LinearDividerItemDecoration;
 import com.liamfarrell.android.snapbattle.R;
@@ -306,7 +307,7 @@ public class ChooseOpponentFragment extends Fragment
 		LambdaInvokerFactory factory = new LambdaInvokerFactory(
                 activityReference.get().getApplicationContext(),
 				Regions.US_EAST_1,
-				FacebookLoginFragment.getCredentialsProvider(activityReference.get().getApplicationContext()));
+                IdentityManager.getDefaultIdentityManager().getCredentialsProvider());
 
 		final LambdaFunctionsInterface lambdaFunctionsInterface = factory.build(LambdaFunctionsInterface.class);
 				try {
@@ -386,7 +387,7 @@ public class ChooseOpponentFragment extends Fragment
 		LambdaInvokerFactory factory = new LambdaInvokerFactory(
                 activityReference.get().getApplicationContext(),
 				Regions.US_EAST_1,
-				FacebookLoginFragment.getCredentialsProvider(activityReference.get()));
+                IdentityManager.getDefaultIdentityManager().getCredentialsProvider());
 
 		// Create the Lambda proxy object with default Json data binder.
 		// You can provide your own data binder by implementing
@@ -477,7 +478,7 @@ public class ChooseOpponentFragment extends Fragment
 		LambdaInvokerFactory factory = new LambdaInvokerFactory(
                 activityReference.get().getApplicationContext(),
 				Regions.US_EAST_1,
-				FacebookLoginFragment.getCredentialsProvider(activityReference.get()));
+                IdentityManager.getDefaultIdentityManager().getCredentialsProvider());
 
 		        final LambdaFunctionsInterface lambdaFunctionsInterface = factory.build(LambdaFunctionsInterface.class);
 

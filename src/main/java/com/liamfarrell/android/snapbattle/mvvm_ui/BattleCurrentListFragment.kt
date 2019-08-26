@@ -7,20 +7,18 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
-import com.google.android.material.snackbar.Snackbar
-import com.liamfarrell.android.snapbattle.adapters.CompletedBattlesListAdapter
+import com.amazonaws.mobile.auth.core.IdentityManager
 import com.liamfarrell.android.snapbattle.adapters.CurrentBattlesListAdapter
 import com.liamfarrell.android.snapbattle.databinding.FragmentFriendsBattleListBinding
-import com.liamfarrell.android.snapbattle.di.AWSLambdaModule
-import com.liamfarrell.android.snapbattle.di.DaggerCompletedBattlesComponent
-import com.liamfarrell.android.snapbattle.di.DaggerCurrentBattlesComponent
-import com.liamfarrell.android.snapbattle.ui.FacebookLoginFragment
-import com.liamfarrell.android.snapbattle.viewmodels.CompletedBattlesViewModel
+import com.liamfarrell.android.snapbattle.di.Injectable
 import com.liamfarrell.android.snapbattle.viewmodels.CurrentBattlesViewModel
-import kotlinx.android.synthetic.main.fragment_view_comments.*
+import javax.inject.Inject
 
-class BattleCurrentListFragment : Fragment() {
+class BattleCurrentListFragment : Fragment(), Injectable {
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
 
     private lateinit var viewModel: CurrentBattlesViewModel
 
@@ -30,14 +28,8 @@ class BattleCurrentListFragment : Fragment() {
         val binding = FragmentFriendsBattleListBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = viewLifecycleOwner
 
-        val appComponent = DaggerCurrentBattlesComponent.builder()
-                .aWSLambdaModule(AWSLambdaModule(requireContext()))
-                .build()
-
-
-
-        viewModel = ViewModelProviders.of(this, appComponent.getCurrentBattlesViewModelFactory()).get(CurrentBattlesViewModel::class.java)
-        val adapter = CurrentBattlesListAdapter(FacebookLoginFragment.getCredentialsProvider(context).cachedIdentityId)
+        viewModel = ViewModelProviders.of(this, viewModelFactory).get(CurrentBattlesViewModel::class.java)
+        val adapter = CurrentBattlesListAdapter(IdentityManager.getDefaultIdentityManager().cachedUserID)
         binding.recyclerView.adapter = adapter
 
         subscribeUi(adapter)
@@ -46,7 +38,11 @@ class BattleCurrentListFragment : Fragment() {
 
     private fun subscribeUi(adapter: CurrentBattlesListAdapter) {
         viewModel.battles.observe(viewLifecycleOwner, Observer { battlesList ->
-            adapter.submitList(battlesList)
+            battlesList?.let{adapter.submitList(battlesList)}
+        })
+
+        viewModel.errorMessage.observe(viewLifecycleOwner, Observer {
+            it?.let{ Toast.makeText(context, it, Toast.LENGTH_SHORT).show()}
         })
     }
 

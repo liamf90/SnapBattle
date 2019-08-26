@@ -3,6 +3,7 @@ package com.liamfarrell.android.snapbattle.caches;
 import android.content.Context;
 import android.util.Log;
 
+import com.amazonaws.mobile.auth.core.IdentityManager;
 import com.facebook.AccessToken;
 import com.google.gson.Gson;
 import com.liamfarrell.android.snapbattle.ui.FacebookLoginFragment;
@@ -119,7 +120,7 @@ public class ThumbnailCacheHelper {
 
     private String getFilename(Context context)
     {
-        return FacebookLoginFragment.getCredentialsProvider(context).getIdentityId() + "-thumbnailImageCacheJson";
+        return IdentityManager.getDefaultIdentityManager().getCachedUserID() + "-thumbnailImageCacheJson";
     }
 
     public String getThumbnailPicOldUrl(int battleID)

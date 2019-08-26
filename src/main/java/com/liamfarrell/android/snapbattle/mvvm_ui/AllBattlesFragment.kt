@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -21,9 +22,12 @@ import com.liamfarrell.android.snapbattle.viewmodels.FollowingViewModel
 import kotlinx.android.synthetic.main.fragment_friends_battle_list.*
 import kotlinx.android.synthetic.main.fragment_friends_battle_list.parentCoordinatorLayout
 import kotlinx.android.synthetic.main.fragment_view_comments.*
+import javax.inject.Inject
 
-class AllBattlesFragment : Fragment() {
+class AllBattlesFragment : Fragment(), Injectable {
 
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
 
     private lateinit var viewModel: AllBattlesViewModel
 
@@ -33,13 +37,7 @@ class AllBattlesFragment : Fragment() {
         val binding = FragmentFriendsBattleListBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = viewLifecycleOwner
 
-
-       val appComponent = DaggerAllBattlesComponent.builder()
-               .aWSLambdaModule(AWSLambdaModule(requireContext()))
-               .allBattlesRepositoryModule(AllBattlesRepositoryModule(requireContext()))
-               .build()
-
-        viewModel = ViewModelProviders.of(this, appComponent.getAllBattlesViewModelFactory()).get(AllBattlesViewModel::class.java)
+        viewModel = ViewModelProviders.of(this, viewModelFactory).get(AllBattlesViewModel::class.java)
         val adapter = AllBattlesFeedPagingListAdapter()
         binding.recyclerView.adapter = adapter
         binding.recyclerView.addItemDecoration(DividerItemDecoration(context, LinearLayoutManager.VERTICAL))

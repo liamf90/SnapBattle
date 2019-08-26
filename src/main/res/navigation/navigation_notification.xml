@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/notificationListFragment">
+    <fragment
+        android:id="@+id/notificationListFragment"
+        android:name="com.liamfarrell.android.snapbattle.mvvm_ui.NotificationListFragment"
+        android:label="NotificationListFragment" >
+        <action
+            android:id="@+id/action_notificationListFragment_to_viewBattleFragment"
+            app:destination="@id/viewBattleFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/viewBattleFragment"
+        android:name="com.liamfarrell.android.snapbattle.mvvm_ui.ViewBattleFragment"
+        android:label="ViewBattleFragment" />
+</navigation>

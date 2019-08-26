@@ -4,6 +4,7 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 import android.util.Log;
 
+import com.amazonaws.mobile.auth.core.IdentityManager;
 import com.facebook.AccessToken;
 import com.google.gson.Gson;
 import com.liamfarrell.android.snapbattle.ui.FacebookLoginFragment;
@@ -201,7 +202,7 @@ public class OtherUsersProfilePicCacheManager implements Serializable{
     @NonNull
     private String getFilename(Context context)
     {
-        return  FacebookLoginFragment.getCredentialsProvider(context).getIdentityId() + "-" + "SmallProfilePicCacheJson";
+        return  IdentityManager.getDefaultIdentityManager().getCachedUserID() + "-" + "SmallProfilePicCacheJson";
     }
 
 

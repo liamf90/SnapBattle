@@ -17,6 +17,10 @@
         <item>One Month</item>
     </string-array>
 
+    <!-- Home Fragment -->
+    <string name="all_battles_tab_title">All Battles</string>
+    <string name="following_battles_tab_title">Following Battles</string>
+
     <string name="title_activity_view_friend_battle">View Friend Battle</string>
 
 
@@ -97,8 +101,6 @@
     <string name="privacy_policy">Privacy Policy</string>
     <string name="title_activity_main_navigation_drawer">Snap Battle</string>
 
-    <string name="all_battles_tab_title">All Battles</string>
-    <string name="following_battles_tab_title">Following Battles</string>
 
     <string name="atusername">\@%1$s</string>
     <string name="view_comments_text"><u>View Comments</u></string>
@@ -331,6 +333,11 @@
     <string name="title_activity_search_users_and_battles">SearchUsersAndBattlesActivity</string>
     <string name="tab_text_1">Tab 1</string>
     <string name="tab_text_2">Tab 2</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="title_activity_home_fragment">HomeFragment</string>
+    <string name="title_activity_testing">TESTING</string>
 
 
 </resources>

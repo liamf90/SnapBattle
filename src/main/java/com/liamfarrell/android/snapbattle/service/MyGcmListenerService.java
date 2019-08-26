@@ -30,6 +30,7 @@ import android.os.Bundle;
 import androidx.core.app.NotificationCompat;
 import android.util.Log;
 
+import com.amazonaws.mobile.auth.core.IdentityManager;
 import com.google.android.gms.gcm.GcmListenerService;
 import com.liamfarrell.android.snapbattle.ActivityMainNavigationDrawer;
 import com.liamfarrell.android.snapbattle.R;
@@ -84,7 +85,7 @@ public class MyGcmListenerService extends GcmListenerService {
     	//{
 		//Initialize Facebook SDK
         Log.i(TAG, "GCM MESSAGE RECEIVED");
-        String cognitoID = FacebookLoginFragment.getCredentialsProvider(this).getCachedIdentityId();
+        String cognitoID = IdentityManager.getDefaultIdentityManager().getCachedUserID();
 
         if (cognitoID != null) {
             String message = data.getString("message");
@@ -92,9 +93,9 @@ public class MyGcmListenerService extends GcmListenerService {
             switch (data.getString("type")) {
                 case BATTLE_CHALLENGES_LIST_CLASS:
 
-                    if (data.getString("challenged_cognito_id").equals(FacebookLoginFragment.getCredentialsProvider(this).getCachedIdentityId())) {
-                        NewBattleRequestNotification nrn = new NewBattleRequestNotification(Integer.parseInt(data.getString("battleID")), data.getString("mChallengerCognitoId"), data.getString("challenger_username"));
-                        message = nrn.getMessage().toString();
+                    if (data.getString("challenged_cognito_id").equals(IdentityManager.getDefaultIdentityManager().getCachedUserID())) {
+                        NewBattleRequestNotification nrn = new NewBattleRequestNotification(-1, Integer.parseInt(data.getString("battleID")), data.getString("mChallengerCognitoId"), data.getString("challenger_username"));
+                        message = nrn.getMessage(getApplicationContext()).toString();
                         updateNotificationFragmentList();
                         sendNotification(message, nrn.getIntent(this));
                     }
@@ -102,8 +103,8 @@ public class MyGcmListenerService extends GcmListenerService {
                 case TYPE_VIDEO_SUBMITTED:
                     if (data.getString("opponent_cognito_id").equals(cognitoID)) {
 
-                        VideoSubmittedNotification n = new VideoSubmittedNotification(Integer.parseInt(data.getString("battleID")), data.getString("uploader_cogntito_id"), data.getString("uploader_username"));
-                        message = n.getMessage().toString();
+                        VideoSubmittedNotification n = new VideoSubmittedNotification(-1,Integer.parseInt(data.getString("battleID")), data.getString("uploader_cogntito_id"), data.getString("uploader_username"));
+                        message = n.getMessage(this.getApplicationContext()).toString();
 
                         updateNotificationFragmentList();
                         sendNotification(message, n.getIntent(this));
@@ -117,8 +118,8 @@ public class MyGcmListenerService extends GcmListenerService {
                 case TYPE_BATTLE_ACCEPTED:
 
                     if (data.getString("opponent_cognito_id").equals(cognitoID)) {
-                        BattleAcceptedNotification ban = new BattleAcceptedNotification(Integer.parseInt(data.getString("battleID")), data.getString("opponent_cognito_id"), data.getString("opponent_username"), Boolean.valueOf(data.getString("battle_accepted")));
-                        message = ban.getMessage().toString();
+                        BattleAcceptedNotification ban = new BattleAcceptedNotification(-1,Integer.parseInt(data.getString("battleID")), data.getString("opponent_cognito_id"), data.getString("opponent_username"), Boolean.valueOf(data.getString("battle_accepted")));
+                        message = ban.getMessage(getApplicationContext()).toString();
 
                         updateNotificationFragmentList();
                         sendNotification(message, ban.getIntent(this));
@@ -137,8 +138,8 @@ public class MyGcmListenerService extends GcmListenerService {
                 case NEW_COMMENT:
                     updateNotificationFragmentList();
                     if (data.getString("cognito_id_opponent").equals(cognitoID)) {
-                        NewCommentNotification ncn = new NewCommentNotification(Integer.parseInt(data.getString("battleID")), data.getString("battle_name"), data.getString("cognito_id_commenter"), data.getString("commenter_name"));
-                        message = ncn.getMessage().toString();
+                        NewCommentNotification ncn = new NewCommentNotification(-1,Integer.parseInt(data.getString("battleID")), data.getString("battle_name"), data.getString("cognito_id_commenter"), data.getString("commenter_name"));
+                        message = ncn.getMessage(getApplicationContext()).toString();
                         sendNotification(message, ncn.getIntent(this));
                     }
                     break;
@@ -146,16 +147,16 @@ public class MyGcmListenerService extends GcmListenerService {
                     updateNotificationFragmentList();
                     if (data.getString("cognito_id_to").equals(cognitoID)) {
 
-                        TaggedInCommentNotification ncn = new TaggedInCommentNotification(Integer.parseInt(data.getString("battleID")), data.getString("battle_name"), data.getString("cognito_id_commenter"), data.getString("commenter_name"), data.getString("challenger_username"), data.getString("challenged_username"), data.getString("challenger_cognito_id"), data.getString("challenged_cognito_id"));
-                        message = ncn.getMessage().toString();
+                        TaggedInCommentNotification ncn = new TaggedInCommentNotification(-1,Integer.parseInt(data.getString("battleID")), data.getString("battle_name"), data.getString("cognito_id_commenter"), data.getString("commenter_name"), data.getString("challenger_username"), data.getString("challenged_username"), data.getString("challenger_cognito_id"), data.getString("challenged_cognito_id"));
+                        message = ncn.getMessage(getApplicationContext()).toString();
                         sendNotification(message, ncn.getIntent(this));
                     }
                         break;
                 case VOTE_COMPLETE:
 
                     if (data.getString("cognito_id").equals(cognitoID)) {
-                        VotingCompleteNotification vcn = new VotingCompleteNotification(Integer.parseInt(data.getString("battle_id")), data.getString("cognito_id_opponent"), data.getString("username_opponent"), Integer.parseInt(data.getString("vote")), Integer.parseInt(data.getString("vote_opponent")), data.getString("voting_result"));
-                        message = vcn.getMessage().toString();
+                        VotingCompleteNotification vcn = new VotingCompleteNotification(-1,Integer.parseInt(data.getString("battle_id")), data.getString("cognito_id_opponent"), data.getString("username_opponent"), Integer.parseInt(data.getString("vote")), Integer.parseInt(data.getString("vote_opponent")), data.getString("voting_result"));
+                        message = vcn.getMessage(getApplicationContext()).toString();
 
                         updateNotificationFragmentList();
                         sendNotification(message, vcn.getIntent(this));
@@ -163,8 +164,8 @@ public class MyGcmListenerService extends GcmListenerService {
                     break;
                 case NEW_FOLLOWER:
                     if (data.getString("to_cognito_id").equals(cognitoID)) {
-                        NewFollowerNotification nfn = new NewFollowerNotification(data.getString("follower_cognito_id"), data.getString("follower_username"));
-                        message = nfn.getMessage().toString();
+                        NewFollowerNotification nfn = new NewFollowerNotification(-1,data.getString("follower_cognito_id"), data.getString("follower_username"));
+                        message = nfn.getMessage(getApplicationContext()).toString();
 
                         updateNotificationFragmentList();
                         sendNotification(message, nfn.getIntent(this));

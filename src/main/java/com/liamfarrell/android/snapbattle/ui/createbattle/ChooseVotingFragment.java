@@ -12,7 +12,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 
-import com.liamfarrell.android.snapbattle.app.App;
+import com.liamfarrell.android.snapbattle.app.SnapBattleApp;
 import com.liamfarrell.android.snapbattle.R;
 
 /**
@@ -62,37 +62,37 @@ public class ChooseVotingFragment extends Fragment implements View.OnClickListen
     public enum VotingChoice {
         MUTUAL_FACEBOOK {
             public String toString() {
-                return App.getContext().getResources().getText(R.string.mutual_facebook_friends).toString();
+                return "";
             }
-            public String getLongStyle(){
-                return App.getContext().getResources().getText(R.string.mutual_facebook_friends_long).toString();
+            public String getLongStyle(Context context){
+                return "";
             }
         },
         PUBLIC {
             public String toString() {
-                return App.getContext().getResources().getText(R.string.public_voting).toString();
+                return "";
             }
-            public String getLongStyle(){
-                return App.getContext().getResources().getText(R.string.public_voting_long).toString();
+            public String getLongStyle(Context context){
+                return "";
             }
         },
         SELECTED {
             public String toString() {
-                return App.getContext().getResources().getText(R.string.selected_judges).toString();
+                return "";
             }
-            public String getLongStyle(){
-                return App.getContext().getResources().getText(R.string.selected_judges).toString();
+            public String getLongStyle(Context context){
+                return "";
             }
         },
         NONE {
             public String toString() {
-                return App.getContext().getResources().getText(R.string.no_voting_used).toString();
+                return "";
             }
-            public String getLongStyle(){
-                return App.getContext().getResources().getText(R.string.no_voting_used).toString();
+            public String getLongStyle(Context context){
+                return "";
             }
         };
-        public abstract String getLongStyle();
+        public abstract String getLongStyle(Context context);
     }
 
 

@@ -35,19 +35,24 @@
     <uses-permission android:name="com.liamfarrell.android.snapbattle.mygcmlistenerservice.PRIVATE" />
 
     <application
-        android:name=".app.App"
+        android:name=".app.SnapBattleApp"
         android:allowBackup="false"
         android:icon="@drawable/battle_icon_selected"
         android:label="@string/app_name"
         android:theme="@style/MyMaterialTheme">
+
+        <activity android:name=".mvvm_ui.startup.StartupActivity"></activity>
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/title_activity_main" />
+        <activity android:name=".mvvm_ui.LoggedInActivity" />
+
         <provider
             android:name="androidx.work.impl.WorkManagerInitializer"
             android:authorities="${applicationId}.workmanager-init"
             android:exported="false"
-            tools:node="remove"/>
-        <activity
-            android:name=".mvvm_ui.SearchUsersAndBattlesActivity">
-        </activity>
+            tools:node="remove" />
+
         <activity android:name=".mvvm_ui.AuthenticatorActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -66,7 +71,7 @@
         <activity
             android:name=".ui.FacebookLoginActivity"
             android:label="@string/app_name"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.VideoRecordActivity"
             android:label="@string/app_name"

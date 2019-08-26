@@ -32,7 +32,7 @@ import android.widget.TextView;
 import com.liamfarrell.android.snapbattle.ui.AboutUsActivity;
 import com.liamfarrell.android.snapbattle.ui.BattleChallengesListFragment;
 import com.liamfarrell.android.snapbattle.ui.BattleCompletedListFragment;
-import com.liamfarrell.android.snapbattle.ui.BattleCurrentListFragment;
+import com.liamfarrell.android.snapbattle.ui.CommentsReportedFragment;
 import com.liamfarrell.android.snapbattle.ui.FacebookLoginFragment;
 import com.liamfarrell.android.snapbattle.ui.FollowFacebookFriendsFragment;
 import com.liamfarrell.android.snapbattle.ui.FollowingBattleListFragment;
@@ -40,7 +40,7 @@ import com.liamfarrell.android.snapbattle.ui.LogoutFragment;
 import com.liamfarrell.android.snapbattle.ui.NotificationListActivity;
 import com.liamfarrell.android.snapbattle.ui.ProfileFragment;
 import com.liamfarrell.android.snapbattle.ui.SearchUsersAndBattlesActivity;
-import com.liamfarrell.android.snapbattle.ui.ViewFollowingFragment;
+import com.liamfarrell.android.snapbattle.mvvm_ui.ViewFollowingFragment;
 import com.liamfarrell.android.snapbattle.ui.createbattle.CreateBattleActivity;
 import com.liamfarrell.android.snapbattle.ui.createbattle.VerifyBattleFragment;
 import com.liamfarrell.android.snapbattle.ui.startup.ChooseProfilePictureStartupFragment;
@@ -386,11 +386,11 @@ public class ActivityMainNavigationDrawer extends AppCompatActivity {
                 // create battle
                 //CreateBattleActivity createActivity = new CreateBattleActivity();
                 //return createActivity;
-                BattleCurrentListFragment currentBattlesFragment = new BattleCurrentListFragment();
+                CommentsReportedFragment currentBattlesFragment = new CommentsReportedFragment();
                 return currentBattlesFragment;
             case 2:
                 // current fragment
-                BattleCurrentListFragment currentBattlesFragment2 = new BattleCurrentListFragment();
+                CommentsReportedFragment currentBattlesFragment2 = new CommentsReportedFragment();
                 return currentBattlesFragment2;
             case 3:
                 // current fragment
@@ -486,10 +486,10 @@ public class ActivityMainNavigationDrawer extends AppCompatActivity {
                         break;
 
 
-                    case R.id.nav_admin_reportings:
-
-                        startActivityForResult(new Intent(ActivityMainNavigationDrawer.this, ReportingsActivity.class), 200);
-                        break;
+//                    case R.id.nav_admin_reportings:
+//
+//                        startActivityForResult(new Intent(ActivityMainNavigationDrawer.this, ReportingsActivity.class), 200);
+//                        break;
 
                     case R.id.nav_about_us:
                         // launch new intent instead of loading fragment

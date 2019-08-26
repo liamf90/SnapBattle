@@ -63,7 +63,7 @@ public class BattleCurrentListFragment extends Fragment
 
 
     /**
-     * Gets the current battles
+     * Gets the current topBattles
      */
 	private void getCurrentBattles() {
         mProgressContainer.setVisibility(View.VISIBLE);
@@ -240,11 +240,11 @@ public class BattleCurrentListFragment extends Fragment
 
 			holder.battleOpponentTextView.setText(res.getString(R.string.vsOpponent, b.getOpponentName(FacebookLoginFragment.getCredentialsProvider(getActivity()).getIdentityId())));
 			Log.i(TAG, "Opponent Name: " + b.getOpponentName(FacebookLoginFragment.getCredentialsProvider(getActivity()).getIdentityId()));
-			String currentBattleStatus = b.getCurrentBattleStatus();
+			String currentBattleStatus = b.getCurrentBattleStatus(getContext());
 			currentBattleStatus = currentBattleStatus.replace(" ", "\n");
 			currentBattleStatus = currentBattleStatus.toUpperCase();
 			holder.battleStatusTextView.setText(currentBattleStatus);
-			holder.timeAgoTextView.setText(b.getTimeSinceLastVideosUploaded());
+			holder.timeAgoTextView.setText(b.getTimeSinceLastVideosUploaded(getContext()));
 			//Cancel the previous set profile pic request, if it exists
 			Picasso.get().cancelRequest(holder.profilePicOpponent);
             holder.profilePicOpponent.setImageResource(R.drawable.default_profile_pic100x100);

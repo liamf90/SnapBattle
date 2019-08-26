@@ -1,5 +1,6 @@
 package com.liamfarrell.android.snapbattle.data
 
+import com.liamfarrell.android.snapbattle.adapters.AddFacebookFriendsAsFollowersStartupListAdapter
 import com.liamfarrell.android.snapbattle.model.AsyncTaskResult
 import com.liamfarrell.android.snapbattle.model.User
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.LambdaFunctionsInterface
@@ -7,6 +8,7 @@ import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserializat
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.DefaultResponse
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.ResponseFollowing
 import com.liamfarrell.android.snapbattle.util.executeAWSFunction
+import java.util.ArrayList
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -34,6 +36,13 @@ class FollowingRepository @Inject constructor
         val request = AddFollowerRequestWithUsername()
         request.usernameFollow = username
         return executeAWSFunction{lambdaFunctionsInterface.AddFollower(request)}
+    }
+
+    suspend fun addFollowing(facebookIDList : List<String>) :  AsyncTaskResult<ResponseFollowing>{
+        val addFollowerRequest = FollowUserWithFacebookIDsRequest()
+        addFollowerRequest.facebookFriendIdList = facebookIDList as ArrayList<String>
+        return executeAWSFunction{lambdaFunctionsInterface.AddFollower(addFollowerRequest)}
+
     }
 
 }

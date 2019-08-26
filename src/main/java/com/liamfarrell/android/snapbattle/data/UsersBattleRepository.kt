@@ -15,7 +15,7 @@ import javax.inject.Singleton
 
 @Singleton
 class UsersBattleRepository @Inject constructor
-(private val lambdaFunctionsInterface: LambdaFunctionsInterface) {
+( val lambdaFunctionsInterface: LambdaFunctionsInterface) {
 
 
     suspend fun getBattle(battleID: Int) :  AsyncTaskResult<Battle> {

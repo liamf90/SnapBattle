@@ -1,7 +1,9 @@
 package com.liamfarrell.android.snapbattle.data
 
+import android.os.Bundle
 import android.os.Parcel
 import android.os.Parcelable
+import android.preference.PreferenceManager
 import android.util.Log
 import android.view.View
 import android.widget.Toast
@@ -9,6 +11,7 @@ import com.facebook.*
 import com.liamfarrell.android.snapbattle.R
 import com.liamfarrell.android.snapbattle.model.AsyncTaskResult
 import com.liamfarrell.android.snapbattle.model.User
+import com.liamfarrell.android.snapbattle.ui.FacebookLoginFragment
 import org.json.JSONException
 import org.json.JSONObject
 import java.util.ArrayList
@@ -23,7 +26,7 @@ suspend fun getFriendsList() : AsyncTaskResult<List<User>> =
     /* make the API call */
     GraphRequest(
             AccessToken.getCurrentAccessToken(),
-            "/me/friends", null,
+            "/me/friends?fields=id,name,picture", null,
             HttpMethod.GET,
             GraphRequest.Callback { response ->
                 if (response.error != null && response.error.errorCode == FacebookRequestError.INVALID_ERROR_CODE){
@@ -36,7 +39,8 @@ suspend fun getFriendsList() : AsyncTaskResult<List<User>> =
             }
     ).executeAsync()
 
-    }
+}
+
 
 
 fun graphResponseToOpponentList(response: GraphResponse): ArrayList<User> {
@@ -48,13 +52,21 @@ fun graphResponseToOpponentList(response: GraphResponse): ArrayList<User> {
         var friend: JSONObject
         var friendName: String
         var friendId: String
+        var isSilouhette: Boolean
+        var proflilePicPath: String
 
         for (i in 0 until friendsList.length()) {
 
             friend = friendsList.getJSONObject(i)
             friendName = friend.getString("name")
             friendId = friend.getString("id")
+            proflilePicPath = friend.getJSONObject("picture").getJSONObject("data").getString("url")
+            isSilouhette = friend.getJSONObject("picture").getJSONObject("data").getBoolean("is_silhouette")
+
             val op = User(friendName, friendId)
+            if (!isSilouhette){
+                op.profilePicSignedUrl = proflilePicPath
+            }
             opponentListFromGraph.add(op)
         }
 
@@ -64,3 +76,4 @@ fun graphResponseToOpponentList(response: GraphResponse): ArrayList<User> {
     }
     return opponentListFromGraph
 }
+

@@ -12,6 +12,7 @@
     <string name="no_result">No Result</string>
     <string name="not_authorised_delete_comment">Not authorised to delete comment</string>
     <string name="not_authorised_ignore_comment">Not authorised to ignore comment</string>
+    <string name="not_authorised_ban_user">Not authorised to ban user</string>
 
     <string name="not_authorised_delete_battle">"Not authorised to delete battle</string>
     <string name="not_authorised_ignore_battle">"Not authorised to ignore battle</string>
@@ -43,6 +44,7 @@
     <string name="user_banned">User Banned</string>
     <string name="comment_ignored">Comment Ignored</string>
     <string name="comment_title">Comment:</string>
-    <string name="nav_reportings">Reportings</string>
+    <string name="nav_reportings_battle">Battle Reportings</string>
+    <string name="nav_reportings_comment">Comment Reportings</string>
 
 </resources>

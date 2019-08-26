@@ -21,15 +21,16 @@ import android.widget.Toast;
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
+import com.amazonaws.mobile.auth.core.IdentityManager;
 import com.amazonaws.mobileconnectors.lambdainvoker.LambdaFunctionException;
 import com.amazonaws.mobileconnectors.lambdainvoker.LambdaInvokerFactory;
 import com.amazonaws.regions.Regions;
 import com.liamfarrell.android.snapbattle.model.AsyncTaskResult;
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.LambdaFunctionsInterface;
 import com.liamfarrell.android.snapbattle.R;
+import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.UpdateNameRequest;
 import com.liamfarrell.android.snapbattle.ui.FacebookLoginFragment;
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.UpdateNameResponse;
-import com.liamfarrell.android.snapbattle.model.lambda_function_request_objects.UpdateNameRequest;
 import com.liamfarrell.android.snapbattle.util.HandleLambdaError;
 
 import java.lang.ref.WeakReference;
@@ -121,7 +122,7 @@ public class ChooseNameStartupFragment extends Fragment
         LambdaInvokerFactory factory = new LambdaInvokerFactory(
                 activityReference.get().getApplicationContext(),
                 Regions.US_EAST_1,
-                FacebookLoginFragment.getCredentialsProvider(activityReference.get()));
+                IdentityManager.getDefaultIdentityManager().getCredentialsProvider());
 
         final LambdaFunctionsInterface lambdaFunctionsInterface = factory.build(LambdaFunctionsInterface.class);
 

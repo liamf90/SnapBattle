@@ -33,6 +33,8 @@ import com.amazonaws.regions.Regions;
 import com.liamfarrell.android.snapbattle.ActivityMainNavigationDrawer;
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.LambdaFunctionsInterface;
 import com.liamfarrell.android.snapbattle.R;
+import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.UpdateNameRequest;
+import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.UpdateUsernameRequest;
 import com.liamfarrell.android.snapbattle.ui.startup.ChooseUsernameStartupFragment;
 import com.liamfarrell.android.snapbattle.caches.CurrentUsersProfilePicCacheManager;
 import com.liamfarrell.android.snapbattle.model.AsyncTaskResult;
@@ -40,8 +42,6 @@ import com.liamfarrell.android.snapbattle.model.User;
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.GetProfileResponse;
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.UpdateNameResponse;
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.UpdateUsernameResponse;
-import com.liamfarrell.android.snapbattle.model.lambda_function_request_objects.UpdateNameRequest;
-import com.liamfarrell.android.snapbattle.model.lambda_function_request_objects.UpdateUsernameRequest;
 import com.liamfarrell.android.snapbattle.util.HandleLambdaError;
 import com.theartofdev.edmodo.cropper.CropImage;
 

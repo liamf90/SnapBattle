@@ -18,6 +18,7 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.amazonaws.mobile.auth.core.IdentityManager
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -43,7 +44,7 @@ import java.io.File
 /**
 * Adapter for the [RecyclerView] in [ViewBattleFragment].
 */
-class BattleVideoAdapter (val battle: Battle, val recordButtonOnClickCallback: (video: Video)-> Unit, val usersBattleRepository : UsersBattleRepository ) :
+class BattleVideoAdapter (val battle: Battle, val recordButtonOnClickCallback: (video: Video)-> Unit, private val usersBattleRepository : UsersBattleRepository ) :
         ListAdapter<Video, BattleVideoAdapter.ViewHolder>(VideoDiffCallback()) {
 
 
@@ -123,7 +124,7 @@ class BattleVideoAdapter (val battle: Battle, val recordButtonOnClickCallback: (
 
 
     private fun playWithCloudFrontSignedUrl(context: Context, s3Path: String) {
-        val url = "https://djbj27vmux1mw.cloudfront.net/" + FacebookLoginFragment.getCredentialsProvider(context).cachedIdentityId + "/" + s3Path
+        val url = "https://djbj27vmux1mw.cloudfront.net/" + IdentityManager.getDefaultIdentityManager().getCachedUserID() + "/" + s3Path
         Battle.getSignedUrlFromServer(url, context) { signedUrl ->
             val intent = Intent(context, VideoViewActivity::class.java)
             intent.putExtra(VideoViewFragment.VIDEO_FILEPATH_EXTRA, signedUrl)

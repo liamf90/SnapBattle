@@ -34,9 +34,13 @@
 
             android:title="@string/nav_logout" />
         <item
-            android:id="@+id/nav_admin_reportings"
+            android:id="@+id/nav_admin_battle_reportings"
 
-            android:title="@string/nav_reportings" />
+            android:title="@string/nav_reportings_battle" />
+        <item
+            android:id="@+id/nav_admin_comment_reportings"
+
+            android:title="@string/nav_reportings_comment" />
 
 
     </group>

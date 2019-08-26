@@ -10,6 +10,7 @@ import android.widget.ImageView;
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
+import com.amazonaws.mobile.auth.core.IdentityManager;
 import com.amazonaws.mobileconnectors.lambdainvoker.LambdaFunctionException;
 import com.amazonaws.mobileconnectors.lambdainvoker.LambdaInvokerFactory;
 import com.amazonaws.regions.Regions;
@@ -80,7 +81,7 @@ public class CurrentUsersProfilePicCacheManager {
         LambdaInvokerFactory factory = new LambdaInvokerFactory(
                 contextReference.get().getApplicationContext(),
                 Regions.US_EAST_1,
-                FacebookLoginFragment.getCredentialsProvider(contextReference.get()));
+                IdentityManager.getDefaultIdentityManager().getCredentialsProvider());
 
         // Create the Lambda proxy object with default Json data binder.
         // You can provide your own data binder by implementing
@@ -149,7 +150,7 @@ public class CurrentUsersProfilePicCacheManager {
     private String getProfilePicturePathS3(Context context)
     {
         try {
-            String filename = FacebookLoginFragment.getCredentialsProvider(mContext).getIdentityId() + "/" + FacebookLoginFragment.getCredentialsProvider(context).getIdentityId() + "-" + getProfilePicCountSharedPrefs(context) + "-ProfilePic.png";
+            String filename = IdentityManager.getDefaultIdentityManager().getCachedUserID() + "/" + IdentityManager.getDefaultIdentityManager().getCachedUserID() + "-" + getProfilePicCountSharedPrefs(context) + "-ProfilePic.png";
             return filename;
         } catch (com.amazonaws.services.cognitoidentity.model.NotAuthorizedException e)
         {
@@ -161,14 +162,14 @@ public class CurrentUsersProfilePicCacheManager {
     private String getNextProfilePicturePathS3(Context context)
     {
         int nextProfilePicCount = getProfilePicCountSharedPrefs(context) + 1;
-        String path = FacebookLoginFragment.getCredentialsProvider(mContext).getIdentityId() + "/" + FacebookLoginFragment.getCredentialsProvider(context).getIdentityId() + "-" +  nextProfilePicCount + "-ProfilePic.png";
+        String path = IdentityManager.getDefaultIdentityManager().getCachedUserID() + "/" + IdentityManager.getDefaultIdentityManager().getCachedUserID() + "-" +  nextProfilePicCount + "-ProfilePic.png";
         return path;
     }
 
 
     public static String getProfilePictureSavePath(Context context)
     {
-        return context.getFilesDir().getAbsolutePath() + "/" + FacebookLoginFragment.getCredentialsProvider(context).getCachedIdentityId() + "-ProfilePic.png";
+        return context.getFilesDir().getAbsolutePath() + "/" + IdentityManager.getDefaultIdentityManager().getCachedUserID() + "-ProfilePic.png";
 
     }
 
@@ -227,7 +228,7 @@ public class CurrentUsersProfilePicCacheManager {
             String s3Path = getProfilePicturePathS3(mContext);
 
             //download file
-            AmazonS3 s3 = new AmazonS3Client(FacebookLoginFragment.getCredentialsProvider(mContext));
+            AmazonS3 s3 = new AmazonS3Client(IdentityManager.getDefaultIdentityManager().getCredentialsProvider());
             String bucketName  = "snapbattlevideos";
 
             GetObjectRequest gor = new GetObjectRequest(bucketName, s3Path);
@@ -278,7 +279,7 @@ public class CurrentUsersProfilePicCacheManager {
 
     private void updateProfilePicCountSharedPrefs(int profilePicCount)
     {
-        SharedPreferences sharedPref = mContext.getSharedPreferences(FacebookLoginFragment.getCredentialsProvider(mContext).getIdentityId(), Context.MODE_PRIVATE);
+        SharedPreferences sharedPref = mContext.getSharedPreferences(IdentityManager.getDefaultIdentityManager().getCachedUserID(), Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putInt("PROFILE_PIC_COUNT", profilePicCount);
         editor.commit();
@@ -286,7 +287,7 @@ public class CurrentUsersProfilePicCacheManager {
 
     private static int getProfilePicCountSharedPrefs(Context context)
     {
-        SharedPreferences sharedPref = context.getSharedPreferences(FacebookLoginFragment.getCredentialsProvider(context).getIdentityId(), Context.MODE_PRIVATE);
+        SharedPreferences sharedPref = context.getSharedPreferences(IdentityManager.getDefaultIdentityManager().getCachedUserID(), Context.MODE_PRIVATE);
         int profilePicCount = sharedPref.getInt("PROFILE_PIC_COUNT", 0);
         return profilePicCount;
     }
@@ -311,7 +312,7 @@ public class CurrentUsersProfilePicCacheManager {
 
 
             ///AmazonS3 s3 = createS3Bucket();
-            AmazonS3 s3 = new AmazonS3Client(FacebookLoginFragment.getCredentialsProvider(mContext));
+            AmazonS3 s3 = new AmazonS3Client(IdentityManager.getDefaultIdentityManager().getCredentialsProvider());
 
             String bucketName = "snapbattlevideos";
             final File newProfilePic = new File(params[0]);
@@ -394,7 +395,7 @@ public class CurrentUsersProfilePicCacheManager {
         LambdaInvokerFactory factory = new LambdaInvokerFactory(
                 mContext,
                 Regions.US_EAST_1,
-                FacebookLoginFragment.getCredentialsProvider(mContext));
+                IdentityManager.getDefaultIdentityManager().getCredentialsProvider());
 
         // Create the Lambda proxy object with default Json data binder.
 // You can provide your own data binder by implementing
@@ -436,8 +437,8 @@ public class CurrentUsersProfilePicCacheManager {
             }
             User user = result.getSqlResult().get(0);
             int profilePicCount = user.getProfilePicCount();
-            Log.i("TEST1",FacebookLoginFragment.getCredentialsProvider(mContext).getCachedIdentityId());
-           SharedPreferences sharedPref =   mContext.getSharedPreferences(FacebookLoginFragment.getCredentialsProvider(mContext).getCachedIdentityId(), Context.MODE_PRIVATE);
+            Log.i("TEST1",IdentityManager.getDefaultIdentityManager().getCachedUserID());
+           SharedPreferences sharedPref =   mContext.getSharedPreferences(IdentityManager.getDefaultIdentityManager().getCachedUserID(), Context.MODE_PRIVATE);
             int profilePicCountSharedPrefs = sharedPref.getInt("Profile_Pic_Count", -1);
 
 

@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
+import com.amazonaws.mobile.auth.core.IdentityManager;
 import com.amazonaws.mobileconnectors.lambdainvoker.LambdaFunctionException;
 import com.amazonaws.mobileconnectors.lambdainvoker.LambdaInvokerFactory;
 import com.amazonaws.regions.Regions;
@@ -384,7 +385,7 @@ public class ChooseBattleTypeFragment extends Fragment {
         LambdaInvokerFactory factory = new LambdaInvokerFactory(
                 activityReference.get().getApplicationContext(),
                 Regions.US_EAST_1,
-                FacebookLoginFragment.getCredentialsProvider(activityReference.get().getApplicationContext()));
+                IdentityManager.getDefaultIdentityManager().getCredentialsProvider());
 
         final LambdaFunctionsInterface lambdaFunctionsInterface = factory.build(LambdaFunctionsInterface.class);
                 try {

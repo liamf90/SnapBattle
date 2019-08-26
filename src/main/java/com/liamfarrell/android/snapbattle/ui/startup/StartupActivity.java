@@ -45,9 +45,11 @@ public class StartupActivity extends AppCompatActivity {
 
         setSupportActionBar(toolbar);
         nextFragment();
-
-
     }
+
+
+
+
     public void setEnableNextButton(boolean enabled)
     {
         enableNextButton = enabled;

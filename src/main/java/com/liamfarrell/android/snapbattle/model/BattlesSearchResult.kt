@@ -2,6 +2,7 @@ package com.liamfarrell.android.snapbattle.model
 
 import androidx.lifecycle.LiveData
 import androidx.paging.PagedList
+import com.liamfarrell.android.snapbattle.db.FollowingBattle
 
 /**
  * BattlesSearchResult from a load database, which contains LiveData<List<Battle>> holding query data,

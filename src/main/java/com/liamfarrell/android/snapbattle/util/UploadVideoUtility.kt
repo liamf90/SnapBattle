@@ -1,28 +1,16 @@
 package com.liamfarrell.android.snapbattle.util
 
 import android.content.Context
-import android.os.Handler
-import android.os.Looper
-import android.util.Log
-import android.widget.Toast
-import androidx.work.CoroutineWorker
-import androidx.work.WorkerParameters
 import com.amazonaws.AmazonClientException
 import com.amazonaws.AmazonServiceException
 import com.amazonaws.event.ProgressEvent
-import com.amazonaws.event.ProgressListener
+import com.amazonaws.mobile.auth.core.IdentityManager
 import com.amazonaws.services.s3.AmazonS3Client
 import com.amazonaws.services.s3.model.CopyObjectRequest
 import com.amazonaws.services.s3.model.PutObjectRequest
-import com.liamfarrell.android.snapbattle.R
-import com.liamfarrell.android.snapbattle.data.following_battle_feed.FollowingBattlesDynamoCount
-import com.liamfarrell.android.snapbattle.db.following_battle_feed.FollowingBattlesFeedDatabase
 import com.liamfarrell.android.snapbattle.model.AsyncTaskResult
 import com.liamfarrell.android.snapbattle.model.Battle
 import com.liamfarrell.android.snapbattle.model.Video
-import com.liamfarrell.android.snapbattle.ui.FacebookLoginFragment
-import com.liamfarrell.android.snapbattle.util.executeAWSFunction
-import kotlinx.coroutines.coroutineScope
 import java.io.File
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -30,12 +18,12 @@ import kotlin.coroutines.suspendCoroutine
 suspend fun uploadVideoJob(context: Context, b : Battle, fileName : String, cognitoIDOpponent : String, videoID : Int) : AsyncTaskResult<Boolean> {
 
 
-    val s3 = AmazonS3Client(FacebookLoginFragment.getCredentialsProvider(context))
+    val s3 = AmazonS3Client(IdentityManager.getDefaultIdentityManager().credentialsProvider)
     val bucketName = "snapbattlevideos"
-    val CognitoID = FacebookLoginFragment.getCredentialsProvider(context).identityId
+    val CognitoID = IdentityManager.getDefaultIdentityManager().cachedUserID
     val file = File(context.getFilesDir().getAbsolutePath() + "/" + fileName)
     val key = CognitoID + "/" + file.getName()
-    val CognitoIDUser = FacebookLoginFragment.getCredentialsProvider(context).identityId
+    val CognitoIDUser = IdentityManager.getDefaultIdentityManager().cachedUserID
     val orientationLock = Video.orientationHintToLock(Integer.parseInt(Video.getVideoRotation(context, b.videos.get(b.videosUploaded))))
 
     println("Uploading a new object to S3 from a file\n")

@@ -18,7 +18,9 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.content.PermissionChecker.checkSelfPermission
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
+import com.amazonaws.mobile.auth.core.IdentityManager
 import com.google.android.material.snackbar.Snackbar
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
@@ -30,6 +32,8 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.liamfarrell.android.snapbattle.R
 import com.liamfarrell.android.snapbattle.adapters.AllBattlesFeedPagingListAdapter
 import com.liamfarrell.android.snapbattle.adapters.BattleVideoAdapter
+import com.liamfarrell.android.snapbattle.data.UsersBattleRepository
+import com.liamfarrell.android.snapbattle.data.UsersBattlesRepository
 import com.liamfarrell.android.snapbattle.databinding.FragmentFriendsBattleListBinding
 import com.liamfarrell.android.snapbattle.databinding.FragmentViewBattleBinding
 import com.liamfarrell.android.snapbattle.di.*
@@ -44,8 +48,14 @@ import com.liamfarrell.android.snapbattle.util.downloadFileFromURL
 import com.liamfarrell.android.snapbattle.viewmodels.ViewOwnBattleViewModel
 import kotlinx.android.synthetic.main.fragment_view_comments.*
 import java.io.File
+import javax.inject.Inject
 
-class ViewBattleFragment : Fragment(){
+class ViewBattleFragment : Fragment(), Injectable {
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+
+    @Inject
+    lateinit var usersBattleRepository : UsersBattleRepository
 
     companion object{
         const val BATTLE_ID_EXTRA = "com.liamfarrell.android.snapbattle.battle_id_extra"
@@ -67,14 +77,9 @@ class ViewBattleFragment : Fragment(){
         binding.lifecycleOwner = viewLifecycleOwner
         battleID = activity?.intent?.getIntExtra(BATTLE_ID_EXTRA, -1) ?: -1
 
-        val appComponent = DaggerOwnBattleComponent.builder()
-                .aWSLambdaModule(AWSLambdaModule(requireContext()))
-                .viewOwnBattleViewModelFactoryModule(ViewOwnBattleViewModelFactoryModule(battleID))
-                .build()
 
-
-        adapter = BattleVideoAdapter(battle, ::getRecordButtonOnClick, appComponent.getUsersBattleRepository())
-        viewModel = ViewModelProviders.of(this, appComponent.getViewOwnBattleViewModelFactory()).get(ViewOwnBattleViewModel::class.java)
+        adapter = BattleVideoAdapter(battle, ::getRecordButtonOnClick, usersBattleRepository )
+        viewModel = ViewModelProviders.of(this, viewModelFactory).get(ViewOwnBattleViewModel::class.java)
         binding.battle = viewModel.battle
         binding.recyclerView.adapter = adapter
         binding.included.saveToDeviceButton.setOnClickListener({onSaveToDeviceButtonClicked()})
@@ -86,6 +91,8 @@ class ViewBattleFragment : Fragment(){
 
         registerReceiver()
         subscribeUi(adapter)
+        viewModel.getBattle(battleID)
+
         return binding.root
     }
 
@@ -131,7 +138,7 @@ class ViewBattleFragment : Fragment(){
                     battle.setOrientationLock(Battle.ORIENTATION_LOCK_LANDSCAPE)
                 }
             }
-            viewModel.getBattle()
+            viewModel.getBattle(battleID)
         }
     }
 
@@ -157,9 +164,9 @@ class ViewBattleFragment : Fragment(){
             if (intent.getStringExtra(MyGcmListenerService.TYPE_INTENT_EXTRA) == MyGcmListenerService.TYPE_VIDEO_SUBMITTED && intent.getIntExtra(MyGcmListenerService.BATTLE_ID_INTENT_EXTRA, -1) == battle.getBattleId()) {
                 // TODO If we receive this, we're visible, so cancel the notification
                 //setResultCode(Activity.RESULT_CANCELED);
-                viewModel.getBattle()
+                viewModel.getBattle(battleID)
             } else if (intent.getStringExtra(MyGcmListenerService.TYPE_INTENT_EXTRA) == MyGcmListenerService.UPLOAD_FULL_VIDEO && intent.getIntExtra(MyGcmListenerService.BATTLE_ID_INTENT_EXTRA, -1) == battle.getBattleId()) {
-                viewModel.getBattle()
+                viewModel.getBattle(battleID)
             }
         }
     }
@@ -197,7 +204,7 @@ class ViewBattleFragment : Fragment(){
 
 
     private fun saveFileToDevice() {
-        val filepath = battle.getServerFinalVideoUrl(FacebookLoginFragment.getCredentialsProvider(activity).identityId)
+        val filepath = battle.getServerFinalVideoUrl(IdentityManager.getDefaultIdentityManager().cachedUserID)
         val callback = Battle.SignedUrlCallback { signedUrl ->
             context?.let{downloadFileFromURL(it, signedUrl, battle.finalVideoFilename, null, battle.battleName)}
 
@@ -218,7 +225,7 @@ class ViewBattleFragment : Fragment(){
                 startActivity(intent)
             } else {
                 //Stream the file
-                val filepath = battle.getServerFinalVideoUrl(FacebookLoginFragment.getCredentialsProvider(activity).identityId)
+                val filepath = battle.getServerFinalVideoUrl(IdentityManager.getDefaultIdentityManager().cachedUserID)
                 val callback = Battle.SignedUrlCallback { signedUrl ->
                     //progressContainer.setVisibility(View.INVISIBLE)
                     val intent = Intent(it, VideoViewActivity::class.java)

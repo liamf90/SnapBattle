@@ -12,14 +12,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:scaleType="centerCrop"
-        android:adjustViewBounds="true"
-
-
-        />
-
-
+        android:adjustViewBounds="true" />
+    
     <TextView
-
         android:id = "@+id/battle_list_item_battle_name_title_TextView"
         android:layout_below="@id/thumbnailImageView"
         android:layout_alignParentStart="true"

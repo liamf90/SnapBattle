@@ -20,6 +20,7 @@ import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.liamfarrell.android.snapbattle.R;
 import com.liamfarrell.android.snapbattle.model.User;
+import com.liamfarrell.android.snapbattle.ui.createbattle.ChooseRoundsFragment;
 
 import java.util.Arrays;
 import java.util.Set;
@@ -44,7 +45,7 @@ public class CreateBattleActivity extends AppCompatActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_create_battle);
 
-		mFragments = new Fragment[]{ new ChooseBattleTypeFragment(),new ChooseOpponentFragment(), new ChooseRoundsFragment(), new ChooseVotingFragment(), new VerifyBattleFragment()};
+		mFragments = new Fragment[]{ new ChooseBattleTypeFragment(),new ChooseOpponentFragment(), new com.liamfarrell.android.snapbattle.mvvm_ui.create_battle.ChooseRoundsFragment(), new ChooseVotingFragment(), new VerifyBattleFragment()};
 		mFragmentNames = getResources().getStringArray(R.array.nav_create_battle_fragment_titles);
 		Toolbar toolbar = findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
@@ -75,7 +76,7 @@ public class CreateBattleActivity extends AppCompatActivity {
 		{
 			setEnableNextButton(false);
 		}
-		else if (mFragments[mCurrentFragmentIndex] instanceof ChooseRoundsFragment)
+		else if (mFragments[mCurrentFragmentIndex] instanceof com.liamfarrell.android.snapbattle.mvvm_ui.create_battle.ChooseRoundsFragment)
 		{
 			setEnableNextButton(true);
 		}

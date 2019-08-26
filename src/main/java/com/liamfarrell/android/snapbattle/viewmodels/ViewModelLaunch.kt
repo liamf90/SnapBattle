@@ -1,24 +1,10 @@
 package com.liamfarrell.android.snapbattle.viewmodels
 
-import android.content.Context
 import android.view.View
 import android.widget.FrameLayout
-import android.widget.ProgressBar
 import androidx.databinding.BindingAdapter
 import androidx.lifecycle.*
-import androidx.lifecycle.Transformations.switchMap
-import com.amazonaws.AmazonClientException
-import com.amazonaws.AmazonServiceException
-import com.amazonaws.mobileconnectors.lambdainvoker.LambdaFunctionException
-import com.facebook.internal.Mutable
-import com.google.gson.JsonParser
-import com.liamfarrell.android.snapbattle.R
-import com.liamfarrell.android.snapbattle.app.App
-import com.liamfarrell.android.snapbattle.model.AsyncTaskResult
-import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.LambdaFunctionsInterface
-import com.liamfarrell.android.snapbattle.util.HandleLambdaError.ALREADY_FOLLOWING_ERROR
 import kotlinx.coroutines.*
-import java.lang.Exception
 
 
 open class ViewModelLaunch : ViewModel() {
@@ -49,7 +35,6 @@ open class ViewModelLaunch : ViewModel() {
      */
     protected fun awsLambdaFunctionCall(showSpinner: Boolean, block: suspend () -> Unit): Job {
         return viewModelScope.launch {
-
                 if (showSpinner) _spinner.value = true
                     block()
                 if (showSpinner) _spinner.value = false

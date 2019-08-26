@@ -10,9 +10,6 @@ import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.liamfarrell.android.snapbattle.databinding.FragmentViewCommentsBinding
-import com.liamfarrell.android.snapbattle.di.AWSLambdaModule
-import com.liamfarrell.android.snapbattle.di.CommentViewModelFactoryModule
-import com.liamfarrell.android.snapbattle.di.DaggerAppComponent
 import com.liamfarrell.android.snapbattle.viewmodels.CommentViewModel
 import com.liamfarrell.android.snapbattle.adapters.CommentsListAdapter
 import android.widget.TextView
@@ -25,13 +22,18 @@ import com.facebook.login.LoginResult
 import com.facebook.FacebookCallback
 import com.facebook.CallbackManager
 import android.content.Intent
+import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.snackbar.Snackbar
 import com.liamfarrell.android.snapbattle.R
+import com.liamfarrell.android.snapbattle.di.Injectable
 import com.liamfarrell.android.snapbattle.ui.FullBattleVideoPlayerActivity
 import java.util.*
+import javax.inject.Inject
 
 
-class ViewCommentsFragment : Fragment(){
+class ViewCommentsFragment : Fragment(), Injectable {
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
 
     companion object{
        val EXTRA_BATTLEID = "com.liamfarrell.android.snapbattle.viewcommentsfragment.BATTLEIDEXTRA"}
@@ -54,20 +56,15 @@ class ViewCommentsFragment : Fragment(){
             battleID = getActivity()?.getIntent()?.getIntExtra(EXTRA_BATTLEID, 0)!!
         }
 
-        val appComponent  = DaggerAppComponent.builder()
-                .aWSLambdaModule(AWSLambdaModule(requireContext()))
-                .commentViewModelFactoryModule(CommentViewModelFactoryModule(battleID))
-                .build()
 
-
-
-        viewModel = ViewModelProviders.of(this, appComponent.getCommentViewModelFactory()).get(CommentViewModel::class.java)
+        viewModel = ViewModelProviders.of(this, viewModelFactory).get(CommentViewModel::class.java)
         val adapter = CommentsListAdapter(viewModel, ::listItemViewHolderOnClick)
         binding.commentsList.adapter = adapter
         binding.viewModel = viewModel
         binding.commentEditText.addTextChangedListener(onAddCommentEditTextChanged)
         binding.addACommentButton.setOnClickListener(addCommentButtonClicked())
         subscribeUi(adapter)
+        viewModel.getComments(battleID)
         return binding.root
     }
 
@@ -83,7 +80,7 @@ class ViewCommentsFragment : Fragment(){
 
     private fun addCommentButtonClicked() : View.OnClickListener{
         return View.OnClickListener {
-            viewModel.addComment(commentEditText.text.toString(), usernameTagsList, ::requestUserFriendsPermission)
+            viewModel.addComment(battleID, commentEditText.text.toString(), usernameTagsList, ::requestUserFriendsPermission)
             commentEditText.setText("")
             hideKeyboard()
         }
@@ -191,7 +188,7 @@ class ViewCommentsFragment : Fragment(){
         LoginManager.getInstance().registerCallback(mCallbackManager,
                 object : FacebookCallback<LoginResult> {
                     override fun onSuccess(loginResult: LoginResult) {
-                        viewModel.verifyUser(commentEditText.text.toString(), usernameTagsList)}
+                        viewModel.verifyUser(battleID, commentEditText.text.toString(), usernameTagsList)}
                     override fun onCancel() {}
                     override fun onError(e: FacebookException) {
                         Toast.makeText(activity, R.string.server_error_toast, Toast.LENGTH_SHORT).show() }

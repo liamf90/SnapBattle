@@ -1,3 +1,5 @@
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
 
     android:id="@+id/constraintLayout"
@@ -9,6 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:drawSelectorOnTop="false"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         android:background="#cfd8dc"
 
 
@@ -28,3 +31,5 @@
     </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

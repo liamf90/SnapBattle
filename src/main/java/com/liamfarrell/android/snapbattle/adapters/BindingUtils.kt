@@ -1,13 +1,7 @@
 package com.liamfarrell.android.snapbattle.adapters
 
-import android.content.Context
-import android.graphics.Typeface
-import android.text.Spannable
 import android.text.SpannableStringBuilder
-import android.text.style.StyleSpan
 import android.view.View
-import android.widget.FrameLayout
-import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.core.text.bold
@@ -19,11 +13,23 @@ import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
 import android.view.ViewGroup
 import com.liamfarrell.android.snapbattle.R
-
+import com.squareup.picasso.Callback
+import timber.log.Timber
+import java.lang.Exception
 
 @BindingAdapter("profileImage")
 fun loadImage(view: CircleImageView, imageUrl: String?) {
-    Picasso.get().load(imageUrl).placeholder(R.drawable.default_profile_pic100x100).error(R.drawable.default_profile_pic100x100).into(view)
+    Picasso.get().load(imageUrl).placeholder(R.drawable.default_profile_pic100x100).error(R.drawable.default_profile_pic100x100).into(view, object: Callback {
+        override fun onSuccess() {
+           Timber.i("On Success")
+        }
+
+        override fun onError(e: Exception?) {
+            Timber.e(e)
+        }
+
+    })
+
 }
 
 @BindingAdapter("commentText")

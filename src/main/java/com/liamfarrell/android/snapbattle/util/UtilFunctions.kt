@@ -1,20 +1,34 @@
 package com.liamfarrell.android.snapbattle.util
 
+import android.content.Context
 import com.liamfarrell.android.snapbattle.R
-import com.liamfarrell.android.snapbattle.app.App
+import com.liamfarrell.android.snapbattle.app.SnapBattleApp
+import com.squareup.picasso.Callback
+import com.squareup.picasso.NetworkPolicy
+import com.squareup.picasso.Picasso
+import java.lang.Exception
+import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.coroutines.suspendCoroutine
 
 
+fun mysqlDateStringToDate(dateString : String) : Date {
+    var timeBanEnds = Date()
+    val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.ENGLISH)
+    sdf.timeZone = TimeZone.getTimeZone("UTC")
+    timeBanEnds = sdf.parse(dateString)
+    return timeBanEnds
+}
 
-fun getTimeUntil(dateAfterNow: Date): String {
+fun getTimeUntil(context: Context, dateAfterNow: Date): String {
     val cal = Calendar.getInstance()
     cal.timeZone = TimeZone.getTimeZone("UTC")
     val timeNow = cal.time
 
-    return getTimeBetween(timeNow, dateAfterNow, false)
+    return getTimeBetween(context, timeNow, dateAfterNow, false)
 }
 
- fun getTimeBetween(before: Date?, after: Date?, shortHandVersion: Boolean): String {
+ fun getTimeBetween(context: Context, before: Date?, after: Date?, shortHandVersion: Boolean): String {
     if (after == null || before == null) {
         return ""
     }
@@ -41,7 +55,7 @@ fun getTimeUntil(dateAfterNow: Date): String {
 
     val elapsedMinutes = timeDifference / minutesInMilli
     var timeSinceString = ""
-    val res = App.getContext().resources
+    val res = context.resources
 
     if (totalMinutes == 1L) {
         if (shortHandVersion) {
@@ -94,6 +108,23 @@ fun getTimeUntil(dateAfterNow: Date): String {
     }
     return timeSinceString
 }
+
+
+ suspend fun isSignedUrlInPicassoCache(signedUrl: String) : Boolean{
+    return suspendCoroutine<Boolean> {
+        Picasso.get().load(signedUrl).networkPolicy(NetworkPolicy.OFFLINE).fetch()
+        object : Callback {
+            override fun onSuccess() {
+                it.resumeWith(Result.success(true))
+            }
+
+            override fun onError(e: Exception?) {
+                it.resumeWith(Result.success(false))
+            }
+        }
+    }
+}
+
 
 
 

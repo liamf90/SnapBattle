@@ -13,7 +13,7 @@ private val fragments = mutableListOf<Fragment>()
  * A [FragmentPagerAdapter] that returns a fragment corresponding to
  * one of the sections/tabs/pages.
  */
-class SectionsPagerAdapter(fm: FragmentManager, private val searchView: SearchView)
+class SearchPagerAdapter(fm: FragmentManager, private val searchView: SearchView)
     : FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
     override fun getItem(position: Int): Fragment {

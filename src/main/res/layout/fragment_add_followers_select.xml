@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <import type="android.view.View"/>
+        <variable
+            name="viewModel"
+            type="com.liamfarrell.android.snapbattle.viewmodels.startup.AddFacebookFriendsAsFollowersStartupViewModel" />
+    </data>
+
+<androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/coordinatorLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -12,11 +21,12 @@
             android:id="@+id/recyclerList"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             android:drawSelectorOnTop="false" />
     </LinearLayout>
-
     <FrameLayout
         android:id="@+id/opponent_list_progressContainer"
+        android:visibility="@{viewModel.spinner ? View.VISIBLE : View.GONE}"
         android:layout_width="match_parent"
         android:layout_height="@dimen/progress_container_height"
         android:clickable="true"
@@ -29,4 +39,5 @@
             android:layout_gravity="center"/>
 
     </FrameLayout>
-</FrameLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</layout>

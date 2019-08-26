@@ -7,7 +7,7 @@ import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
 
-import com.liamfarrell.android.snapbattle.app.App;
+import com.liamfarrell.android.snapbattle.app.SnapBattleApp;
 import com.liamfarrell.android.snapbattle.R;
 import com.liamfarrell.android.snapbattle.ui.ViewBattleActivity;
 import com.liamfarrell.android.snapbattle.ui.ViewBattleFragment;
@@ -20,14 +20,16 @@ public class BattleAcceptedNotification extends Notification {
     private String mOpponentCogntioId;
     private String mOpponentName;
     private boolean mBattleAccepted;
-    public BattleAcceptedNotification(int battleId, String opponentCognitoId, String opponentName, boolean battleAccepted)
+    public BattleAcceptedNotification(int notificationIndex, int battleId, String opponentCognitoId, String opponentName, boolean battleAccepted)
     {
-        super(battleId);
+        super(notificationIndex, battleId);
         mOpponentCogntioId = opponentCognitoId;
         mOpponentName = opponentName;
         mBattleAccepted = battleAccepted;
 
     }
+
+
 
     @Override
     public Intent getIntent(Context context) {
@@ -37,7 +39,7 @@ public class BattleAcceptedNotification extends Notification {
     }
 
     @Override
-    public SpannableStringBuilder getMessage()
+    public SpannableStringBuilder getMessage(Context context)
     {
         SpannableStringBuilder longDescription = new SpannableStringBuilder();
         longDescription.append(mOpponentName);
@@ -45,11 +47,11 @@ public class BattleAcceptedNotification extends Notification {
         longDescription.setSpan(new StyleSpan(android.graphics.Typeface.BOLD), 0, longDescription.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         if (mBattleAccepted)
         {
-            longDescription.append(App.getContext().getResources().getString(R.string.accepted_the_battle));
+            longDescription.append(context.getResources().getString(R.string.accepted_the_battle));
         }
         else
         {
-            longDescription.append(App.getContext().getResources().getString(R.string.declined_the_battle));
+            longDescription.append(context.getResources().getString(R.string.declined_the_battle));
         }
 
         return longDescription;
@@ -61,5 +63,15 @@ public class BattleAcceptedNotification extends Notification {
         return mOpponentCogntioId;
     }
 
+    public String getOpponentCogntioId() {
+        return mOpponentCogntioId;
+    }
 
+    public String getOpponentName() {
+        return mOpponentName;
+    }
+
+    public boolean isBattleAccepted() {
+        return mBattleAccepted;
+    }
 }

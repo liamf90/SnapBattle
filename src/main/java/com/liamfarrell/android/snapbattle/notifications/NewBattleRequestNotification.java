@@ -8,7 +8,7 @@ import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
 
-import com.liamfarrell.android.snapbattle.app.App;
+import com.liamfarrell.android.snapbattle.app.SnapBattleApp;
 import com.liamfarrell.android.snapbattle.ui.BattleChallengesListActivity;
 import com.liamfarrell.android.snapbattle.R;
 
@@ -20,9 +20,9 @@ public class NewBattleRequestNotification extends Notification {
 
     private String mChallengerName;
     private String mCognitoIdChallenger;
-    public NewBattleRequestNotification(int battleID, String cognitoIDChallenger, String challengerName)
+    public NewBattleRequestNotification(int notificationIndex, int battleID, String cognitoIDChallenger, String challengerName)
     {
-        super(battleID);
+        super(notificationIndex,battleID);
         mChallengerName = challengerName;
         mCognitoIdChallenger = cognitoIDChallenger;
 
@@ -35,10 +35,10 @@ public class NewBattleRequestNotification extends Notification {
     }
 
     @Override
-    public SpannableStringBuilder getMessage()
+    public SpannableStringBuilder getMessage(Context context)
     {
         SpannableStringBuilder longDescription = new SpannableStringBuilder();
-        longDescription.append(App.getContext().getResources().getString(R.string.battle_request_notification_append));
+        longDescription.append(context.getResources().getString(R.string.battle_request_notification_append));
         int start = longDescription.length();
         longDescription.append(mChallengerName);
         longDescription.setSpan(new ForegroundColorSpan(0xFFCC5500), start, longDescription.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -51,4 +51,11 @@ public class NewBattleRequestNotification extends Notification {
         return mCognitoIdChallenger;
     }
 
+    public String getChallengerName() {
+        return mChallengerName;
+    }
+
+    public String getCognitoIdChallenger() {
+        return mCognitoIdChallenger;
+    }
 }

@@ -1,5 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="user"
+            type="com.liamfarrell.android.snapbattle.model.User"/>
+        <variable
+            name="onCheckedChangedListener"
+            type="android.widget.CompoundButton.OnCheckedChangeListener"/>
+    </data>
+
+<LinearLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
@@ -11,7 +24,9 @@
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/profileImageView"
         android:layout_width="@dimen/profile_pic_small_width"
-        android:layout_height="@dimen/profile_pic_small_height" />
+        android:layout_height="@dimen/profile_pic_small_height"
+        app:profileImage="@{user.profilePicSignedUrl}"
+        />
 
     <TextView
         android:layout_weight="1"
@@ -20,6 +35,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity= "center_vertical"
+        android:text="@{user.facebookName}"
         android:id="@+id/facebookUsernameTextView"
         />
 
@@ -28,6 +44,10 @@
         android:layout_height="wrap_content"
         android:id="@+id/addFollowerCheckBox"
         android:layout_gravity="center_vertical"
+        android:checked="@={user.isFollowing}"
+        android:onCheckedChanged="@{onCheckedChangedListener}"
+
         />
 
 </LinearLayout>
+</layout>

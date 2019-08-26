@@ -99,7 +99,7 @@
     <dimen name="about_us_margin_top">32dp</dimen>
     <dimen name="about_us_spacing_textviews">24dp</dimen>
 
-    <!-- activity users battles -->
+    <!-- activity users topBattles -->
     <dimen name="elevation_user_header">2dp</dimen>
 
     <!-- activity video capture -->

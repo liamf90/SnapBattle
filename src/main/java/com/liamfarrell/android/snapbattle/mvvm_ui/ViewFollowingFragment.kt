@@ -9,20 +9,21 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import com.liamfarrell.android.snapbattle.R
 import com.liamfarrell.android.snapbattle.adapters.FollowingListAdapter
 import com.liamfarrell.android.snapbattle.databinding.FragmentViewFollowersBinding
-import com.liamfarrell.android.snapbattle.di.AWSLambdaModule
-import com.liamfarrell.android.snapbattle.di.DaggerFollowingComponent
-import com.liamfarrell.android.snapbattle.di.FollowingViewModelFactoryModule
 import com.liamfarrell.android.snapbattle.viewmodels.FollowingViewModel
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.DividerItemDecoration
+import com.liamfarrell.android.snapbattle.di.Injectable
+import javax.inject.Inject
 
 
-
-class ViewFollowingFragment : Fragment() {
+class ViewFollowingFragment : Fragment() , Injectable {
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
 
 
     private lateinit var viewModel: FollowingViewModel
@@ -33,13 +34,7 @@ class ViewFollowingFragment : Fragment() {
         val binding = FragmentViewFollowersBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = viewLifecycleOwner
 
-
-        val appComponent = DaggerFollowingComponent.builder()
-                .aWSLambdaModule(AWSLambdaModule(requireContext()))
-                .followingViewModelFactoryModule(FollowingViewModelFactoryModule())
-                .build()
-
-        viewModel = ViewModelProviders.of(this, appComponent.getFollowingViewModelFactory()).get(FollowingViewModel::class.java)
+        viewModel = ViewModelProviders.of(this, viewModelFactory).get(FollowingViewModel::class.java)
         val adapter = FollowingListAdapter(viewModel)
         binding.recyclerList.adapter = adapter
         binding.recyclerList.addItemDecoration(DividerItemDecoration(context, LinearLayoutManager.VERTICAL))
@@ -56,7 +51,9 @@ class ViewFollowingFragment : Fragment() {
         })
 
         viewModel.errorMessage.observe(viewLifecycleOwner, Observer {
-            Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+            if (it != null) {
+                Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+            }
         })
     }
 

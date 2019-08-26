@@ -9,13 +9,14 @@ import com.liamfarrell.android.snapbattle.model.BattlesSearchResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 import kotlin.concurrent.fixedRateTimer
 
 
 /**
  * The ViewModel used in [AllBattlesFragment].
  */
-class AllBattlesViewModel(val allBattlesRepository: AllBattlesRepository ) : ViewModelLaunch() {
+class AllBattlesViewModel @Inject constructor(private val allBattlesRepository: AllBattlesRepository ) : ViewModelLaunch() {
 
     private val allBattlesResult = MutableLiveData<BattlesSearchResult>()
     private val _noMoreOlderBattles =  allBattlesRepository.isNoMoreOlderBattles

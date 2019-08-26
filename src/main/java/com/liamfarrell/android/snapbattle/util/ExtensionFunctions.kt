@@ -15,6 +15,7 @@ import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserializat
 import com.liamfarrell.android.snapbattle.viewmodels.ViewModelLaunch
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 
 suspend fun <R> executeAWSFunction(awsFunctionCall : () -> R ) : AsyncTaskResult<R> {
     return withContext(Dispatchers.IO) {
@@ -22,12 +23,15 @@ suspend fun <R> executeAWSFunction(awsFunctionCall : () -> R ) : AsyncTaskResult
             AsyncTaskResult<R>(awsFunctionCall())
         }
         catch (lfe : LambdaFunctionException){
+            Timber.i(lfe)
             AsyncTaskResult<R>(lfe)
         }
         catch ( ase: AmazonServiceException){
+            Timber.i(ase)
             AsyncTaskResult<R>(ase)
         }
         catch (ace : AmazonClientException){
+            Timber.i(ace)
             AsyncTaskResult<R>(ace)
         }
     }
@@ -65,4 +69,6 @@ fun Context.hideKeyboard(view: View) {
     val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
     inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
 }
+
+
 

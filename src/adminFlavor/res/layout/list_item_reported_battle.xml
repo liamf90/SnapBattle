@@ -1,4 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
+<layout>
+
+    <data>
+        <import type="android.view.View"/>
+        <variable
+            name="reportedBattle"
+            type="com.liamfarrell.android.snapbattle.model.ReportedBattle" />
+        <variable
+            name="callbacks"
+            type="com.liamfarrell.android.snapbattle.adapters.ReportedBattleCallback"/>
+        <variable
+            name="banDaysLength"
+            type="String"/>
+
+    </data>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
@@ -24,7 +39,9 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/battleNameTextView"/>
+            android:id="@+id/battleNameTextView"
+            android:text="@{@string/battle_name(reportedBattle.battleName)}"
+            />
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
@@ -37,6 +54,7 @@
         <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="@{reportedBattle.challengerName}"
         android:id="@+id/challengerNameTextView"/>
     </LinearLayout>
     <LinearLayout
@@ -50,6 +68,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="@{reportedBattle.challengerUsername}"
             android:id="@+id/challengerUsernameTextView"/>
     </LinearLayout>
     <LinearLayout
@@ -63,6 +82,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="@{reportedBattle.challengedName}"
             android:id="@+id/challengedNameTextView"/>
     </LinearLayout>
     <LinearLayout
@@ -76,17 +96,20 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="@{reportedBattle.challengedUsername}"
             android:id="@+id/challengedUsernameTextView"/>
     </LinearLayout>
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/deleteButton"
+        android:onClick="@{() -> callbacks.onDeleteBattle(reportedBattle.battleId)}"
         android:text="@string/delete_battle"/>
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/ignoreButton"
+        android:onClick="@{() -> callbacks.onIgnoreBattle(reportedBattle.battleId)}"
         android:text="@string/ignore_battle_report"/>
     <LinearLayout
         android:layout_width="match_parent"
@@ -98,8 +121,9 @@
             android:text="@string/ban_days_length"/>
         <EditText
             android:id="@+id/banDaysEditText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@={banDaysLength}"
             android:inputType="number">
 
         </EditText>
@@ -112,11 +136,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/banChallengerButton"
+            android:onClick="@{() -> callbacks.onBanChallenger(reportedBattle.battleId, reportedBattle.challengerCognitoId, Integer.valueOf(banDaysLength))}"
             android:text="@string/ban_challenger"/>
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/banChallengedButton"
+            android:onClick="@{() -> callbacks.onBanChallenged(reportedBattle.battleId, reportedBattle.challengedCognitoId, Integer.valueOf(banDaysLength))}"
             android:text="@string/ban_challenged"/>
     </LinearLayout>
 
@@ -131,14 +157,14 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:textColor="@android:color/holo_red_dark"
-        android:visibility="gone"
+        android:visibility="@{reportedBattle.challengerBanned ? View.VISIBLE : View.GONE}"
         android:text="@string/challenger_user_banned"/>
     <TextView
         android:id="@+id/challengedBannedTextView"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:textColor="@android:color/holo_red_dark"
-        android:visibility="gone"
+        android:visibility="@{reportedBattle.challengedBanned ? View.VISIBLE : View.GONE}"
         android:text="@string/challenged_user_banned"/>
 
     <TextView
@@ -146,14 +172,16 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:textColor="@android:color/holo_red_dark"
-        android:visibility="gone"
+        android:visibility="@{reportedBattle.battleDeleted ? View.VISIBLE : View.GONE}"
         android:text="@string/battle_deleted"/>
     <TextView
         android:id="@+id/battleIgnoredTextView"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:textColor="@android:color/holo_red_dark"
-        android:visibility="gone"
+        android:visibility="@{reportedBattle.battleIgnored ? View.VISIBLE : View.GONE}"
         android:text="@string/battle_ignored"/>
 
 </LinearLayout>
+
+</layout>

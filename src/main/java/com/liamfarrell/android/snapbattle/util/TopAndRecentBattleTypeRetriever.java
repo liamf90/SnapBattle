@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
+import com.amazonaws.mobile.auth.core.IdentityManager;
 import com.amazonaws.mobileconnectors.lambdainvoker.LambdaFunctionException;
 import com.amazonaws.mobileconnectors.lambdainvoker.LambdaInvokerFactory;
 import com.amazonaws.regions.Regions;
@@ -71,7 +72,7 @@ public class TopAndRecentBattleTypeRetriever
         LambdaInvokerFactory factory = new LambdaInvokerFactory(
                 activityReference.get().getApplicationContext(),
                 Regions.US_EAST_1,
-                FacebookLoginFragment.getCredentialsProvider(activityReference.get().getApplicationContext()));
+                IdentityManager.getDefaultIdentityManager().getCredentialsProvider());
         final LambdaFunctionsInterface lambdaFunctionsInterface = factory.build(LambdaFunctionsInterface.class);
                 try {
                     RecentBattleResponse response =  lambdaFunctionsInterface.GetRecentBattleNames();
@@ -122,7 +123,7 @@ public class TopAndRecentBattleTypeRetriever
     {
         try {
             AmazonDynamoDBClient ddbClient = new AmazonDynamoDBClient(
-                    FacebookLoginFragment.getCredentialsProvider(context));
+                    IdentityManager.getDefaultIdentityManager().getCredentialsProvider());
             Map<String, AttributeValue> key = new HashMap<String, AttributeValue>();
             AttributeValue val = new AttributeValue();
             val.setS("english");

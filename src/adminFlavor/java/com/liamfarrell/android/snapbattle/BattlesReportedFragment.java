@@ -337,7 +337,7 @@ public class BattlesReportedFragment extends Fragment {
 
     }
 
-    private enum ChallengerOrChallenged
+    public enum ChallengerOrChallenged
     {
         CHALLENGED,
         CHALLENGER

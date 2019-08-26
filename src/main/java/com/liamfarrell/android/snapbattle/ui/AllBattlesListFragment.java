@@ -27,7 +27,7 @@ import com.liamfarrell.android.snapbattle.R;
 import com.liamfarrell.android.snapbattle.caches.AllBattlesFeedCache;
 import com.liamfarrell.android.snapbattle.caches.AllBattlesFeedCacheFile;
 import com.liamfarrell.android.snapbattle.model.Voting;
-import com.liamfarrell.android.snapbattle.ui.createbattle.ChooseVotingFragment;
+import com.liamfarrell.android.snapbattle.mvvm_ui.create_battle.ChooseVotingFragment;
 import com.liamfarrell.android.snapbattle.caches.ThumbnailCacheHelper;
 import com.liamfarrell.android.snapbattle.model.Battle;
 import com.liamfarrell.android.snapbattle.model.Video;
@@ -125,7 +125,7 @@ public class AllBattlesListFragment extends Fragment
 
         loadAllBattlesList();
 
-        //turn on the background handler that checks for updates to battles every so often, whilst the fragment is being viewed
+        //turn on the background handler that checks for updates to topBattles every so often, whilst the fragment is being viewed
         turnOnCheckForUpdatesRepeater();
 
         return v;
@@ -166,7 +166,7 @@ public class AllBattlesListFragment extends Fragment
 
             @Override
             public void onUpdated(List<Integer> updatedBattleIDList) {
-                //Mysql data is updated. Update the visible battles if they have been updated
+                //Mysql data is updated. Update the visible topBattles if they have been updated
                 for (int i= mLayoutManager.findFirstVisibleItemPosition(); i <= mLayoutManager.findLastVisibleItemPosition() && i>=0; i++)
                 {
                     if (updatedBattleIDList.contains(AllBattlesFeedCache.get(getActivity()).getBattleIDFromPosition(i))) {
@@ -180,7 +180,7 @@ public class AllBattlesListFragment extends Fragment
             @Override
             public void onNewBattles(List<Integer> battleIDList) {
 
-                // add battles to start of battle id
+                // add topBattles to start of battle id
                 for (int i = battleIDList.size() - 1; i >= 0; i--) {
 
                     mBattleIDList.addFirst(battleIDList
@@ -198,7 +198,7 @@ public class AllBattlesListFragment extends Fragment
     }
 
 
-    //This method checks for updates on the server to the all battles list every so often
+    //This method checks for updates on the server to the all topBattles list every so often
     private void turnOnCheckForUpdatesRepeater(){
         updateHandler = new Handler();
         final int delay = HOW_OFTEN_CHECK_FOR_UPDATES_MILLISECONDS;
@@ -218,7 +218,7 @@ public class AllBattlesListFragment extends Fragment
 
     private void loadAllBattlesList()
     {
-        //load the battles from the all battles cache.
+        //load the topBattles from the all topBattles cache.
 
         //on updated from server after load callbacks
         AllBattlesFeedCache.UpdateCallbacks updateCallbacks = new AllBattlesFeedCache.UpdateCallbacks() {
@@ -227,7 +227,7 @@ public class AllBattlesListFragment extends Fragment
             @Override
             public void onUpdated(List<Integer> updatedBattleIDList) {
                 Log.i(TAG, "Update Following Battles - On Updated");
-                //reload the visible battles
+                //reload the visible topBattles
                 for (int i= mLayoutManager.findFirstVisibleItemPosition(); i <= mLayoutManager.findLastVisibleItemPosition()&& i>=0; i++)
                 {
                     if (updatedBattleIDList.contains(AllBattlesFeedCache.get(getActivity()).getBattleIDFromPosition(i))) {
@@ -239,14 +239,14 @@ public class AllBattlesListFragment extends Fragment
 
             @Override
             public void onNewBattles(List<Integer> battleIDList) {
-                // add battles to start of battle id
+                // add topBattles to start of battle id
                 for (int i = battleIDList.size() - 1; i >= 0; i--) {
 
                     mBattleIDList.addFirst(battleIDList
                             .get(i));
                 }
 
-                Log.i(TAG, "Update Folloqing Battles - On new battles");
+                Log.i(TAG, "Update Folloqing Battles - On new topBattles");
                 noBattlesTextView.setVisibility(View.GONE);
                 mAdapter.notifyItemRangeInserted(0, battleIDList.size());
                 //scroll to top of list
@@ -366,7 +366,7 @@ public class AllBattlesListFragment extends Fragment
                 thumbnail = (ImageView)view.findViewById(R.id.thumbnailImageView);
                 thumbnail.setImageResource(R.drawable.placeholder1440x750);
 
-                //No more battles View
+                //No more topBattles View
                 noMoreBattlesView = view.findViewById(R.id.loadMoreBattlesLayout);
                 noMoreBattlesTextView  = view.findViewById(R.id.loadMoreBattlesTextView);
                 noMoreBattlesProgressContainer = view.findViewById(R.id.loadMorebattlesProgressContainer);
@@ -431,12 +431,12 @@ public class AllBattlesListFragment extends Fragment
                 holder.battleNameTextView.setText(res.getString(R.string.battle_name, battleName));
                 holder.challengerUsernameTextView.setText(b.getChallengerUsername());
                 holder.challengedUsernameTextView.setText(b.getChallengedUsername());
-                holder.battleStatusTextView.setText(b.getCompletedBattleStatus());
+                holder.battleStatusTextView.setText(b.getCompletedBattleStatus(getContext()));
                 holder.battleRoundsTextView.setText(res.getQuantityString(R.plurals.rounds, b.getRounds(), b.getRounds()));
                 holder.likeCountTextView.setText(res.getQuantityString(R.plurals.likes, b.getLikeCount(), b.getLikeCount()));
                 holder.dislikeCountTextView.setText(res.getQuantityString(R.plurals.dislikes, b.getDislikeCount(), b.getDislikeCount()));
                 holder.videoViewCountTextView.setText(res.getString(R.string.video_views, b.getVideoViewCount()));
-                holder.votingTypeTextView.setText(b.getVoting().getVotingChoice().getLongStyle());
+                holder.votingTypeTextView.setText(b.getVoting().getVotingChoice().toLongStyleString(getContext()));
                 holder.noMoreBattlesView.setVisibility(View.GONE); ////TODO
                 holder.challengerUsernameTextView.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -503,7 +503,7 @@ public class AllBattlesListFragment extends Fragment
                             });
                         }
                         holder.timeUntilVoteEndsTextView.setVisibility(View.VISIBLE);
-                        holder.timeUntilVoteEndsTextView.setText(res.getString(R.string.voting_time_left, Video.getTimeUntil(b.getVoting().getVotingTimeEnd())));
+                        holder.timeUntilVoteEndsTextView.setText(res.getString(R.string.voting_time_left, Video.getTimeUntil(getContext(), b.getVoting().getVotingTimeEnd())));
                     } else if (b.getVoting().getVotingTimeEnd() != null && !b.getVoting().getVotingTimeEnd().after(new Date(System.currentTimeMillis())))
                     {
                         //voting has finished
@@ -513,8 +513,8 @@ public class AllBattlesListFragment extends Fragment
                         holder.challengedResultTextView.setVisibility(View.VISIBLE);
                         holder.challengerVotesTextView.setVisibility(View.VISIBLE);
                         holder.challengedVotesTextView.setVisibility(View.VISIBLE);
-                        holder.challengerResultTextView.setText(b.getVoting().getChallengerVotingResult());
-                        holder.challengedResultTextView.setText(b.getVoting().getChallengedVotingResult());
+                        holder.challengerResultTextView.setText(b.getVoting().getChallengerVotingResult(getContext()));
+                        holder.challengedResultTextView.setText(b.getVoting().getChallengedVotingResult(getContext()));
                         holder.challengerVotesTextView.setText(res.getQuantityString(R.plurals.votes, b.getVoting().getVoteChallenger(), b.getVoting().getVoteChallenger()));
                         holder.challengedVotesTextView.setText(res.getQuantityString(R.plurals.votes, b.getVoting().getVoteChallenged(), b.getVoting().getVoteChallenged()));
                     }

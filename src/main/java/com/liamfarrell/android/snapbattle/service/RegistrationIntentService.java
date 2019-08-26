@@ -29,6 +29,7 @@ import android.util.Log;
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
+import com.amazonaws.mobile.auth.core.IdentityManager;
 import com.amazonaws.mobileconnectors.lambdainvoker.LambdaFunctionException;
 import com.amazonaws.mobileconnectors.lambdainvoker.LambdaInvokerFactory;
 import com.amazonaws.regions.Regions;
@@ -122,7 +123,7 @@ public class RegistrationIntentService extends IntentService {
         LambdaInvokerFactory factory = new LambdaInvokerFactory(
                 contextReference.get().getApplicationContext(),
                 Regions.US_EAST_1,
-                FacebookLoginFragment.getCredentialsProvider(contextReference.get().getApplicationContext()));
+                IdentityManager.getDefaultIdentityManager().getCredentialsProvider());
         final LambdaFunctionsInterface lambdaFunctionsInterface = factory.build(LambdaFunctionsInterface.class);
                 try {
                     DefaultResponse response = lambdaFunctionsInterface.updateGCM(params[0]);

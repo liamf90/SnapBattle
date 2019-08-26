@@ -28,7 +28,7 @@ import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
-import com.liamfarrell.android.snapbattle.ui.createbattle.ChooseVotingFragment;
+import com.liamfarrell.android.snapbattle.mvvm_ui.create_battle.ChooseVotingFragment;
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.deserializers.CustomLambdaDataBinder;
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.LambdaFunctionsInterface;
 import com.liamfarrell.android.snapbattle.R;
@@ -61,7 +61,7 @@ public class BattleChallengesListFragment extends Fragment
 	public void onCreate(Bundle savedInstanceState) 
 	{
 		super.onCreate(savedInstanceState);
-		mBattles = new ArrayList<Battle>();
+		mBattles = new ArrayList<>();
 
         mChallengesAdapter = new BattleChallengesAdapter(mBattles);
 		setRetainInstance(true);
@@ -371,13 +371,13 @@ public class BattleChallengesListFragment extends Fragment
 
 			holder.battleOpponentTextView.setText(res.getString(R.string.vsOpponent, b.getChallengerUsername()));
 
-			String currentBattleStatus = b.getChallengedTimeSinceStatus();
+			String currentBattleStatus = b.getChallengedTimeSinceStatus(getContext());
 			holder.battleStatusTextView.setText(currentBattleStatus);
 
 			String battleName = b.getBattleName();
 			holder.battleNameTextView.setText(res.getString(R.string.battle_name, battleName));
 			holder.battleRoundsTextView.setText(res.getQuantityString(R.plurals.rounds, b.getRounds(), b.getRounds()));
-			holder.chosenVotingTypeTextView.setText(b.getVoting().getVotingChoice().getLongStyle());
+			holder.chosenVotingTypeTextView.setText(b.getVoting().getVotingChoice().toLongStyleString(getContext()));
 			//Cancel the previous set profile pic request, if it exists
 			Picasso.get().cancelRequest(holder.profilePicOpponent);
 			holder.profilePicOpponent.setImageResource(R.drawable.default_profile_pic100x100);

@@ -2,17 +2,17 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
-	>
+	xmlns:app="http://schemas.android.com/apk/res-auto">
 
 	<androidx.recyclerview.widget.RecyclerView
 		android:id="@+id/recyclerList"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
 		android:drawSelectorOnTop="false"
+		app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
 		android:background="@color/completed_list_background"
-
-
 		/>
+
 	<FrameLayout
 		android:id="@+id/completed_list_progressContainer"
 		android:layout_width="match_parent"

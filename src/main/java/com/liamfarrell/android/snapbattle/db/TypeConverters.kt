@@ -1,8 +1,10 @@
 package com.liamfarrell.android.snapbattle.db
 
 import androidx.room.TypeConverter
+import com.liamfarrell.android.snapbattle.caches.NotificationType
 import com.liamfarrell.android.snapbattle.model.Battle
-import com.liamfarrell.android.snapbattle.ui.createbattle.ChooseVotingFragment
+import com.liamfarrell.android.snapbattle.notifications.VotingCompleteNotification
+import com.liamfarrell.android.snapbattle.mvvm_ui.create_battle.ChooseVotingFragment
 import java.util.*
 
 
@@ -49,6 +51,27 @@ class Converters {
     fun stringToVotingLength(votingLengthString: String?): ChooseVotingFragment.VotingLength?{
         return if (votingLengthString == null) null else  ChooseVotingFragment.VotingLength.valueOf(votingLengthString)
     }
+
+    @TypeConverter
+    fun notificationTypeToString(notificationType: NotificationType?) : String?{
+        return if (notificationType == null) null else notificationType.name
+    }
+
+    @TypeConverter
+    fun stringToNotificationType(notificationTypeString: String?): NotificationType?{
+        return if (notificationTypeString == null) null else  NotificationType.valueOf(notificationTypeString)
+    }
+
+    @TypeConverter
+    fun votingResultToString(votingResult: VotingCompleteNotification.VotingResult?) : String?{
+        return if (votingResult == null) null else votingResult.name
+    }
+
+    @TypeConverter
+    fun stringToVotingResult(votingResultString: String?): VotingCompleteNotification.VotingResult?{
+        return if (votingResultString == null) null else  VotingCompleteNotification.VotingResult.valueOf(votingResultString)
+    }
+
 
 
 }

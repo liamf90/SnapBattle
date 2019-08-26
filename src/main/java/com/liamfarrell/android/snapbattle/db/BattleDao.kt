@@ -11,10 +11,8 @@ import com.liamfarrell.android.snapbattle.model.Video
  */
 @Dao
 interface BattleDao {
-
     @Query("SELECT * FROM all_battles ORDER BY mLastVideoUploadTime")
     fun getAllBattles(): DataSource.Factory<Int,Battle>
-
 
     @Query("SELECT battle_id FROM all_battles")
     suspend fun getAllBattleIDs(): List<Int>

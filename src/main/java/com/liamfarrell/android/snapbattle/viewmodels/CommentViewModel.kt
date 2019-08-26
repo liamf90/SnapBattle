@@ -1,35 +1,30 @@
 package com.liamfarrell.android.snapbattle.viewmodels
 
-import android.view.View
-import android.widget.FrameLayout
-import androidx.databinding.BindingAdapter
+import android.app.Application
 import com.liamfarrell.android.snapbattle.data.CommentRepository
 import com.liamfarrell.android.snapbattle.model.Comment
 import androidx.lifecycle.*
 import com.facebook.AccessToken
-import com.liamfarrell.android.snapbattle.app.App
+import com.liamfarrell.android.snapbattle.app.SnapBattleApp
 import com.liamfarrell.android.snapbattle.R
 import com.liamfarrell.android.snapbattle.model.AsyncTaskResult
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.VerifyUserResponse
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.AddCommentResponse
-import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.GetCommentsResponse
-import com.liamfarrell.android.snapbattle.ui.FacebookLoginFragment
 import com.liamfarrell.android.snapbattle.util.AlreadyFollowingError
 import com.liamfarrell.android.snapbattle.util.BannedError
 import com.liamfarrell.android.snapbattle.util.getErrorMessage
-import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 
 /**
  * The ViewModel used in [ViewCommentFragment].
  */
-class CommentViewModel(val commentRepository : CommentRepository, val battleID: Int ) : ViewModelLaunch() {
-
+class CommentViewModel @Inject constructor(private val context: Application, private val commentRepository : CommentRepository) : ViewModelLaunch() {
 
     private val commentsResult = MutableLiveData<AsyncTaskResult<MutableList<Comment>>>()
 
     val errorMessage : LiveData<String?> = Transformations.map(commentsResult) { result ->
-        getErrorMessage(App.getContext(), result.error)
+        getErrorMessage(context, result.error)
     }
 
     val comments : LiveData<MutableList<Comment>>  =  Transformations.map (commentsResult) { result ->
@@ -45,7 +40,10 @@ class CommentViewModel(val commentRepository : CommentRepository, val battleID: 
 
     init {
         _showAddCommentProgressBar.value = false
-         awsLambdaFunctionCall(true, suspend{commentsResult.value = commentRepository.getComments(battleID)})
+    }
+
+    fun getComments(battleID: Int){
+        awsLambdaFunctionCall(true, suspend{commentsResult.value = commentRepository.getComments(battleID)})
     }
 
     fun deleteComment(commentID: Int) {
@@ -60,7 +58,7 @@ class CommentViewModel(val commentRepository : CommentRepository, val battleID: 
         )
     }
 
-    fun addComment(comment: String, usernamesToTag : List<String>, requestUserFriends: ()->Unit){
+    fun addComment(battleID: Int, comment: String, usernamesToTag : List<String>, requestUserFriends: ()->Unit){
         awsLambdaFunctionCall(false,
                 suspend {
                         _showAddCommentProgressBar.value = true
@@ -70,7 +68,7 @@ class CommentViewModel(val commentRepository : CommentRepository, val battleID: 
                             //User not verified with enough facebook friends to post comments.. Verify User
                             //first check if user has user_friends permission allowed
                             if (doesUserHaveUserFriendsPermission()) {
-                                verifyUser(comment, usernamesToTag)
+                                verifyUser(battleID, comment, usernamesToTag)
                             } else {
                                 commentsResult.value?.error =  AlreadyFollowingError()
                                 requestUserFriends() }
@@ -88,23 +86,23 @@ class CommentViewModel(val commentRepository : CommentRepository, val battleID: 
                 suspend {
                     val asyncResult = commentRepository.reportComment(commentID)
                     if (asyncResult.result.affectedRows == 1) {
-                        _snackBarMessage.value = App.getContext().getString(R.string.comment_reported_toast)
+                        _snackBarMessage.value = context.getString(R.string.comment_reported_toast)
                     } else {
-                        _snackBarMessage.value = App.getContext().getString(R.string.comment_already_reported_toast)
+                        _snackBarMessage.value = context.getString(R.string.comment_already_reported_toast)
                     }
                 }
         )
     }
 
-    fun verifyUser(comment: String, usernameTagsList: List<String>){
+    fun verifyUser(battleID: Int, comment: String, usernameTagsList: List<String>){
         awsLambdaFunctionCall(true,
                 suspend {
                     val asyncResult = commentRepository.verifyUser()
                     if (asyncResult.result.getResult().equals(VerifyUserResponse.USER_VERIFIED_RESULT)) {
-                        addComment(comment, usernameTagsList){}
+                        addComment(battleID, comment, usernameTagsList){}
                     }
                     else if (asyncResult.result.getResult().equals(VerifyUserResponse.USER_NOT_VERIFIED_RESULT)) {
-                        _snackBarMessage.value = App.getContext().getString(R.string.not_enough_facebook_friends_toast)
+                        _snackBarMessage.value = context.getString(R.string.not_enough_facebook_friends_toast)
                     }
                 }
         )

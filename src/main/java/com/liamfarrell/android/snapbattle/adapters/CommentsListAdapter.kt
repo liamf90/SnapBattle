@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.liamfarrell.android.snapbattle.databinding.ListItemCommentBinding
 import com.liamfarrell.android.snapbattle.model.Comment
 import androidx.appcompat.widget.PopupMenu
+import com.amazonaws.mobile.auth.core.IdentityManager
 import com.liamfarrell.android.snapbattle.R
 import com.liamfarrell.android.snapbattle.ui.FacebookLoginFragment
 import com.liamfarrell.android.snapbattle.viewmodels.CommentViewModel
@@ -38,7 +39,7 @@ class CommentsListAdapter (private  val viewModel : CommentViewModel, val viewHo
             itemView.tag = comment
             //TODO CHANGE cached identity idTO DAGGER
             holder.itemView.setOnClickListener{viewHolderOnClick(comment.username)}
-            if (comment.cognitoIdCommenter == FacebookLoginFragment.getCredentialsProvider(holder.itemView.context).cachedIdentityId){
+            if (comment.cognitoIdCommenter == IdentityManager.getDefaultIdentityManager().getCachedUserID()){
                 holder.itemView.setOnLongClickListener(getOnLongClickListenerOwnComment(comment.commentId))
             } else{
                 holder.itemView.setOnLongClickListener(getOnLongClickListenerNotOwnComment(comment.commentId))

@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import com.liamfarrell.android.snapbattle.adapters.BattleNameSearchSuggestionAdapter
 import com.liamfarrell.android.snapbattle.adapters.UserSearchSuggestionAdapter
@@ -19,11 +20,11 @@ import com.liamfarrell.android.snapbattle.viewmodels.UserSearchViewModel
 import io.reactivex.Observable
 import io.reactivex.ObservableOnSubscribe
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
-class UserSearchFragment : Fragment(){
-
-
-    private val TAG = "UserSearchFragment"
+class UserSearchFragment : Fragment(), Injectable {
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
 
     private lateinit var viewModel: UserSearchViewModel
     private val adapter = UserSearchSuggestionAdapter()
@@ -33,14 +34,8 @@ class UserSearchFragment : Fragment(){
         val binding = FragmentUserSearchBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = viewLifecycleOwner
 
-        val appComponent = DaggerUserSearchComponent.builder()
-                .aWSLambdaModule(AWSLambdaModule(requireContext()))
-                .userSearchViewModelFactoryModule(UserSearchViewModelFactoryModule())
-                .userSearchRepositoryModule(UserSearchRepositoryModule(requireContext()))
-                .build()
 
-
-        viewModel = ViewModelProviders.of(this, appComponent.getUserSearchViewModelFactory()).get(UserSearchViewModel::class.java)
+        viewModel = ViewModelProviders.of(this, viewModelFactory).get(UserSearchViewModel::class.java)
         binding.recyclerList.adapter = adapter
         subscribeUi()
         return binding.root
@@ -87,10 +82,10 @@ class UserSearchFragment : Fragment(){
 
             override fun onQueryTextChange(newText: String?): Boolean {
             if (newText == null){
-                viewModel.searchUserSubmit("")
+                viewModel.searchQueryChange("")
             }
             else {
-                viewModel.searchUserSubmit(newText)
+                viewModel.searchQueryChange(newText)
             }
                 return true
             }

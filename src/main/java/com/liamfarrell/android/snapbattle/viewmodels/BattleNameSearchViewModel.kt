@@ -1,9 +1,10 @@
 package com.liamfarrell.android.snapbattle.viewmodels
 
+import android.app.Application
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
-import com.liamfarrell.android.snapbattle.app.App
+import com.liamfarrell.android.snapbattle.app.SnapBattleApp
 import com.liamfarrell.android.snapbattle.data.BattleNameSearchRepository
 import com.liamfarrell.android.snapbattle.model.AsyncTaskResult
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.BattleTypeSuggestionsSearchResponse
@@ -16,7 +17,7 @@ import javax.inject.Inject
 /**
  * The ViewModel used in [BattleNameSearchFragment].
  */
-class BattleNameSearchViewModel @Inject constructor(private val searchRepository: BattleNameSearchRepository
+class BattleNameSearchViewModel @Inject constructor(private val context: Application, private val searchRepository: BattleNameSearchRepository
                                                  ) : ViewModelLaunch() {
 
 
@@ -28,7 +29,7 @@ class BattleNameSearchViewModel @Inject constructor(private val searchRepository
 
     val errorMessage : LiveData<String?> = Transformations.map(searchResultResponse) { asyncResult ->
         if (asyncResult.error != null){
-        getErrorMessage(App.getContext(), asyncResult.error)}
+        getErrorMessage(context, asyncResult.error)}
         else null
     }
 

@@ -1,30 +1,21 @@
 package com.liamfarrell.android.snapbattle.viewmodels
 
-import android.view.View
-import android.widget.Toast
+import android.app.Application
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
-import androidx.lifecycle.viewModelScope
-import com.amazonaws.AmazonClientException
-import com.facebook.FacebookRequestError
-import com.google.android.gms.tasks.Tasks.await
-import com.liamfarrell.android.snapbattle.R
-import com.liamfarrell.android.snapbattle.app.App
+import com.liamfarrell.android.snapbattle.app.SnapBattleApp
 import com.liamfarrell.android.snapbattle.caches.FollowingUserCache
-import com.liamfarrell.android.snapbattle.data.CommentRepository
 import com.liamfarrell.android.snapbattle.data.FollowingRepository
 import com.liamfarrell.android.snapbattle.model.AsyncTaskResult
-import com.liamfarrell.android.snapbattle.model.Comment
 import com.liamfarrell.android.snapbattle.model.User
 import com.liamfarrell.android.snapbattle.util.getErrorMessage
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 /**
  * The ViewModel used in [ViewFollowingFragment].
  */
-class FollowingViewModel(val followingRepository : FollowingRepository ) : ViewModelLaunch() {
+class FollowingViewModel @Inject constructor(private val context: Application, private val followingRepository : FollowingRepository ) : ViewModelLaunch() {
 
     private val followingUsers = MutableLiveData<AsyncTaskResult<MutableList<User>>>()
 
@@ -33,7 +24,11 @@ class FollowingViewModel(val followingRepository : FollowingRepository ) : ViewM
         asyncResult.result }
 
     val errorMessage : LiveData<String?> = Transformations.map(followingUsers) { asyncResult ->
-        getErrorMessage(App.getContext(), asyncResult.error) }
+        if (asyncResult.error != null) {
+            getErrorMessage(context, asyncResult.error)
+        } else {
+            null
+        } }
 
 
 
@@ -51,7 +46,7 @@ class FollowingViewModel(val followingRepository : FollowingRepository ) : ViewM
                         followingUsers.value?.result?.remove(followingUsers.value?.result?.find { it.cognitoId == cognitoIDUnfollow })
 
                         //Update following user cache
-                        FollowingUserCache.get(App.getContext(), null).updateCache(App.getContext(), null)
+                        FollowingUserCache.get(context, null).updateCache(context, null)
                 }}
         )
     }
@@ -72,7 +67,7 @@ class FollowingViewModel(val followingRepository : FollowingRepository ) : ViewM
                         }
 
                         //Update following user cache
-                        FollowingUserCache.get(App.getContext(), null).updateCache(App.getContext(), null)
+                        FollowingUserCache.get(context, null).updateCache(context, null)
                     }
                 }
 
