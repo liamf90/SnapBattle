@@ -99,7 +99,7 @@ public class TopAndRecentBattleTypeRetriever
 
             @Override
             protected void onPostExecute(AsyncTaskResult<RecentBattleResponse> asyncResult) {
-                // get a reference to the activity and fragment if it is still there
+                // get a reference to the callbacks and fragment if it is still there
                 Activity activity = activityReference.get();
                 if (activity == null || activity.isFinishing()) return;
 

@@ -10,19 +10,26 @@ import androidx.recyclerview.widget.RecyclerView
 import com.liamfarrell.android.snapbattle.databinding.ListItemCommentBinding
 import com.liamfarrell.android.snapbattle.model.Comment
 import androidx.appcompat.widget.PopupMenu
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.navigation.findNavController
 import com.liamfarrell.android.snapbattle.R
+import com.liamfarrell.android.snapbattle.data.OtherUsersProfilePicUrlRepository
 import com.liamfarrell.android.snapbattle.databinding.ListItemBattleCurrentBinding
 import com.liamfarrell.android.snapbattle.databinding.ListItemBattleFriendsBinding
 import com.liamfarrell.android.snapbattle.model.Battle
+import com.liamfarrell.android.snapbattle.mvvm_ui.BattleCurrentListFragmentDirections
+import com.liamfarrell.android.snapbattle.mvvm_ui.ViewBattleFragmentArgs
 import com.liamfarrell.android.snapbattle.ui.FacebookLoginFragment
 import com.liamfarrell.android.snapbattle.viewmodels.CommentViewModel
+import com.liamfarrell.android.snapbattle.viewmodels.ProfilePicViewModel
 import kotlinx.android.synthetic.main.media_controller_battle.view.*
 
 
 /**
- * Adapter for the [RecyclerView] in [BattleCompletedListFragment].
+ * Adapter for the [RecyclerView] in [BattleCurrentListFragment].
  */
-class CurrentBattlesListAdapter(val opponentCognitoID: String) :
+class CurrentBattlesListAdapter(private val currentCognitoId: String) :
         ListAdapter<Battle, CurrentBattlesListAdapter.ViewHolder>(BattleDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -37,7 +44,7 @@ class CurrentBattlesListAdapter(val opponentCognitoID: String) :
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val battle = getItem(position)
         holder.apply {
-            bind(battle, opponentCognitoID)
+            bind(battle, currentCognitoId)
             itemView.tag = battle
             holder.itemView.setOnClickListener(getOnClickListener(battle.battleID))
         }
@@ -46,8 +53,11 @@ class CurrentBattlesListAdapter(val opponentCognitoID: String) :
     private fun getOnClickListener(battleID: Int): View.OnClickListener {
         return View.OnClickListener {
             //go to battle
+            val action = BattleCurrentListFragmentDirections.actionBattleCurrentListFragmentToViewBattleFragment(battleID)
+            it.findNavController().navigate(action)
         }
     }
+
 
 
 
@@ -55,9 +65,9 @@ class CurrentBattlesListAdapter(val opponentCognitoID: String) :
             private val binding: ListItemBattleCurrentBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(item: Battle, opponentCognitoID: String) {
+        fun bind(item: Battle, currentCognitoId: String) {
             with(binding) {
-                this.opponentCognitoID = opponentCognitoID
+                this.currentCognitoID = currentCognitoId
                 battle = item
                 executePendingBindings()
             }

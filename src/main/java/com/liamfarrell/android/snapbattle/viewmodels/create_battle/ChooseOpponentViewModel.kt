@@ -4,10 +4,12 @@ import android.app.Application
 import android.content.Context
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import com.liamfarrell.android.snapbattle.R
 import com.liamfarrell.android.snapbattle.app.SnapBattleApp
 import com.liamfarrell.android.snapbattle.data.ChooseOpponentRepository
 import com.liamfarrell.android.snapbattle.data.FollowingRepository
+import com.liamfarrell.android.snapbattle.data.OtherUsersProfilePicUrlRepository
 import com.liamfarrell.android.snapbattle.model.AsyncTaskResult
 import com.liamfarrell.android.snapbattle.model.User
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.GetUsersResponse
@@ -15,13 +17,17 @@ import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserializat
 import com.liamfarrell.android.snapbattle.util.CustomError
 import com.liamfarrell.android.snapbattle.util.getErrorMessage
 import com.liamfarrell.android.snapbattle.viewmodels.ViewModelLaunch
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
 /**
  * The ViewModel used in [ChooseOpponentFragment].
  */
-class ChooseOpponentViewModel @Inject constructor(private val context: Application, val chooseOpponentRepository: ChooseOpponentRepository, val followingRepository : FollowingRepository) : ViewModelLaunch() {
+class ChooseOpponentViewModel @Inject constructor(private val context: Application, val chooseOpponentRepository: ChooseOpponentRepository, val followingRepository : FollowingRepository,
+                                                  private val otherUsersProfilePicUrlRepository: OtherUsersProfilePicUrlRepository) : ViewModelLaunch() {
+
+    private val profilePicMap = mutableMapOf<String, String>()
 
     private var tabIndexSelected = 0
     var searchQuery = ""
@@ -60,17 +66,17 @@ class ChooseOpponentViewModel @Inject constructor(private val context: Applicati
                     errorMessage.value = getErrorMessage(context, result.error) }
             }
             _userList.addSource(followingResult){
-                if (it.error != null){
-                    _userList.value = it.result.sqlResult
+                if (it.error == null){
+                        _userList.value = it.result.sqlResult
                 }
             }
             _userList.addSource(recentOpponentsResult){
-                if (it.error != null){
-                    _userList.value = it.result.sqlResult
+                if (it.error == null){
+                        _userList.value = it.result.sqlResult
                 }
             }
             _userList.addSource(facebookFollowingResult){
-                if (it.error != null){
+                if (it.error == null){
                     _userList.value = it.result
                 }
             }
@@ -99,6 +105,9 @@ class ChooseOpponentViewModel @Inject constructor(private val context: Applicati
             awsLambdaFunctionCall(true,
                     suspend {
                         val response = chooseOpponentRepository.getFollowing()
+                        if (response.error == null) {
+                            response.result.sqlResult = getProfilePicSignedUrls(response.result.sqlResult)
+                        }
                         if (tabIndexSelected == 0){
                             followingResult.value = response
                         } })
@@ -110,6 +119,9 @@ class ChooseOpponentViewModel @Inject constructor(private val context: Applicati
             awsLambdaFunctionCall(true,
                     suspend {
                         val response =  chooseOpponentRepository.getRecentOpponents()
+                        if (response.error == null) {
+                            response.result.sqlResult = getProfilePicSignedUrls(response.result.sqlResult)
+                        }
                         if (tabIndexSelected == 1){
                             recentOpponentsResult.value = response
                         }
@@ -127,6 +139,19 @@ class ChooseOpponentViewModel @Inject constructor(private val context: Applicati
                         }
                     })
         }
+
+    private suspend fun getProfilePicSignedUrls(userList: List<User>) : List<User>{
+        userList.forEach {
+            if (it.profilePicCount != 0) {
+                if (profilePicMap.containsKey(it.cognitoId)){
+                    it.profilePicSignedUrl = profilePicMap[it.cognitoId]
+                } else {
+                    it.profilePicSignedUrl = otherUsersProfilePicUrlRepository.getOrUpdateProfilePicSignedUrl(it.cognitoId,  it.profilePicCount , it.profilePicSignedUrl )
+                }
+            }
+        }
+        return userList
+    }
 
 
     /**

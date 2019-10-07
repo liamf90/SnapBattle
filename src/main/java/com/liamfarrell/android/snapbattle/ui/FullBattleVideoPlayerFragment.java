@@ -4,27 +4,44 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.FragmentManager;
+import androidx.navigation.NavDirections;
+import androidx.navigation.Navigation;
+
+import android.text.Layout;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
+import com.amazonaws.auth.AWSCredentialsProvider;
+import com.amazonaws.auth.CognitoCachingCredentialsProvider;
+import com.amazonaws.mobile.client.AWSMobileClient;
 import com.amazonaws.mobileconnectors.lambdainvoker.LambdaFunctionException;
 import com.amazonaws.mobileconnectors.lambdainvoker.LambdaInvokerFactory;
 import com.amazonaws.regions.Regions;
 import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
+import com.liamfarrell.android.snapbattle.HideAndShowBottomNavigation;
+import com.liamfarrell.android.snapbattle.MainActivity;
 import com.liamfarrell.android.snapbattle.caches.AllBattlesFeedCache;
 import com.liamfarrell.android.snapbattle.caches.FollowingBattleCache;
+import com.liamfarrell.android.snapbattle.di.Injectable;
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.AddDislikeRequest;
+import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.DoVoteRequest;
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.FriendBattleRequest;
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.LambdaFunctionsInterface;
 import com.liamfarrell.android.snapbattle.R;
@@ -37,9 +54,9 @@ import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserializat
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.FriendBattleResponse;
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.ReportBattleResponse;
 import com.liamfarrell.android.snapbattle.model.lambda_function_request_objects.AddLikeRequest;
-import com.liamfarrell.android.snapbattle.model.lambda_function_request_objects.DoVoteRequest;
 import com.liamfarrell.android.snapbattle.model.lambda_function_request_objects.UndoDislikeRequest;
 import com.liamfarrell.android.snapbattle.model.lambda_function_request_objects.UndoLikeRequest;
+import com.liamfarrell.android.snapbattle.mvvm_ui.ViewCommentsFragment;
 import com.liamfarrell.android.snapbattle.util.HandleLambdaError;
 import com.liamfarrell.android.snapbattle.views.VideoControllerView;
 import com.liamfarrell.android.snapbattle.mvvm_ui.create_battle.ChooseVotingFragment;
@@ -56,11 +73,17 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
+import javax.inject.Inject;
+
+import timber.log.Timber;
+
 /**
  * Created by Liam on 20/01/2018.
+ *
+ * Needs to be updated to kotlin with mvvm architecture
  */
 
-public class FullBattleVideoPlayerFragment extends VideoPlayerAbstractFragment  {
+public class FullBattleVideoPlayerFragment extends VideoPlayerAbstractFragment implements Injectable {
 
     private String filepath;
     private int mBattleID;
@@ -75,6 +98,8 @@ public class FullBattleVideoPlayerFragment extends VideoPlayerAbstractFragment  
     private String mChallengerName = "Challenger";
     private String mChallengedName = "Challenged";
 
+    private static AWSCredentialsProvider credentialsProvider = AWSMobileClient.getInstance().getCredentialsProvider();
+
     public static final String EXTRA_BATTLEID = "com.liamfarrell.android.snapbattle.videoplayeractivity.battleIDextra";
 
     public static final int VOTE_DONE_REQUEST_CODE = 555;
@@ -87,25 +112,53 @@ public class FullBattleVideoPlayerFragment extends VideoPlayerAbstractFragment  
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRetainInstance(true);
 
-        Log.i(TAG, "On Create");
-        filepath = getActivity().getIntent().getStringExtra(FullBattleVideoPlayerActivity.EXTRA_FILE_VIDEO_PATH);
-        Log.i(TAG, "Filepath: "+ filepath);
-        mBattleID = getActivity().getIntent().getIntExtra(EXTRA_BATTLEID, 0);
+        //filepath = getActivity().getIntent().getStringExtra(FullBattleVideoPlayerActivity.EXTRA_FILE_VIDEO_PATH);
+        filepath = getArguments().getString("filepath");
+        mChallengerName = getArguments().getString("challengerName");
+        mChallengedName = getArguments().getString("challengedName");
+        Timber.i("Filepath: " + filepath);
+        //mBattleID = getActivity().getIntent().getIntExtra(EXTRA_BATTLEID, 0);
+        mBattleID = getArguments().getInt("battleId");
         isLiked = false;
         isDisliked = false;
-        mChallengerName = getActivity().getIntent().getStringExtra(FullBattleVideoPlayerActivity.EXTRA_CHALLENGER_USERNAME);
-        mChallengedName = getActivity().getIntent().getStringExtra(FullBattleVideoPlayerActivity.EXTRA_CHALLENGED_USERNAME);
-
-
+//        mChallengerName = getActivity().getIntent().getStringExtra(FullBattleVideoPlayerActivity.EXTRA_CHALLENGER_USERNAME);
+//        mChallengedName = getActivity().getIntent().getStringExtra(FullBattleVideoPlayerActivity.EXTRA_CHALLENGED_USERNAME);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+        getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR);
 
+        ((HideAndShowBottomNavigation)getActivity()).hideBottomNavigation();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+        getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        ((HideAndShowBottomNavigation)getActivity()).showBottomNavigation();
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+    }
+
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+    }
 
     private void checkCanVote(final VideoControllerView controller, int hasUserVoted, ChooseVotingFragment.VotingChoice votingChoice, Date votingTimeEnd, final String facebookUserIdChallenger, final String facebookUserIdChallenged, String currentUserCognitoId, String challengerCognitoId, String challengedCognitoId)
     {
-        Log.i(TAG, "User has voted: " + hasUserVoted);
-
+        Timber.i("User has voted: " + hasUserVoted);
 
         //check current user is not trying to vote on own battle
         if (currentUserCognitoId.equals(challengerCognitoId) || currentUserCognitoId.equals(challengedCognitoId))
@@ -223,7 +276,7 @@ public class FullBattleVideoPlayerFragment extends VideoPlayerAbstractFragment  
                 public boolean onError(MediaPlayer mp, int what, int extra) {
                     Log.i(TAG, "ON ERROR: what= " + what + "extra: " + extra);
 
-                    //if the signed url has expired. reset the video filepath. else exit activity
+                    //if the signed url has expired. reset the video filepath. else exit callbacks
                     if (what == 1) {
                         setVideoFilepath();
                     }
@@ -267,10 +320,14 @@ public class FullBattleVideoPlayerFragment extends VideoPlayerAbstractFragment  
             public void onClick(View view) {
 
                 isPaused = true;
-                if (mMediaPlayer != null) {
+                if (mMediaPlayer != null && mMediaPlayer.isPlaying()) {
                     mMediaPlayer.pause();
                 }
-                ((FullBattleVideoPlayerActivity)getActivity()).startCommentsFragment();
+//                FragmentManager fm = getActivity().getSupportFragmentManager();
+//                fm.beginTransaction().add(R.id.nav_host_container, new ViewCommentsFragment()).addToBackStack(null).commit();
+                NavDirections directions = FullBattleVideoPlayerFragmentDirections.Companion.actionFullBattleVideoPlayerFragmentToViewCommentsFragment(mBattleID);
+                Navigation.findNavController(view).navigate(directions);
+                //((FullBattleVideoPlayerActivity)getActivity()).startCommentsFragment();
             }
         });
 
@@ -415,7 +472,7 @@ public class FullBattleVideoPlayerFragment extends VideoPlayerAbstractFragment  
         LambdaInvokerFactory factory = new LambdaInvokerFactory(
                 activityReference.get().getApplicationContext(),
                 Regions.US_EAST_1,
-                FacebookLoginFragment.getCredentialsProvider(activityReference.get()));
+                credentialsProvider);
 
         final LambdaFunctionsInterface lambdaFunctionsInterface = factory.build(LambdaFunctionsInterface.class);
                 try {
@@ -441,7 +498,7 @@ public class FullBattleVideoPlayerFragment extends VideoPlayerAbstractFragment  
 
             @Override
             protected void onPostExecute(AsyncTaskResult<ReportBattleResponse> asyncResult) {
-                // get a reference to the activity if it is still there
+                // get a reference to the callbacks if it is still there
                 FullBattleVideoPlayerFragment fragment = fragmentReference.get();
                 Activity activity = activityReference.get();
                 if (fragment == null || fragment.isRemoving()) return;
@@ -495,7 +552,7 @@ public class FullBattleVideoPlayerFragment extends VideoPlayerAbstractFragment  
         LambdaInvokerFactory factory = new LambdaInvokerFactory(
                 activityReference.get().getApplicationContext(),
                 Regions.US_EAST_1,
-                FacebookLoginFragment.getCredentialsProvider(activityReference.get()));
+                credentialsProvider);
 
         // Create the Lambda proxy object with default Json data binder.
         // You can provide your own data binder by implementing
@@ -533,7 +590,7 @@ public class FullBattleVideoPlayerFragment extends VideoPlayerAbstractFragment  
 
             @Override
             protected void onPostExecute(AsyncTaskResult<DefaultResponse> asyncResult) {
-                // get a reference to the activity if it is still there
+                // get a reference to the callbacks if it is still there
                 FullBattleVideoPlayerFragment fragment = fragmentReference.get();
                 Activity activity = activityReference.get();
                 if (fragment == null || fragment.isRemoving()) return;
@@ -572,7 +629,7 @@ public class FullBattleVideoPlayerFragment extends VideoPlayerAbstractFragment  
         LambdaInvokerFactory factory = new LambdaInvokerFactory(
                 activityReference.get().getApplicationContext(),
                 Regions.US_EAST_1,
-                FacebookLoginFragment.getCredentialsProvider(activityReference.get()));
+                credentialsProvider);
 
         // Create the Lambda proxy object with default Json data binder.
         // You can provide your own data binder by implementing
@@ -609,7 +666,7 @@ public class FullBattleVideoPlayerFragment extends VideoPlayerAbstractFragment  
 
             @Override
             protected void onPostExecute(AsyncTaskResult<DefaultResponse> asyncResult) {
-                // get a reference to the activity and fragment if it is still there
+                // get a reference to the callbacks and fragment if it is still there
                 FullBattleVideoPlayerFragment fragment = fragmentReference.get();
                 Activity activity = activityReference.get();
                 if (fragment == null || fragment.isRemoving()) return;
@@ -656,7 +713,7 @@ public class FullBattleVideoPlayerFragment extends VideoPlayerAbstractFragment  
         LambdaInvokerFactory factory = new LambdaInvokerFactory(
                 activityReference.get().getApplicationContext(),
                 Regions.US_EAST_1,
-                FacebookLoginFragment.getCredentialsProvider(activityReference.get()));
+                credentialsProvider);
 
         // Create the Lambda proxy object with default Json data binder.
         // You can provide your own data binder by implementing
@@ -695,7 +752,7 @@ public class FullBattleVideoPlayerFragment extends VideoPlayerAbstractFragment  
 
             @Override
             protected void onPostExecute(AsyncTaskResult<DoVoteResponse> asyncResult) {
-                // get a reference to the activity and fragment if it is still there
+                // get a reference to the callbacks and fragment if it is still there
                 FullBattleVideoPlayerFragment fragment = fragmentReference.get();
                 Activity activity = activityReference.get();
 
@@ -711,8 +768,9 @@ public class FullBattleVideoPlayerFragment extends VideoPlayerAbstractFragment  
 
                 }
                 ((VideoControllerView) fragment.mVideoController).setVoteButtonVoted();
-                AllBattlesFeedCache.get(appContext).updateUserHasVoted(appContext,result.getBattleID() );
-                FollowingBattleCache.get(appContext).updateUserHasVoted(appContext,result.getBattleID() );
+                //TODO fix this below
+//                AllBattlesFeedCache.get(appContext).updateUserHasVoted(appContext,result.getBattleID() );
+//                FollowingBattleCache.get(appContext).updateUserHasVoted(appContext,result.getBattleID() );
                 Intent i = new Intent();
                 i.putExtra(INTENT_EXTRA_BATTLE_ID_VOTE_DONE_REQUEST, result.getBattleID());
                 activity.setResult(Activity.RESULT_OK, i);
@@ -742,7 +800,7 @@ public class FullBattleVideoPlayerFragment extends VideoPlayerAbstractFragment  
         LambdaInvokerFactory factory = new LambdaInvokerFactory(
                 activityReference.get().getApplicationContext(),
                 Regions.US_EAST_1,
-                FacebookLoginFragment.getCredentialsProvider(activityReference.get()));
+                credentialsProvider);
 
         // Create the Lambda proxy object with default Json data binder.
         // You can provide your own data binder by implementing
@@ -780,7 +838,7 @@ public class FullBattleVideoPlayerFragment extends VideoPlayerAbstractFragment  
 
             @Override
             protected void onPostExecute(AsyncTaskResult<DefaultResponse> asyncResult) {
-                // get a reference to the activity and fragment if it is still there
+                // get a reference to the callbacks and fragment if it is still there
                 FullBattleVideoPlayerFragment fragment = fragmentReference.get();
                 Activity activity = activityReference.get();
                 if (fragment == null || fragment.isRemoving()) return;
@@ -819,7 +877,7 @@ public class FullBattleVideoPlayerFragment extends VideoPlayerAbstractFragment  
         LambdaInvokerFactory factory = new LambdaInvokerFactory(
                 activityReference.get().getApplicationContext(),
                 Regions.US_EAST_1,
-                FacebookLoginFragment.getCredentialsProvider(activityReference.get()));
+                credentialsProvider);
 
         // Create the Lambda proxy object with default Json data binder.
         // You can provide your own data binder by implementing
@@ -882,7 +940,7 @@ public class FullBattleVideoPlayerFragment extends VideoPlayerAbstractFragment  
         LambdaInvokerFactory factory = new LambdaInvokerFactory(
                 activityReference.get().getApplicationContext(),
                 Regions.US_EAST_1,
-                FacebookLoginFragment.getCredentialsProvider(activityReference.get()));
+                credentialsProvider);
 
         // Create the Lambda proxy object with default Json data binder.
         // You can provide your own data binder by implementing
@@ -920,7 +978,7 @@ public class FullBattleVideoPlayerFragment extends VideoPlayerAbstractFragment  
 
             @Override
             protected void onPostExecute(AsyncTaskResult<DefaultResponse> asyncResult) {
-                // get a reference to the activity if it is still there
+                // get a reference to the callbacks if it is still there
                 Activity activity = activityReference.get();
                 if (activity == null || activity.isFinishing()) return;
 
@@ -956,7 +1014,7 @@ public class FullBattleVideoPlayerFragment extends VideoPlayerAbstractFragment  
         LambdaInvokerFactory factory = new LambdaInvokerFactory(
                 activityReference.get().getApplicationContext(),
                 Regions.US_EAST_1,
-                FacebookLoginFragment.getCredentialsProvider(activityReference.get()));
+                credentialsProvider);
 
         final LambdaFunctionsInterface lambdaFunctionsInterface = factory.build(LambdaFunctionsInterface.class);
                 try {
@@ -985,7 +1043,7 @@ public class FullBattleVideoPlayerFragment extends VideoPlayerAbstractFragment  
             @Override
             protected void onPostExecute( AsyncTaskResult<FriendBattleResponse> asyncResult) {
             Log.i(TAG, "BattlePOJO received from server");
-                // get a reference to the activity and fragment if it is still there
+                // get a reference to the callbacks and fragment if it is still there
                 FullBattleVideoPlayerFragment fragment = fragmentReference.get();
                 Activity activity = activityReference.get();
                 if (fragment == null || fragment.isRemoving()) return;

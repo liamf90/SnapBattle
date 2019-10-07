@@ -24,6 +24,7 @@ import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserializat
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Objects;
 
 import timber.log.Timber;
 
@@ -324,6 +325,16 @@ public class Battle implements Serializable
         return  timeSinceString;
     }
 
+    public String getBattleStatus(Context context) {
+        if (!mBattleAccepted) {
+            return context.getString(R.string.declined_battle_status_message, mChallengedUsername);
+        } else if (isBattleDone() && !mIsFinalVideoReady) {
+            return context.getString(R.string.final_video_transcoding_status_message);
+        } else if (isBattleDone() && mIsFinalVideoReady) {
+            return getCompletedBattleStatus(context);
+        } else return "";
+    }
+
     public Integer getOpponentProfilePicCount(String cogntitoIDcurrent)
     {
         if (mChallengerCognitoId.equals(cogntitoIDcurrent))
@@ -594,23 +605,50 @@ public class Battle implements Serializable
 	}
 
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Battle battle = (Battle) o;
+        return mLikeCount == battle.mLikeCount &&
+                mDislikeCount == battle.mDislikeCount &&
+                mDeleted == battle.mDeleted &&
+                mIsFinalVideoReady == battle.mIsFinalVideoReady &&
+                mCommentCount == battle.mCommentCount &&
+                mBattleID.equals(battle.mBattleID) &&
+                Objects.equals(mBattleName, battle.mBattleName) &&
+                Objects.equals(mChallengerCognitoId, battle.mChallengerCognitoId) &&
+                Objects.equals(mChallengedCognitoId, battle.mChallengedCognitoId) &&
+                Objects.equals(mRounds, battle.mRounds) &&
+                Objects.equals(mChallengerFacebookUserId, battle.mChallengerFacebookUserId) &&
+                Objects.equals(mChallengedFacebookUserId, battle.mChallengedFacebookUserId) &&
+                Objects.equals(mBattleAccepted, battle.mBattleAccepted) &&
+                Objects.equals(mChallengerUsername, battle.mChallengerUsername) &&
+                Objects.equals(mChallengedUsername, battle.mChallengedUsername) &&
+                Objects.equals(mOpponentUsername, battle.mOpponentUsername) &&
+                Objects.equals(mChallengerName, battle.mChallengerName) &&
+                Objects.equals(mChallengedName, battle.mChallengedName) &&
+                Objects.equals(mLastVideoUploadTime, battle.mLastVideoUploadTime) &&
+                Objects.equals(mVideosUploaded, battle.mVideosUploaded) &&
+                Objects.equals(mVideos, battle.mVideos) &&
+                Objects.equals(mVideoViewCount, battle.mVideoViewCount) &&
+                Objects.equals(mVoting, battle.mVoting) &&
+                mWhoTurn == battle.mWhoTurn &&
+                Objects.equals(mChallengedTime, battle.mChallengedTime) &&
+                Objects.equals(mProfilePicSmallSignedUrl, battle.mProfilePicSmallSignedUrl) &&
+                Objects.equals(mChallengerProfilePicCount, battle.mChallengerProfilePicCount) &&
+                Objects.equals(mChallengedProfilePicCount, battle.mChallengedProfilePicCount) &&
+                Objects.equals(mChallengerProfilePicSignedUrl, battle.mChallengerProfilePicSignedUrl) &&
+                Objects.equals(mOrientationLock, battle.mOrientationLock) &&
+                Objects.equals(mSignedThumbnailUrl, battle.mSignedThumbnailUrl) &&
+                Objects.equals(mUserHasVoted, battle.mUserHasVoted) &&
+                Objects.equals(mIsFollowingFeedBattle, battle.mIsFollowingFeedBattle);
+    }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    @Override
+    public int hashCode() {
+        return Objects.hash(mBattleID, mBattleName, mChallengerCognitoId, mChallengedCognitoId, mRounds, mChallengerFacebookUserId, mChallengedFacebookUserId, mBattleAccepted, mChallengerUsername, mChallengedUsername, mOpponentUsername, mChallengerName, mChallengedName, mLastVideoUploadTime, mVideosUploaded, mVideos, mVideoViewCount, mVoting, mLikeCount, mDislikeCount, mWhoTurn, mChallengedTime, mProfilePicSmallSignedUrl, mChallengerProfilePicCount, mChallengedProfilePicCount, mChallengerProfilePicSignedUrl, mOrientationLock, mDeleted, mIsFinalVideoReady, mCommentCount, mSignedThumbnailUrl, mUserHasVoted, mIsFollowingFeedBattle);
+    }
 }
 
 

@@ -5,6 +5,7 @@ import android.content.Context
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.MutableLiveData
 import com.amazonaws.AmazonClientException
 import com.amazonaws.AmazonServiceException
 import com.amazonaws.mobileconnectors.lambdainvoker.LambdaFunctionException
@@ -70,5 +71,8 @@ fun Context.hideKeyboard(view: View) {
     inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
 }
 
+fun <T> MutableLiveData<T>.notifyObserver() {
+    this.value = this.value
+}
 
 

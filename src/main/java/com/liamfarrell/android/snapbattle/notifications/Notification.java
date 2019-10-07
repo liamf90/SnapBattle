@@ -1,5 +1,6 @@
 package com.liamfarrell.android.snapbattle.notifications;
 
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.text.SpannableStringBuilder;
@@ -47,7 +48,7 @@ public abstract class Notification implements Serializable{
     }
 
 
-    public abstract Intent getIntent(Context context);
+    public abstract PendingIntent getIntent(Context context);
 
     public abstract SpannableStringBuilder getMessage(Context context);
 

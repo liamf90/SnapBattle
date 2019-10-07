@@ -1,21 +1,27 @@
 package com.liamfarrell.android.snapbattle.adapters
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.navigation.findNavController
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.liamfarrell.android.snapbattle.R
 import com.liamfarrell.android.snapbattle.databinding.ListItemNotificationBinding
-import com.liamfarrell.android.snapbattle.notifications.Notification
-import com.liamfarrell.android.snapbattle.notifications.NotificationDb
+import com.liamfarrell.android.snapbattle.model.Video
+import com.liamfarrell.android.snapbattle.mvvm_ui.NotificationListFragmentDirections
+import com.liamfarrell.android.snapbattle.notifications.*
+import java.lang.IllegalArgumentException
 
 /**
  * Adapter for the [RecyclerView] in [NotificationListFragment].
  */
-class NotificationPagedListAdapter :
+class NotificationPagedListAdapter(val onNotificationLoadedByAdapter : (n : Notification)->Unit) :
         PagedListAdapter<NotificationDb, NotificationPagedListAdapter.ViewHolder>(NotificationDiffCallback()) {
+
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
@@ -28,13 +34,34 @@ class NotificationPagedListAdapter :
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val notification = getItem(position)
+        notification?.let{onNotificationLoadedByAdapter(it.getNotification())}
         holder.apply {
             notification?.let {
                 bind(it)
                 itemView.tag = it
+                itemView.setOnClickListener(getItemOnClickListener(it.getNotification()))
             }
         }
     }
+
+    private fun getItemOnClickListener(notification: Notification) : View.OnClickListener{
+        return View.OnClickListener {
+            val direction = when(notification) {
+                is BattleAcceptedNotification ->  NotificationListFragmentDirections.actionNotificationListFragmentToViewBattleFragment(notification.battleId)
+                is FullVideoUploadedNotification -> NotificationListFragmentDirections.actionNotificationListFragmentToViewBattleFragment(notification.battleId)
+                is NewBattleRequestNotification -> NotificationListFragmentDirections.actionNotificationListFragmentToBattleChallengesListFragment2()
+                is NewCommentNotification -> NotificationListFragmentDirections.actionNotificationListFragmentToViewBattleFragment(notification.battleId)
+                is NewFollowerNotification -> NotificationListFragmentDirections.actionNotificationListFragmentToViewFollowingFragment2()
+                is TaggedInCommentNotification -> NotificationListFragmentDirections.actionNotificationListFragmentToFullBattleVideoPlayerFragment2()
+                is VideoSubmittedNotification -> NotificationListFragmentDirections.actionNotificationListFragmentToViewBattleFragment(notification.battleId)
+                is VotingCompleteNotification -> NotificationListFragmentDirections.actionNotificationListFragmentToViewBattleFragment(notification.battleId)
+                else -> throw IllegalArgumentException("Notification type on click not specified")
+            }
+            it.findNavController().navigate(direction)
+        }
+    }
+
+
 
 
     class ViewHolder(

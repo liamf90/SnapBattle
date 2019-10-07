@@ -178,7 +178,7 @@ public class ViewBattleFragment extends ListFragment
 
 		View v = inflater.inflate(R.layout.fragment_view_battle, parent, false);
 
-		mProgressContainer = v.findViewById(R.id.current_list_progressContainer);
+		mProgressContainer = v.findViewById(R.id.progressContainer);
 		BattleNameTextView = v.findViewById(R.id.battle_name_TextView);
 		RoundsTextView = v.findViewById(R.id.battle_rounds_TextView);
         vsTextView = v.findViewById(R.id.vs_TextView);
@@ -665,7 +665,7 @@ public class ViewBattleFragment extends ListFragment
 
 			@Override
 			protected void onPostExecute( AsyncTaskResult<ResponseBattle> asyncResult) {
-				// get a reference to the activity and fragment if it is still there
+				// get a reference to the callbacks and fragment if it is still there
 				ViewBattleFragment fragment = fragmentReference.get();
 				Activity activity = activityReference.get();
 				if (fragment == null || fragment.isRemoving()) return;
@@ -676,12 +676,12 @@ public class ViewBattleFragment extends ListFragment
                     new HandleLambdaError().handleError(asyncResult.getError(), activity, null);
                     return;
                 }
-				//String currentUserCognitoID = BattleFragment.getCredentialsProvider(getActivity()).getIdentityId();
+				//String currentUserCognitoID = BattleFragment.getCredentialsProvider(getCallbacks()).getIdentityId();
 				//mBattle = new BattlePOJO(result.sql_result, currentUserCognitoID);
 				fragment.setValues(result);
 				fragment.mProgressContainer.setVisibility(View.GONE);
-				//Toast.makeText(getActivity(), "Error: " + result.getSqlResult().getBattleid()), Toast.LENGTH_LONG).show();
-				//Toast.makeText(getActivity(), "Battleid: " + result.sql_result.get(0).battleid, Toast.LENGTH_SHORT).show();
+				//Toast.makeText(getCallbacks(), "Error: " + result.getSqlResult().getBattleid()), Toast.LENGTH_LONG).show();
+				//Toast.makeText(getCallbacks(), "Battleid: " + result.sql_result.get(0).battleid, Toast.LENGTH_SHORT).show();
 			}
 	}
 
@@ -902,7 +902,7 @@ public class ViewBattleFragment extends ListFragment
 
 			@Override
 			protected void onPostExecute(AsyncTaskResult<VideoSubmittedResponse> asyncResult) {
-                // get a reference to the activity and fragment if it is still there
+                // get a reference to the callbacks and fragment if it is still there
                 ViewBattleFragment fragment = fragmentReference.get();
                 Context context = contextReference.get();
                 if (fragment == null || fragment.isRemoving()) return;

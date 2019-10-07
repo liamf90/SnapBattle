@@ -6,6 +6,7 @@ import com.google.android.material.tabs.TabLayout
 import androidx.viewpager.widget.ViewPager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
+import androidx.appcompat.widget.Toolbar
 import androidx.databinding.DataBindingUtil.setContentView
 import androidx.fragment.app.Fragment
 import com.liamfarrell.android.snapbattle.R
@@ -22,24 +23,28 @@ class SearchUsersAndBattlesFragment : Fragment(){
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.activity_search_users_and_battles2, container, false)
+        setHasOptionsMenu(true)
+        val toolbar = view.findViewById(R.id.toolbar) as Toolbar
+        (activity as AppCompatActivity).setSupportActionBar(toolbar)
         viewPager = view.findViewById(R.id.view_pager)
         tabs = view.findViewById(R.id.tabs)
         return view
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.menu_search, menu)
         val searchItem =  menu.findItem(R.id.action_search)
         searchItem.expandActionView()
         val searchView = searchItem.actionView as SearchView
         setupViewPager(searchView)
-        super.onCreateOptionsMenu(menu, inflater)
     }
 
 
     private fun setupViewPager(searchView : SearchView){
         val sectionsPagerAdapter = SearchPagerAdapter(childFragmentManager, searchView)
         battleNameSearchFragment.setOnQueryChangedListener(searchView)
+        sectionsPagerAdapter.deleteFragments()
         sectionsPagerAdapter.addFragment(battleNameSearchFragment, resources.getString(R.string.battles_search_tab_title))
         sectionsPagerAdapter.addFragment(userSearchFragment, resources.getString(R.string.users_search_tab_title) )
         viewPager.adapter = sectionsPagerAdapter

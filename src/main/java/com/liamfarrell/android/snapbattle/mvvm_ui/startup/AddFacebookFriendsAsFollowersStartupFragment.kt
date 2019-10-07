@@ -5,7 +5,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.*
 import android.widget.Toast
-import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -23,8 +22,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.liamfarrell.android.snapbattle.adapters.AddFacebookFriendsAsFollowersStartupListAdapter
 import com.liamfarrell.android.snapbattle.databinding.FragmentAddFollowersSelectBinding
 import com.liamfarrell.android.snapbattle.di.*
-import com.liamfarrell.android.snapbattle.model.User
-import com.liamfarrell.android.snapbattle.viewmodels.startup.AddFacebookFriendsAsFollowersStartupViewModel
+import com.liamfarrell.android.snapbattle.viewmodels.AddFacebookFriendsAsFollowersViewModel
 import java.lang.ClassCastException
 import java.util.*
 import javax.inject.Inject
@@ -36,7 +34,7 @@ class AddFacebookFriendsAsFollowersStartupFragment : Fragment(), Injectable {
 
 
     private lateinit var startupActivity : SetupToolbarInterface
-    private lateinit var viewModel: AddFacebookFriendsAsFollowersStartupViewModel
+    private lateinit var viewModel: AddFacebookFriendsAsFollowersViewModel
     private val callbackManager: CallbackManager by lazy {CallbackManager.Factory.create()}
     private val adapter = AddFacebookFriendsAsFollowersStartupListAdapter{enableNextButton -> updateShouldShowNextButton(enableNextButton)}
 
@@ -55,7 +53,7 @@ class AddFacebookFriendsAsFollowersStartupFragment : Fragment(), Injectable {
         val binding = FragmentAddFollowersSelectBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = viewLifecycleOwner
 
-        viewModel = ViewModelProviders.of(this, viewModelFactory).get(AddFacebookFriendsAsFollowersStartupViewModel::class.java)
+        viewModel = ViewModelProviders.of(this, viewModelFactory).get(AddFacebookFriendsAsFollowersViewModel::class.java)
 
         binding.recyclerList.adapter = adapter
         binding.recyclerList.addItemDecoration(DividerItemDecoration(context, LinearLayoutManager.VERTICAL))

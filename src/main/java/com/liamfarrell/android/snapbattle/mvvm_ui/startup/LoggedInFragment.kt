@@ -18,6 +18,7 @@ import com.liamfarrell.android.snapbattle.MainActivity
 import com.liamfarrell.android.snapbattle.R
 import com.liamfarrell.android.snapbattle.data.*
 import com.liamfarrell.android.snapbattle.di.Injectable
+import com.liamfarrell.android.snapbattle.service.RegistrationIntentService
 import com.liamfarrell.android.snapbattle.ui.FacebookLoginFragment
 import com.liamfarrell.android.snapbattle.ui.startup.StartupActivity
 import com.liamfarrell.android.snapbattle.util.getErrorMessage
@@ -88,7 +89,13 @@ class LoggedInFragment  : Fragment() , Injectable {
             IdentityManager.getDefaultIdentityManager().signOut()
             return }
 
+        //reset all the room databases for the new logged in user
         resetDatabases()
+
+        //register the user for google cloud messaging
+        Intent(requireContext(), RegistrationIntentService::class.java).also { intent ->
+            requireContext().startService(intent)
+        }
 
         if (response.result.userExists == USER_ALREADY_EXISTS_RESULT) {
             val sharedPref = PreferenceManager.getDefaultSharedPreferences(requireContext().getApplicationContext())

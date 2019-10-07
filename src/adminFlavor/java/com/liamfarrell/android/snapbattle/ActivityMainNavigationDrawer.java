@@ -164,7 +164,7 @@ public class ActivityMainNavigationDrawer extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        // Unregister since the activity is about to be closed.
+        // Unregister since the callbacks is about to be closed.
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
         super.onDestroy();
     }
@@ -605,7 +605,7 @@ public class ActivityMainNavigationDrawer extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+        // as you specify a parent callbacks in AndroidManifest.xml.
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement

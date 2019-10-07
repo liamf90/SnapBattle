@@ -1,29 +1,29 @@
 package com.liamfarrell.android.snapbattle.viewmodels
 
 import android.app.Application
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
-import com.liamfarrell.android.snapbattle.app.SnapBattleApp
+import androidx.lifecycle.*
 import com.liamfarrell.android.snapbattle.caches.FollowingUserCache
 import com.liamfarrell.android.snapbattle.data.FollowingRepository
+import com.liamfarrell.android.snapbattle.data.OtherUsersProfilePicUrlRepository
 import com.liamfarrell.android.snapbattle.model.AsyncTaskResult
 import com.liamfarrell.android.snapbattle.model.User
 import com.liamfarrell.android.snapbattle.util.getErrorMessage
+import com.liamfarrell.android.snapbattle.util.notifyObserver
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
  * The ViewModel used in [ViewFollowingFragment].
  */
-class FollowingViewModel @Inject constructor(private val context: Application, private val followingRepository : FollowingRepository ) : ViewModelLaunch() {
+class FollowingViewModel @Inject constructor(private val context: Application, private val followingRepository : FollowingRepository, private val otherUsersProfilePicUrlRepository: OtherUsersProfilePicUrlRepository) : ViewModelLaunch() {
 
-    private val followingUsers = MutableLiveData<AsyncTaskResult<MutableList<User>>>()
+    private val profilePicMap = mutableMapOf<String, String>()
 
+    private val followingUsersResponse = MutableLiveData<AsyncTaskResult<MutableList<User>>>()
 
-    val following : LiveData<MutableList<User>>  =  Transformations.map (followingUsers) { asyncResult ->
-        asyncResult.result }
+    val following = MediatorLiveData<MutableList<User>>()
 
-    val errorMessage : LiveData<String?> = Transformations.map(followingUsers) { asyncResult ->
+    val errorMessage : LiveData<String?> = Transformations.map(followingUsersResponse) { asyncResult ->
         if (asyncResult.error != null) {
             getErrorMessage(context, asyncResult.error)
         } else {
@@ -31,10 +31,21 @@ class FollowingViewModel @Inject constructor(private val context: Application, p
         } }
 
 
-
     init {
+        following.addSource(followingUsersResponse){
+            if (it.error != null) {
+               following.value = it.result
+            }
+        }
+
         awsLambdaFunctionCall(true,
-                suspend {followingUsers.value = followingRepository.getFollowing()})
+                suspend {
+                    val response = followingRepository.getFollowing()
+                    if (response.error == null) {
+                        //get profile pic signed urls from either db cache (if they exist + are current pics) or use the new signed urls
+                        response.result = getProfilePicSignedUrls(response.result).toMutableList()
+                    }
+                    followingUsersResponse.value = followingRepository.getFollowing()})
     }
 
     fun removeFollowing(cognitoIDUnfollow: String) {
@@ -43,7 +54,8 @@ class FollowingViewModel @Inject constructor(private val context: Application, p
                     val result = followingRepository.removeFollowing(cognitoIDUnfollow)
                     result.let {
                         //remove user from list
-                        followingUsers.value?.result?.remove(followingUsers.value?.result?.find { it.cognitoId == cognitoIDUnfollow })
+                        followingUsersResponse.value?.result?.remove(followingUsersResponse.value?.result?.find { it.cognitoId == cognitoIDUnfollow })
+                        followingUsersResponse.notifyObserver()
 
                         //Update following user cache
                         FollowingUserCache.get(context, null).updateCache(context, null)
@@ -58,13 +70,18 @@ class FollowingViewModel @Inject constructor(private val context: Application, p
                     val asyncResult = followingRepository.addFollowing(username)
 
                     if (asyncResult.error != null){
-                        followingUsers.value?.error = asyncResult.error
+                        followingUsersResponse.value?.error = asyncResult.error
+                        followingUsersResponse.notifyObserver()
                     } else {
+                        //Get the profle pic signed urls to use
+                        asyncResult.result?.sqlResult?.let { asyncResult.result.sqlResult = getProfilePicSignedUrls(it.toList())}
 
                         //Add the added user to the list
                         asyncResult.result?.sqlResult?.forEach {
-                            followingUsers.value?.result?.add(it)
+                            followingUsersResponse.value?.result?.add(it)
                         }
+
+                        followingUsersResponse.notifyObserver()
 
                         //Update following user cache
                         FollowingUserCache.get(context, null).updateCache(context, null)
@@ -72,6 +89,20 @@ class FollowingViewModel @Inject constructor(private val context: Application, p
                 }
 
         )
+    }
+
+
+     private suspend fun getProfilePicSignedUrls(userList: List<User>) : List<User>{
+        userList.forEach {
+            if (it.profilePicCount != 0) {
+                if (profilePicMap.containsKey(it.cognitoId)){
+                    it.profilePicSignedUrl = profilePicMap[it.cognitoId]
+                } else {
+                    it.profilePicSignedUrl = otherUsersProfilePicUrlRepository.getOrUpdateProfilePicSignedUrl(it.cognitoId,  it.profilePicCount , it.profilePicSignedUrl )
+                }
+            }
+        }
+        return userList
     }
 
 

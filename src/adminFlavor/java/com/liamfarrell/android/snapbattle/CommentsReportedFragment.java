@@ -131,7 +131,7 @@ public class CommentsReportedFragment extends Fragment {
 
             @Override
             protected void onPostExecute( AsyncTaskResult<ReportedCommentsResponse> asyncResult) {
-                // get a reference to the activity and fragment if it is still there
+                // get a reference to the callbacks and fragment if it is still there
                 CommentsReportedFragment fragment = fragmentReference.get();
                 Activity activity = activityReference.get();
                 if (fragment == null || fragment.isRemoving()) return;
@@ -210,7 +210,7 @@ public class CommentsReportedFragment extends Fragment {
 
             @Override
             protected void onPostExecute(AsyncTaskResult<DeleteCommentResponse> asyncResult) {
-                // get a reference to the activity and fragment if it is still there
+                // get a reference to the callbacks and fragment if it is still there
                 CommentsReportedFragment fragment = fragmentReference.get();
                 Activity activity = activityReference.get();
                 if (fragment == null || fragment.isRemoving()) return;
@@ -296,7 +296,7 @@ public class CommentsReportedFragment extends Fragment {
 
             @Override
             protected void onPostExecute(AsyncTaskResult<IgnoreCommentResponse> asyncResult) {
-                // get a reference to the activity and fragment if it is still there
+                // get a reference to the callbacks and fragment if it is still there
                 CommentsReportedFragment fragment = fragmentReference.get();
                 Activity activity = activityReference.get();
                 if (fragment == null || fragment.isRemoving()) return;
@@ -392,7 +392,7 @@ public class CommentsReportedFragment extends Fragment {
 
             @Override
             protected void onPostExecute( AsyncTaskResult<BanUserResponse> asyncResult) {
-                // get a reference to the activity and fragment if it is still there
+                // get a reference to the callbacks and fragment if it is still there
                 CommentsReportedFragment fragment = fragmentReference.get();
                 Activity activity = activityReference.get();
                 if (fragment == null || fragment.isRemoving()) return;

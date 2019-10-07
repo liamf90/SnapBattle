@@ -22,7 +22,7 @@ import com.liamfarrell.android.snapbattle.adapters.BattleChallengesListAdapter
 import com.liamfarrell.android.snapbattle.databinding.FragmentChallengesListBinding
 import com.liamfarrell.android.snapbattle.di.Injectable
 import com.liamfarrell.android.snapbattle.model.Battle
-import com.liamfarrell.android.snapbattle.ui.createbattle.ChooseVotingFragment
+import com.liamfarrell.android.snapbattle.mvvm_ui.create_battle.ChooseVotingFragment
 import com.liamfarrell.android.snapbattle.viewmodels.BattleChallengesViewModel
 import java.util.*
 import javax.inject.Inject
@@ -43,6 +43,7 @@ class BattleChallengesListFragment : Fragment(), BattleChallengesAdapterCallback
 
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(BattleChallengesViewModel::class.java)
         binding.recyclerList.adapter = adapter
+        binding.viewModel = viewModel
 
         subscribeUi(adapter)
         return binding.root
@@ -50,11 +51,11 @@ class BattleChallengesListFragment : Fragment(), BattleChallengesAdapterCallback
 
     private fun subscribeUi(adapter: BattleChallengesListAdapter) {
         viewModel.battles.observe(viewLifecycleOwner, Observer { battlesList ->
-            adapter.submitList(battlesList)
+            battlesList?.let{adapter.submitList(battlesList.toList())}
         })
 
         viewModel.errorMessage.observe(viewLifecycleOwner, Observer {
-            Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+            it?.let{Toast.makeText(context, it, Toast.LENGTH_SHORT).show()}
         })
     }
 

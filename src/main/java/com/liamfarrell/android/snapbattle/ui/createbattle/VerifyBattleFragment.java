@@ -229,7 +229,7 @@ public class VerifyBattleFragment extends Fragment
 
 			@Override
 			protected void onPostExecute( AsyncTaskResult<CreateBattleResponse> asyncResult) {
-				// get a reference to the activity and fragment if it is still there
+				// get a reference to the callbacks and fragment if it is still there
 				VerifyBattleFragment fragment = fragmentReference.get();
 				Activity activity = activityReference.get();
 				if (fragment == null || fragment.isRemoving()) return;
@@ -243,7 +243,7 @@ public class VerifyBattleFragment extends Fragment
 					return;
                 }
 
-                //Add snackbar message to display in the main activity when battle request is successfully sent.
+                //Add snackbar message to display in the main callbacks when battle request is successfully sent.
                 Intent data = new Intent();
 				//check for errors and display toast if they have occurred
 				if (result.getError() != null) {

@@ -13,6 +13,8 @@ import android.widget.FrameLayout;
 import com.liamfarrell.android.snapbattle.R;
 import com.liamfarrell.android.snapbattle.views.VideoController;
 
+import timber.log.Timber;
+
 
 public class VideoViewFragment extends VideoPlayerAbstractFragment
 {
@@ -57,9 +59,9 @@ public class VideoViewFragment extends VideoPlayerAbstractFragment
         mVideoView.setOnErrorListener(new MediaPlayer.OnErrorListener() {
             @Override
             public boolean onError(MediaPlayer mp, int what, int extra) {
-                Log.i(TAG, "ON ERROR: what= " + what + "extra: " + extra);
+                Timber.i("ON ERROR: what= " + what + "extra: " + extra);
 
-                //if the signed url has expired. reset the video filepath. else exit activity
+                //if the signed url has expired. reset the video filepath. else exit callbacks
                 if (what == 1) {
                     getActivity().finish();
                 }
@@ -81,8 +83,6 @@ public class VideoViewFragment extends VideoPlayerAbstractFragment
     protected void setVideoController(View v) {
         mVideoController = new VideoController(getActivity());
         mVideoController.setAnchorView((FrameLayout) v.findViewById(R.id.videoContainer));
-
-
     }
 
 }

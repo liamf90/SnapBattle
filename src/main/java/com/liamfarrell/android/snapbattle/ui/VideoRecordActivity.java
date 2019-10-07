@@ -275,7 +275,7 @@ public class VideoRecordActivity extends Activity {
             mChronometer.stop();
 
 
-            //Save fileid as an intent extra and go back to main activity
+            //Save fileid as an intent extra and go back to main callbacks
             Intent data = new Intent();
             data.putExtra(EXTRA_VIDEO_ID, -1);
             data.putExtra(EXTRA_ORIENTATION_LOCK, orientationLock);
@@ -287,7 +287,7 @@ public class VideoRecordActivity extends Activity {
         catch (RuntimeException e)
         {
             //Called when stop button is pressed too quickly after record pressed.
-            //delete the file and exit the activity
+            //delete the file and exit the callbacks
             Toast.makeText(this, R.string.generic_error_toast, Toast.LENGTH_SHORT).show();
             deleteFile();
             releaseMediaRecorder();

@@ -10,6 +10,7 @@ import com.liamfarrell.android.snapbattle.notifications.NotificationDb
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 /**
  * This boundary callback gets notified when user reaches to the edges of the list for example when
@@ -22,14 +23,14 @@ class NotificationsBoundaryCallback(
 
 
     override fun onZeroItemsLoaded() {
-        Log.d("RepoBoundaryCallback", "onZeroItemsLoaded")
+        Timber.d("onZeroItemsLoaded")
     }
 
     /**
      * When all items in the database were loaded, we need to query the backend for more items.
      */
     override fun onItemAtEndLoaded(itemAtEnd: NotificationDb) {
-        Log.d("RepoBoundaryCallback", "onItemAtEndLoaded")
+        Timber.d("onItemAtEndLoaded")
         coroutineScope.launch(Dispatchers.IO) { notificationsManager.requestMoreBattles()}
     }
 

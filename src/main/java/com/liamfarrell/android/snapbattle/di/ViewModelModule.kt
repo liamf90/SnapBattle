@@ -23,7 +23,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.liamfarrell.android.snapbattle.viewmodels.*
 import com.liamfarrell.android.snapbattle.viewmodels.create_battle.ChooseBattleTypeViewModel
 import com.liamfarrell.android.snapbattle.viewmodels.create_battle.ChooseOpponentViewModel
-import com.liamfarrell.android.snapbattle.viewmodels.startup.AddFacebookFriendsAsFollowersStartupViewModel
+import com.liamfarrell.android.snapbattle.viewmodels.AddFacebookFriendsAsFollowersViewModel
 import com.liamfarrell.android.snapbattle.viewmodels.startup.ChooseNameStartupViewModel
 import com.liamfarrell.android.snapbattle.viewmodels.startup.ChooseUsernameStartupViewModel
 
@@ -49,6 +49,11 @@ abstract class ViewModelModule {
     @ViewModelKey(BattleNameSearchViewModel::class)
     abstract fun bindBattleNameViewModel(battleNameSearchViewModel: BattleNameSearchViewModel): ViewModel
 
+    @Binds
+    @IntoMap
+    @ViewModelKey(BattlesByNameViewModel::class)
+    abstract fun bindBattlesByNameViewModel(battlesByNameViewModel: BattlesByNameViewModel): ViewModel
+
 
     @Binds
     @IntoMap
@@ -65,10 +70,6 @@ abstract class ViewModelModule {
     @ViewModelKey(CurrentBattlesViewModel::class)
     abstract fun bindCurrentBattlesViewModel(currentBattlesViewModel: CurrentBattlesViewModel): ViewModel
 
-    @Binds
-    @IntoMap
-    @ViewModelKey(FollowFacebookFriendsViewModel::class)
-    abstract fun bindFollowFacebookFriendsViewModel(followFacebookFriendsViewModel: FollowFacebookFriendsViewModel): ViewModel
 
     @Binds
     @IntoMap
@@ -107,8 +108,8 @@ abstract class ViewModelModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(AddFacebookFriendsAsFollowersStartupViewModel::class)
-    abstract fun bindAddFacebookFriendsAsFollowersStartupViewModel(addFacebookFriendsAsFollowersStartupViewModel: AddFacebookFriendsAsFollowersStartupViewModel): ViewModel
+    @ViewModelKey(AddFacebookFriendsAsFollowersViewModel::class)
+    abstract fun bindAddFacebookFriendsAsFollowersStartupViewModel(addFacebookFriendsAsFollowersStartupViewModel: AddFacebookFriendsAsFollowersViewModel): ViewModel
 
     @Binds
     @IntoMap

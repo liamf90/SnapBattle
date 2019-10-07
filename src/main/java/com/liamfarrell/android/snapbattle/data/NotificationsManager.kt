@@ -7,6 +7,7 @@ import com.liamfarrell.android.snapbattle.db.NotificationsDynamoInfo
 import com.liamfarrell.android.snapbattle.notifications.NotificationDb
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -44,13 +45,13 @@ class NotificationsManager @Inject constructor(
         val notificationCount = notificationsDao.getCountAllNotifications()
         val totalNotificationsCountDynamo = notificationsDynamoDbRepository.getNotificationCountDynamo()
         val lastAllNotificationDynamoCount = notificationsDynamoInfoDao.getNotificationDynamoCount()
-
-        if (totalNotificationsCountDynamo != notificationCount) {
+            if (totalNotificationsCountDynamo != notificationCount) {
             val startIndex = totalNotificationsCountDynamo - lastAllNotificationDynamoCount + notificationCount
             val endIndex = startIndex + NETWORK_PAGE_SIZE - 1
 
             val moreNotificationsList = notificationsDynamoDbRepository.getNotificationListFromDynamo(startIndex, endIndex)
             notificationsDao.insertAll(moreNotificationsList.map{NotificationDb(it)})
+            notificationsDynamoInfoDao.updateNotificationsDynamoCount(totalNotificationsCountDynamo)
         } else {
             noMoreBattles.postValue(true)
         }
@@ -77,7 +78,9 @@ class NotificationsManager @Inject constructor(
             }
 
             val newNotificationsList = notificationsDynamoDbRepository.getNotificationListFromDynamo(startIndex, endIndex)
+            //TODO: make the below two Room updates in a transaction
             notificationsDao.insertAll(newNotificationsList.map { NotificationDb(it) })
+            notificationsDynamoInfoDao.updateNotificationsDynamoCount(notificationCountDynamo)
         }
         loadingNewBattles.postValue(false)
     }

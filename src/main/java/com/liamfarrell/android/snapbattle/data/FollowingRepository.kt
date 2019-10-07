@@ -40,7 +40,7 @@ class FollowingRepository @Inject constructor
 
     suspend fun addFollowing(facebookIDList : List<String>) :  AsyncTaskResult<ResponseFollowing>{
         val addFollowerRequest = FollowUserWithFacebookIDsRequest()
-        addFollowerRequest.facebookFriendIdList = facebookIDList as ArrayList<String>
+        addFollowerRequest.facebookFriendIdList = ArrayList(facebookIDList)
         return executeAWSFunction{lambdaFunctionsInterface.AddFollower(addFollowerRequest)}
 
     }

@@ -6,24 +6,28 @@ import androidx.lifecycle.Transformations
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagedList
 import com.liamfarrell.android.snapbattle.data.NotificationsRepository
-import com.liamfarrell.android.snapbattle.model.Battle
-import com.liamfarrell.android.snapbattle.model.BattlesSearchResult
+import com.liamfarrell.android.snapbattle.data.OtherUsersProfilePicUrlRepository
+import com.liamfarrell.android.snapbattle.db.OtherUsersProfilePicUrlCache
 import com.liamfarrell.android.snapbattle.model.NotificationsDatabaseResult
-import com.liamfarrell.android.snapbattle.notifications.Notification
 import com.liamfarrell.android.snapbattle.notifications.NotificationDb
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
 /**
- * The ViewModel used in [BattleChallengesListFragment].
+ * The ViewModel used in [NotificationsListFragment].
  */
-class NotificationsViewModel @Inject constructor(private val notificationsRepository: NotificationsRepository) : ViewModelLaunch() {
+class NotificationsViewModel @Inject constructor(private val notificationsRepository: NotificationsRepository, private val otherUsersProfilePicUrlRepository: OtherUsersProfilePicUrlRepository) : ViewModelLaunch() {
 
     private val notificationsResult = MutableLiveData<NotificationsDatabaseResult>()
     private val _noMoreOlderBattles =  notificationsRepository.isNoMoreOlderBattles
     private val _loadingMoreBattles = notificationsRepository.isLoadingMoreBattles
 
-    val notifications: LiveData<PagedList<NotificationDb>> = Transformations.switchMap(notificationsResult) { it -> it.data }
+    private val cogntioIdSignedUrlServerCheckList = mutableListOf<String>()
+
+    val notifications: LiveData<PagedList<NotificationDb>> = Transformations.switchMap(notificationsResult) {
+        //getProfilePics()
+        it.data }
     val networkErrors: LiveData<String> = Transformations.switchMap(notificationsResult) { it ->
         it.networkErrors
     }
@@ -32,7 +36,9 @@ class NotificationsViewModel @Inject constructor(private val notificationsReposi
 
 
     init {
+
         notificationsResult.value = notificationsRepository.loadAllNotifications(viewModelScope)
+        viewModelScope.launch {notificationsRepository.checkForUpdates()}
     }
 
     fun updateSeenAllBattles(){
@@ -40,6 +46,22 @@ class NotificationsViewModel @Inject constructor(private val notificationsReposi
                 suspend {notificationsRepository.updateSeenAllBattles()})
 
     }
+
+    fun getProfilePic(cognitoId: String){
+        if (!cogntioIdSignedUrlServerCheckList.contains(cognitoId)){
+            cogntioIdSignedUrlServerCheckList.add(cognitoId)
+            viewModelScope.launch {
+                val response = otherUsersProfilePicUrlRepository.getSignedUrlsFromServer(listOf(cognitoId))
+                if (response.error == null){
+                    val updatedSignedUrl  =  response.result.newSignedUrls[0]
+                    //Insert into database
+                    otherUsersProfilePicUrlRepository.insertOtherUsersProfilePicOnlyIfProfilePicCountDifferent(updatedSignedUrl.cognitoId, updatedSignedUrl.profilePicCount, updatedSignedUrl.newSignedUrl)
+                }
+            }
+        }
+    }
+
+
 
 
 

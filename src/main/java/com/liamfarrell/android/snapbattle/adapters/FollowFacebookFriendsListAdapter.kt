@@ -8,15 +8,14 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.liamfarrell.android.snapbattle.R
-import com.liamfarrell.android.snapbattle.databinding.ListItemFollowingBinding
+import com.liamfarrell.android.snapbattle.databinding.ListItemFacebookFriendsBinding
 import com.liamfarrell.android.snapbattle.model.User
-import com.liamfarrell.android.snapbattle.viewmodels.FollowFacebookFriendsViewModel
 
 
 /**
  * Adapter for the [RecyclerView] in [FollowFacebookFriendsFragment].
  */
-class FollowFacebookFriendsListAdapter(val viewModel: FollowFacebookFriendsViewModel) :
+class FollowFacebookFriendsListAdapter(val addFollowingCallback : (username: String)->Unit, val removeFollowingCallback : (cognitoId: String)->Unit) :
         ListAdapter<User, FollowFacebookFriendsListAdapter.ViewHolder>(UserFacebookFriendDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -43,12 +42,12 @@ class FollowFacebookFriendsListAdapter(val viewModel: FollowFacebookFriendsViewM
 
     private fun createOnModifyClickListener(user: User): View.OnClickListener {
         return View.OnClickListener {
-            if (user.isFollowing) viewModel.removeFollowing(user.cognitoId) else viewModel.addFollowing(user.username)
+            if (user.isFollowing) removeFollowingCallback(user.cognitoId) else addFollowingCallback(user.facebookUserId)
         }
     }
 
     class ViewHolder(
-            private val binding: ListItemFollowingBinding
+            private val binding: ListItemFacebookFriendsBinding
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: User, profilePicClicklistener: View.OnClickListener, modifyUserClickListener : View.OnClickListener) {
             with(binding) {

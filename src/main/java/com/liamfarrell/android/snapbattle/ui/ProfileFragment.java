@@ -230,7 +230,7 @@ public class ProfileFragment extends Fragment
 
         @Override
         protected void onPostExecute(AsyncTaskResult<GetProfileResponse> asyncResult) {
-            // get a reference to the activity and fragment if it is still there
+            // get a reference to the callbacks and fragment if it is still there
             ProfileFragment fragment = fragmentReference.get();
             Activity activity = activityReference.get();
             if (fragment == null || fragment.isRemoving()) return;
@@ -365,7 +365,7 @@ public class ProfileFragment extends Fragment
 
             @Override
             protected void onPostExecute( AsyncTaskResult<UpdateUsernameResponse> asyncResult) {
-                // get a reference to the activity and fragment if it is still there
+                // get a reference to the callbacks and fragment if it is still there
                 ProfileFragment fragment = fragmentReference.get();
                 Activity activity = activityReference.get();
                 if (fragment == null || fragment.isRemoving()) return;
@@ -385,7 +385,7 @@ public class ProfileFragment extends Fragment
                         fragment.changeUsernameConfirmButton.setVisibility(View.GONE);
 						SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(activity.getApplicationContext());
 						sharedPrefs.edit().putString(FacebookLoginFragment.USERNAME_SHAREDPREFS, fragment.usernameEditText.getText().toString()).commit();
-						//update textview in main activity showing username
+						//update textview in main callbacks showing username
 						((ActivityMainNavigationDrawer)activity).loadUsernameAndName();
 						Log.i(TAG, "Username updated");
                         final CoordinatorLayout coordinatorLayout =activity.findViewById(R.id.coordinatorLayoutMain);
@@ -463,7 +463,7 @@ public class ProfileFragment extends Fragment
 
             @Override
             protected void onPostExecute( AsyncTaskResult<UpdateNameResponse> asyncResult) {
-                // get a reference to the activity and fragment if it is still there
+                // get a reference to the callbacks and fragment if it is still there
                 ProfileFragment fragment = fragmentReference.get();
                 Activity activity = activityReference.get();
                 if (fragment == null || fragment.isRemoving()) return;

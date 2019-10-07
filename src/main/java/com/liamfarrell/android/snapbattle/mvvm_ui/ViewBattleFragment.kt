@@ -1,6 +1,7 @@
 package com.liamfarrell.android.snapbattle.mvvm_ui
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.*
 import android.content.pm.PackageManager
@@ -20,6 +21,9 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.amazonaws.mobile.auth.core.IdentityManager
 import com.google.android.material.snackbar.Snackbar
 import com.karumi.dexter.Dexter
@@ -47,6 +51,7 @@ import com.liamfarrell.android.snapbattle.ui.VideoViewFragment
 import com.liamfarrell.android.snapbattle.util.downloadFileFromURL
 import com.liamfarrell.android.snapbattle.viewmodels.ViewOwnBattleViewModel
 import kotlinx.android.synthetic.main.fragment_view_comments.*
+import timber.log.Timber
 import java.io.File
 import javax.inject.Inject
 
@@ -67,47 +72,48 @@ class ViewBattleFragment : Fragment(), Injectable {
 
     private lateinit var viewModel: ViewOwnBattleViewModel
     private lateinit var battle : Battle
+    private lateinit var binding : FragmentViewBattleBinding
     private lateinit var adapter : BattleVideoAdapter
-    private var battleID : Int = -1
+    private var battleID = -1
+    private val args: ViewBattleFragmentArgs by navArgs()
 
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+    }
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val binding = FragmentViewBattleBinding.inflate(inflater, container, false)
+        binding = FragmentViewBattleBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = viewLifecycleOwner
-        battleID = activity?.intent?.getIntExtra(BATTLE_ID_EXTRA, -1) ?: -1
-
-
-        adapter = BattleVideoAdapter(battle, ::getRecordButtonOnClick, usersBattleRepository )
+        battleID = args.battleId
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(ViewOwnBattleViewModel::class.java)
-        binding.battle = viewModel.battle
-        binding.recyclerView.adapter = adapter
-        binding.included.saveToDeviceButton.setOnClickListener({onSaveToDeviceButtonClicked()})
-        binding.included.playWholeBattleButton.setOnClickListener({onPlayButtonClicked()})
-        adapter.notifyDataSetChanged()
+        binding.viewModel = viewModel
 
-
-
-
+        binding.included.saveToDeviceButton.setOnClickListener {onSaveToDeviceButtonClicked()}
+        binding.included.playWholeBattleButton.setOnClickListener {onPlayButtonClicked()}
         registerReceiver()
-        subscribeUi(adapter)
+        subscribeUi()
         viewModel.getBattle(battleID)
-
         return binding.root
     }
 
-    private fun subscribeUi(adapter : BattleVideoAdapter) {
+    private fun subscribeUi() {
         viewModel.battle.observe(viewLifecycleOwner, Observer {
+            it?.let{
             battle = it
-            adapter.submitList(it.videos)
+            adapter = BattleVideoAdapter(battle, ::getRecordButtonOnClick, ::onVideoSubmitted, usersBattleRepository )
+            binding.recyclerView.adapter = adapter
+            binding.battleStatus = battle.getBattleStatus(requireContext())
+            adapter.submitList(it.videos.toList())}
         })
 
         viewModel.errorMessage.observe(viewLifecycleOwner, Observer {
-            Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+            it?.let{Toast.makeText(context, it, Toast.LENGTH_SHORT).show()}
         })
 
         viewModel.snackBarMessage.observe(viewLifecycleOwner, Observer {snackBarMessage ->
-            Snackbar.make(parentCoordinatorLayout, snackBarMessage, Snackbar.LENGTH_LONG).show()
+            snackBarMessage?.let{Snackbar.make(parentCoordinatorLayout, snackBarMessage, Snackbar.LENGTH_LONG).show()}
         })
     }
 
@@ -115,6 +121,8 @@ class ViewBattleFragment : Fragment(), Injectable {
         destroyRegister()
         super.onDestroy()
     }
+
+
 
 
     /**
@@ -155,6 +163,7 @@ class ViewBattleFragment : Fragment(), Injectable {
     }
 
 
+
     private fun destroyRegister() {
         activity?.unregisterReceiver(mOnShowNotification)
     }
@@ -170,7 +179,6 @@ class ViewBattleFragment : Fragment(), Injectable {
             }
         }
     }
-
 
 
     private fun onSaveToDeviceButtonClicked(){
@@ -207,41 +215,28 @@ class ViewBattleFragment : Fragment(), Injectable {
         val filepath = battle.getServerFinalVideoUrl(IdentityManager.getDefaultIdentityManager().cachedUserID)
         val callback = Battle.SignedUrlCallback { signedUrl ->
             context?.let{downloadFileFromURL(it, signedUrl, battle.finalVideoFilename, null, battle.battleName)}
-
         }
         Battle.getSignedUrlFromServer(filepath, context, callback)
     }
 
+    private fun onVideoSubmitted() {
+        viewModel.getBattle(battleID)
+    }
+
     private fun onPlayButtonClicked() {
-        //check if the file is stored, otherwise stream it
         activity?.let {
-            val file = File(it.filesDir.absolutePath + "/" + battle.getFinalVideoFilename())
-            if (file.exists()) {
-                //Play the file
-                val intent = Intent(it, VideoViewActivity::class.java)
-                intent.putExtra(VIDEO_FILEPATH_EXTRA, file.getAbsolutePath())
-                intent.putExtra(VideoViewFragment.VIDEO_TYPE_EXTRA, VideoViewFragment.VIDEO_TYPE_LOCAL)
-                intent.putExtra(VideoViewFragment.VIDEO_ROTATION_LOCK_EXTRA, battle.getOrientationLock())
-                startActivity(intent)
-            } else {
                 //Stream the file
                 val filepath = battle.getServerFinalVideoUrl(IdentityManager.getDefaultIdentityManager().cachedUserID)
                 val callback = Battle.SignedUrlCallback { signedUrl ->
-                    //progressContainer.setVisibility(View.INVISIBLE)
+                    progressContainer.setVisibility(View.GONE)
                     val intent = Intent(it, VideoViewActivity::class.java)
-                    intent.putExtra(ViewBattleFragment.VIDEO_FILEPATH_EXTRA, signedUrl)
+                    intent.putExtra(VideoViewFragment.VIDEO_FILEPATH_EXTRA, signedUrl)
                     intent.putExtra(VideoViewFragment.VIDEO_TYPE_EXTRA, VideoViewFragment.VIDEO_TYPE_STREAM)
                     intent.putExtra(VideoViewFragment.VIDEO_ROTATION_LOCK_EXTRA, battle.getOrientationLock())
                     startActivity(intent)
                 }
                 Battle.getSignedUrlFromServer(filepath, it, callback)
-                //mProgressContainer.setVisibility(View.VISIBLE)
-            }
-
-            //createMovie  create = new createMovie(false);
-            //create.start();
-        }
-
+                progressContainer.setVisibility(View.VISIBLE) }
     }
 
     private fun getRecordButtonOnClick(video: Video){

@@ -114,7 +114,7 @@ public class ViewBattlesFromNameFragment extends BattleCompletedListFragment
 
             @Override
             protected void onPostExecute(AsyncTaskResult<GetBattlesByNameResponse> asyncResult)  {
-                // get a reference to the activity and fragment if it is still there
+                // get a reference to the callbacks and fragment if it is still there
                 ViewBattlesFromNameFragment fragment = fragmentReference.get();
                 Activity activity = activityReference.get();
                 if (fragment == null || fragment.isRemoving()) return;

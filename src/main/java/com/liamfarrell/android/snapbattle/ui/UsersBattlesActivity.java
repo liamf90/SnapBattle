@@ -217,7 +217,7 @@ public class UsersBattlesActivity extends AppCompatActivity {
             @Override
             protected void onPostExecute(AsyncTaskResult<ResponseFollowing> asyncResult)
             {
-            // get a reference to the activity if it is still there
+            // get a reference to the callbacks if it is still there
                 UsersBattlesActivity activity = (UsersBattlesActivity)activityReference.get();
                 if (activity == null || activity.isFinishing()) return;
                 if (asyncResult.getError() != null)
@@ -280,7 +280,7 @@ public class UsersBattlesActivity extends AppCompatActivity {
             @Override
             protected void onPostExecute(AsyncTaskResult<DefaultResponse> asyncResult)
             {
-                // get a reference to the activity and fragment if it is still there
+                // get a reference to the callbacks and fragment if it is still there
                 UsersBattlesActivity activity = (UsersBattlesActivity)activityReference.get();
                 if (activity == null || activity.isFinishing()) return;
 

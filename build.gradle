@@ -14,8 +14,12 @@ android {
         minSdkVersion 23
         targetSdkVersion 28
         compileOptions {
-            sourceCompatibility JavaVersion.VERSION_1_7
-            targetCompatibility JavaVersion.VERSION_1_7
+            sourceCompatibility JavaVersion.VERSION_1_8
+            targetCompatibility JavaVersion.VERSION_1_8
+        }
+
+        kotlinOptions {
+            jvmTarget = "1.8"
         }
 
 
@@ -90,7 +94,6 @@ dependencies {
     kapt "com.google.dagger:dagger-android-support:2.16"
 
 
-
     implementation "androidx.work:work-runtime-ktx:$rootProject.workVersion"
     implementation "androidx.room:room-runtime:$rootProject.roomVersion"
     implementation "androidx.room:room-ktx:$rootProject.roomVersion"
@@ -108,7 +111,7 @@ dependencies {
     // Kotlin
     implementation "androidx.navigation:navigation-fragment-ktx:$nav_version_ktx"
     implementation "androidx.navigation:navigation-ui-ktx:$nav_version_ktx"
-
+    apply plugin: "androidx.navigation.safeargs.kotlin"
 
     //compile fileTree(dir: 'libs', include: ['.so'])
     // compile fileTree(include: ['*.jar'], dir: 'libs')

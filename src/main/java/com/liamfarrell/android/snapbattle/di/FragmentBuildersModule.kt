@@ -21,6 +21,7 @@ import com.liamfarrell.android.snapbattle.mvvm_ui.create_battle.ChooseBattleType
 import com.liamfarrell.android.snapbattle.mvvm_ui.create_battle.ChooseOpponentFragment
 import com.liamfarrell.android.snapbattle.mvvm_ui.create_battle.VerifyBattleFragment
 import com.liamfarrell.android.snapbattle.mvvm_ui.startup.*
+import com.liamfarrell.android.snapbattle.ui.FullBattleVideoPlayerFragment
 
 
 import dagger.Module
@@ -100,6 +101,9 @@ abstract class FragmentBuildersModule {
 
     @ContributesAndroidInjector
     abstract fun contributeChooseProfilePictureStartupFragment(): ChooseProfilePictureStartupFragment
+
+    @ContributesAndroidInjector
+    abstract fun contributeFullBattleVideoPlayerFragment(): FullBattleVideoPlayerFragment
 
 
 }

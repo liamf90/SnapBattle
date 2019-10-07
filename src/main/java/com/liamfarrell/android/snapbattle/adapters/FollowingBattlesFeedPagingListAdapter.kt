@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.navigation.findNavController
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -11,6 +12,7 @@ import com.liamfarrell.android.snapbattle.R
 import com.liamfarrell.android.snapbattle.databinding.ListItemBattleFriendsBinding
 import com.liamfarrell.android.snapbattle.db.FollowingBattle
 import com.liamfarrell.android.snapbattle.model.Battle
+import com.liamfarrell.android.snapbattle.mvvm_ui.HomeFragmentDirections
 import com.liamfarrell.android.snapbattle.viewmodels.AllBattlesViewModel
 import com.liamfarrell.android.snapbattle.viewmodels.BattleViewModel
 
@@ -38,26 +40,29 @@ class FollowingBattlesFeedPagingListAdapter :
             battle?.let { bind(it.battle,
                     createChallengerOnClickListener(it.battle.challengerCognitoID),
                     createChallengedOnClickListener(it.battle.challengedCognitoID),
-                    createThumbnailOnClickListener(it.battle.battleID))
+                    createThumbnailOnClickListener(it.battle))
                 itemView.tag = it}
         }
     }
 
-    private fun createThumbnailOnClickListener(battleID: Int): View.OnClickListener {
+    private fun createThumbnailOnClickListener(battle: Battle): View.OnClickListener {
         return View.OnClickListener {
-
+            val direction = HomeFragmentDirections.actionNavigationHomeToFullBattleVideoPlayerFragment(battle.battleId,  battle.getServerFinalVideoUrl(battle.challengerCognitoID), battle.challengerUsername, battle.challengedUsername)
+            it.findNavController().navigate(direction)
         }
     }
 
     private fun createChallengerOnClickListener(challengerCognitoID: String): View.OnClickListener {
         return View.OnClickListener {
-
+            val direction = HomeFragmentDirections.actionNavigationHomeToUsersBattlesFragment2(challengerCognitoID)
+            it.findNavController().navigate(direction)
         }
     }
 
     private fun createChallengedOnClickListener(challengedCognitoID: String): View.OnClickListener {
         return View.OnClickListener {
-
+            val direction = HomeFragmentDirections.actionNavigationHomeToUsersBattlesFragment2(challengedCognitoID)
+            it.findNavController().navigate(direction)
         }
     }
 

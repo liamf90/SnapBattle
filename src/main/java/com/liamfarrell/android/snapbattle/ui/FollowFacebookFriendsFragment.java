@@ -448,7 +448,7 @@ public class FollowFacebookFriendsFragment extends Fragment
         private String facebookIDFollow;
         private OpponentAdapter.MyViewHolder holder;
 
-        // only retain a weak reference to the activity
+        // only retain a weak reference to the callbacks
         FollowUserTask(Activity activity, FollowFacebookFriendsFragment fragment, String facebookIDFollow, final OpponentAdapter.MyViewHolder holder) {
             fragmentReference = new WeakReference<>(fragment);
             activityReference = new WeakReference<>(activity);
@@ -495,14 +495,14 @@ public class FollowFacebookFriendsFragment extends Fragment
         @Override
         protected void onPostExecute(AsyncTaskResult<ResponseFollowing> asyncResult) {
 
-            // get a reference to the activity if it is still there
+            // get a reference to the callbacks if it is still there
             Log.i(TAG, "On post execute");
             FollowFacebookFriendsFragment fragment = fragmentReference.get();
             Activity activity = activityReference.get();
             if (fragment == null || fragment.isRemoving()) return;
             if (activity == null || activity.isFinishing()) return;
 
-            Log.i(TAG, "Fragment and activity != null");
+            Log.i(TAG, "Fragment and callbacks != null");
             if (asyncResult.getError() != null)
             {
                 new HandleLambdaError().handleError(asyncResult.getError(), activity, fragment.mProgressContainer);

@@ -43,7 +43,7 @@ class AWSModule{
     fun credentialsProvider() : AWSCredentialsProvider {
         return AWSMobileClient.getInstance().credentialsProvider
 //        return CognitoCachingCredentialsProvider(
-//                context, /* get the context for the current activity */
+//                context, /* get the context for the current callbacks */
 //                "us-east-1:e6478f31-2dbe-4ad8-aadd-b4964691350c", /* Identity Pool ID */
 //                Regions.US_EAST_1          /* Region for your identity pool--US_EAST_1 or EU_WEST_1*/
 //        );

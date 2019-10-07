@@ -22,6 +22,7 @@ import com.amazonaws.mobileconnectors.lambdainvoker.LambdaFunctionException;
 import com.amazonaws.mobileconnectors.lambdainvoker.LambdaInvokerFactory;
 import com.amazonaws.regions.Regions;
 import com.google.gson.JsonParser;
+import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.SignedUrlsRequest;
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.UsersSearchRequest;
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.GetSignedUrlsResponse;
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.LambdaFunctionsInterface;
@@ -31,7 +32,6 @@ import com.liamfarrell.android.snapbattle.caches.OtherUsersProfilePicCacheManage
 import com.liamfarrell.android.snapbattle.model.User;
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.GetNewSignedUrlResponse;
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.GetUsersResponse;
-import com.liamfarrell.android.snapbattle.model.lambda_function_request_objects.SignedUrlsRequest;
 import com.liamfarrell.android.snapbattle.util.HandleLambdaError;
 import com.liamfarrell.android.snapbattle.views.SimpleDividerItemDecoration;
 import com.liamfarrell.android.snapbattle.model.AsyncTaskResult;
@@ -76,7 +76,7 @@ public class UserSearchFragment extends Fragment implements androidx.appcompat.w
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
-        //searchView = ((SearchUsersAndBattlesActivity)getActivity()).getSearchView();
+        //searchView = ((SearchUsersAndBattlesActivity)getCallbacks()).getSearchView();
         mUserList = new ArrayList<>();
         mAdapter = new UserSearchAdapter(mUserList);
 
@@ -208,7 +208,7 @@ public class UserSearchFragment extends Fragment implements androidx.appcompat.w
 
             @Override
             protected void onPostExecute(AsyncTaskResult<GetUsersResponse> asyncResult) {
-                // get a reference to the activity and fragment if it is still there
+                // get a reference to the callbacks and fragment if it is still there
                 UserSearchFragment fragment = fragmentReference.get();
                 Activity activity = activityReference.get();
                 if (fragment == null || fragment.isRemoving()) return;
@@ -349,7 +349,7 @@ public class UserSearchFragment extends Fragment implements androidx.appcompat.w
 
             @Override
             protected void onPostExecute(AsyncTaskResult<GetSignedUrlsResponse> asyncResult) {
-                // get a reference to the activity and fragment if it is still there
+                // get a reference to the callbacks and fragment if it is still there
                 UserSearchFragment fragment = fragmentReference.get();
                 Activity activity = activityReference.get();
                 if (fragment == null || fragment.isRemoving()) return;

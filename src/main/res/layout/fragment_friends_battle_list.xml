@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-
+    <data>
+        <import type="android.view.View" />
+        <import type="androidx.lifecycle.LiveData"/>
+        <variable
+            name="showSpinner"
+            type="LiveData&lt;Boolean>" />
+    </data>
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@+id/parentCoordinatorLayout"
         android:layout_width="match_parent"
@@ -24,18 +30,17 @@
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
         <FrameLayout
-            android:id="@+id/current_list_progressContainer"
+            android:id="@+id/progressContainer"
             android:layout_width="match_parent"
             android:layout_height="@dimen/progress_container_height"
             android:clickable="true"
             android:focusable="true"
-            android:visibility="gone">
+            android:visibility="@{safeUnbox(showSpinner) ? View.VISIBLE : View.GONE}">
             <ProgressBar
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:theme="@style/MyMaterialTheme.Base"
-                android:visibility="gone" />
+                android:theme="@style/MyMaterialTheme.Base" />
         </FrameLayout>
 
 
@@ -59,11 +64,11 @@
             android:text="@string/no_more_battles"
             />
         <FrameLayout
-            android:visibility="gone"
             android:id="@+id/loadMorebattlesProgressContainer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
+            android:visibility="gone"
             android:clickable="true"
             android:focusable="true">
             <ProgressBar

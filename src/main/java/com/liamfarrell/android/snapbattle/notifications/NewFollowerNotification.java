@@ -1,12 +1,17 @@
 package com.liamfarrell.android.snapbattle.notifications;
 
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
 
+import androidx.navigation.NavDeepLinkBuilder;
+
+import com.liamfarrell.android.snapbattle.MainActivity;
 import com.liamfarrell.android.snapbattle.app.SnapBattleApp;
 import com.liamfarrell.android.snapbattle.R;
 import com.liamfarrell.android.snapbattle.ui.UsersBattlesActivity;
@@ -22,10 +27,23 @@ public class NewFollowerNotification extends Notification {
     }
 
     @Override
-    public Intent getIntent(Context context) {
-        Intent intent = new Intent(context, UsersBattlesActivity.class);
-        intent.putExtra(UsersBattlesActivity.EXTRA_COGNITO_ID, mOpponentCognitoId);
-        return intent;
+    public PendingIntent getIntent(Context context) {
+        Bundle args = new Bundle();
+        args.putString("cognitoId", mOpponentCognitoId);
+
+        return new NavDeepLinkBuilder(context)
+                .setComponentName(MainActivity.class)
+                .setGraph(R.navigation.navigation_home)
+                .setDestination(R.id.usersBattlesFragment2)
+                .setArguments(args)
+                .createPendingIntent();
+
+
+//        Intent intent = new Intent(context, UsersBattlesActivity.class);
+//        intent.putExtra(UsersBattlesActivity.EXTRA_COGNITO_ID, mOpponentCognitoId);
+//        return intent;
+
+
     }
 
     @Override

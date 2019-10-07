@@ -13,7 +13,10 @@ import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
 import android.view.ViewGroup
 import com.liamfarrell.android.snapbattle.R
+import com.liamfarrell.android.snapbattle.db.SnapBattleDatabase
 import com.squareup.picasso.Callback
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.lang.Exception
 
@@ -29,8 +32,9 @@ fun loadImage(view: CircleImageView, imageUrl: String?) {
         }
 
     })
-
 }
+
+
 
 @BindingAdapter("commentText")
 fun bindCommentText(textView: TextView, comment: Comment) {

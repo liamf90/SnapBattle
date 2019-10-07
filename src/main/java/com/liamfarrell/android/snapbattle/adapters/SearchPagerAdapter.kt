@@ -29,6 +29,10 @@ class SearchPagerAdapter(fm: FragmentManager, private val searchView: SearchView
         fragments.add(fragment)
         titles.add(title)
     }
+
+    fun deleteFragments(){
+        fragments.clear()
+    }
     override fun getCount(): Int {
         return fragments.size
     }

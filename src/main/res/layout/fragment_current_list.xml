@@ -12,7 +12,7 @@
 		  app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
 		  />
 	<FrameLayout
-	    android:id="@+id/current_list_progressContainer"
+	    android:id="@+id/progressContainer"
 	    android:layout_width="match_parent"
 		android:layout_height="@dimen/progress_container_height"
 	    android:clickable="true"

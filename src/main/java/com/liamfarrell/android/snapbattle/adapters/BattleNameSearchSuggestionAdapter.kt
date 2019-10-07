@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -11,6 +12,7 @@ import com.liamfarrell.android.snapbattle.R
 import com.liamfarrell.android.snapbattle.databinding.ListItemSearchBattleBinding
 import com.liamfarrell.android.snapbattle.model.Battle
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.SuggestionsResponse
+import com.liamfarrell.android.snapbattle.mvvm_ui.SearchUsersAndBattlesFragmentDirections
 import com.liamfarrell.android.snapbattle.ui.UserSearchFragment
 
 /**
@@ -90,6 +92,8 @@ class BattleNameSearchSuggestionAdapter :
     private fun getOnClickListener(battleName: String): View.OnClickListener {
         return View.OnClickListener {
             //go to battle
+            val direction = SearchUsersAndBattlesFragmentDirections.actionSearchUsersAndBattlesFragmentToViewBattlesFromNameFragment(battleName)
+            it.findNavController().navigate(direction)
         }
     }
 

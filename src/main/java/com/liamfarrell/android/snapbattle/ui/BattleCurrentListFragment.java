@@ -131,7 +131,7 @@ public class BattleCurrentListFragment extends Fragment
 
 			@Override
 			protected void onPostExecute( AsyncTaskResult<CurrentBattleResponse> asyncResult) {
-                // get a reference to the activity and fragment if it is still there
+                // get a reference to the callbacks and fragment if it is still there
                 BattleCurrentListFragment fragment = fragmentReference.get();
                 Activity activity = activityReference.get();
                 if (fragment == null || fragment.isRemoving()) return;
@@ -170,7 +170,7 @@ public class BattleCurrentListFragment extends Fragment
 			Bundle savedInstanceState) {
 		
 		View v = inflater.inflate(R.layout.fragment_current_list, parent, false);
-		mProgressContainer = v.findViewById(R.id.current_list_progressContainer);
+		mProgressContainer = v.findViewById(R.id.progressContainer);
 		RecyclerView mRecyclerView = v.findViewById(R.id.recyclerList);
 		RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
 		mRecyclerView.setLayoutManager(mLayoutManager);

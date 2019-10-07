@@ -152,7 +152,7 @@ public class BattleNameSearchFragment extends Fragment implements androidx.appco
 
     @Override
     protected void onPostExecute( AsyncTaskResult<BattleTypeSuggestionsSearchResponse> asyncResult) {
-        // get a reference to the activity if it is still there
+        // get a reference to the callbacks if it is still there
         BattleNameSearchFragment fragment = fragmentReference.get();
         Activity activity = activityReference.get();
         if (fragment == null || fragment.isRemoving()) return;

@@ -12,6 +12,10 @@ public class GetChallengesResponse {
         return sql_result;
     }
 
+    public void setSql_result(List<Battle> sql_result) {
+        this.sql_result = sql_result;
+    }
+
     public void setSqlResult(List<Battle> sql_result) {
         this.sql_result = sql_result;
     }

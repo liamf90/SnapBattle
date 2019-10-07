@@ -335,7 +335,7 @@ public class FacebookLoginFragment extends Fragment
 			@SuppressLint("ApplySharedPref")
             @Override
 			protected void onPostExecute(AsyncTaskResult<CreateUserResponse> asyncResult) {
-                // get a reference to the activity if it is still there
+                // get a reference to the callbacks if it is still there
                 FacebookLoginFragment fragment = fragmentReference.get();
                 Activity activity = activityReference.get();
                 if (fragment == null || fragment.isRemoving()) return;
@@ -397,7 +397,7 @@ public class FacebookLoginFragment extends Fragment
         }
         @Override
         protected void onPostExecute(String result) {
-            // get a reference to the activity if it is still there
+            // get a reference to the callbacks if it is still there
             Activity activity = activityReference.get();
             if (activity == null || activity.isFinishing()) return;
 
@@ -498,7 +498,7 @@ public class FacebookLoginFragment extends Fragment
 //		{
 //            Log.i(TAG, "Creating the credentials provider");
 //			sCredentialsProvider = new CognitoCachingCredentialsProvider(
-//					context,    /* get the context for the current activity */
+//					context,    /* get the context for the current callbacks */
 //					"us-east-1:e6478f31-2dbe-4ad8-aadd-b4964691350c",    /* Identity Pool ID */
 //					Regions.US_EAST_1          /* Region for your identity pool--US_EAST_1 or EU_WEST_1*/
 //			);

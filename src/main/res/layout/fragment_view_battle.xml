@@ -6,6 +6,9 @@
     <data>
         <import type="androidx.lifecycle.LiveData" />
         <import type="android.view.View"/>
+        <variable
+            name="viewModel"
+            type="com.liamfarrell.android.snapbattle.viewmodels.ViewOwnBattleViewModel" />
 
         <variable
             name="battle"
@@ -48,7 +51,7 @@
                 android:layout_marginTop="@dimen/header_element_spacing"
                 android:textColor="@android:color/white"
                 android:textSize="25sp"
-                android:text="@{@string/battle_name(battle.battleName)}"
+                android:text='@{viewModel.battle != null ? @string/battle_name(viewModel.battle.battleName) : ""}'
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
             <TextView
@@ -62,14 +65,14 @@
                 android:layout_marginTop="@dimen/header_element_spacing"
                 android:textColor="@android:color/white"
                 android:textSize="14sp"
-                android:text="@{battle.challengerUsername}"
+                android:text="@{viewModel.battle.challengerUsername}"
                 app:layout_constraintEnd_toStartOf="@+id/vs_TextView"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/voting_length_TextView" />
 
             <TextView
                 android:id="@+id/vs_TextView"
-                android:visibility="gone"
+                android:visibility="@{viewModel.battle != null ? View.VISIBLE : View.GONE}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
@@ -95,7 +98,7 @@
                 android:gravity="end"
                 android:textColor="@android:color/white"
                 android:textSize="14sp"
-                android:text="@{battle.challengedUsername}"
+                android:text="@{viewModel.battle.challengedUsername}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/vs_TextView"
                 app:layout_constraintTop_toBottomOf="@+id/voting_length_TextView" />
@@ -109,7 +112,7 @@
                 android:layout_marginTop="@dimen/header_element_spacing"
                 android:textColor="@android:color/white"
                 android:textSize="12sp"
-                android:text="@{@plurals/rounds(battle.rounds, battle.rounds)}"
+                android:text='@{viewModel.battle != null ? @plurals/rounds(safeUnbox(viewModel.battle.rounds), safeUnbox(viewModel.battle.rounds)) : ""}'
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/battle_name_TextView" />
 
@@ -121,7 +124,7 @@
                 android:layout_marginTop="@dimen/header_element_spacing"
                 android:textColor="@android:color/white"
                 android:textSize="12sp"
-                android:text="@{battle.voting.votingChoice.toLongStyleString(context)}"
+                android:text="@{viewModel.battle.voting.votingChoice.toLongStyleString(context)}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/battle_name_TextView" />
 
@@ -134,7 +137,7 @@
                 android:layout_marginTop="@dimen/header_element_spacing"
                 android:textColor="@android:color/white"
                 android:textSize="12sp"
-                android:text="@{battle.voting.votingLength.toString(context)}"
+                android:text="@{viewModel.battle.voting.votingLength.toString(context)}"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/voting_type_TextView" />
@@ -153,7 +156,7 @@
 
                 <TextView
                     android:id="@+id/statusTextView"
-                    android:visibility="@{(!battle.isBattleAccepted || !battle.isFinalVideoReady || battle.isBattleDone) ? View.VISIBLE : View.GONE}"
+                    android:visibility="@{(!battle.isBattleAccepted ||  battle.isBattleDone()) ? View.VISIBLE : View.GONE}"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@{battleStatus}"
@@ -161,7 +164,7 @@
 
                 <ProgressBar
                     android:id="@+id/finalTranscodingProgressBar"
-                    android:visibility="gone"
+                    android:visibility='@{battle.isBattleDone() &amp;&amp; !battle.isFinalVideoReady ? View.VISIBLE : View.GONE}'
                     android:layout_width="@dimen/transcoding_progress_spinner_width_height"
                     android:layout_height="@dimen/transcoding_progress_spinner_width_height"
                     android:layout_marginStart="@dimen/element_horizontal_spacing_default"
@@ -173,31 +176,34 @@
             <include
                 layout="@layout/completed_battle_layout"
                 android:id="@+id/included"
-                bind:battle="@{battle}"
+                bind:battle="@{viewModel.battle}"
                 android:layout_marginTop="@dimen/header_element_spacing"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:visibility="gone"
+                android:visibility="@{battle.isFinalVideoReady ? View.VISIBLE : View.GONE}"
                 app:layout_constraintTop_toBottomOf="@+id/statusTextViewLinearLayout" />
 		</androidx.constraintlayout.widget.ConstraintLayout>
 
         <FrameLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content" >
-	  <androidx.recyclerview.widget.RecyclerView
-          android:id="@+id/recyclerView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/listview_margin_top"
-            android:drawSelectorOnTop="false"
-		  android:divider="@null" />
-   </FrameLayout>
+            android:layout_height="match_parent">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/listview_margin_top"
+                android:divider="@null"
+                android:drawSelectorOnTop="false"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+        </FrameLayout>
    </LinearLayout>
 
     <FrameLayout
-        android:id="@+id/current_list_progressContainer"
+        android:id="@+id/progressContainer"
         android:layout_width="match_parent"
         android:layout_height="@dimen/progress_container_height"
+        app:showProgress="@{safeUnbox(viewModel.spinner)}"
         android:clickable="true"
         android:focusable="true">
 

@@ -80,7 +80,7 @@ public class FollowingBattleListFragment extends Fragment
 			Bundle savedInstanceState) {
 		
 		View v = inflater.inflate(R.layout.fragment_friends_battle_list, parent, false);
-		mProgressContainer = v.findViewById(R.id.current_list_progressContainer);
+		mProgressContainer = v.findViewById(R.id.progressContainer);
 		mProgressContainer.setVisibility(View.INVISIBLE);
 
 		mSwipeToRefreshLayout= v.findViewById(R.id.swipe_container);
@@ -474,7 +474,7 @@ public class FollowingBattleListFragment extends Fragment
 							intent.putExtra(FullBattleVideoPlayerActivity.EXTRA_CHALLENGER_USERNAME, b.getChallengerUsername());
                             intent.putExtra(FullBattleVideoPlayerActivity.EXTRA_CHALLENGED_USERNAME, b.getChallengedUsername());
 							//Log.i(TAG, "Orientation Lock: " + b.getOrientationLock());
-                            //start activity for result, result is if the user has voted so we can update the list view item of the battle according on resume
+                            //start callbacks for result, result is if the user has voted so we can update the list view item of the battle according on resume
                             startActivityForResult(intent, FullBattleVideoPlayerFragment.VOTE_DONE_REQUEST_CODE);
 						}
 					};

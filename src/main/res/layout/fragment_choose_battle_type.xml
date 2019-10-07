@@ -27,8 +27,7 @@
             android:paddingStart="@dimen/activity_horizontal_margin"
             android:paddingEnd="@dimen/activity_horizontal_margin"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="2.5"
+            android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:orientation="horizontal"
             android:background="@color/add_comment_margin_color"
@@ -77,123 +76,132 @@
             </LinearLayout>
 
         </RelativeLayout>
-        <TextView
-            android:layout_marginLeft="@dimen/activity_horizontal_margin"
-            android:layout_marginRight="@dimen/activity_horizontal_margin"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:text="@string/top_battles"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            />
-        <ProgressBar
-            android:id="@+id/topBattlesLoadingProgressBar"
-            android:visibility="@{safeUnbox(viewModel.topBattlesLoading) ? View.VISIBLE : View.GONE}"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_marginLeft="@dimen/activity_horizontal_margin"
-            android:theme="@style/MyMaterialTheme.Base" />
-        <FrameLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="4"
-            >
-            <org.apmem.tools.layouts.FlowLayout
-                xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:layout_marginTop="@dimen/element_vertical_spacing_default"
+            android:orientation="vertical">
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:visibility="@{(!safeUnbox(viewModel.recentBattlesLoading) &amp;&amp; !safeUnbox(viewModel.topBattlesLoading)) ? View.VISIBLE : View.GONE}"
-                android:gravity="top"
-              >
+                android:text="@string/top_battles"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                />
+            <ProgressBar
+                android:id="@+id/topBattlesLoadingProgressBar"
+                android:visibility="@{safeUnbox(viewModel.topBattlesLoading) ? View.VISIBLE : View.GONE}"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:theme="@style/MyMaterialTheme.Base" />
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                >
+                <org.apmem.tools.layouts.FlowLayout
+                    xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:visibility="@{(!safeUnbox(viewModel.recentBattlesLoading) &amp;&amp; !safeUnbox(viewModel.topBattlesLoading)) ? View.VISIBLE : View.INVISIBLE}"
+                    android:gravity="top"
+                    >
 
-                <TextView
-                    android:id="@+id/topBattleTextView1"
-                    style="@style/battleTypeSuggestionTextView"
-                    android:text="@{viewModel.topBattles[0]}"
-                    android:visibility="@{viewModel.topBattles[0] != null ? View.VISIBLE : View.GONE}"
-                    android:onClick="@{onSuggestionTextClick}"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    style="@style/battleTypeSuggestionTextView"
-                    android:id="@+id/topBattleTextView2"
-                    android:text="@{viewModel.topBattles[1]}"
-                    android:visibility="@{viewModel.topBattles[1] != null ? View.VISIBLE : View.GONE}"
-                    android:onClick="@{onSuggestionTextClick}"
-                    />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/topBattleTextView3"
-                    style="@style/battleTypeSuggestionTextView"
-                    android:text="@{viewModel.topBattles[2]}"
-                    android:visibility="@{viewModel.topBattles[2] != null ? View.VISIBLE : View.GONE}"
-                    android:onClick="@{onSuggestionTextClick}"
-                   />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    style="@style/battleTypeSuggestionTextView"
-                    android:id="@+id/topBattleTextView4"
-                    android:text="@{viewModel.topBattles[3]}"
-                    android:visibility="@{viewModel.topBattles[3] != null ? View.VISIBLE : View.GONE}"
-                    android:onClick="@{onSuggestionTextClick}"
-                    />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/topBattleTextView5"
-                    style="@style/battleTypeSuggestionTextView"
-                    android:text="@{viewModel.topBattles[4]}"
-                    android:visibility="@{viewModel.topBattles[4] != null ? View.VISIBLE : View.GONE}"
-                    android:onClick="@{onSuggestionTextClick}"
-                   />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/topBattleTextView6"
-                    style="@style/battleTypeSuggestionTextView"
-                    android:text="@{viewModel.topBattles[5]}"
-                    android:visibility="@{viewModel.topBattles[5] != null ? View.VISIBLE : View.GONE}"
-                    android:onClick="@{onSuggestionTextClick}"
-                   />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    style="@style/battleTypeSuggestionTextView"
-                    android:id="@+id/topBattleTextView7"
-                    android:text="@{viewModel.topBattles[6]}"
-                    android:visibility="@{viewModel.topBattles[6] != null ? View.VISIBLE : View.GONE}"
-                    android:onClick="@{onSuggestionTextClick}"
-                   />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    style="@style/battleTypeSuggestionTextView"
-                    android:id="@+id/topBattleTextView8"
-                    android:text="@{viewModel.topBattles[7]}"
-                    android:visibility="@{viewModel.topBattles[7] != null ? View.VISIBLE : View.GONE}"
-                    android:onClick="@{onSuggestionTextClick}"
-                   />
+                    <TextView
+                        android:id="@+id/topBattleTextView1"
+                        style="@style/battleTypeSuggestionTextView"
+                        android:text="@{viewModel.topBattles[0]}"
+                        android:visibility="@{viewModel.topBattles[0] != null ? View.VISIBLE : View.GONE}"
+                        android:onClick="@{onSuggestionTextClick}"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="@style/battleTypeSuggestionTextView"
+                        android:id="@+id/topBattleTextView2"
+                        android:text="@{viewModel.topBattles[1]}"
+                        android:visibility="@{viewModel.topBattles[1] != null ? View.VISIBLE : View.GONE}"
+                        android:onClick="@{onSuggestionTextClick}"
+                        />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/topBattleTextView3"
+                        style="@style/battleTypeSuggestionTextView"
+                        android:text="@{viewModel.topBattles[2]}"
+                        android:visibility="@{viewModel.topBattles[2] != null ? View.VISIBLE : View.GONE}"
+                        android:onClick="@{onSuggestionTextClick}"
+                        />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="@style/battleTypeSuggestionTextView"
+                        android:id="@+id/topBattleTextView4"
+                        android:text="@{viewModel.topBattles[3]}"
+                        android:visibility="@{viewModel.topBattles[3] != null ? View.VISIBLE : View.GONE}"
+                        android:onClick="@{onSuggestionTextClick}"
+                        />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/topBattleTextView5"
+                        style="@style/battleTypeSuggestionTextView"
+                        android:text="@{viewModel.topBattles[4]}"
+                        android:visibility="@{viewModel.topBattles[4] != null ? View.VISIBLE : View.GONE}"
+                        android:onClick="@{onSuggestionTextClick}"
+                        />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/topBattleTextView6"
+                        style="@style/battleTypeSuggestionTextView"
+                        android:text="@{viewModel.topBattles[5]}"
+                        android:visibility="@{viewModel.topBattles[5] != null ? View.VISIBLE : View.GONE}"
+                        android:onClick="@{onSuggestionTextClick}"
+                        />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="@style/battleTypeSuggestionTextView"
+                        android:id="@+id/topBattleTextView7"
+                        android:text="@{viewModel.topBattles[6]}"
+                        android:visibility="@{viewModel.topBattles[6] != null ? View.VISIBLE : View.GONE}"
+                        android:onClick="@{onSuggestionTextClick}"
+                        />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="@style/battleTypeSuggestionTextView"
+                        android:id="@+id/topBattleTextView8"
+                        android:text="@{viewModel.topBattles[7]}"
+                        android:visibility="@{viewModel.topBattles[7] != null ? View.VISIBLE : View.GONE}"
+                        android:onClick="@{onSuggestionTextClick}"
+                        />
 
-            </org.apmem.tools.layouts.FlowLayout>
-            <View style="@style/Divider"
-                android:layout_gravity="bottom"/>
-        </FrameLayout>
+                </org.apmem.tools.layouts.FlowLayout>
+
+            </FrameLayout>
+        </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="4"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:orientation="vertical">
+        <View style="@style/Divider"
+            android:layout_gravity="bottom"/>
         <TextView
             android:id="@+id/recent_batles_title"
             android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/element_vertical_spacing_default"
-            android:layout_marginLeft="@dimen/activity_horizontal_margin"
-            android:layout_marginRight="@dimen/activity_horizontal_margin"
             android:text="@string/recent_battles"
             android:textSize="20sp"
             android:textStyle="bold"/>
@@ -202,20 +210,16 @@
             android:visibility="@{safeUnbox(viewModel.recentBattlesLoading) ? View.VISIBLE : View.GONE}"
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:layout_marginLeft="@dimen/activity_horizontal_margin"
             android:theme="@style/MyMaterialTheme.Base" />
-    <FrameLayout
-        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-        android:layout_marginRight="@dimen/activity_horizontal_margin"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="4">
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
             <org.apmem.tools.layouts.FlowLayout
                 xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:visibility="@{(!safeUnbox(viewModel.recentBattlesLoading) &amp;&amp; !safeUnbox(viewModel.topBattlesLoading)) ? View.VISIBLE : View.GONE}"
+                android:visibility="@{(!safeUnbox(viewModel.recentBattlesLoading) &amp;&amp; !safeUnbox(viewModel.topBattlesLoading)) ? View.VISIBLE : View.INVISIBLE}"
                 android:gravity="top"
                 >
                 <TextView
@@ -226,7 +230,7 @@
                     android:text="@{viewModel.recentBattles[0].battle_name }"
                     android:visibility="@{viewModel.recentBattles[0] != null ? View.VISIBLE : View.GONE}"
                     android:onClick="@{onSuggestionTextClick}"
-                   />
+                    />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -235,7 +239,7 @@
                     android:text="@{viewModel.recentBattles[1].battle_name}"
                     android:visibility="@{viewModel.recentBattles[1] != null ? View.VISIBLE : View.GONE}"
                     android:onClick="@{onSuggestionTextClick}"
-                   />
+                    />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -253,7 +257,7 @@
                     android:text="@{viewModel.recentBattles[3].battle_name}"
                     android:visibility="@{viewModel.recentBattles[3] != null ? View.VISIBLE : View.GONE}"
                     android:onClick="buttonClick"
-                   />
+                    />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -262,7 +266,7 @@
                     android:text="@{viewModel.recentBattles[4].battle_name}"
                     android:visibility="@{viewModel.recentBattles[4] != null ? View.VISIBLE : View.GONE}"
                     android:onClick="@{onSuggestionTextClick}"
-                   />
+                    />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -290,12 +294,13 @@
                     android:visibility="@{viewModel.recentBattles[7] != null ? View.VISIBLE : View.GONE}"
                     android:onClick="@{onSuggestionTextClick}"
 
-                   />
+                    />
 
             </org.apmem.tools.layouts.FlowLayout>
-        <View style="@style/Divider"
-            android:layout_gravity="bottom"/>
-    </FrameLayout>
+        </FrameLayout>
+
+    </LinearLayout>
+
 
 
 

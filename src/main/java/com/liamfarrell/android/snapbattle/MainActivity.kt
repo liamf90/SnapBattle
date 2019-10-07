@@ -2,24 +2,35 @@ package com.liamfarrell.android.snapbattle
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.fragment.app.Fragment
-import com.liamfarrell.android.snapbattle.mvvm_ui.*
 import com.liamfarrell.android.snapbattle.mvvm_ui.host_fragments.HomeHostFragment
 import com.liamfarrell.android.snapbattle.mvvm_ui.host_fragments.NavigationHostFragment
+import com.liamfarrell.android.snapbattle.mvvm_ui.host_fragments.NotificationHostFragment
 import com.liamfarrell.android.snapbattle.mvvm_ui.host_fragments.SearchHostFragment
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.support.HasSupportFragmentInjector
+import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
 
 
-class MainActivity : AppCompatActivity(), HasSupportFragmentInjector {
+
+interface HideAndShowBottomNavigation{
+    fun hideBottomNavigation()
+    fun showBottomNavigation()
+}
+
+
+class MainActivity : AppCompatActivity(), HasSupportFragmentInjector, HideAndShowBottomNavigation {
     @Inject
     lateinit var dispatchingAndroidInjector: DispatchingAndroidInjector<Fragment>
 
-    private val notificationListFragment : NavigationHostFragment by lazy { NavigationHostFragment() }
+    private val notificationHostFragment : NotificationHostFragment by lazy {NotificationHostFragment()}
+    private val navigationHostFragmnet : NavigationHostFragment by lazy { NavigationHostFragment() }
     private val searchUsersAndBattlesFragment : SearchHostFragment by lazy { SearchHostFragment() }
     private val homeFragment : HomeHostFragment by lazy { HomeHostFragment() }
+
 
 
     private val onNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
@@ -37,7 +48,7 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector {
                 return@OnNavigationItemSelectedListener true
             }
             R.id.navigation_notifications -> {
-                loadFragment(notificationListFragment)
+                loadFragment(NotificationHostFragment())
                 return@OnNavigationItemSelectedListener true
             }
         }
@@ -45,12 +56,20 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector {
     }
 
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
         val navView: BottomNavigationView = findViewById(R.id.bottom_nav)
        navView.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener)
-       navView.selectedItemId = R.id.navigation_home
+
+        //if there is a deep link intent show the deep link destination in the side menu, else show the home fragment
+        if (intent.hasExtra("android-support-nav:controller:deepLinkIntent")){
+            navView.selectedItemId = R.id.side_menu
+        } else {
+            navView.selectedItemId = R.id.navigation_home
+        }
     }
 
 
@@ -58,9 +77,22 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector {
     private fun loadFragment(fragment: Fragment) {
         // load fragment
         val transaction = supportFragmentManager.beginTransaction()
-        transaction.replace(R.id.nav_host_container, fragment)
-        transaction.addToBackStack(null)
+        supportFragmentManager.primaryNavigationFragment?.let{transaction.hide(it)}
+        if (supportFragmentManager.fragments.contains(fragment)){
+            transaction.show(fragment)
+        } else {
+            transaction.add(R.id.nav_host_container, fragment) }
+        transaction.setPrimaryNavigationFragment(fragment)
         transaction.commit()
+    }
+
+
+    override fun hideBottomNavigation() {
+        bottom_nav.visibility = View.GONE
+    }
+
+    override fun showBottomNavigation() {
+        bottom_nav.visibility = View.VISIBLE
     }
 
 

@@ -13,8 +13,11 @@ import com.liamfarrell.android.snapbattle.data.UsersBattleRepository
 import com.liamfarrell.android.snapbattle.model.Battle
 import com.liamfarrell.android.snapbattle.model.Video
 import com.liamfarrell.android.snapbattle.util.getErrorMessage
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import timber.log.Timber
 
 class BattleVideoItemViewModel(val context: Context, val battle: Battle, _video: Video, val usersBattleRepository: UsersBattleRepository) : ViewModel(){
 
@@ -34,25 +37,28 @@ class BattleVideoItemViewModel(val context: Context, val battle: Battle, _video:
     val submitButtonEnabled = ObservableField<Boolean>(true)
 
 
-    fun uploadVideo() {
-        nameText.set(context.resources.getString(R.string.uploading))
-        submitButtonEnabled.set(false)
+    suspend fun uploadVideo() {
+        withContext(Dispatchers.Main) {
+            nameText.set(context.resources.getString(R.string.uploading))
+            submitButtonEnabled.set(false)
 
-        var orientationLock : String? = null
-        val videosUploaded = battle.videosUploaded
+            var orientationLock: String? = null
+            val videosUploaded = battle.videosUploaded
 
-        val videoNLastUploaded = videosUploaded?.let {battle.videos?.get(videosUploaded)}
-        if (battle.videosUploaded == 0){
-            orientationLock = Video.orientationHintToLock(Integer.parseInt(Video.getVideoRotation(context, videoNLastUploaded)))
-        }
-        GlobalScope.launch {
-            suspend {
-                val asyncResult = video.get()?.let{usersBattleRepository.uploadVideo(context, battle, it.videoFilename,
-                        battle.getOpponentCognitoID(IdentityManager.getDefaultIdentityManager().cachedUserID), it.videoID)}
-                if (asyncResult?.error != null){
-                    _error.value = asyncResult.error }
+            val videoNLastUploaded = videosUploaded?.let { battle.videos?.get(videosUploaded) }
+            if (battle.videosUploaded == 0) {
+                orientationLock = Video.orientationHintToLock(Integer.parseInt(Video.getVideoRotation(context, videoNLastUploaded)))
+            }
+
+            val asyncResult = video.get()?.let {
+                usersBattleRepository.uploadVideo(context, battle, it.videoFilename,
+                        battle.getOpponentCognitoID(IdentityManager.getDefaultIdentityManager().cachedUserID), it.videoID, orientationLock)
+            }
+            if (asyncResult?.error != null) {
+                _error.value = asyncResult.error
             }
         }
+
     }
 
 

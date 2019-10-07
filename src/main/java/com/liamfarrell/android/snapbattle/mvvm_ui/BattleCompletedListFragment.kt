@@ -30,6 +30,7 @@ class BattleCompletedListFragment : Fragment(), Injectable {
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(CompletedBattlesViewModel::class.java)
         val adapter = CompletedBattlesListAdapter()
         binding.recyclerView.adapter = adapter
+        binding.showSpinner = viewModel.spinner
 
         subscribeUi(adapter)
         return binding.root

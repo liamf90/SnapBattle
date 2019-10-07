@@ -65,10 +65,10 @@ class AllBattlesFragment : Fragment(), Injectable {
             }
         })
 
-        viewModel.isLoadingMoreBattles.observe(viewLifecycleOwner, Observer {
-            val yo = it
-
-        })
+//        viewModel.isLoadingMoreBattles.observe(viewLifecycleOwner, Observer {
+//
+//
+//        })
     }
 
 }

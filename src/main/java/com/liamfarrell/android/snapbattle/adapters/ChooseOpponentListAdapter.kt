@@ -3,15 +3,14 @@ package com.liamfarrell.android.snapbattle.adapters
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.liamfarrell.android.snapbattle.R
-import com.liamfarrell.android.snapbattle.databinding.ListItemFollowingBinding
 import com.liamfarrell.android.snapbattle.databinding.ListItemOpponentSelectBinding
 import com.liamfarrell.android.snapbattle.model.User
-import com.liamfarrell.android.snapbattle.viewmodels.FollowFacebookFriendsViewModel
 
 
 /**
@@ -31,7 +30,7 @@ class ChooseOpponentListAdapter(val opponentSelectedCallback : (user: User) -> U
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val user = getItem(position)
         holder.apply {
-            bind(user, createOnProfilePicClickListener())
+            bind(user, createOnProfilePicClickListener(), createOnItemClickListener(user))
             itemView.tag = user
         }
     }
@@ -52,9 +51,11 @@ class ChooseOpponentListAdapter(val opponentSelectedCallback : (user: User) -> U
     class ViewHolder(
             private val binding: ListItemOpponentSelectBinding
     ) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: User, profilePicClicklistener: View.OnClickListener) {
+        fun bind(item: User, profilePicClicklistener: View.OnClickListener, itemClickListener: View.OnClickListener) {
             with(binding) {
                 user = item
+                onItemClickListener = itemClickListener
+                onProfilePictureClickListener = profilePicClicklistener
                 executePendingBindings()
             }
         }

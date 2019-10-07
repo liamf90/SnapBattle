@@ -19,6 +19,6 @@
 package com.liamfarrell.android.snapbattle.di
 
 /**
- * Marks an activity / fragment injectable.
+ * Marks an callbacks / fragment injectable.
  */
 interface Injectable

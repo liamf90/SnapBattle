@@ -8,11 +8,11 @@
 			alias="VotingChoice"/>
 
 		<variable
-			name="showAcceptButton"
+			name="enableAcceptButton"
 			type="Boolean"/>
 
 		<variable
-			name="showDeclineButton"
+			name="enableDeclineButton"
 			type="Boolean"/>
 		<variable
 			name="battle"
@@ -139,7 +139,7 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_gravity="center_vertical"
-			android:text='@{battle.rounds ?? ""}'
+			android:text="@{@plurals/rounds(battle.rounds, battle.rounds)}"
 			android:textSize="16sp" />
 
 		<TextView
@@ -167,7 +167,7 @@
 		android:text="@string/accept"
 		android:onClick="@{acceptButtonOnClickListener}"
 		android:textColor="@color/secondary_text_light"
-		android:visibility="@{showAcceptButton ? View.VISIBLE : View.GONE}"
+		android:enabled="@{enableAcceptButton}"
 		app:layout_constraintBottom_toBottomOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toBottomOf="@+id/linearLayout4" />
@@ -182,7 +182,7 @@
 		android:text="@string/decline"
 		android:textColor="@color/secondary_text_light"
 		android:onClick="@{declineButtonOnClickListener}"
-		android:visibility="@{showDeclineButton ? View.VISIBLE : View.GONE}"
+		android:enabled="@{enableDeclineButton}"
 		app:layout_constraintBaseline_toBaselineOf="@+id/battle_list_item_accept_button"
 		app:layout_constraintEnd_toEndOf="parent" />
 

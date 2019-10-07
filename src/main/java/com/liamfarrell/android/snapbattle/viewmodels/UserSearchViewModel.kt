@@ -7,6 +7,7 @@ import androidx.lifecycle.Transformations
 import androidx.lifecycle.viewModelScope
 import com.liamfarrell.android.snapbattle.app.SnapBattleApp
 import com.liamfarrell.android.snapbattle.data.FollowingUserCacheManager
+import com.liamfarrell.android.snapbattle.data.OtherUsersProfilePicUrlRepository
 import com.liamfarrell.android.snapbattle.data.UserSearchRepository
 import com.liamfarrell.android.snapbattle.model.AsyncTaskResult
 import com.liamfarrell.android.snapbattle.model.User
@@ -14,17 +15,25 @@ import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserializat
 import com.liamfarrell.android.snapbattle.util.getErrorMessage
 import javax.inject.Inject
 import kotlinx.coroutines.*
+import timber.log.Timber
 
 
 /**
  * The ViewModel used in [UserSearchFragment].
  */
 class UserSearchViewModel @Inject constructor(private val context: Application, private val searchRepository: UserSearchRepository,
-                                              private val followingUserCacheManager: FollowingUserCacheManager
+                                              private val followingUserCacheManager: FollowingUserCacheManager, private val otherUsersProfilePicUrlRepository: OtherUsersProfilePicUrlRepository
                                                  ) : ViewModelLaunch() {
 
+    enum class State{
+        CACHE_RESULT,
+        SERVER_SEARCH,
+        SERVER_AND_CACHE_RESULT
+    }
 
+     val searchState = MutableLiveData<State>()
 
+    private val profilePicMap = mutableMapOf<String, String>()
 
     private val searchResultResponse = MutableLiveData<AsyncTaskResult<GetUsersResponse>>()
 
@@ -40,6 +49,7 @@ class UserSearchViewModel @Inject constructor(private val context: Application, 
     }
 
     init {
+        searchState.value = State.CACHE_RESULT
         GlobalScope.launch {followingUserCacheManager.checkForUpdates()}
     }
 
@@ -58,9 +68,12 @@ class UserSearchViewModel @Inject constructor(private val context: Application, 
         doServerSearchOverride = false
         searchQueryCurrent = searchQuery
         //clear the list
-        searchResultResponse.value?.result?.sqlResult?.clear()
+        //searchResultResponse.value?.result?.sqlResult?.clear()
+        //searchResultResponse.value = AsyncTaskResult(GetUsersResponse())
 
-        if (searchQuery.isEmpty()){return}
+        if (searchQuery.isEmpty()){
+            searchResultResponse.value = AsyncTaskResult(GetUsersResponse())
+            return}
 
         searchingCache = true
         val searchCacheJob = getSearchFollowingCacheJobAsync(searchQuery)
@@ -68,9 +81,10 @@ class UserSearchViewModel @Inject constructor(private val context: Application, 
         viewModelScope.launch {
             var serverSearchJob =
                 if (searchQuery.length >= 3) {
-                     _spinner.value = true
+                     searchState.value = State.SERVER_SEARCH
                      getServerSearchJobAsync(searchQuery)
                 } else {
+                     searchState.value = State.CACHE_RESULT
                      null
                 }
 
@@ -89,11 +103,12 @@ class UserSearchViewModel @Inject constructor(private val context: Application, 
                 if (searchUserResponse != null && searchQuery == searchQueryCurrent){
                     val combinedList = addServerSearchToCacheList(followingResponse.result.sqlResult, searchUserResponse.result.sqlResult)
                     searchUserResponse.result.sqlResult = combinedList
+                    searchUserResponse.result.sqlResult = getProfilePicSignedUrls(combinedList)
+                    searchState.value = State.SERVER_AND_CACHE_RESULT
                     searchResultResponse.value = searchUserResponse
                 }
             }
             searchingCache = false
-            _spinner.value = false
         }
     }
 
@@ -104,6 +119,7 @@ class UserSearchViewModel @Inject constructor(private val context: Application, 
      * this method forces the server search to be run when the query length < 3
      */
     fun searchUserSubmit(searchQuery : String){
+
         submitPressed = true
         //if searchQuery.length < 3 do a server search on search submit else it will occur anyway on search text changed
         //else return
@@ -115,6 +131,7 @@ class UserSearchViewModel @Inject constructor(private val context: Application, 
             doServerSearchOverride = true
         } else {
             viewModelScope.launch {
+                searchState.value = State.SERVER_SEARCH
                 val serverJob = getServerSearchJobAsync(searchQuery)
                 val response = serverJob.await()
                 if (response != null && searchQuery == searchQueryCurrent){
@@ -122,8 +139,12 @@ class UserSearchViewModel @Inject constructor(private val context: Application, 
                     if (cacheList != null){
                         val combinedList = addServerSearchToCacheList(cacheList, response.result.sqlResult)
                         response.result.sqlResult = combinedList
+                        searchState.value = State.SERVER_AND_CACHE_RESULT
                         searchResultResponse.value = response
+
                     }
+                } else {
+                    searchState.value = State.CACHE_RESULT
                 }
             }
         }
@@ -135,17 +156,16 @@ class UserSearchViewModel @Inject constructor(private val context: Application, 
      */
     private fun addServerSearchToCacheList(cacheList : List<User>, serverList : List<User>) : List<User>{
         val cognitoIDCacheList = cacheList.map { it.cognitoId }
-        serverList.filterNot {cognitoIDCacheList.contains(it.cognitoId)}
+        val serverListFiltered = serverList.filterNot {cognitoIDCacheList.contains(it.cognitoId)}
         val finalList =  mutableListOf<User>()
         finalList.addAll(cacheList)
-        finalList.addAll(serverList)
+        finalList.addAll(serverListFiltered)
         return finalList
     }
 
 
     private fun getServerSearchJobAsync(searchQuery : String) = viewModelScope.async {
             submitPressed = false
-            _spinner.value = true
             //debounce the search. if user pressed the submit search button, the debounce wait will stop and the search will occur straight away
             var delayCountMilliSeconds = 0
             while (!submitPressed && delayCountMilliSeconds < 300){
@@ -167,6 +187,19 @@ class UserSearchViewModel @Inject constructor(private val context: Application, 
              val getUsersResponse = GetUsersResponse()
              getUsersResponse.sqlResult = followingUserCacheManager.searchUsersInCache(searchQuery)
              AsyncTaskResult(getUsersResponse)
+    }
+
+    private suspend fun getProfilePicSignedUrls(userList: List<User>) : List<User>{
+        userList.forEach {
+            if (it.profilePicCount != 0) {
+                if (profilePicMap.containsKey(it.cognitoId)){
+                    it.profilePicSignedUrl = profilePicMap[it.cognitoId]
+                } else {
+                    it.profilePicSignedUrl = otherUsersProfilePicUrlRepository.getOrUpdateProfilePicSignedUrl(it.cognitoId,  it.profilePicCount , it.profilePicSignedUrl )
+                }
+            }
+        }
+        return userList
     }
 
 

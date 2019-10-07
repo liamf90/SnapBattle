@@ -31,19 +31,41 @@
         <action
             android:id="@+id/action_bottomNavigationDrawerFragment_to_profileFragment"
             app:destination="@id/profileFragment" />
+        <action
+            android:id="@+id/action_bottomNavigationDrawerFragment_to_logoutFragment"
+            app:destination="@id/logoutFragment" />
+        <action
+            android:id="@+id/action_bottomNavigationDrawerFragment_to_aboutUsFragment"
+            app:destination="@id/aboutUsFragment" />
+        <action
+            android:id="@+id/action_bottomNavigationDrawerFragment_to_viewBattleFragment"
+            app:destination="@+id/viewBattleFragment" />
     </fragment>
     <fragment
         android:id="@+id/battleCurrentListFragment"
         android:name="com.liamfarrell.android.snapbattle.mvvm_ui.BattleCurrentListFragment"
-        android:label="BattleCurrentListFragment" />
+        android:label="BattleCurrentListFragment" >
+        <action
+            android:id="@+id/action_battleCurrentListFragment_to_viewBattleFragment"
+            app:destination="@id/viewBattleFragment"
+            app:popUpTo="@+id/battleCurrentListFragment" />
+    </fragment>
     <fragment
         android:id="@+id/battleCompletedListFragment"
         android:name="com.liamfarrell.android.snapbattle.mvvm_ui.BattleCompletedListFragment"
-        android:label="BattleCompletedListFragment" />
+        android:label="BattleCompletedListFragment" >
+        <action
+            android:id="@+id/action_battleCompletedListFragment_to_viewBattleFragment"
+            app:destination="@id/viewBattleFragment" />
+    </fragment>
     <fragment
         android:id="@+id/battleChallengesListFragment"
         android:name="com.liamfarrell.android.snapbattle.mvvm_ui.BattleChallengesListFragment"
-        android:label="BattleChallengesListFragment" />
+        android:label="BattleChallengesListFragment" >
+        <action
+            android:id="@+id/action_battleChallengesListFragment_to_viewBattleFragment"
+            app:destination="@id/viewBattleFragment" />
+    </fragment>
     <fragment
         android:id="@+id/followFacebookFriendsFragment"
         android:name="com.liamfarrell.android.snapbattle.mvvm_ui.FollowFacebookFriendsFragment"
@@ -104,6 +126,14 @@
             app:argType="string"
             app:nullable="true" />
         <argument
+            android:name="opponentName"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="opponentUsername"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
             android:name="votingType"
             app:argType="string" />
         <argument
@@ -118,4 +148,22 @@
         android:id="@+id/profileFragment"
         android:name="com.liamfarrell.android.snapbattle.mvvm_ui.ProfileFragment"
         android:label="ProfileFragment" />
+    <fragment
+        android:id="@+id/viewBattleFragment"
+        android:name="com.liamfarrell.android.snapbattle.mvvm_ui.ViewBattleFragment"
+        android:label="ViewBattleFragment" >
+        <argument
+            android:name="battleId"
+            app:argType="integer" />
+    </fragment>
+    <fragment
+        android:id="@+id/logoutFragment"
+        android:name="com.liamfarrell.android.snapbattle.ui.LogoutFragment"
+        android:label="fragment_logout"
+        tools:layout="@layout/fragment_logout" />
+    <fragment
+        android:id="@+id/aboutUsFragment"
+        android:name="com.liamfarrell.android.snapbattle.ui.AboutUsFragment"
+        android:label="content_about_us"
+        tools:layout="@layout/content_about_us" />
 </navigation>

@@ -65,16 +65,17 @@ class ChooseOpponentFragment : Fragment(), Injectable {
         subscribeUi(adapter)
         setHasOptionsMenu(true)
         setToolbar(binding.toolbar.toolbar)
+        viewModel.recentOpponentsTabSelected()
         return binding.root
     }
 
     private fun opponentSelected(user: User){
         if (user.cognitoId != null) {
-            val bundle = bundleOf(("opponentCognitoId" to user.cognitoId))
+            val bundle = bundleOf(("opponentCognitoId" to user.cognitoId), ("opponentUsername" to user.username) )
             bundle.putAll(arguments)
             findNavController().navigate(R.id.action_chooseOpponentFragment_to_chooseRoundsFragment, bundle)
         } else if (user.facebookUserId != null){
-            val bundle = bundleOf(("opponentFacebookId" to user.facebookUserId))
+            val bundle = bundleOf(("opponentFacebookId" to user.facebookUserId),("opponentName" to user.facebookName) )
             bundle.putAll(arguments)
             findNavController().navigate(R.id.action_chooseOpponentFragment_to_chooseRoundsFragment, bundle)
         }
@@ -100,11 +101,11 @@ class ChooseOpponentFragment : Fragment(), Injectable {
 
     private fun subscribeUi(adapter: ChooseOpponentListAdapter) {
         viewModel.userList.observe(viewLifecycleOwner, Observer { userList ->
-            adapter.submitList(userList)
+            userList?.let{adapter.submitList(it)}
         })
 
         viewModel.errorMessage.observe(viewLifecycleOwner, Observer {
-            Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+            it?.let{Toast.makeText(context, it, Toast.LENGTH_SHORT).show()}
         })
     }
 

@@ -5,8 +5,6 @@
     android:versionCode="5"
     android:versionName="1.4">
 
-    <uses-sdk android:targetSdkVersion="28" />
-
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
 
@@ -40,11 +38,12 @@
         android:icon="@drawable/battle_icon_selected"
         android:label="@string/app_name"
         android:theme="@style/MyMaterialTheme">
-
-        <activity android:name=".mvvm_ui.startup.StartupActivity"></activity>
+        <activity android:name=".mvvm_ui.startup.StartupActivity" />
         <activity
             android:name=".MainActivity"
-            android:label="@string/title_activity_main" />
+            android:label="@string/title_activity_main"
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="portrait"/>
         <activity android:name=".mvvm_ui.LoggedInActivity" />
 
         <provider
@@ -194,7 +193,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/MyMaterialTheme" />
         <activity
-            android:name=".ui.AboutUsActivity"
+            android:name=".ui.AboutUsFragment"
             android:label="@string/title_activity_about_us"
             android:theme="@style/MyMaterialTheme.NoActionBar" />
     </application>

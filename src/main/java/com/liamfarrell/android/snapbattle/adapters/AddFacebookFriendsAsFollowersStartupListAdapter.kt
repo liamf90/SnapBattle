@@ -1,18 +1,14 @@
 package com.liamfarrell.android.snapbattle.adapters
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.CompoundButton
 import androidx.databinding.DataBindingUtil
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.liamfarrell.android.snapbattle.R
 import com.liamfarrell.android.snapbattle.databinding.ListItemFacebookFriendsSelectBinding
-import com.liamfarrell.android.snapbattle.databinding.ListItemFollowingBinding
 import com.liamfarrell.android.snapbattle.model.User
-import com.liamfarrell.android.snapbattle.viewmodels.FollowFacebookFriendsViewModel
 
 
 /**

@@ -4,7 +4,7 @@
         <import type="android.view.View"/>
         <variable
             name="viewModel"
-            type="com.liamfarrell.android.snapbattle.viewmodels.startup.AddFacebookFriendsAsFollowersStartupViewModel" />
+            type="com.liamfarrell.android.snapbattle.viewmodels.AddFacebookFriendsAsFollowersViewModel" />
     </data>
 
 <androidx.coordinatorlayout.widget.CoordinatorLayout

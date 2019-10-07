@@ -1,12 +1,18 @@
 package com.liamfarrell.android.snapbattle.notifications;
 
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
 
+import androidx.navigation.NavDeepLinkBuilder;
+import androidx.navigation.Navigation;
+
+import com.liamfarrell.android.snapbattle.MainActivity;
 import com.liamfarrell.android.snapbattle.app.SnapBattleApp;
 import com.liamfarrell.android.snapbattle.R;
 import com.liamfarrell.android.snapbattle.ui.ViewBattleActivity;
@@ -26,16 +32,28 @@ public class BattleAcceptedNotification extends Notification {
         mOpponentCogntioId = opponentCognitoId;
         mOpponentName = opponentName;
         mBattleAccepted = battleAccepted;
-
     }
 
 
 
     @Override
-    public Intent getIntent(Context context) {
-        Intent intent = new Intent(context, ViewBattleActivity.class);
-        intent.putExtra(ViewBattleFragment.BATTLE_ID_EXTRA, Integer.toString(super.getBattleId()) );
-        return intent;
+    public PendingIntent getIntent(Context context) {
+        Bundle args = new Bundle();
+        args.putInt("battleId", super.getBattleId());
+
+
+        return new NavDeepLinkBuilder(context)
+                .setComponentName(MainActivity.class)
+                .setGraph(R.navigation.navigation_menu)
+                .setDestination(R.id.viewBattleFragment)
+                .setArguments(args)
+                .createPendingIntent();
+
+//        Intent intent = new Intent(context, ViewBattleActivity.class);
+//        intent.putExtra(ViewBattleFragment.BATTLE_ID_EXTRA, Integer.toString(super.getBattleId()) );
+//        return intent;
+
+
     }
 
     @Override

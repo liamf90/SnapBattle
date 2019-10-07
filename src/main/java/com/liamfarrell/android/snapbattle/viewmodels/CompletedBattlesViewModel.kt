@@ -27,7 +27,7 @@ class CompletedBattlesViewModel @Inject constructor(private val context: Applica
 
     init {
         errorMessage.addSource(battlesResult) { result ->
-            result?.let { errorMessage.value = getErrorMessage(context, result.error) }
+            result?.error?.let { errorMessage.value = getErrorMessage(context, result.error) }
         }
 
         battles.addSource(battlesResult) { result ->

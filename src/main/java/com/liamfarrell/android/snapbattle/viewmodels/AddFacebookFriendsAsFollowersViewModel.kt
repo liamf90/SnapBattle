@@ -1,40 +1,36 @@
-package com.liamfarrell.android.snapbattle.viewmodels.startup
+package com.liamfarrell.android.snapbattle.viewmodels
 
 import android.app.Application
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.fragment.findNavController
 import com.facebook.AccessToken
 import com.liamfarrell.android.snapbattle.R
-import com.liamfarrell.android.snapbattle.app.SnapBattleApp
 import com.liamfarrell.android.snapbattle.data.FollowingRepository
 import com.liamfarrell.android.snapbattle.model.AsyncTaskResult
 import com.liamfarrell.android.snapbattle.model.User
 import com.liamfarrell.android.snapbattle.util.getErrorMessage
-import com.liamfarrell.android.snapbattle.viewmodels.ViewModelLaunch
 import kotlinx.coroutines.async
 import javax.inject.Inject
 
 /**
- * The ViewModel used in [FollowFacebookFriendsFragment].
+ * The ViewModel used in [FollowFacebookFriendsFragment] and [AddFacebookFriendsAsFollowersStartupFragment].
  */
-class AddFacebookFriendsAsFollowersStartupViewModel @Inject constructor(private val context: Application, private val followingRepository : FollowingRepository) : ViewModelLaunch() {
+class AddFacebookFriendsAsFollowersViewModel @Inject constructor(private val context: Application, private val followingRepository : FollowingRepository) : ViewModelLaunch() {
 
     private val followingUsers = MutableLiveData<AsyncTaskResult<MutableList<User>>>()
 
     val errorMessage : LiveData<String?> = Transformations.map(followingUsers) { asyncResult ->
         if (asyncResult.error != null){
-            getErrorMessage(context, asyncResult.error)
+            getErrorMessage(context.applicationContext, asyncResult.error)
         } else {
             null
         }
     }
 
     val following : LiveData<MutableList<User>>  =  Transformations.map (followingUsers) { asyncResult ->
-        asyncResult.result
+        asyncResult.result?.let{it}
     }
 
     init {
@@ -58,7 +54,6 @@ class AddFacebookFriendsAsFollowersStartupViewModel @Inject constructor(private 
                     } else {
                         followingUsers.value = AsyncTaskResult(facebookFriends.result.toMutableList())
                     }
-
                 }
     }
 
@@ -70,15 +65,56 @@ class AddFacebookFriendsAsFollowersStartupViewModel @Inject constructor(private 
                     suspend {
                         val asyncResult = followingRepository.addFollowing(facebookIDListToFollow)
                         if (asyncResult.error != null) {
-                            followingUsers.value?.error = asyncResult.error
+                            followingUsers.value = AsyncTaskResult(asyncResult.error)
                         } else {
-                            //GO TO NEXT FRAGMENT
+                            //TODO: UPDATE FOLLOWING CACHE
+
+                            //go to nextfragment
                             nextFragmentCallback()
                         }
                     }
 
             )
         }
+    }
+
+    fun removeFollowing(cognitoIDUnfollow: String) {
+        awsLambdaFunctionCall(true) {
+            suspend {
+                val asyncResult = followingRepository.removeFollowing(cognitoIDUnfollow)
+                if (asyncResult.error != null){
+                    followingUsers.value  = AsyncTaskResult(asyncResult.error)
+                } else {
+                    //remove user from list
+                    following.value?.remove(followingUsers.value?.result?.find { it.cognitoId == cognitoIDUnfollow })
+                    following.value?.let{followingUsers.value = AsyncTaskResult(it)}
+
+                    //TODO: Update following user cache
+                    Unit
+                }}}
+    }
+
+
+    fun addFollowing(facebookUserId: String) {
+        awsLambdaFunctionCall(true,
+                suspend {
+                    val asyncResult = followingRepository.addFollowing(listOf(facebookUserId))
+
+                    if (asyncResult.error != null){
+                        ///change it to like startup
+                        followingUsers.value = AsyncTaskResult(asyncResult.error)
+                    } else {
+                        //Add the added user to the list
+                        asyncResult.result.sqlResult?.forEach {
+                            following.value?.add(it) }
+                        following.value?.let{followingUsers.value = AsyncTaskResult(it)}
+
+
+                        //TODO: Update following user cache
+                        Unit
+                    }
+                }
+        )
     }
 
 

@@ -32,7 +32,7 @@
 <color name="media_controler_secondary_progress_tint">#9498a7</color>
 
     <!-- DRAWABLES -->
-<color name="vote_button">#FFFFFF</color>
+    <color name="vote_button">#FFFFFF</color>
     <color name="battle_video_view_user_background">#A2F393</color>
     <color name="battle_video_view_opponent_background">#8EE3F1</color>
     <color name="battle_video_view_text_color">#4D4D4D</color>
@@ -47,6 +47,7 @@
     <color name="floating_plus_icon_color">#000</color>
     <color name="media_buttons">#FFFFFF</color>
     <color name="comment_background">#dcdcdc</color>
+    <color name="bottom_nav_not_selected">#5F5F5F</color>
 
 
 </resources>

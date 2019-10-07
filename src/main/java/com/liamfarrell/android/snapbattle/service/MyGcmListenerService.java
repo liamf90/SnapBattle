@@ -191,21 +191,18 @@ public class MyGcmListenerService extends GcmListenerService {
      *
      * @param message GCM message received.
      */
-    private void sendNotification(String message, Intent intent) {
+    private void sendNotification(String message, PendingIntent pendingIntent) {
 
 
-    	if ( intent == null)
-        {
-            intent = new Intent(this, ActivityMainNavigationDrawer.class);
-        }
-
-
-
+//    	if ( intent == null)
+//        {
+//            intent = new Intent(this, ActivityMainNavigationDrawer.class);
+//        }
 
         //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
+//        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
+//                PendingIntent.FLAG_UPDATE_CURRENT);
 
         //Settings such as vibration pattern specified in the NotificationChannel override those specified in the actual Notification.
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
@@ -235,7 +232,7 @@ public class MyGcmListenerService extends GcmListenerService {
 
     private void updateNotificationFragmentList()
     {
-        NotificationCache.getNotificationCache().gcmUpdate(this);
+       // NotificationCache.getNotificationCache().gcmUpdate(this);
     }
 
 

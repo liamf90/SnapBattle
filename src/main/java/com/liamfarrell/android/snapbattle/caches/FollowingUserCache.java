@@ -548,8 +548,8 @@ public class FollowingUserCache {
                 followerMap.put(user.getCognitoId(), user);
             }
             thisClass.applyUpdates(context,actionList, followerMap, dynamoFollowingActionUpdateCount,callbacks);
-            //Toast.makeText(getActivity(), "Error: " + result.getSqlResult().getBattleid()), Toast.LENGTH_LONG).show();
-            //Toast.makeText(getActivity(), "Battleid: " + result.sql_result.get(0).battleid, Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getCallbacks(), "Error: " + result.getSqlResult().getBattleid()), Toast.LENGTH_LONG).show();
+            //Toast.makeText(getCallbacks(), "Battleid: " + result.sql_result.get(0).battleid, Toast.LENGTH_SHORT).show();
 
         }
 

@@ -11,9 +11,34 @@
         <action
             android:id="@+id/action_notificationListFragment_to_viewBattleFragment"
             app:destination="@id/viewBattleFragment" />
+        <action
+            android:id="@+id/action_notificationListFragment_to_battleChallengesListFragment2"
+            app:destination="@id/battleChallengesListFragment2" />
+        <action
+            android:id="@+id/action_notificationListFragment_to_fullBattleVideoPlayerFragment2"
+            app:destination="@id/fullBattleVideoPlayerFragment2" />
+        <action
+            android:id="@+id/action_notificationListFragment_to_viewFollowingFragment2"
+            app:destination="@id/viewFollowingFragment2" />
     </fragment>
     <fragment
         android:id="@+id/viewBattleFragment"
         android:name="com.liamfarrell.android.snapbattle.mvvm_ui.ViewBattleFragment"
-        android:label="ViewBattleFragment" />
+        android:label="ViewBattleFragment" >
+        <argument
+            android:name="battleId"
+            app:argType="integer" />
+    </fragment>
+    <fragment
+        android:id="@+id/battleChallengesListFragment2"
+        android:name="com.liamfarrell.android.snapbattle.mvvm_ui.BattleChallengesListFragment"
+        android:label="BattleChallengesListFragment" />
+    <fragment
+        android:id="@+id/fullBattleVideoPlayerFragment2"
+        android:name="com.liamfarrell.android.snapbattle.ui.FullBattleVideoPlayerFragment"
+        android:label="FullBattleVideoPlayerFragment" />
+    <fragment
+        android:id="@+id/viewFollowingFragment2"
+        android:name="com.liamfarrell.android.snapbattle.mvvm_ui.ViewFollowingFragment"
+        android:label="ViewFollowingFragment" />
 </navigation>

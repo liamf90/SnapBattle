@@ -5,7 +5,7 @@
 	<data>
 		<variable
 			name="viewModel"
-			type="com.liamfarrell.android.snapbattle.viewmodels.FollowFacebookFriendsViewModel"/>
+			type="com.liamfarrell.android.snapbattle.viewmodels.AddFacebookFriendsAsFollowersViewModel"/>
 	</data>
 	<FrameLayout
 		android:layout_width="match_parent"

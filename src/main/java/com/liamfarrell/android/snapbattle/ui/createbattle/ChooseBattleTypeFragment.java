@@ -412,7 +412,7 @@ public class ChooseBattleTypeFragment extends Fragment {
 
             @Override
             protected void onPostExecute( AsyncTaskResult<BattleTypeSuggestionsSearchResponse> asyncResult) {
-                // get a reference to the activity and fragment if it is still there
+                // get a reference to the callbacks and fragment if it is still there
                 Log.i(TAG, "On post execute");
                 ChooseBattleTypeFragment fragment = fragmentReference.get();
                 Activity activity = activityReference.get();

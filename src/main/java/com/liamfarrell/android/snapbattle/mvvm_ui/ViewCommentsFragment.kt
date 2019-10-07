@@ -27,6 +27,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.liamfarrell.android.snapbattle.R
 import com.liamfarrell.android.snapbattle.di.Injectable
 import com.liamfarrell.android.snapbattle.ui.FullBattleVideoPlayerActivity
+import java.lang.IllegalStateException
 import java.util.*
 import javax.inject.Inject
 
@@ -45,17 +46,13 @@ class ViewCommentsFragment : Fragment(), Injectable {
 
 
 
-    private var battleID = 0
+    private  var battleId = -1
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
         val binding = FragmentViewCommentsBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = viewLifecycleOwner
-        battleID = getActivity()?.getIntent()?.getIntExtra(FullBattleVideoPlayerActivity.EXTRA_BATTLEID, 0)!!;
-        if (battleID == 0) {
-            battleID = getActivity()?.getIntent()?.getIntExtra(EXTRA_BATTLEID, 0)!!
-        }
-
+        battleId = arguments?.getInt("battleId") ?: throw IllegalStateException("battle id is not set")
 
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(CommentViewModel::class.java)
         val adapter = CommentsListAdapter(viewModel, ::listItemViewHolderOnClick)
@@ -64,7 +61,7 @@ class ViewCommentsFragment : Fragment(), Injectable {
         binding.commentEditText.addTextChangedListener(onAddCommentEditTextChanged)
         binding.addACommentButton.setOnClickListener(addCommentButtonClicked())
         subscribeUi(adapter)
-        viewModel.getComments(battleID)
+        viewModel.getComments(battleId)
         return binding.root
     }
 
@@ -80,7 +77,7 @@ class ViewCommentsFragment : Fragment(), Injectable {
 
     private fun addCommentButtonClicked() : View.OnClickListener{
         return View.OnClickListener {
-            viewModel.addComment(battleID, commentEditText.text.toString(), usernameTagsList, ::requestUserFriendsPermission)
+            viewModel.addComment(battleId, commentEditText.text.toString(), usernameTagsList, ::requestUserFriendsPermission)
             commentEditText.setText("")
             hideKeyboard()
         }
@@ -188,7 +185,7 @@ class ViewCommentsFragment : Fragment(), Injectable {
         LoginManager.getInstance().registerCallback(mCallbackManager,
                 object : FacebookCallback<LoginResult> {
                     override fun onSuccess(loginResult: LoginResult) {
-                        viewModel.verifyUser(battleID, commentEditText.text.toString(), usernameTagsList)}
+                        viewModel.verifyUser(battleId, commentEditText.text.toString(), usernameTagsList)}
                     override fun onCancel() {}
                     override fun onError(e: FacebookException) {
                         Toast.makeText(activity, R.string.server_error_toast, Toast.LENGTH_SHORT).show() }

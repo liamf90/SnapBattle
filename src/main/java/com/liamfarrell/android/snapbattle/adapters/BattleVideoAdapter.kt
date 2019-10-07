@@ -39,12 +39,14 @@ import com.liamfarrell.android.snapbattle.ui.VideoViewActivity
 import com.liamfarrell.android.snapbattle.ui.VideoViewFragment
 import com.liamfarrell.android.snapbattle.viewmodels.BattleVideoItemViewModel
 import com.liamfarrell.android.snapbattle.viewmodels.CommentViewModel
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.io.File
 
 /**
 * Adapter for the [RecyclerView] in [ViewBattleFragment].
 */
-class BattleVideoAdapter (val battle: Battle, val recordButtonOnClickCallback: (video: Video)-> Unit, private val usersBattleRepository : UsersBattleRepository ) :
+class BattleVideoAdapter (val battle: Battle, val recordButtonOnClickCallback: (video: Video)-> Unit,  private val videoUploadedCallback : () -> Unit, private val usersBattleRepository : UsersBattleRepository) :
         ListAdapter<Video, BattleVideoAdapter.ViewHolder>(VideoDiffCallback()) {
 
 
@@ -103,7 +105,7 @@ class BattleVideoAdapter (val battle: Battle, val recordButtonOnClickCallback: (
                 playWithCloudFrontSignedUrl(context, video.getVideoFilename())
             } else {
                 //Go to view video
-                // val intent = Intent(getActivity(), VideoViewActivity::class.java)
+                // val intent = Intent(getCallbacks(), VideoViewActivity::class.java)
                 //intent.putExtra(VIDEO_FILEPATH_EXTRA, filepath)
                 //startActivity(intent)
             }
@@ -112,7 +114,10 @@ class BattleVideoAdapter (val battle: Battle, val recordButtonOnClickCallback: (
 
     private fun createSubmitButtonOnClickListener(viewModel: BattleVideoItemViewModel) : View.OnClickListener{
         return View.OnClickListener {
-            viewModel.uploadVideo()
+            GlobalScope.launch {
+                viewModel.uploadVideo()
+                videoUploadedCallback()
+            }
         }
     }
 

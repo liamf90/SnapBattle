@@ -11,7 +11,7 @@
         type="com.liamfarrell.android.snapbattle.model.Battle"/>
 
         <variable
-            name="OpponentCognitoID"
+            name="CurrentCognitoID"
             type="String" />
     </data>
 
@@ -40,7 +40,7 @@
                 android:layout_width="@dimen/profile_pic_small_width"
                 android:layout_height="@dimen/profile_pic_small_height"
                 android:layout_gravity="center_vertical|center_horizontal"
-                app:profileImage="@{safeUnbox(battle.getOpponentProfilePicCount(OpponentCognitoID)) != 0 ? battle.ProfilePicSmallSignedUrl : null}"
+                app:profileImage="@{safeUnbox(battle.getOpponentProfilePicCount(CurrentCognitoID)) != 0 ? battle.ProfilePicSmallSignedUrl : null}"
                 />
 
             <TextView
@@ -80,7 +80,7 @@
                     android:layout_height= "wrap_content"
                     android:layout_marginTop="@dimen/battle_info_vertical_spacing"
                     android:textSize="20sp"
-                    android:text="@{@string/vsOpponent(battle.getOpponentName(OpponentCognitoID))}"
+                    android:text="@{@string/vsOpponent(battle.getOpponentName(CurrentCognitoID))}"
                     />
 
                 <TextView
@@ -89,7 +89,7 @@
                     android:layout_height= "wrap_content"
                     android:layout_marginTop="@dimen/battle_info_vertical_spacing"
                     android:textSize="16sp"
-                    android:text='@{battle.rounds ?? ""}'
+                    android:text="@{@plurals/rounds(battle.rounds, battle.rounds)}"
                     />
 
                 <TextView

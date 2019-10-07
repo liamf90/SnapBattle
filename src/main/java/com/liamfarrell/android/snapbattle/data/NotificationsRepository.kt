@@ -35,7 +35,7 @@ class NotificationsRepository @Inject constructor(
     fun loadAllNotifications(coroutineScope: CoroutineScope) : NotificationsDatabaseResult {
 
         // Get data source factory from the local cache
-        val dataSourceFactory = notificationsDao.getAllNotifications()
+        val dataSourceFactory = notificationsDao.getAllNotificationsWithSignedUrls()
 
 
         // every new query creates a new BoundaryCallback
@@ -52,6 +52,11 @@ class NotificationsRepository @Inject constructor(
         // Get the network errors exposed by the boundary callback
         return NotificationsDatabaseResult(data, networkErrors)
     }
+
+    suspend fun checkForUpdates(){
+        notificationsManager.checkForUpdates()
+    }
+
 
     suspend fun updateSeenAllBattles(){
         notificationsManager.updateAllNotificationsHaveBeenSeen()

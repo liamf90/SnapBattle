@@ -95,14 +95,14 @@
     <dimen name="transcoding_progress_spinner_width_height">24dp</dimen>
 
 
-    <!--activity about us -->
+    <!--callbacks about us -->
     <dimen name="about_us_margin_top">32dp</dimen>
     <dimen name="about_us_spacing_textviews">24dp</dimen>
 
-    <!-- activity users topBattles -->
+    <!-- callbacks users topBattles -->
     <dimen name="elevation_user_header">2dp</dimen>
 
-    <!-- activity video capture -->
+    <!-- callbacks video capture -->
     <dimen name="change_camera_icon_width">48dp</dimen>
     <dimen name="change_camera_icon_height">48dp</dimen>
     <dimen name="change_camera_icon_margin">16dp</dimen>

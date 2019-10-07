@@ -10,9 +10,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.liamfarrell.android.snapbattle.databinding.ListItemCommentBinding
 import com.liamfarrell.android.snapbattle.model.Comment
 import androidx.appcompat.widget.PopupMenu
+import androidx.navigation.findNavController
 import com.liamfarrell.android.snapbattle.R
 import com.liamfarrell.android.snapbattle.databinding.ListItemBattleFriendsBinding
 import com.liamfarrell.android.snapbattle.model.Battle
+import com.liamfarrell.android.snapbattle.mvvm_ui.BattleCompletedListFragmentDirections
+import com.liamfarrell.android.snapbattle.mvvm_ui.BattleCurrentListFragmentDirections
 import com.liamfarrell.android.snapbattle.ui.FacebookLoginFragment
 import com.liamfarrell.android.snapbattle.viewmodels.CommentViewModel
 import kotlinx.android.synthetic.main.media_controller_battle.view.*
@@ -45,7 +48,9 @@ class CompletedBattlesListAdapter :
 
     private fun getOnClickListener(battleID: Int): View.OnClickListener {
         return View.OnClickListener {
-           //go to battle
+            //go to battle
+            val action = BattleCompletedListFragmentDirections.actionBattleCompletedListFragmentToViewBattleFragment(battleID)
+            it.findNavController().navigate(action)
         }
     }
 

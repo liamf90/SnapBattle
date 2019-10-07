@@ -37,18 +37,13 @@ class UserSearchFragment : Fragment(), Injectable {
 
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(UserSearchViewModel::class.java)
         binding.recyclerList.adapter = adapter
+        binding.recyclerList.setItemAnimator(null);
         subscribeUi()
         return binding.root
     }
 
     private fun subscribeUi() {
         viewModel.searchResult.observe(viewLifecycleOwner, Observer { searchResult ->
-            if (searchResult.isEmpty()){
-                adapter.state = UserSearchFragment.State.NO_RESULTS
-            }
-            else {
-                adapter.state = UserSearchFragment.State.SHOW_LIST
-            }
             adapter.submitList(searchResult)
             adapter.notifyDataSetChanged()
         })
@@ -59,12 +54,9 @@ class UserSearchFragment : Fragment(), Injectable {
             }
         })
 
-        viewModel.spinner.observe(viewLifecycleOwner, Observer {
-            if (it){
-                adapter.state = UserSearchFragment.State.LOADING
-                adapter.submitList(mutableListOf())
-                adapter.notifyDataSetChanged()
-            }
+        viewModel.searchState.observe(viewLifecycleOwner, Observer {
+           adapter.state = it
+           adapter.notifyDataSetChanged()
         })
     }
 

@@ -30,8 +30,12 @@ class VerifyBattleFragment : Fragment(), Injectable {
         val rounds = arguments?.getInt("rounds") ?: 1
         val challengedCognitoId =  arguments?.getString("opponentCognitoId")
         val challengedFacebookId =  arguments?.getString("opponentFacebookId")
+        val challengedName =  arguments?.getString("opponentName")
+        val challengedUsername =  arguments?.getString("opponentUsername")
         val battle = Battle(-1, null, challengedCognitoId, battleName, rounds )
         battle.challengedFacebookUserId = challengedFacebookId
+        battle.challengedName = challengedName
+        battle.challengedUsername = challengedUsername
 
         val votingChoice  = ChooseVotingFragment.VotingChoice.valueOf(arguments?.getString("votingType") ?: ChooseVotingFragment.VotingChoice.NONE.toString())
         val votingLength = ChooseVotingFragment.VotingLength.valueOf(arguments?.getString("votingLength") ?: ChooseVotingFragment.VotingLength.TWENTY_FOUR_HOURS.toString())

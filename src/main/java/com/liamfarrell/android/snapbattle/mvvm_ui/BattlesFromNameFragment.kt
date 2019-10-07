@@ -10,9 +10,9 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import com.liamfarrell.android.snapbattle.adapters.AllBattlesFeedPagingListAdapter
+import com.liamfarrell.android.snapbattle.adapters.BattlesByNamePagedListAdapter
 import com.liamfarrell.android.snapbattle.databinding.FragmentFriendsBattleListBinding
 import com.liamfarrell.android.snapbattle.di.*
-import com.liamfarrell.android.snapbattle.ui.ViewBattlesFromNameActivity
 import com.liamfarrell.android.snapbattle.viewmodels.BattlesByNameViewModel
 import javax.inject.Inject
 
@@ -30,24 +30,23 @@ class BattlesFromNameFragment : Fragment() , Injectable {
 
         val binding = FragmentFriendsBattleListBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = viewLifecycleOwner
-        battleName = getActivity()?.getIntent()?.getStringExtra(ViewBattlesFromNameActivity.EXTRA_BATTLE_NAME) ?: ""
-
-
+        battleName = arguments?.getString("battleName") ?: ""
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(BattlesByNameViewModel::class.java)
-
-        val adapter = AllBattlesFeedPagingListAdapter()
+        viewModel.setBattleName(battleName)
+        val adapter = BattlesByNamePagedListAdapter()
         binding.recyclerView.adapter = adapter
+        binding.showSpinner = viewModel.spinner
         subscribeUi(adapter)
         return binding.root
     }
 
-    private fun subscribeUi(adapter: AllBattlesFeedPagingListAdapter) {
+    private fun subscribeUi(adapter: BattlesByNamePagedListAdapter) {
         viewModel.battlesList.observe(viewLifecycleOwner, Observer { battlesList ->
             adapter.submitList(battlesList)
         })
 
         viewModel.errorMessage.observe(viewLifecycleOwner, Observer {
-            Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+            it?.let{Toast.makeText(context, it, Toast.LENGTH_SHORT).show()}
         })
     }
 

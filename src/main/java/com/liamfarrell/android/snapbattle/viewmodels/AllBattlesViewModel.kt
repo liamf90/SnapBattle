@@ -4,6 +4,7 @@ package com.liamfarrell.android.snapbattle.viewmodels
 import androidx.lifecycle.*
 import androidx.paging.PagedList
 import com.liamfarrell.android.snapbattle.data.AllBattlesRepository
+import com.liamfarrell.android.snapbattle.data.ThumbnailSignedUrlCacheRepository
 import com.liamfarrell.android.snapbattle.model.Battle
 import com.liamfarrell.android.snapbattle.model.BattlesSearchResult
 import kotlinx.coroutines.Dispatchers
@@ -16,7 +17,7 @@ import kotlin.concurrent.fixedRateTimer
 /**
  * The ViewModel used in [AllBattlesFragment].
  */
-class AllBattlesViewModel @Inject constructor(private val allBattlesRepository: AllBattlesRepository ) : ViewModelLaunch() {
+class AllBattlesViewModel @Inject constructor(private val allBattlesRepository: AllBattlesRepository, val thumbnailSignedUrlCache: ThumbnailSignedUrlCacheRepository) : ViewModelLaunch() {
 
     private val allBattlesResult = MutableLiveData<BattlesSearchResult>()
     private val _noMoreOlderBattles =  allBattlesRepository.isNoMoreOlderBattles
@@ -44,6 +45,22 @@ class AllBattlesViewModel @Inject constructor(private val allBattlesRepository: 
                 delay(HOW_OFTEN_CHECK_FOR_UPDATES_MILLISECONDS)
             }
         }
+    }
+
+    fun loadThumbnail(b: Battle){
+        viewModelScope.launch {
+            val thumbnailSignedUrl = thumbnailSignedUrlCache.getThumbnailSignedUrl(b)
+            if (thumbnailSignedUrl == null) {
+                //thumbnail not in cache. get new signed url from server
+                b.getSignedUrlFromServer() // TODO: GET SIGNED URL
+            } else {
+                //thumbnail in cache, load from cache
+
+
+            }
+
+        }
+
 
     }
 

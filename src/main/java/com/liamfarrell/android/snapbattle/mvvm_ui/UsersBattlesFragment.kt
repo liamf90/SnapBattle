@@ -34,6 +34,7 @@ class UsersBattlesFragment : Fragment(), Injectable {
         binding.userInfo.followUserClickListener = View.OnClickListener{viewModel.followUser()}
         binding.userInfo.unfollowUserClickListener = View.OnClickListener{viewModel.unfollowUser()}
         subscribeUi(binding, adapter)
+        userCognitoID = arguments?.getString("cognitoId") ?: ""
         viewModel.setCognitoId(userCognitoID)
         return binding.root
     }
@@ -50,6 +51,14 @@ class UsersBattlesFragment : Fragment(), Injectable {
         viewModel.user.observe(viewLifecycleOwner, Observer {
             binding.userInfo.user = it
             binding.toolbar.title = it.username
+        })
+
+        viewModel.spinner.observe(viewLifecycleOwner, Observer {
+            if (it){
+                binding.includedList.completedListProgressContainer.visibility = View.VISIBLE
+            } else {
+                binding.includedList.completedListProgressContainer.visibility = View.GONE
+            }
         })
     }
 

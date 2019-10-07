@@ -2,6 +2,9 @@
 <layout xmlns:app="http://schemas.android.com/apk/res-auto">
     <data>
         <variable
+            name="signedUrl"
+            type="androidx.lifecycle.LiveData&lt;String>" />
+        <variable
             name="notification"
             type="com.liamfarrell.android.snapbattle.notifications.Notification" />
     </data>

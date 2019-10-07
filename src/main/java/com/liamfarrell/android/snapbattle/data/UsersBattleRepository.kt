@@ -25,17 +25,18 @@ class UsersBattleRepository @Inject constructor
     }
 
 
-    suspend fun videoSubmitted(battleID: Int, videoRotationLock: String?) : AsyncTaskResult<VideoSubmittedResponse> {
+    suspend fun videoSubmitted(videoID: Int, battleID: Int, videoRotationLock: String?) : AsyncTaskResult<VideoSubmittedResponse> {
         val request = VideoSubmittedRequest()
         request.battleID = battleID
+        request.videoID = videoID
         videoRotationLock?.let { request.videoRotationLock = it }
         return executeAWSFunction { lambdaFunctionsInterface.VideoSubmitted(request)}
     }
 
-    suspend fun uploadVideo (context: Context, battle : Battle, fileName : String, cognitoIDOpponent : String, videoID : Int) : AsyncTaskResult<VideoSubmittedResponse>{
+    suspend fun uploadVideo (context: Context, battle : Battle, fileName : String, cognitoIDOpponent : String, videoID : Int, videoRotationLock: String?) : AsyncTaskResult<VideoSubmittedResponse>{
         val asyncResult = uploadVideoJob(context, battle, fileName, cognitoIDOpponent, videoID)
         if (asyncResult.error != null) return AsyncTaskResult(asyncResult.error)
-        return videoSubmitted(battle.battleID, null)
+        return videoSubmitted(videoID, battle.battleID, videoRotationLock)
     }
 
 

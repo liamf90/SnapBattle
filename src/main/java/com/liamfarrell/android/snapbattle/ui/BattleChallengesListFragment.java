@@ -269,7 +269,7 @@ public class BattleChallengesListFragment extends Fragment
 
 			@Override
 			protected void onPostExecute(AsyncTaskResult<DefaultResponse> asyncResult) {
-                // get a reference to the activity if it is still there
+                // get a reference to the callbacks if it is still there
                 BattleChallengesListFragment fragment = fragmentReference.get();
                 Activity activity = activityReference.get();
                 if (fragment == null || fragment.isRemoving()) return;

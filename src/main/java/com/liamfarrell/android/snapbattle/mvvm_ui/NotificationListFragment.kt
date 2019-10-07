@@ -4,15 +4,20 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.fragment.findNavController
 import com.liamfarrell.android.snapbattle.adapters.NotificationPagedListAdapter
 import com.liamfarrell.android.snapbattle.databinding.FragmentNotificationListBinding
 import com.liamfarrell.android.snapbattle.di.Injectable
 import com.liamfarrell.android.snapbattle.viewmodels.NotificationsViewModel
 import javax.inject.Inject
+import androidx.recyclerview.widget.DividerItemDecoration
+import com.liamfarrell.android.snapbattle.notifications.Notification
+
 
 class NotificationListFragment : Fragment(), Injectable {
     @Inject
@@ -27,8 +32,9 @@ class NotificationListFragment : Fragment(), Injectable {
         binding.lifecycleOwner = viewLifecycleOwner
 
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(NotificationsViewModel::class.java)
-        val adapter = NotificationPagedListAdapter()
+        val adapter = NotificationPagedListAdapter(::onNotificationLoadedByAdapter)
         binding.recyclerView.adapter = adapter
+        binding.recyclerView.addItemDecoration(DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL));
 
         subscribeUi(adapter)
         return binding.root
@@ -42,5 +48,10 @@ class NotificationListFragment : Fragment(), Injectable {
             }
         })
     }
+
+    private fun onNotificationLoadedByAdapter(notification: Notification){
+        viewModel.getProfilePic(notification.opponentCognitoId)
+    }
+
 
 }

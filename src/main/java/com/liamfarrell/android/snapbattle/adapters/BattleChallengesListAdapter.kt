@@ -1,6 +1,5 @@
 package com.liamfarrell.android.snapbattle.adapters
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,10 +8,8 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.amazonaws.mobile.auth.core.IdentityManager
-import com.amazonaws.mobile.client.AWSMobileClient
 import com.liamfarrell.android.snapbattle.R
 import com.liamfarrell.android.snapbattle.databinding.ListItemBattleChallengeBinding
-import com.liamfarrell.android.snapbattle.databinding.ListItemBattleFriendsBinding
 import com.liamfarrell.android.snapbattle.model.Battle
 
 /**
@@ -24,7 +21,7 @@ interface BattleChallengesAdapterCallbacks{
     fun onBattleDeclined(battle: Battle)
 }
 
-class BattleChallengesListAdapter(val activity: BattleChallengesAdapterCallbacks) :
+class BattleChallengesListAdapter(val callbacks: BattleChallengesAdapterCallbacks) :
         ListAdapter<Battle, BattleChallengesListAdapter.ViewHolder>(BattleDiffCallback()) {
 
 
@@ -50,7 +47,7 @@ class BattleChallengesListAdapter(val activity: BattleChallengesAdapterCallbacks
         return View.OnClickListener {
             holder.setAcceptButtonEnabled(false)
             holder.setDeclineButtonEnabled(false)
-            activity.onBattleAccepted(holder, battle)
+            callbacks.onBattleAccepted(holder, battle)
         }
     }
 
@@ -58,7 +55,7 @@ class BattleChallengesListAdapter(val activity: BattleChallengesAdapterCallbacks
         return View.OnClickListener {
             holder.setAcceptButtonEnabled(false)
             holder.setDeclineButtonEnabled(false)
-            activity.onBattleDeclined(battle)
+            callbacks.onBattleDeclined(battle)
         }
     }
 
@@ -81,19 +78,19 @@ class BattleChallengesListAdapter(val activity: BattleChallengesAdapterCallbacks
                 this.acceptButtonOnClickListener  = acceptButtonOnClickListener
                 this.declineButtonOnClickListener = declineButtonOnClickListener
                 this.profilePicOnClickListener = profilePicOnClickListener
-                showAcceptButton = true
-                showDeclineButton = true
+                enableAcceptButton = true
+                enableDeclineButton = true
                 executePendingBindings()
             }
         }
 
         fun setAcceptButtonEnabled(enabled: Boolean){
-            binding.showAcceptButton = enabled
+            binding.enableAcceptButton = enabled
             binding.executePendingBindings()
         }
 
         fun setDeclineButtonEnabled(enabled: Boolean){
-            binding.showDeclineButton = enabled
+            binding.enableDeclineButton = enabled
             binding.executePendingBindings()
         }
     }
@@ -101,7 +98,7 @@ class BattleChallengesListAdapter(val activity: BattleChallengesAdapterCallbacks
     private class BattleDiffCallback : DiffUtil.ItemCallback<Battle>() {
 
         override fun areItemsTheSame(oldItem: Battle, newItem: Battle): Boolean {
-            return oldItem.battleID == newItem.battleID
+            return oldItem.battleId == newItem.battleId
         }
 
         override fun areContentsTheSame(oldItem: Battle, newItem: Battle): Boolean {

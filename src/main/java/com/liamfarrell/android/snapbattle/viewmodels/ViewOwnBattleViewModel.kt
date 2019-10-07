@@ -17,7 +17,7 @@ class ViewOwnBattleViewModel @Inject constructor(private val context: Applicatio
     private val battleResult = MutableLiveData<AsyncTaskResult<Battle>>()
 
     val errorMessage : LiveData<String?> = Transformations.map(battleResult) { asyncResult ->
-        getErrorMessage(context, asyncResult.error)
+        asyncResult.error?.let{getErrorMessage(context, asyncResult.error)}
     }
 
     val battle : LiveData<Battle> =  Transformations.map(battleResult) { asyncResult ->

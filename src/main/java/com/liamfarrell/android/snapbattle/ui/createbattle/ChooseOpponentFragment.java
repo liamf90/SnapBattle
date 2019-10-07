@@ -334,7 +334,7 @@ public class ChooseOpponentFragment extends Fragment
 
 			@Override
 			protected void onPostExecute(AsyncTaskResult<UsernameToFacebookIDResponse> asyncResult) {
-                // get a reference to the activity and fragment if it is still there
+                // get a reference to the callbacks and fragment if it is still there
                 ChooseOpponentFragment fragment = fragmentReference.get();
                 Activity activity = activityReference.get();
                 if (fragment == null || fragment.isRemoving()) return;
@@ -418,7 +418,7 @@ public class ChooseOpponentFragment extends Fragment
 
 			@Override
 			protected void onPostExecute(AsyncTaskResult<ResponseFollowing> asyncResult) {
-                // get a reference to the activity and fragment if it is still there
+                // get a reference to the callbacks and fragment if it is still there
                 ChooseOpponentFragment fragment = fragmentReference.get();
                 Activity activity = activityReference.get();
                 if (fragment == null || fragment.isRemoving()) return;
@@ -508,7 +508,7 @@ public class ChooseOpponentFragment extends Fragment
 
 			@Override
 			protected void onPostExecute(AsyncTaskResult<GetUsersResponse> asyncResult) {
-                // get a reference to the activity and fragment if it is still there
+                // get a reference to the callbacks and fragment if it is still there
                 ChooseOpponentFragment fragment = fragmentReference.get();
                 Activity activity = activityReference.get();
                 if (fragment == null || fragment.isRemoving()) return;

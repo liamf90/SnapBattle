@@ -21,7 +21,7 @@ import com.facebook.login.LoginResult
 import com.liamfarrell.android.snapbattle.adapters.FollowFacebookFriendsListAdapter
 import com.liamfarrell.android.snapbattle.databinding.FragmentAddFollowersBinding
 import com.liamfarrell.android.snapbattle.di.*
-import com.liamfarrell.android.snapbattle.viewmodels.FollowFacebookFriendsViewModel
+import com.liamfarrell.android.snapbattle.viewmodels.AddFacebookFriendsAsFollowersViewModel
 import java.util.*
 import javax.inject.Inject
 
@@ -31,7 +31,7 @@ class FollowFacebookFriendsFragment : Fragment() , Injectable {
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
 
-    private lateinit var viewModel: FollowFacebookFriendsViewModel
+    private lateinit var viewModel: AddFacebookFriendsAsFollowersViewModel
     private val callbackManager: CallbackManager by lazy {CallbackManager.Factory.create()}
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -39,8 +39,8 @@ class FollowFacebookFriendsFragment : Fragment() , Injectable {
         val binding = FragmentAddFollowersBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = viewLifecycleOwner
 
-        viewModel = ViewModelProviders.of(this, viewModelFactory).get(FollowFacebookFriendsViewModel::class.java)
-        val adapter = FollowFacebookFriendsListAdapter(viewModel)
+        viewModel = ViewModelProviders.of(this, viewModelFactory).get(AddFacebookFriendsAsFollowersViewModel::class.java)
+        val adapter = FollowFacebookFriendsListAdapter(::addFollower, ::removeFollower)
         binding.recyclerList.adapter = adapter
         binding.recyclerList.addItemDecoration(DividerItemDecoration(context, LinearLayoutManager.VERTICAL))
         binding.viewModel = viewModel
@@ -52,12 +52,20 @@ class FollowFacebookFriendsFragment : Fragment() , Injectable {
 
     private fun subscribeUi(adapter: FollowFacebookFriendsListAdapter) {
         viewModel.following.observe(viewLifecycleOwner, Observer { followingList ->
-            adapter.submitList(followingList)
+            followingList?.let{adapter.submitList(followingList)}
         })
 
         viewModel.errorMessage.observe(viewLifecycleOwner, Observer {
-            Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+            it?.let{Toast.makeText(context, it, Toast.LENGTH_SHORT).show()}
         })
+    }
+
+    private fun addFollower(facebookUserId: String){
+        viewModel.addFollowing(facebookUserId)
+    }
+
+    private fun removeFollower(cognitoId:String){
+        viewModel.removeFollowing(cognitoId)
     }
 
 

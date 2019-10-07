@@ -133,7 +133,7 @@ public class BattlesReportedFragment extends Fragment {
 
             @Override
             protected void onPostExecute( AsyncTaskResult<ReportedBattlesResponse> asyncResult) {
-                // get a reference to the activity and fragment if it is still there
+                // get a reference to the callbacks and fragment if it is still there
                 BattlesReportedFragment fragment = fragmentReference.get();
                 Activity activity = activityReference.get();
                 if (fragment == null || fragment.isRemoving()) return;
@@ -211,7 +211,7 @@ public class BattlesReportedFragment extends Fragment {
 
             @Override
             protected void onPostExecute(AsyncTaskResult<DeleteBattleResponse> asyncResult) {
-                // get a reference to the activity and fragment if it is still there
+                // get a reference to the callbacks and fragment if it is still there
                 BattlesReportedFragment fragment = fragmentReference.get();
                 Activity activity = activityReference.get();
                 if (fragment == null || fragment.isRemoving()) return;
@@ -302,7 +302,7 @@ public class BattlesReportedFragment extends Fragment {
 
             @Override
             protected void onPostExecute(AsyncTaskResult<IgnoreBattleResponse> asyncResult) {
-                // get a reference to the activity and fragment if it is still there
+                // get a reference to the callbacks and fragment if it is still there
                 BattlesReportedFragment fragment = fragmentReference.get();
                 Activity activity = activityReference.get();
                 if (fragment == null || fragment.isRemoving()) return;
@@ -411,7 +411,7 @@ public class BattlesReportedFragment extends Fragment {
 
             @Override
             protected void onPostExecute( AsyncTaskResult<BanUserResponse> asyncResult) {
-                // get a reference to the activity and fragment if it is still there
+                // get a reference to the callbacks and fragment if it is still there
                 BattlesReportedFragment fragment = fragmentReference.get();
                 Activity activity = activityReference.get();
                 if (fragment == null || fragment.isRemoving()) return;

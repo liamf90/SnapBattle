@@ -30,21 +30,15 @@ class BottomNavigationDrawerFragment: Fragment() {
                 R.id.nav_completed_battles -> findNavController().navigate(R.id.battleCompletedListFragment)
                 R.id.nav_challenges -> findNavController().navigate(R.id.battleChallengesListFragment)
                 R.id.nav_profile -> findNavController().navigate(R.id.profileFragment)
-                R.id.nav_add_followers -> findNavController().navigate(R.id.battleCurrentListFragment)
+                R.id.nav_add_followers -> findNavController().navigate(R.id.followFacebookFriendsFragment)
                 R.id.nav_view_followers -> findNavController().navigate(R.id.viewFollowingFragment)
-                R.id.nav_logout -> context!!.toast("dd")
+                R.id.nav_logout -> findNavController().navigate(R.id.logoutFragment)
+                R.id.nav_about_us -> findNavController().navigate(R.id.aboutUsFragment)
             }
             // Add code here to update the UI based on the item selected
             // For example, swap UI fragments here
             true
         }
-    }
-
-    // This is an extension method for easy Toast call
-    fun Context.toast(message: CharSequence) {
-        val toast = Toast.makeText(this, message, Toast.LENGTH_SHORT)
-        toast.setGravity(Gravity.BOTTOM, 0, 600)
-        toast.show()
     }
 
 }

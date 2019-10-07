@@ -1,12 +1,12 @@
 package com.liamfarrell.android.snapbattle.notifications
 
 import android.content.Context
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+import androidx.room.*
 import com.liamfarrell.android.snapbattle.caches.NotificationType
+import com.liamfarrell.android.snapbattle.db.OtherUsersProfilePicUrlCache
 
 @Entity(tableName = "notifications")
+
 class NotificationDb() {
     @PrimaryKey
     @ColumnInfo(name = "notification_index")
@@ -29,7 +29,6 @@ class NotificationDb() {
     var voteUser: Int = 0
     var voteOpponent: Int = 0
     var votingResult: VotingCompleteNotification.VotingResult? = null
-
 
     constructor(notification: Notification) : this()
     {
@@ -98,15 +97,15 @@ class NotificationDb() {
 
     fun getNotification(): Notification {
         return when (notificationType) {
-            NotificationType.NEW_BATTLE_REQUEST -> NewBattleRequestNotification(notificationIndex, battleId, cognitoIdChallenger, challengerName)
-            NotificationType.CHALLENGE_ACCEPTED -> BattleAcceptedNotification( notificationIndex, battleId, opponentCognitoId, opponentName, battleAccepted)
-            NotificationType.VIDEO_SUBMITTED -> VideoSubmittedNotification(notificationIndex, battleId, opponentCognitoId, opponentName)
-            NotificationType.NEW_COMMENT -> NewCommentNotification(notificationIndex, battleId, battleName, opponentCognitoId, opponentName)
-            NotificationType.FULL_VIDEO_CREATED -> FullVideoUploadedNotification(notificationIndex, battleId, battleName)
-            NotificationType.NEW_FOLLOWER -> NewFollowerNotification(notificationIndex, opponentCognitoId, opponentName)
-            NotificationType.VOTE_COMPLETE -> VotingCompleteNotification(notificationIndex, battleId, opponentCognitoId, opponentName, voteUser, voteOpponent, votingResult?.name)
+            NotificationType.NEW_BATTLE_REQUEST -> NewBattleRequestNotification(notificationIndex, battleId, cognitoIdChallenger, challengerName).also { it.signedUrlProfilePicOpponent = signedUrlProfilePicOpponent; it.opponentProfilePicCount = opponentProfilePicCount }
+            NotificationType.CHALLENGE_ACCEPTED -> BattleAcceptedNotification( notificationIndex, battleId, opponentCognitoId, opponentName, battleAccepted).also { it.signedUrlProfilePicOpponent = signedUrlProfilePicOpponent; it.opponentProfilePicCount = opponentProfilePicCount }
+            NotificationType.VIDEO_SUBMITTED -> VideoSubmittedNotification(notificationIndex, battleId, opponentCognitoId, opponentName).also { it.signedUrlProfilePicOpponent = signedUrlProfilePicOpponent; it.opponentProfilePicCount = opponentProfilePicCount }
+            NotificationType.NEW_COMMENT -> NewCommentNotification(notificationIndex, battleId, battleName, opponentCognitoId, opponentName).also { it.signedUrlProfilePicOpponent = signedUrlProfilePicOpponent; it.opponentProfilePicCount = opponentProfilePicCount }
+            NotificationType.FULL_VIDEO_CREATED -> FullVideoUploadedNotification(notificationIndex, battleId, battleName).also { it.signedUrlProfilePicOpponent = signedUrlProfilePicOpponent; it.opponentProfilePicCount = opponentProfilePicCount }
+            NotificationType.NEW_FOLLOWER -> NewFollowerNotification(notificationIndex, opponentCognitoId, opponentName).also { it.signedUrlProfilePicOpponent = signedUrlProfilePicOpponent; it.opponentProfilePicCount = opponentProfilePicCount }
+            NotificationType.VOTE_COMPLETE -> VotingCompleteNotification(notificationIndex, battleId, opponentCognitoId, opponentName, voteUser, voteOpponent, votingResult?.name).also  { it.signedUrlProfilePicOpponent = signedUrlProfilePicOpponent; it.opponentProfilePicCount = opponentProfilePicCount }
             NotificationType.TAGGED_IN_COMMENT -> TaggedInCommentNotification(notificationIndex, battleId, battleName, opponentCognitoId, opponentName,
-                    challengerUsername, challengedUsername, challengerCognitoId, challengedCognitoId)
+                    challengerUsername, challengedUsername, challengerCognitoId, challengedCognitoId).also { it.signedUrlProfilePicOpponent = signedUrlProfilePicOpponent; it.opponentProfilePicCount = opponentProfilePicCount }
         }
     }
 

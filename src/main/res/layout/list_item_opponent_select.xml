@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
     <data>
         <variable
             name="onItemClickListener"
@@ -23,6 +23,7 @@
         android:id="@+id/profileImageView"
         android:layout_width="@dimen/profile_pic_small_width"
         android:layout_height="@dimen/profile_pic_small_height"
+        app:profileImage="@{user.profilePicSignedUrl}"
         android:onClickListener="@{onProfilePictureClickListener}"
         />
 

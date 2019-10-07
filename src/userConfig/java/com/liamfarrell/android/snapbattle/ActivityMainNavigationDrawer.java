@@ -11,7 +11,6 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
-import com.amazonaws.mobile.auth.core.IdentityManager;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
@@ -31,7 +30,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.liamfarrell.android.snapbattle.ui.AboutUsActivity;
+import com.liamfarrell.android.snapbattle.ui.AboutUsFragment;
 import com.liamfarrell.android.snapbattle.ui.FollowFacebookFriendsFragment;
 import com.liamfarrell.android.snapbattle.ui.BattleChallengesListFragment;
 import com.liamfarrell.android.snapbattle.mvvm_ui.BattleCompletedListFragment;
@@ -165,7 +164,7 @@ public class ActivityMainNavigationDrawer extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        // Unregister since the activity is about to be closed.
+        // Unregister since the callbacks is about to be closed.
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
         super.onDestroy();
     }
@@ -425,10 +424,10 @@ public class ActivityMainNavigationDrawer extends AppCompatActivity {
                 //Check to see which item was being clicked and perform appropriate action
                 switch (menuItem.getItemId()) {
                     //Replacing the main content with ContentFragment Which is our Inbox View;
-                    case R.id.nav_home:
-                        navItemIndex = 0;
-                        CURRENT_TAG = TAG_HOME;
-                        break;
+//                    case R.id.nav_home:
+//                        navItemIndex = 0;
+//                        CURRENT_TAG = TAG_HOME;
+//                        break;
                     case R.id.nav_create_battle:
                         // launch new intent instead of loading fragment
                         startActivityForResult(new Intent(ActivityMainNavigationDrawer.this, CreateBattleActivity.class), 200);
@@ -465,7 +464,7 @@ public class ActivityMainNavigationDrawer extends AppCompatActivity {
 
                     case R.id.nav_about_us:
                         // launch new intent instead of loading fragment
-                        startActivity(new Intent(ActivityMainNavigationDrawer.this, AboutUsActivity.class));
+                        startActivity(new Intent(ActivityMainNavigationDrawer.this, AboutUsFragment.class));
                         drawer.closeDrawers();
                         return true;
 
@@ -575,7 +574,7 @@ public class ActivityMainNavigationDrawer extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+        // as you specify a parent callbacks in AndroidManifest.xml.
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
