@@ -55,6 +55,7 @@ class UsersBattlesListAdapter :
         fun bind(item: Battle) {
             with(binding) {
                 battle = item
+                thumbnailSignedUrl = item.signedThumbnailUrl
                 executePendingBindings()
             }
         }

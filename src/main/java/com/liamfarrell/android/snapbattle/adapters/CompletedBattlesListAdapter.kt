@@ -63,6 +63,7 @@ class CompletedBattlesListAdapter :
         fun bind(item: Battle) {
             with(binding) {
                 battle = item
+                thumbnailSignedUrl = item.signedThumbnailUrl
                 executePendingBindings()
             }
         }

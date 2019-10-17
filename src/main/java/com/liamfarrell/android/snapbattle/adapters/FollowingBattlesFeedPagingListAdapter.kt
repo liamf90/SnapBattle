@@ -18,12 +18,14 @@ import com.liamfarrell.android.snapbattle.viewmodels.BattleViewModel
 
 
 /**
- * Adapter for the [RecyclerView] in [AllBattlesFragment].
+ * Adapter for the [RecyclerView] in [FollowingBattlesFeedFragment].
  */
-class FollowingBattlesFeedPagingListAdapter :
+class FollowingBattlesFeedPagingListAdapter(val onBattleLoadedByAdapter : (b : Battle)->Unit) :
         PagedListAdapter<FollowingBattle, FollowingBattlesFeedPagingListAdapter.ViewHolder>(FollowingBattleDiffCallback()) {
 
-
+    override fun getItemId(position: Int): Long {
+        return super.getItem(position)?.battle?.battleId?.toLong() ?: 0
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
@@ -36,11 +38,13 @@ class FollowingBattlesFeedPagingListAdapter :
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val battle = getItem(position)
+        battle?.let {onBattleLoadedByAdapter(it.battle) }
         holder.apply {
             battle?.let { bind(it.battle,
                     createChallengerOnClickListener(it.battle.challengerCognitoID),
                     createChallengedOnClickListener(it.battle.challengedCognitoID),
-                    createThumbnailOnClickListener(it.battle))
+                    createThumbnailOnClickListener(it.battle),
+                    it.lastSavedSignedUrl)
                 itemView.tag = it}
         }
     }
@@ -71,9 +75,10 @@ class FollowingBattlesFeedPagingListAdapter :
             private val binding: ListItemBattleFriendsBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(item: Battle, challengerOnClick : View.OnClickListener, challengedOnClick : View.OnClickListener, thumbnailOnClick : View.OnClickListener) {
+        fun bind(item: Battle, challengerOnClick : View.OnClickListener, challengedOnClick : View.OnClickListener, thumbnailOnClick : View.OnClickListener, thumbSignedUrl : String?) {
             with(binding) {
                 battle = item
+                thumbnailSignedUrl = thumbSignedUrl
                 viewModel = BattleViewModel(item)
                 challengedUsernameClickListener = challengedOnClick
                 challengerUsernameClickListener = challengerOnClick

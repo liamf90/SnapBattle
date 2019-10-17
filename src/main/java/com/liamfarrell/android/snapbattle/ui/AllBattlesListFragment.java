@@ -367,8 +367,8 @@ public class AllBattlesListFragment extends Fragment
                 thumbnail.setImageResource(R.drawable.placeholder1440x750);
 
                 //No more topBattles View
-                noMoreBattlesView = view.findViewById(R.id.loadMoreBattlesLayout);
-                noMoreBattlesTextView  = view.findViewById(R.id.loadMoreBattlesTextView);
+                //noMoreBattlesView = view.findViewById(R.id.loadMoreBattlesLayout);
+                //noMoreBattlesTextView  = view.findViewById(R.id.loadMoreBattlesTextView);
                 noMoreBattlesProgressContainer = view.findViewById(R.id.loadMorebattlesProgressContainer);
             }
         }

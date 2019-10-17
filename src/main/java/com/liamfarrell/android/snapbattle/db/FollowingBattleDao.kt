@@ -11,7 +11,13 @@ import com.liamfarrell.android.snapbattle.model.Video
  */
 @Dao
 interface FollowingBattleDao {
-    @Query("SELECT * FROM following_battle ORDER BY mLastVideoUploadTime DESC")
+//    @Query("SELECT * FROM following_battle ORDER BY mLastVideoUploadTime DESC")
+//    fun getAllBattles(): DataSource.Factory<Int,FollowingBattle>
+
+    @Query("SELECT * FROM following_battle " +
+            " LEFT JOIN  thumbnail_signed_url " +
+            " ON thumbnail_signed_url.battle_id = following_battle.battle_id "  +
+            " ORDER BY mLastVideoUploadTime DESC")
     fun getAllBattles(): DataSource.Factory<Int,FollowingBattle>
 
     @Query("SELECT battle_id_following FROM following_battle")

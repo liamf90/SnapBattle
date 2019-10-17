@@ -33,6 +33,8 @@ class NotificationListFragment : Fragment(), Injectable {
 
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(NotificationsViewModel::class.java)
         val adapter = NotificationPagedListAdapter(::onNotificationLoadedByAdapter)
+        adapter.setHasStableIds(true)
+
         binding.recyclerView.adapter = adapter
         binding.recyclerView.addItemDecoration(DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL));
 

@@ -254,7 +254,7 @@ public class BattleCompletedListFragment extends Fragment
 				battleRoundsTextView = view.findViewById(R.id.battle_rounds_TextView);
 				battleStatusTextView = view.findViewById(R.id.battle_status_TextView);
 				thumbnailImageView = view.findViewById(R.id.thumbnailImageView);
-                parentLinearLayout = view.findViewById(R.id.parentLinearLayout);
+                //parentLinearLayout = view.findViewById(R.id.parentLinearLayout);
 				dislikeCounTextView = view.findViewById(R.id.dislikeCountTextView);
 				likeCountTextView = view.findViewById(R.id.likeCountTextView);
 				challengerUsernameTextView = view.findViewById(R.id.challenger_name_TextView);

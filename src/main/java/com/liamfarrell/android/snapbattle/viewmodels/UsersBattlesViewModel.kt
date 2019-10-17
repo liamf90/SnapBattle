@@ -4,8 +4,10 @@ import android.app.Application
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
+import androidx.lifecycle.viewModelScope
 import com.liamfarrell.android.snapbattle.app.SnapBattleApp
 import com.liamfarrell.android.snapbattle.data.OtherUsersProfilePicUrlRepository
+import com.liamfarrell.android.snapbattle.data.ThumbnailSignedUrlCacheRepository
 import com.liamfarrell.android.snapbattle.data.UsersBattlesRepository
 import com.liamfarrell.android.snapbattle.model.AsyncTaskResult
 import com.liamfarrell.android.snapbattle.model.Battle
@@ -13,13 +15,14 @@ import com.liamfarrell.android.snapbattle.model.User
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.GetUsersBattlesResponse
 import com.liamfarrell.android.snapbattle.util.getErrorMessage
 import com.liamfarrell.android.snapbattle.util.notifyObserver
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
  * The ViewModel used in [UsersBattlesFragment].
  */
 class UsersBattlesViewModel @Inject constructor(private val context: Application, private val usersBattlesRepository: UsersBattlesRepository
-                                                ,  private val otherUsersProfilePicUrlRepository: OtherUsersProfilePicUrlRepository) : ViewModelLaunch() {
+                                                ,  private val otherUsersProfilePicUrlRepository: OtherUsersProfilePicUrlRepository, val thumbnailSignedUrlCacheRepository: ThumbnailSignedUrlCacheRepository) : ViewModelLaunch() {
 
     private lateinit var cognitoId : String
 
@@ -53,8 +56,9 @@ class UsersBattlesViewModel @Inject constructor(private val context: Application
                         if (profile.profilePicCount > 0) {
                             response.result.user_profile.profilePicSignedUrl =  otherUsersProfilePicUrlRepository.getOrUpdateProfilePicSignedUrl(profile.cognitoId,  profile.profilePicCount , profile.profilePicSignedUrl )
                         }
+                        response.result.user_battles = getThumbnailSignedUrls(response.result.user_battles)
                     }
-                    battlesResult.value = usersBattlesRepository.getUsersBattles(cognitoID)
+                    battlesResult.value = response
 
                 })
     }
@@ -86,5 +90,13 @@ class UsersBattlesViewModel @Inject constructor(private val context: Application
                 }
         )
     }
+
+    private suspend fun getThumbnailSignedUrls(battleList: List<Battle>) : List<Battle>{
+        battleList.forEach {
+            it.signedThumbnailUrl = thumbnailSignedUrlCacheRepository.getThumbnailSignedUrl(it)
+        }
+        return battleList
+    }
+
 
 }

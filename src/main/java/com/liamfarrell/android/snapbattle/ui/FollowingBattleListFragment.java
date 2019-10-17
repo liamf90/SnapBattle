@@ -415,8 +415,8 @@ public class FollowingBattleListFragment extends Fragment
 
 
 				//No more topBattles View
-                noMoreBattlesView = view.findViewById(R.id.loadMoreBattlesLayout);
-                noMoreBattlesTextView  = view.findViewById(R.id.loadMoreBattlesTextView);
+               // noMoreBattlesView = view.findViewById(R.id.loadMoreBattlesLayout);
+                //noMoreBattlesTextView  = view.findViewById(R.id.loadMoreBattlesTextView);
                 noMoreBattlesProgressContainer = view.findViewById(R.id.loadMorebattlesProgressContainer);
 			}
 		}

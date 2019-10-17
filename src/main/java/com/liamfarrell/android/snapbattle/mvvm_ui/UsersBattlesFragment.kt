@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModelProviders
 import com.liamfarrell.android.snapbattle.adapters.UsersBattlesListAdapter
 import com.liamfarrell.android.snapbattle.databinding.FragmentUserBinding
 import com.liamfarrell.android.snapbattle.di.Injectable
+import com.liamfarrell.android.snapbattle.model.Battle
 import com.liamfarrell.android.snapbattle.viewmodels.UsersBattlesViewModel
 import kotlinx.android.synthetic.main.fragment_completed_list.view.*
 import javax.inject.Inject
@@ -61,5 +62,6 @@ class UsersBattlesFragment : Fragment(), Injectable {
             }
         })
     }
+
 
 }

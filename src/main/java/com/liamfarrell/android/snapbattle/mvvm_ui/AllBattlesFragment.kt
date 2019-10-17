@@ -17,6 +17,7 @@ import com.liamfarrell.android.snapbattle.adapters.FollowingListAdapter
 import com.liamfarrell.android.snapbattle.databinding.FragmentFriendsBattleListBinding
 import com.liamfarrell.android.snapbattle.databinding.FragmentViewFollowersBinding
 import com.liamfarrell.android.snapbattle.di.*
+import com.liamfarrell.android.snapbattle.model.Battle
 import com.liamfarrell.android.snapbattle.viewmodels.AllBattlesViewModel
 import com.liamfarrell.android.snapbattle.viewmodels.FollowingViewModel
 import kotlinx.android.synthetic.main.fragment_friends_battle_list.*
@@ -38,7 +39,8 @@ class AllBattlesFragment : Fragment(), Injectable {
         binding.lifecycleOwner = viewLifecycleOwner
 
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(AllBattlesViewModel::class.java)
-        val adapter = AllBattlesFeedPagingListAdapter()
+        val adapter = AllBattlesFeedPagingListAdapter(::onBattleLoadedByAdapter)
+        adapter.setHasStableIds(true)
         binding.recyclerView.adapter = adapter
         binding.recyclerView.addItemDecoration(DividerItemDecoration(context, LinearLayoutManager.VERTICAL))
 
@@ -51,24 +53,18 @@ class AllBattlesFragment : Fragment(), Injectable {
             adapter.submitList(allBattlesResult)
         })
 
-        viewModel.snackBarMessage.observe(viewLifecycleOwner, Observer {snackBarMessage ->
+        viewModel.snackBarMessage.observe(viewLifecycleOwner, Observer { snackBarMessage ->
             Snackbar.make(parentCoordinatorLayout, snackBarMessage, Snackbar.LENGTH_LONG).show()
         })
 
         viewModel.networkErrors.observe(viewLifecycleOwner, Observer {
             Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
         })
+    }
 
-        viewModel.noMoreOlderBattles.observe(viewLifecycleOwner, Observer {
-            if (it == true) {
-                noMoreBattlesTextView.visibility = View.VISIBLE
-            }
-        })
 
-//        viewModel.isLoadingMoreBattles.observe(viewLifecycleOwner, Observer {
-//
-//
-//        })
+    private fun onBattleLoadedByAdapter(battle: Battle){
+        viewModel.loadThumbnail(battle)
     }
 
 }

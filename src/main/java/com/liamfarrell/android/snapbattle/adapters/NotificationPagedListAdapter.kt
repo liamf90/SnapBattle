@@ -21,6 +21,9 @@ import java.lang.IllegalArgumentException
 class NotificationPagedListAdapter(val onNotificationLoadedByAdapter : (n : Notification)->Unit) :
         PagedListAdapter<NotificationDb, NotificationPagedListAdapter.ViewHolder>(NotificationDiffCallback()) {
 
+    override fun getItemId(position: Int): Long {
+        return super.getItem(position)?.notificationIndex?.toLong() ?: 0
+    }
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {

@@ -70,8 +70,9 @@ class ProfileFragment : Fragment(), Injectable {
             changeUsernameButton.visibility = View.GONE
             viewModel.updateUsername(binding.usernameEditText.text.toString(), requireContext())
         }
-        Picasso.get().load(File(viewModel.getProfilePicPath())).placeholder(R.drawable.default_profile_pic100x100).error(R.drawable.default_profile_pic100x100).into(profileImageView)
+        setProfilePic()
         subscribeUi(binding)
+        viewModel.getProfile(::setProfilePic)
         addTextChangedListeners()
         return binding.root
     }
@@ -90,6 +91,11 @@ class ProfileFragment : Fragment(), Injectable {
                 snackBar.show()
             }
         })
+    }
+
+
+    private fun setProfilePic(){
+        Picasso.get().load(File(viewModel.getProfilePicPath())).placeholder(R.drawable.default_profile_pic100x100).error(R.drawable.default_profile_pic100x100).into(profileImageView)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

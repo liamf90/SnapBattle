@@ -10,11 +10,13 @@ import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserializat
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.BattleTypeSuggestionsSearchResponse
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.GetSignedUrlsResponse
 import com.liamfarrell.android.snapbattle.util.executeAWSFunction
+import com.liamfarrell.android.snapbattle.util.isSignedUrlInPicassoCache
 import com.squareup.picasso.Callback
 import com.squareup.picasso.NetworkPolicy
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import java.lang.Exception
 import java.util.*
 import javax.inject.Inject
@@ -76,22 +78,6 @@ class OtherUsersProfilePicUrlRepository @Inject constructor(private val otherUse
         }
     }
 
-
-
-     suspend fun isSignedUrlInPicassoCache(signedUrl: String) : Boolean{
-        return suspendCoroutine<Boolean> {
-            Picasso.get().load(signedUrl).networkPolicy(NetworkPolicy.OFFLINE).fetch(
-                    object : Callback{
-                        override fun onSuccess() {
-                            it.resumeWith(Result.success(true))
-                        }
-
-                        override fun onError(e: Exception?) {
-                            it.resumeWith(Result.success(false))
-                        }
-                    })
-            }
-        }
 
     suspend fun getSignedUrlsFromServer(cognitoIdList : List<String>) : AsyncTaskResult<GetSignedUrlsResponse> {
         val request = SignedUrlsRequest()

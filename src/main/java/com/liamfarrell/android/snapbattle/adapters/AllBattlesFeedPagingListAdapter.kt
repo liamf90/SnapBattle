@@ -12,19 +12,24 @@ import androidx.recyclerview.widget.RecyclerView
 import com.amazonaws.mobile.client.AWSMobileClient
 import com.liamfarrell.android.snapbattle.R
 import com.liamfarrell.android.snapbattle.databinding.ListItemBattleFriendsBinding
+import com.liamfarrell.android.snapbattle.db.AllBattlesBattle
 import com.liamfarrell.android.snapbattle.model.Battle
 import com.liamfarrell.android.snapbattle.mvvm_ui.HomeFragmentDirections
 import com.liamfarrell.android.snapbattle.viewmodels.AllBattlesViewModel
 import com.liamfarrell.android.snapbattle.viewmodels.BattleViewModel
 
 
+
+
 /**
  * Adapter for the [RecyclerView] in [AllBattlesFragment].
  */
-class AllBattlesFeedPagingListAdapter() :
-        PagedListAdapter<Battle, AllBattlesFeedPagingListAdapter.ViewHolder>(BattleDiffCallback()) {
+class AllBattlesFeedPagingListAdapter(val onBattleLoadedByAdapter : (b : Battle)->Unit) :
+        PagedListAdapter<AllBattlesBattle, AllBattlesFeedPagingListAdapter.ViewHolder>(BattleDiffCallback()) {
 
-
+    override fun getItemId(position: Int): Long {
+        return super.getItem(position)?.battle?.battleId?.toLong() ?: 0
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
@@ -37,11 +42,13 @@ class AllBattlesFeedPagingListAdapter() :
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val battle = getItem(position)
+        battle?.let {onBattleLoadedByAdapter(it.battle) }
         holder.apply {
-            battle?.let { bind(it,
-                    createChallengerOnClickListener(it.challengerCognitoID),
-                    createChallengedOnClickListener(it.challengedCognitoID),
-                    createThumbnailOnClickListener(it))
+            battle?.let { bind(it.battle,
+                    createChallengerOnClickListener(it.battle.challengerCognitoID),
+                    createChallengedOnClickListener(it.battle.challengedCognitoID),
+                    createThumbnailOnClickListener(it.battle),
+                    it.lastSavedSignedUrl)
                 itemView.tag = it}
         }
     }
@@ -72,9 +79,10 @@ class AllBattlesFeedPagingListAdapter() :
             private val binding: ListItemBattleFriendsBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(item: Battle, challengerOnClick : View.OnClickListener, challengedOnClick : View.OnClickListener, thumbnailOnClick : View.OnClickListener) {
+        fun bind(item: Battle, challengerOnClick : View.OnClickListener, challengedOnClick : View.OnClickListener, thumbnailOnClick : View.OnClickListener, thumbSignedUrl: String?) {
             with(binding) {
                 battle = item
+                thumbnailSignedUrl = thumbSignedUrl
                 viewModel = BattleViewModel(item)
                 challengedUsernameClickListener = challengedOnClick
                 challengerUsernameClickListener = challengerOnClick
@@ -86,13 +94,13 @@ class AllBattlesFeedPagingListAdapter() :
 }
 
 
-private class BattleDiffCallback : DiffUtil.ItemCallback<Battle>() {
+private class BattleDiffCallback : DiffUtil.ItemCallback<AllBattlesBattle>() {
 
-    override fun areItemsTheSame(oldItem: Battle, newItem: Battle): Boolean {
-        return oldItem.battleID == newItem.battleID
+    override fun areItemsTheSame(oldItem: AllBattlesBattle, newItem: AllBattlesBattle): Boolean {
+        return oldItem.battle.battleId == newItem.battle.battleId
     }
 
-    override fun areContentsTheSame(oldItem: Battle, newItem: Battle): Boolean {
+    override fun areContentsTheSame(oldItem: AllBattlesBattle, newItem: AllBattlesBattle): Boolean {
         return oldItem == newItem
     }
 }

@@ -109,9 +109,39 @@ class NotificationDb() {
         }
     }
 
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
 
+        other as NotificationDb
 
+        if (notificationIndex != other.notificationIndex) return false
+        if (notificationType != other.notificationType) return false
+        if (battleId != other.battleId) return false
+        if (signedUrlProfilePicOpponent != other.signedUrlProfilePicOpponent) return false
+        if (opponentProfilePicCount != other.opponentProfilePicCount) return false
+        if (battleAccepted != other.battleAccepted) return false
+        if (battleName != other.battleName) return false
+        if (challengerName != other.challengerName) return false
+        if (cognitoIdChallenger != other.cognitoIdChallenger) return false
+        if (opponentCognitoId != other.opponentCognitoId) return false
+        if (opponentName != other.opponentName) return false
+        if (challengerUsername != other.challengerUsername) return false
+        if (challengedUsername != other.challengedUsername) return false
+        if (challengerCognitoId != other.challengerCognitoId) return false
+        if (challengedCognitoId != other.challengedCognitoId) return false
+        if (voteUser != other.voteUser) return false
+        if (voteOpponent != other.voteOpponent) return false
+        if (votingResult != other.votingResult) return false
 
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = notificationIndex
+        result = 31 * result + battleId
+        return result
+    }
 
 
 }

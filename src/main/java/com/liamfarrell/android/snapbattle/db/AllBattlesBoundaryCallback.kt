@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 class AllBattlesBoundaryCallback(
         private val allBattlesCacheManager : AllBattlesCacheManager,
          private val coroutineScope: CoroutineScope
-) : PagedList.BoundaryCallback<Battle>() {
+) : PagedList.BoundaryCallback<AllBattlesBattle>() {
 
 
     override fun onZeroItemsLoaded() {
@@ -25,7 +25,7 @@ class AllBattlesBoundaryCallback(
     /**
      * When all items in the database were loaded, we need to query the backend for more items.
      */
-    override fun onItemAtEndLoaded(itemAtEnd: Battle) {
+    override fun onItemAtEndLoaded(itemAtEnd: AllBattlesBattle) {
         Log.d("RepoBoundaryCallback", "onItemAtEndLoaded")
         coroutineScope.launch(Dispatchers.IO) { allBattlesCacheManager.requestMoreBattles()}
     }

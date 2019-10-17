@@ -62,7 +62,12 @@ class AllBattlesCacheManager @Inject constructor(
         val battleCountDynamo = allBattlesDynamoRepository.getBattlesCountDynamo()
         val lastAllBattlesDynamoCount = allBattlesDynamoInfoDao.getDynamoCount()
 
-        //if there is more topBattles to be loaded from server to cache, get new ones then update old ones, else just update old ones
+       if (battleCountDynamo == 0) {
+           noMoreBattles.postValue(true)
+           return
+       }
+
+       //if there is more topBattles to be loaded from server to cache, get new ones then update old ones, else just update old ones
         if (battleCountDynamo == lastAllBattlesDynamoCount) {
                 val oldBattlesList =  battleDao.getAllBattleIDs()
                 // Update old topBattles
@@ -88,7 +93,7 @@ class AllBattlesCacheManager @Inject constructor(
             val newBattlesList = allBattlesDynamoRepository.loadListFromDynamo(startIndex, endIndex)
             val moreBattlesResponse = battlesApi.getFriendsBattles(newBattlesList)
             if (moreBattlesResponse.error == null) {
-                if (moreBattlesResponse.result.sqlResult.size != NETWORK_PAGE_SIZE) {
+                if (moreBattlesResponse.result.sqlResult.size != newBattlesList.size) {
                     noMoreBattles.postValue(true)
                 }
 

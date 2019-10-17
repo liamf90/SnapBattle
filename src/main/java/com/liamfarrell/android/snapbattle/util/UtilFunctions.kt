@@ -1,11 +1,18 @@
 package com.liamfarrell.android.snapbattle.util
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
+import android.widget.ImageView
 import com.liamfarrell.android.snapbattle.R
 import com.liamfarrell.android.snapbattle.app.SnapBattleApp
 import com.squareup.picasso.Callback
 import com.squareup.picasso.NetworkPolicy
 import com.squareup.picasso.Picasso
+import com.squareup.picasso.Target
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import timber.log.Timber
 import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.util.*
@@ -111,18 +118,23 @@ fun getTimeUntil(context: Context, dateAfterNow: Date): String {
 
 
  suspend fun isSignedUrlInPicassoCache(signedUrl: String) : Boolean{
-    return suspendCoroutine<Boolean> {
-        Picasso.get().load(signedUrl).networkPolicy(NetworkPolicy.OFFLINE).fetch()
-        object : Callback {
-            override fun onSuccess() {
-                it.resumeWith(Result.success(true))
-            }
+     return withContext(Dispatchers.Main) {
+          suspendCoroutine<Boolean> {
+             Timber.i("url: %s", signedUrl)
+             Picasso.get().load(signedUrl).networkPolicy(NetworkPolicy.OFFLINE).into(object : Target {
+                 override fun onPrepareLoad(placeHolderDrawable: Drawable?) {}
+                 override fun onBitmapFailed(e: Exception?, errorDrawable: Drawable?) {
+                     Timber.i("bitmap not in picasso cache. url= %s", signedUrl)
+                     it.resumeWith(Result.success(false))
+                 }
 
-            override fun onError(e: Exception?) {
-                it.resumeWith(Result.success(false))
-            }
-        }
-    }
+                 override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
+                     Timber.i("bitmap in picasso cache. url = %s", signedUrl)
+                     it.resumeWith(Result.success(true))
+                 }
+             })
+         }
+     }
 }
 
 

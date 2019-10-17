@@ -5,10 +5,7 @@ import android.app.Application
 import android.content.Context
 import android.content.Intent
 import android.preference.PreferenceManager
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
+import androidx.lifecycle.*
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.liamfarrell.android.snapbattle.R
 import com.liamfarrell.android.snapbattle.data.ProfilePicRepository
@@ -51,10 +48,20 @@ class ProfileViewModel @Inject constructor(private val context: Application, pri
                 errorMessage.value = getErrorMessage(context.applicationContext, result.error)
             }
         }
-
-        awsLambdaFunctionCall(true,
-                suspend {profileResult.value = profileRepository.getProfile()})
     }
+
+    fun getProfile(updateProfilePicImage : ()->Unit){
+        awsLambdaFunctionCall(true, suspend {
+            val profileResponse = profileRepository.getProfile()
+            profileResult.value = profileResponse
+            if (profileResponse.error == null) {
+                val updatedProfilePic = profilePicRepository.checkForUpdate(context, profileResponse.result.sqlResult.get(0).profilePicCount)
+                if (updatedProfilePic){
+                    updateProfilePicImage()
+                } }
+        })
+    }
+
 
 
     fun updateName(name: String){
@@ -95,6 +102,7 @@ class ProfileViewModel @Inject constructor(private val context: Application, pri
                 }
         )
     }
+
 
     fun getProfilePicPath() : String {
         return profilePicRepository.getProfilePictureSavePath(context)

@@ -68,7 +68,7 @@ class FollowingBattlesFeedDynamodbRepository @Inject constructor(val context: Ap
     }
 
     @Throws(AmazonClientException::class)
-    suspend fun getFullFeedUpdateCount(): Any {
+    suspend fun getFullFeedUpdateCount(): Int {
         val cognitoID = IdentityManager.getDefaultIdentityManager().cachedUserID
         val key = HashMap<String, AttributeValue>()
         key["CognitoID"] = AttributeValue().apply {s = cognitoID}

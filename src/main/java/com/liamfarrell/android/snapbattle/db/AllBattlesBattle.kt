@@ -6,11 +6,8 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.liamfarrell.android.snapbattle.model.Battle
 
-//Following Battle
-
-@Entity(tableName = "following_battle")
-data class FollowingBattle (
-        @PrimaryKey @ColumnInfo(name = "battle_id_following") val id : Int,
+@Entity(tableName = "all_battles_battle")
+data class AllBattlesBattle (
         @Embedded
         val battle: Battle,
         @ColumnInfo(name="last_saved_signed_url") val lastSavedSignedUrl : String? = null

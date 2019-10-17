@@ -5,6 +5,7 @@ import androidx.lifecycle.*
 import androidx.paging.PagedList
 import com.liamfarrell.android.snapbattle.data.AllBattlesRepository
 import com.liamfarrell.android.snapbattle.data.ThumbnailSignedUrlCacheRepository
+import com.liamfarrell.android.snapbattle.db.AllBattlesBattle
 import com.liamfarrell.android.snapbattle.model.Battle
 import com.liamfarrell.android.snapbattle.model.BattlesSearchResult
 import kotlinx.coroutines.Dispatchers
@@ -17,18 +18,22 @@ import kotlin.concurrent.fixedRateTimer
 /**
  * The ViewModel used in [AllBattlesFragment].
  */
-class AllBattlesViewModel @Inject constructor(private val allBattlesRepository: AllBattlesRepository, val thumbnailSignedUrlCache: ThumbnailSignedUrlCacheRepository) : ViewModelLaunch() {
+class AllBattlesViewModel @Inject constructor(private val allBattlesRepository: AllBattlesRepository, val thumbnailSignedUrlCacheRepository: ThumbnailSignedUrlCacheRepository) : ViewModelLaunch() {
 
     private val allBattlesResult = MutableLiveData<BattlesSearchResult>()
     private val _noMoreOlderBattles =  allBattlesRepository.isNoMoreOlderBattles
     private val _loadingMoreBattles = allBattlesRepository.isLoadingMoreBattles
 
-    val battles: LiveData<PagedList<Battle>> = Transformations.switchMap(allBattlesResult) { it -> it.data }
+    val battles: LiveData<PagedList<AllBattlesBattle>> = Transformations.switchMap(allBattlesResult) { it -> it.data }
     val networkErrors: LiveData<String> = Transformations.switchMap(allBattlesResult) { it ->
         it.networkErrors
     }
+
+
     val noMoreOlderBattles : LiveData<Boolean> = _noMoreOlderBattles
     val isLoadingMoreBattles : LiveData<Boolean> = _loadingMoreBattles
+
+    val battleIdsOfThumbnailsLoadedList = mutableListOf<Int>()
 
 
 
@@ -48,20 +53,14 @@ class AllBattlesViewModel @Inject constructor(private val allBattlesRepository: 
     }
 
     fun loadThumbnail(b: Battle){
+        if (battleIdsOfThumbnailsLoadedList.contains(b.battleId)) return
+
         viewModelScope.launch {
-            val thumbnailSignedUrl = thumbnailSignedUrlCache.getThumbnailSignedUrl(b)
-            if (thumbnailSignedUrl == null) {
-                //thumbnail not in cache. get new signed url from server
-                b.getSignedUrlFromServer() // TODO: GET SIGNED URL
-            } else {
-                //thumbnail in cache, load from cache
-
-
-            }
-
+            //thumbnail signed url repository will update the signed url for the thumbnail in the room db if needed (not still in picasso cache, not loaded yet etc)
+            //this change will be reflected in the left join of the LiveData of the getAllBattles Dao call and the thumbnail will be auto updated
+            battleIdsOfThumbnailsLoadedList.add(b.battleID)
+            thumbnailSignedUrlCacheRepository.getThumbnailSignedUrl(b)
         }
-
-
     }
 
     companion object{

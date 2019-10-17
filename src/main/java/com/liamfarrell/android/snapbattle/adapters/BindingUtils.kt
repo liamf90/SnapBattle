@@ -15,6 +15,7 @@ import android.view.ViewGroup
 import com.liamfarrell.android.snapbattle.R
 import com.liamfarrell.android.snapbattle.db.SnapBattleDatabase
 import com.squareup.picasso.Callback
+import com.squareup.picasso.NetworkPolicy
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -22,18 +23,28 @@ import java.lang.Exception
 
 @BindingAdapter("profileImage")
 fun loadImage(view: CircleImageView, imageUrl: String?) {
-    Picasso.get().load(imageUrl).placeholder(R.drawable.default_profile_pic100x100).error(R.drawable.default_profile_pic100x100).into(view, object: Callback {
+    //load the image from the cache if it exists, if not, load from server
+    Picasso.get().load(imageUrl).placeholder(R.drawable.default_profile_pic100x100).networkPolicy(NetworkPolicy.OFFLINE).error(R.drawable.default_profile_pic100x100).into(view, object : Callback {
         override fun onSuccess() {
-           Timber.i("On Success")
+            Timber.i("success")
         }
 
         override fun onError(e: Exception?) {
-            Timber.e(e)
-        }
+            Timber.i("url: " + imageUrl + ". error: " + e.toString())
+            Picasso.get().load(imageUrl).placeholder(R.drawable.default_profile_pic100x100).error(R.drawable.default_profile_pic100x100).into(view, object : Callback {
+                override fun onSuccess() {
+                    Timber.i("success")
+                }
 
+                override fun onError(e: Exception?) {
+                    Timber.i("url: " + imageUrl + ". error: " + e.toString())
+                }
+
+
+            })
+        }
     })
 }
-
 
 
 @BindingAdapter("commentText")

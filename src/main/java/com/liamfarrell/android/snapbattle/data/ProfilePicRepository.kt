@@ -32,7 +32,7 @@ class ProfilePicRepository @Inject constructor
     suspend fun uploadProfilePicRepository(context: Context, newPhotoPath: String, profilePicCount: Int)  : AsyncTaskResult<DefaultResponse>  {
 
             try {
-                withContext(Dispatchers.IO) {uploadProfilePicture(context, newPhotoPath)}
+                withContext(Dispatchers.IO) {uploadProfilePicture(context, newPhotoPath, profilePicCount)}
             } catch (e: Exception) {
                 Timber.i(e)
                 return AsyncTaskResult(e)
@@ -46,16 +46,16 @@ class ProfilePicRepository @Inject constructor
         return context.filesDir.absolutePath + "/" + IdentityManager.getDefaultIdentityManager().cachedUserID + "-ProfilePic.png"
     }
 
-    suspend fun checkForUpdate(context: Context) : Boolean {
-        val profilePicCountResponse = getProfilePicCount()
-        return if (profilePicCountResponse.error != null){
-            val profilePicCount = profilePicCountResponse.result.sqlResult.get(0).profilePicCount
+    suspend fun checkForUpdate(context: Context, profilePicCount : Int) : Boolean {
+        //val profilePicCountResponse = getProfilePicCount()
+        //return if (profilePicCountResponse.error != null){
+            //val profilePicCount = profilePicCountResponse.result.sqlResult.get(0).profilePicCount
             if (profilePicCount != getProfilePicCountSharedPrefs(context)){
-                getProfilePictureS3(context)
+                getProfilePictureS3(context, profilePicCount)
                 updateProfilePicCountSharedPrefs(context, profilePicCount)
-                true
-            } else false
-        } else false
+                return true
+            } else return false
+        //} else false
 
     }
 
@@ -84,12 +84,12 @@ class ProfilePicRepository @Inject constructor
         return sharedPref.getInt("PROFILE_PIC_COUNT", 0)
     }
 
-    private suspend fun uploadProfilePicture(context: Context, newPhotoPath: String) =
+    private suspend fun uploadProfilePicture(context: Context, newPhotoPath: String, currentProfilePicCount: Int) =
             suspendCancellableCoroutine<Unit> { continuation ->
                 val s3 = AmazonS3Client(IdentityManager.getDefaultIdentityManager().credentialsProvider)
                 val bucketName = "snapbattlevideos"
                 val newProfilePicFile = File(newPhotoPath)
-                val fileName = getNextProfilePicturePathS3(context)
+                val fileName = getNextProfilePicturePathS3(currentProfilePicCount)
                 val por = PutObjectRequest(bucketName, fileName, newProfilePicFile)
                 por.generalProgressListener = ProgressListener { arg0 ->
                     if (arg0.eventCode == com.amazonaws.event.ProgressEvent.COMPLETED_EVENT_CODE) {
@@ -109,35 +109,37 @@ class ProfilePicRepository @Inject constructor
                 }
             }
 
-    private suspend fun getProfilePictureS3(context: Context) =
-            suspendCancellableCoroutine<Unit> { continuation ->
-                val file = File(getProfilePictureSavePath(context))
-                val s3Path = getProfilePicturePathS3(context)
-                val s3 = AmazonS3Client(IdentityManager.getDefaultIdentityManager().credentialsProvider)
-                val bucketName = "snapbattlevideos"
-                val gor = GetObjectRequest(bucketName, s3Path)
-                gor.generalProgressListener = ProgressListener { arg0 ->
-                    if (arg0.eventCode == com.amazonaws.event.ProgressEvent.COMPLETED_EVENT_CODE) {
+    private suspend fun getProfilePictureS3(context: Context, currentProfilePicCount : Int) =
+            withContext(Dispatchers.IO) {
+                suspendCancellableCoroutine<Unit> { continuation ->
+                    val file = File(getProfilePictureSavePath(context))
+                    val s3Path = getProfilePicturePathS3(currentProfilePicCount)
+                    val s3 = AmazonS3Client(IdentityManager.getDefaultIdentityManager().credentialsProvider)
+                    val bucketName = "snapbattlevideos"
+                    val gor = GetObjectRequest(bucketName, s3Path)
+                    gor.generalProgressListener = ProgressListener { arg0 ->
+                        if (arg0.eventCode == com.amazonaws.event.ProgressEvent.COMPLETED_EVENT_CODE) {
                             continuation.resumeWith(Result.success(Unit))
+                        }
                     }
-                }
-                try {
-                    s3.getObject(gor, file)
-                } catch (exception: Exception) {
-                    continuation.resumeWith(Result.failure(exception))
+                    try {
+                        s3.getObject(gor, file)
+                    } catch (exception: Exception) {
+                        continuation.resumeWith(Result.failure(exception))
+                    }
                 }
             }
 
-    private fun getProfilePicturePathS3(context: Context): String {
+    private fun getProfilePicturePathS3(currentProfilePicCount: Int): String {
         try {
-            return IdentityManager.getDefaultIdentityManager().cachedUserID + "/" + IdentityManager.getDefaultIdentityManager().cachedUserID + "-" + getProfilePicCountSharedPrefs(context) + "-ProfilePic.png"
+            return IdentityManager.getDefaultIdentityManager().cachedUserID + "/" + IdentityManager.getDefaultIdentityManager().cachedUserID + "-" + currentProfilePicCount + "-ProfilePic.png"
         } catch (e: com.amazonaws.services.cognitoidentity.model.NotAuthorizedException) {
             return ""
         }
     }
 
-    private fun getNextProfilePicturePathS3(context: Context): String {
-        val nextProfilePicCount = getProfilePicCountSharedPrefs(context) + 1
+    private fun getNextProfilePicturePathS3(currentProfilePicCount: Int): String {
+        val nextProfilePicCount = currentProfilePicCount + 1
         return IdentityManager.getDefaultIdentityManager().cachedUserID + "/" + IdentityManager.getDefaultIdentityManager().cachedUserID + "-" + nextProfilePicCount + "-ProfilePic.png"
     }
 

@@ -43,10 +43,12 @@ class FollowingBattlesFeedCacheManager @Inject constructor(
             val moreBattlesIDList = followingBattlesFeedDynamoRepository.loadListFromDynamo(startIndex, endIndex)
             val moreBattlesResponse = battlesApi.getFriendsBattles(moreBattlesIDList)
             if (moreBattlesResponse.error == null) {
+                followingBattleDao.insertAll( moreBattlesResponse.result.sqlResult.map { FollowingBattle(it.battleId, battle = it)})
+
                 if (moreBattlesResponse.result.sqlResult.size != NETWORK_PAGE_SIZE) {
                     noMoreBattles.postValue(true)
                 }
-                followingBattleDao.insertAll( moreBattlesResponse.result.sqlResult.map { FollowingBattle(it.battleId, battle = it)})
+
             } else{
                 //ERROR
             }
@@ -62,11 +64,16 @@ class FollowingBattlesFeedCacheManager @Inject constructor(
         val battleCountDynamo = followingBattlesFeedDynamoRepository.getBattlesCountDynamo()
         val lastAllBattlesDynamoCount = followingBattlesFeedDynamoInfoDao.getDynamoCount()
          val fullFeedUpdateDynamoCount = followingBattlesFeedDynamoRepository.getFullFeedUpdateCount()
-         val lastfullFeedUpdateCount = followingBattlesFeedDynamoInfoDao.getLastFullFeedUpdateDynamoCount()
+         val lastFullFeedUpdateCount = followingBattlesFeedDynamoInfoDao.getLastFullFeedUpdateDynamoCount()
 
-        if (fullFeedUpdateDynamoCount != lastfullFeedUpdateCount){
+       if (battleCountDynamo == 0) {
+           noMoreBattles.postValue(true)
+           return
+       }
+
+        if (fullFeedUpdateDynamoCount != lastFullFeedUpdateCount){
             //feed order has been changed around. clear database, then re-add topBattles
-            followingBattlesFeedDynamoInfoDao.insert(FollowingBattlesDynamoCount())
+            followingBattlesFeedDynamoInfoDao.insert(FollowingBattlesDynamoCount(full_feed_update_bound = fullFeedUpdateDynamoCount))
             followingBattleDao.deleteAllBattles()
             checkForUpdates()
             return
@@ -98,13 +105,8 @@ class FollowingBattlesFeedCacheManager @Inject constructor(
                 val newBattlesList = followingBattlesFeedDynamoRepository.loadListFromDynamo(startIndex, endIndex)
                 val moreBattlesResponse = battlesApi.getFriendsBattles(newBattlesList)
                 if (moreBattlesResponse.error == null) {
-                    if (moreBattlesResponse.result.sqlResult.size != NETWORK_PAGE_SIZE) {
-                        noMoreBattles.postValue(true)
-                    }
-
                     followingBattleDao.insertAll(moreBattlesResponse.result.sqlResult.map { FollowingBattle(it.battleId, it) })
                     followingBattlesFeedDynamoInfoDao.updateFollowingBattlesDynamoCount(battleCountDynamo)
-
                 } else {
                     //ERROR
                 }

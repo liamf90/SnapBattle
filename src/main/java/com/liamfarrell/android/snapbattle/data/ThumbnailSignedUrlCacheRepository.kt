@@ -34,7 +34,7 @@ class ThumbnailSignedUrlCacheRepository @Inject constructor(private val thumbnai
             } else {
                 //get from server and update cache
                 val signedUrlResponse = getSignedUrlFromServer(battle)
-                if (signedUrlResponse.error != null) {
+                if (signedUrlResponse.error == null) {
                     insertOrUpdateThumbnailSignedUrl(signedUrlResponse.result, battle.battleID)
                     signedUrlResponse.result
                 } else null
@@ -42,7 +42,7 @@ class ThumbnailSignedUrlCacheRepository @Inject constructor(private val thumbnai
         } else {
             //get from server and update cache
             val signedUrlResponse = getSignedUrlFromServer(battle)
-            return if (signedUrlResponse.error != null) {
+            return if (signedUrlResponse.error == null) {
                 insertOrUpdateThumbnailSignedUrl(signedUrlResponse.result, battle.battleID)
                 signedUrlResponse.result
             } else null
