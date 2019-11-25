@@ -44,6 +44,8 @@
                     android:layout_weight="0"
 					android:layout_height="wrap_content"
 					android:layout_gravity="end"
+					android:background="@drawable/button_main_selector"
+					android:textColor="@color/primary_text"
 					android:text="@string/enter_username"/>
 			</LinearLayout>
 

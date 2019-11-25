@@ -15,15 +15,13 @@ import com.liamfarrell.android.snapbattle.model.User
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.GetProfileResponse
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.UpdateUsernameResponse
 import com.liamfarrell.android.snapbattle.mvvm_ui.startup.ChooseProfilePictureStartupFragment
-import com.liamfarrell.android.snapbattle.ui.FacebookLoginFragment
-import com.liamfarrell.android.snapbattle.ui.startup.ChooseUsernameStartupFragment
+import com.liamfarrell.android.snapbattle.mvvm_ui.startup.ChooseUsernameStartupFragment
+import com.liamfarrell.android.snapbattle.mvvm_ui.startup.LoggedInFragment
 import com.liamfarrell.android.snapbattle.util.CustomError
 import com.liamfarrell.android.snapbattle.util.getErrorMessage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import timber.log.Timber
-import java.io.File
 import javax.inject.Inject
 
 /**
@@ -86,7 +84,7 @@ class ProfileViewModel @Inject constructor(private val context: Application, pri
                     if (response.result != null){
                         if (response.result.result == UpdateUsernameResponse.resultUsernameUpdated) {
                             val sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context)
-                            sharedPrefs.edit().putString(FacebookLoginFragment.USERNAME_SHAREDPREFS, username).commit()
+                            sharedPrefs.edit().putString(LoggedInFragment.USERNAME_SHAREDPREFS, username).commit()
                             //update textview in main callbacks showing username
                             //TODO(callbacks as ActivityMainNavigationDrawer).loadUsernameAndName()
                             _snackBarMessage.value = context.getString(R.string.username_updated_snackbar_message)

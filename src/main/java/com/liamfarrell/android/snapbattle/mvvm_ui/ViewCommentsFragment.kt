@@ -26,7 +26,6 @@ import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.snackbar.Snackbar
 import com.liamfarrell.android.snapbattle.R
 import com.liamfarrell.android.snapbattle.di.Injectable
-import com.liamfarrell.android.snapbattle.ui.FullBattleVideoPlayerActivity
 import java.lang.IllegalStateException
 import java.util.*
 import javax.inject.Inject
@@ -65,13 +64,18 @@ class ViewCommentsFragment : Fragment(), Injectable {
         return binding.root
     }
 
+
     private fun subscribeUi(adapter: CommentsListAdapter) {
         viewModel.comments.observe(viewLifecycleOwner, Observer {commentsList ->
-            adapter.submitList(commentsList)
+            adapter.submitList(commentsList.toList())
         })
 
         viewModel.snackBarMessage.observe(viewLifecycleOwner, Observer {snackBarMessage ->
             Snackbar.make(parentCoordinatorLayout, snackBarMessage, Snackbar.LENGTH_LONG).show()
+        })
+
+        viewModel.errorMessage.observe(viewLifecycleOwner, Observer {
+            it?.let{Toast.makeText(context, it, Toast.LENGTH_SHORT).show()}
         })
     }
 

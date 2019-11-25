@@ -12,6 +12,7 @@ import com.liamfarrell.android.snapbattle.app.SnapBattleApp
 import com.liamfarrell.android.snapbattle.data.BattlesRepository
 import com.liamfarrell.android.snapbattle.model.Battle
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.CreateBattleResponse
+import com.liamfarrell.android.snapbattle.mvvm_ui.create_battle.VerifyBattleFragmentDirections
 import com.liamfarrell.android.snapbattle.util.BannedError
 import com.liamfarrell.android.snapbattle.util.CustomError
 import com.liamfarrell.android.snapbattle.util.getErrorMessage
@@ -40,7 +41,8 @@ class VerifyBattleViewModel @Inject constructor(private val context: Application
                         else -> {
                             //successfully created battle, go to next fragment
                             // set snackbar data to (R.string.battle_request_sent_snackbar_message)
-                            view.findNavController().navigate(R.id.action_verifyBattleFragment_to_bottomNavigationDrawerFragment)
+                            val directions = VerifyBattleFragmentDirections.actionVerifyBattleFragmentToBottomNavigationDrawerFragment(R.string.battle_request_sent_snackbar_message)
+                            view.findNavController().navigate(directions)
 
                         }
                     }

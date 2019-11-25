@@ -48,6 +48,8 @@
             android:id="@+id/NoBattlesTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
             android:layout_gravity="center_vertical|center_horizontal"
             android:text="@string/no_battles"
             android:textColor="@android:color/black"

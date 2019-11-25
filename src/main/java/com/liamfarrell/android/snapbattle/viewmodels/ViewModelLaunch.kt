@@ -4,9 +4,11 @@ import android.view.View
 import android.widget.FrameLayout
 import androidx.databinding.BindingAdapter
 import androidx.lifecycle.*
+import com.liamfarrell.android.snapbattle.testing.OpenForTesting
+import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.*
 
-
+@OpenForTesting
 open class ViewModelLaunch : ViewModel() {
 
 
@@ -15,6 +17,7 @@ open class ViewModelLaunch : ViewModel() {
 
     val spinner : LiveData<Boolean> = _spinner
 
+    protected val compositeDisposable = CompositeDisposable()
 
     protected val _snackBarMessage = MutableLiveData<String>()
     val snackBarMessage : LiveData<String> = _snackBarMessage
@@ -48,6 +51,7 @@ open class ViewModelLaunch : ViewModel() {
     override fun onCleared() {
         super.onCleared()
         viewModelScope.cancel()
+        compositeDisposable.clear()
     }
 
 

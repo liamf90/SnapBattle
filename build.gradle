@@ -1,8 +1,16 @@
 //noinspection GradleCompatible
 apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android-extensions'
+
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-allopen'
+
+allOpen {
+    // allows mocking for classes w/o directly opening them for release builds
+    annotation 'com.liamfarrell.android.snapbattle.testing.OpenClass'
+}
+
 
 android {
     compileSdkVersion 28
@@ -13,6 +21,7 @@ android {
         applicationId "com.liamfarrell.android.snapbattle"
         minSdkVersion 23
         targetSdkVersion 28
+        testInstrumentationRunner "com.liamfarrell.android.snapbattle.util.SnapBattleTestRunner"
         compileOptions {
             sourceCompatibility JavaVersion.VERSION_1_8
             targetCompatibility JavaVersion.VERSION_1_8
@@ -21,6 +30,14 @@ android {
         kotlinOptions {
             jvmTarget = "1.8"
         }
+        testOptions {
+            unitTests.includeAndroidResources = true
+        }
+        sourceSets {
+            androidTest.java.srcDirs += "src/test-common/java"
+            test.java.srcDirs += "src/test-common/java"
+        }
+
 
 
     }
@@ -82,9 +99,10 @@ dependencies {
     implementation 'com.squareup.picasso:picasso:2.71828'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     implementation 'androidx.multidex:multidex:2.0.1'
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.1.1'
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.1.1'
-    implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.2'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.2'
+
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.1.0'
     implementation 'com.jakewharton.timber:timber:4.7.1'
     implementation "com.google.dagger:dagger:2.16"
     implementation "com.google.dagger:dagger-android:2.16"
@@ -116,17 +134,17 @@ dependencies {
     //compile fileTree(dir: 'libs', include: ['.so'])
     // compile fileTree(include: ['*.jar'], dir: 'libs')
     //implementation 'com.facebook.android:facebook-android-sdk:4.29.0'
-    implementation 'com.facebook.android:facebook-android-sdk:[5,6)'
+    implementation 'com.facebook.android:facebook-android-sdk:5.9.0'
     //compile project(':facebook')
     //noinspection GradleCompatible
-    implementation 'androidx.appcompat:appcompat:1.0.2'
+    implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'com.google.android.material:material:1.0.0'
     implementation 'org.apmem.tools:layouts:1.10@aar'
     //compile ('com.writingminds:FFmpegAndroid:0.3.2') {changing = true}
     implementation 'com.theartofdev.edmodo:android-image-cropper:2.4.7'
     implementation 'de.hdodenhof:circleimageview:2.1.0'
     implementation 'androidx.cardview:cardview:1.0.0'
-    implementation 'androidx.recyclerview:recyclerview:1.0.0'
+    implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'com.karumi:dexter:4.2.0'
     implementation 'org.apache.commons:commons-io:1.3.2'
     //compile ('com.android.support:design:21.0.0'){force = true}
@@ -157,7 +175,23 @@ dependencies {
     compile files('libs/gradle-wrapper.jar')
     compile files('libs/org.apache.http.legacy.jar')
     //'com.google.android.gms:play-services:10.2.1'
-    implementation 'com.google.android.gms:play-services-gcm:16.1.0'
+    implementation 'com.google.android.gms:play-services-gcm:17.0.0'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation "io.reactivex.rxjava2:rxjava:2.1.9"
+    implementation "io.reactivex.rxjava2:rxjava:2.2.4"
+    implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
+    implementation "com.github.koushikcse:LoadingButton:1.4"
+    testImplementation 'junit:junit:4.12'
+    testImplementation 'org.mockito:mockito-core:2.25.0'
+    testImplementation 'org.hamcrest:hamcrest-junit:2.0.0.0'
+    testImplementation "androidx.arch.core:core-testing:2.1.0"
+    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.3.2'
+    androidTestImplementation "androidx.arch.core:core-testing:2.1.0"
+    androidTestImplementation 'junit:junit:4.12'
+    androidTestImplementation 'org.mockito:mockito-core:2.25.0'
+    androidTestImplementation 'org.mockito:mockito-android:2.25.0'
+    androidTestImplementation 'androidx.test:core:1.2.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-contrib:3.2.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-intents:3.2.0'
+    androidTestImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.3.2'
 }

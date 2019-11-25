@@ -17,11 +17,12 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
+        app:layout_collapseMode="none"
         android:layout_width="match_parent"
         android:layout_height="@dimen/user_info_header_height"
         android:layout_gravity="bottom"
         android:layout_marginBottom="@dimen/activity_vertical_margin"
-        app:layout_collapseMode="none">
+        >
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/profileImageView"
@@ -46,6 +47,7 @@
             android:layout_marginEnd="@dimen/user_info_header_margins_default"
             android:layout_marginTop="@dimen/user_info_header_margins_default"
             android:layout_toEndOf="@id/profileImageView"
+            android:clickable="@{user.isFollowingChangeInProgress ? false : true}"
             android:onClick="@{user.isFollowing ? unfollowUserClickListener : followUserClickListener}"
             android:text="@{user.isFollowing ? @string/unfollow : @string/follow}"
             app:layout_constraintEnd_toEndOf="parent"

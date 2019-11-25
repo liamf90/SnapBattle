@@ -1,5 +1,6 @@
 package com.liamfarrell.android.snapbattle
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -23,13 +24,19 @@ interface HideAndShowBottomNavigation{
 
 
 class MainActivity : AppCompatActivity(), HasSupportFragmentInjector, HideAndShowBottomNavigation {
+    companion object {
+        val HOME_BUTTON_PRESSED_INTENT = "com.liamfarrell.android.snapbattle.MainActivity.HOME_BUTTON_PRESSED"
+        val SEARCH_BUTTON_PRESSED_INTENT = "com.liamfarrell.android.snapbattle.MainActivity.SEARCH_BUTTON_PRESSED"
+    }
+
     @Inject
     lateinit var dispatchingAndroidInjector: DispatchingAndroidInjector<Fragment>
+
 
     private val notificationHostFragment : NotificationHostFragment by lazy {NotificationHostFragment()}
     private val navigationHostFragmnet : NavigationHostFragment by lazy { NavigationHostFragment() }
     private val searchUsersAndBattlesFragment : SearchHostFragment by lazy { SearchHostFragment() }
-    private val homeFragment : HomeHostFragment by lazy { HomeHostFragment() }
+    private val homeFragment : HomeHostFragment by lazy {HomeHostFragment()}
 
 
 
@@ -40,10 +47,18 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector, HideAndSho
                 return@OnNavigationItemSelectedListener true
             }
             R.id.navigation_home -> {
+                //scroll up
+                val intent = Intent(HOME_BUTTON_PRESSED_INTENT)
+                sendBroadcast(intent)
+
                 loadFragment(homeFragment)
                 return@OnNavigationItemSelectedListener true
             }
             R.id.navigation_search -> {
+                //send broadcast for battlesFromName/UersBattles fragments to go back to root navigation node if currently visible and from the search navigation
+                val intent = Intent(SEARCH_BUTTON_PRESSED_INTENT)
+                sendBroadcast(intent)
+
                 loadFragment(searchUsersAndBattlesFragment)
                 return@OnNavigationItemSelectedListener true
             }

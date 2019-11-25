@@ -51,21 +51,21 @@ class FollowingBattlesFeedPagingListAdapter(val onBattleLoadedByAdapter : (b : B
 
     private fun createThumbnailOnClickListener(battle: Battle): View.OnClickListener {
         return View.OnClickListener {
-            val direction = HomeFragmentDirections.actionNavigationHomeToFullBattleVideoPlayerFragment(battle.battleId,  battle.getServerFinalVideoUrl(battle.challengerCognitoID), battle.challengerUsername, battle.challengedUsername)
+            val direction = HomeFragmentDirections.actionNavigationHomeToNavigationFullBattleVideo(battle.battleId,  battle.getServerFinalVideoUrl(battle.challengerCognitoID), battle.challengerUsername, battle.challengedUsername)
             it.findNavController().navigate(direction)
         }
     }
 
     private fun createChallengerOnClickListener(challengerCognitoID: String): View.OnClickListener {
         return View.OnClickListener {
-            val direction = HomeFragmentDirections.actionNavigationHomeToUsersBattlesFragment2(challengerCognitoID)
+            val direction = HomeFragmentDirections.actionNavigationHomeToNavigationUsersBattles(challengerCognitoID)
             it.findNavController().navigate(direction)
         }
     }
 
     private fun createChallengedOnClickListener(challengedCognitoID: String): View.OnClickListener {
         return View.OnClickListener {
-            val direction = HomeFragmentDirections.actionNavigationHomeToUsersBattlesFragment2(challengedCognitoID)
+            val direction = HomeFragmentDirections.actionNavigationHomeToNavigationUsersBattles(challengedCognitoID)
             it.findNavController().navigate(direction)
         }
     }

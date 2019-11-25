@@ -20,14 +20,23 @@ import com.liamfarrell.android.snapbattle.R
 import com.liamfarrell.android.snapbattle.databinding.FragmentChooseUsernameStartupBinding
 import com.liamfarrell.android.snapbattle.di.Injectable
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.UpdateUsernameRequest
-import com.liamfarrell.android.snapbattle.ui.FacebookLoginFragment
 import com.liamfarrell.android.snapbattle.viewmodels.startup.ChooseUsernameStartupViewModel
 import kotlinx.android.synthetic.main.fragment_choose_username_startup.*
 import java.lang.ClassCastException
 import javax.inject.Inject
 
 
+
+
+
 class ChooseUsernameStartupFragment : Fragment() , Injectable {
+
+    companion object{
+        val usernamameNotValidErorrCode = "USERNAME_NOT_VALID"
+        val usernameTooLongErrorCode = "USERNAME_TOO_LONG"
+        val usernameUsernameAlreadyExistsErrorCode = "USERNAME_ALREADY_EXISTS"
+    }
+
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
@@ -84,7 +93,7 @@ class ChooseUsernameStartupFragment : Fragment() , Injectable {
         val newUsername = usernameEditText.getText().toString()
         if (defaultUsername == newUsername) {
             val sharedPref = PreferenceManager.getDefaultSharedPreferences(activity!!.applicationContext)
-            sharedPref.edit().putString(FacebookLoginFragment.USERNAME_SHAREDPREFS, newUsername).commit()
+            sharedPref.edit().putString(LoggedInFragment.USERNAME_SHAREDPREFS, newUsername).commit()
             nextActivity()
         } else {
             val request = UpdateUsernameRequest()

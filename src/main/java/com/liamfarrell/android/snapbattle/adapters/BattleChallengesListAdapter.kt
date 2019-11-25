@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -11,6 +12,7 @@ import com.amazonaws.mobile.auth.core.IdentityManager
 import com.liamfarrell.android.snapbattle.R
 import com.liamfarrell.android.snapbattle.databinding.ListItemBattleChallengeBinding
 import com.liamfarrell.android.snapbattle.model.Battle
+import com.liamfarrell.android.snapbattle.mvvm_ui.BattleChallengesListFragmentDirections
 
 /**
  * Adapter for the [RecyclerView] in [BattleChallengesListFragment].
@@ -62,6 +64,8 @@ class BattleChallengesListAdapter(val callbacks: BattleChallengesAdapterCallback
     private fun getProfilePicOnClickListener(cognitoIdOpponent: String): View.OnClickListener {
         return View.OnClickListener {
             //go to user
+            val direction = BattleChallengesListFragmentDirections.actionBattleChallengesListFragmentToNavigationUsersBattles(cognitoIdOpponent)
+            it.findNavController().navigate(direction)
         }
     }
 

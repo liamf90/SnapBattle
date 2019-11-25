@@ -2,7 +2,6 @@ package com.liamfarrell.android.snapbattle.notifications;
 
 import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
@@ -12,10 +11,7 @@ import android.text.style.StyleSpan;
 import androidx.navigation.NavDeepLinkBuilder;
 
 import com.liamfarrell.android.snapbattle.MainActivity;
-import com.liamfarrell.android.snapbattle.app.SnapBattleApp;
 import com.liamfarrell.android.snapbattle.R;
-import com.liamfarrell.android.snapbattle.ui.ViewBattleActivity;
-import com.liamfarrell.android.snapbattle.ui.ViewBattleFragment;
 
 public class NewCommentNotification extends Notification {
     private String mOpponentCognitoId;

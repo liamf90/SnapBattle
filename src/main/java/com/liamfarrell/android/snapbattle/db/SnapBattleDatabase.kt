@@ -12,7 +12,6 @@ import com.liamfarrell.android.snapbattle.data.AllBattlesDynamoCount
 import com.liamfarrell.android.snapbattle.model.Battle
 import com.liamfarrell.android.snapbattle.model.User
 import com.liamfarrell.android.snapbattle.notifications.NotificationDb
-import com.liamfarrell.android.snapbattle.workers.AllBattlesFeedDatabaseWorker
 
 /**
  * Database schema for the Room Database of the app
@@ -44,28 +43,28 @@ abstract class SnapBattleDatabase : RoomDatabase() {
     abstract fun followingBattlesFeedDynamoDataDao() : FollowingBattlesFeedDynamoDataDao
     abstract fun followingBattlesDao() : FollowingBattleDao
 
-    companion object {
-
-        @Volatile
-        private var INSTANCE: SnapBattleDatabase? = null
-
-        fun getInstance(context: Context): SnapBattleDatabase =
-                INSTANCE ?: synchronized(this) {
-                    INSTANCE
-                            ?: buildDatabase(context).also { INSTANCE = it }
-                }
-
-        private fun buildDatabase(context: Context) =
-                Room.databaseBuilder(context.applicationContext,
-                        SnapBattleDatabase::class.java, "SnapBattle.db")
-                        .addCallback(object : RoomDatabase.Callback() {
-                            override fun onCreate(db: SupportSQLiteDatabase) {
-                                super.onCreate(db)
-                                val request = OneTimeWorkRequestBuilder<AllBattlesFeedDatabaseWorker>().build()
-                                WorkManager.getInstance().enqueue(request)
-                            }
-                        })
-                 .fallbackToDestructiveMigration()
-                 .build()
-    }
+//    companion object {
+//
+//        @Volatile
+//        private var INSTANCE: SnapBattleDatabase? = null
+//
+//        fun getInstance(context: Context): SnapBattleDatabase =
+//                INSTANCE ?: synchronized(this) {
+//                    INSTANCE
+//                            ?: buildDatabase(context).also { INSTANCE = it }
+//                }
+//
+//        private fun buildDatabase(context: Context) =
+//                Room.databaseBuilder(context.applicationContext,
+//                        SnapBattleDatabase::class.java, "SnapBattle.db")
+////                        .addCallback(object : RoomDatabase.Callback() {
+////                            override fun onCreate(db: SupportSQLiteDatabase) {
+////                                super.onCreate(db)
+////                                //val request = OneTimeWorkRequestBuilder<AllBattlesFeedDatabaseWorker>().build()
+////                                WorkManager.getInstance().enqueue(request)
+////                            }
+////                        })
+//                 .fallbackToDestructiveMigration()
+//                 .build()
+//    }
 }

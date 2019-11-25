@@ -9,6 +9,7 @@ import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserializat
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.SignedUrlsRequest
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.BattleTypeSuggestionsSearchResponse
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.GetSignedUrlsResponse
+import com.liamfarrell.android.snapbattle.testing.OpenForTesting
 import com.liamfarrell.android.snapbattle.util.executeAWSFunction
 import com.liamfarrell.android.snapbattle.util.isSignedUrlInPicassoCache
 import com.squareup.picasso.Callback
@@ -24,6 +25,7 @@ import javax.inject.Singleton
 import kotlin.coroutines.suspendCoroutine
 
 @Singleton
+@OpenForTesting
 class OtherUsersProfilePicUrlRepository @Inject constructor(private val otherUsersProfilePicUrlDao: OtherUsersProfilePicUrlDao, private val lambdaFunctionsInterface: LambdaFunctionsInterface){
 
     suspend fun getOrUpdateProfilePicSignedUrl(cognitoID: String, profilePicCount: Int, signedUrlNew: String) : String {

@@ -11,6 +11,7 @@ import com.liamfarrell.android.snapbattle.model.BattlesSearchResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import kotlin.concurrent.fixedRateTimer
 
@@ -51,6 +52,13 @@ class AllBattlesViewModel @Inject constructor(private val allBattlesRepository: 
             }
         }
     }
+
+    fun updateAllBattles(){
+        awsLambdaFunctionCall(true){
+            withContext(Dispatchers.IO) {
+                allBattlesRepository.updateBattles()
+            }
+        }}
 
     fun loadThumbnail(b: Battle){
         if (battleIdsOfThumbnailsLoadedList.contains(b.battleId)) return

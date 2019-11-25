@@ -2,17 +2,13 @@ package com.liamfarrell.android.snapbattle.notifications;
 
 import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.text.SpannableStringBuilder;
 
 import androidx.navigation.NavDeepLinkBuilder;
 
 import com.liamfarrell.android.snapbattle.MainActivity;
-import com.liamfarrell.android.snapbattle.app.SnapBattleApp;
 import com.liamfarrell.android.snapbattle.R;
-import com.liamfarrell.android.snapbattle.ui.ViewBattleActivity;
-import com.liamfarrell.android.snapbattle.ui.ViewBattleFragment;
 
 /**
  * Created by Liam on 10/11/2017.

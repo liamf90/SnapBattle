@@ -1,9 +1,7 @@
 package com.liamfarrell.android.snapbattle.di
 
 import android.app.Application
-import android.content.Context
 import com.amazonaws.auth.AWSCredentialsProvider
-import com.amazonaws.auth.CognitoCachingCredentialsProvider
 import com.amazonaws.mobile.auth.core.IdentityManager
 import com.amazonaws.mobile.client.AWSMobileClient
 import com.amazonaws.mobileconnectors.lambdainvoker.LambdaInvokerFactory
@@ -11,13 +9,17 @@ import com.amazonaws.regions.Regions
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.LambdaFunctionsInterface
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.deserializers.CustomLambdaDataBinder
-import com.liamfarrell.android.snapbattle.ui.FacebookLoginFragment
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
 
 @Module
 class AWSModule{
+    @Provides
+    fun identityManager() : IdentityManager {
+        return IdentityManager.getDefaultIdentityManager()
+    }
+
     @Provides
     fun amazonDynamoDBClient(credentialsProvider: AWSCredentialsProvider): AmazonDynamoDBClient {
         return AmazonDynamoDBClient(credentialsProvider);

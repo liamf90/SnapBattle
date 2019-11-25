@@ -40,7 +40,7 @@ class ChooseVotingFragment : Fragment(), View.OnClickListener{
     private fun setToolbar(toolbar : androidx.appcompat.widget.Toolbar){
         (activity as AppCompatActivity).setSupportActionBar(toolbar)
         (activity as AppCompatActivity).supportActionBar?.title = "Choose Voting";
-        (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true);
+        (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false);
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater : MenuInflater) {

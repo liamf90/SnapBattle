@@ -2,20 +2,20 @@ package com.liamfarrell.android.snapbattle.viewmodels
 
 import android.app.Application
 import androidx.lifecycle.*
-import com.liamfarrell.android.snapbattle.caches.FollowingUserCache
 import com.liamfarrell.android.snapbattle.data.FollowingRepository
+import com.liamfarrell.android.snapbattle.data.FollowingUserCacheManager
 import com.liamfarrell.android.snapbattle.data.OtherUsersProfilePicUrlRepository
 import com.liamfarrell.android.snapbattle.model.AsyncTaskResult
 import com.liamfarrell.android.snapbattle.model.User
 import com.liamfarrell.android.snapbattle.util.getErrorMessage
 import com.liamfarrell.android.snapbattle.util.notifyObserver
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
  * The ViewModel used in [ViewFollowingFragment].
  */
-class FollowingViewModel @Inject constructor(private val context: Application, private val followingRepository : FollowingRepository, private val otherUsersProfilePicUrlRepository: OtherUsersProfilePicUrlRepository) : ViewModelLaunch() {
+class FollowingViewModel @Inject constructor(private val context: Application, private val followingRepository : FollowingRepository,
+                                             private val otherUsersProfilePicUrlRepository: OtherUsersProfilePicUrlRepository, private val followingUserCacheManager: FollowingUserCacheManager) : ViewModelLaunch() {
 
     private val profilePicMap = mutableMapOf<String, String>()
 
@@ -33,7 +33,7 @@ class FollowingViewModel @Inject constructor(private val context: Application, p
 
     init {
         following.addSource(followingUsersResponse){
-            if (it.error != null) {
+            if (it.error == null) {
                following.value = it.result
             }
         }
@@ -42,53 +42,86 @@ class FollowingViewModel @Inject constructor(private val context: Application, p
                 suspend {
                     val response = followingRepository.getFollowing()
                     if (response.error == null) {
+                        //set all users as following
+                        response.result.forEach { it.isFollowing = true }
                         //get profile pic signed urls from either db cache (if they exist + are current pics) or use the new signed urls
                         response.result = getProfilePicSignedUrls(response.result).toMutableList()
+                        followingUsersResponse.value = response
                     }
-                    followingUsersResponse.value = followingRepository.getFollowing()})
+                    followingUsersResponse.value = response})
     }
 
     fun removeFollowing(cognitoIDUnfollow: String) {
-        awsLambdaFunctionCall(true,
-                suspend {
-                    val result = followingRepository.removeFollowing(cognitoIDUnfollow)
-                    result.let {
-                        //remove user from list
-                        followingUsersResponse.value?.result?.remove(followingUsersResponse.value?.result?.find { it.cognitoId == cognitoIDUnfollow })
-                        followingUsersResponse.notifyObserver()
+        awsLambdaFunctionCall(false) {
+            following.value?.find{it.cognitoId == cognitoIDUnfollow}?.apply {
+                isFollowing = false
+                isFollowingChangeInProgress = true
+            }
+            following.notifyObserver()
 
-                        //Update following user cache
-                        FollowingUserCache.get(context, null).updateCache(context, null)
-                }}
-        )
+            val response = followingRepository.removeFollowing(cognitoIDUnfollow)
+            if (response.error != null){
+                followingUsersResponse.value = AsyncTaskResult(response.error)
+                following.value?.find{it.cognitoId == cognitoIDUnfollow}?.run {
+                    isFollowing = true
+                    isFollowingChangeInProgress = false
+                }
+                following.notifyObserver()
+            } else {
+                following.value?.find{it.cognitoId == cognitoIDUnfollow}?.isFollowingChangeInProgress = false
+                following.notifyObserver()
+
+                followingUserCacheManager.checkForUpdates()
+            }
+        }
     }
+
+    fun followUser(cognitoID: String) {
+            awsLambdaFunctionCall(false) {
+                following.value?.find{it.cognitoId == cognitoID}?.apply {
+                    isFollowing = true
+                    isFollowingChangeInProgress = true
+                }
+                following.notifyObserver()
+
+
+                val response = followingRepository.addFollowingCognitoId(cognitoID)
+                if (response.error != null){
+                    followingUsersResponse.value = AsyncTaskResult(response.error)
+                    following.value?.find{it.cognitoId == cognitoID}?.run {
+                        isFollowing = false
+                        isFollowingChangeInProgress = false
+                    }
+                    following.notifyObserver()
+                } else {
+                    following.value?.find{it.cognitoId == cognitoID}?.isFollowingChangeInProgress = false
+                    following.notifyObserver()
+
+                    followingUserCacheManager.checkForUpdates()
+                }
+            }
+        }
 
 
     fun addFollowing(username: String) {
-        awsLambdaFunctionCall(true,
-                suspend {
+        awsLambdaFunctionCall(true) {
                     val asyncResult = followingRepository.addFollowing(username)
-
                     if (asyncResult.error != null){
-                        followingUsersResponse.value?.error = asyncResult.error
-                        followingUsersResponse.notifyObserver()
+                        followingUsersResponse.value = AsyncTaskResult(asyncResult.error)
                     } else {
                         //Get the profle pic signed urls to use
                         asyncResult.result?.sqlResult?.let { asyncResult.result.sqlResult = getProfilePicSignedUrls(it.toList())}
 
                         //Add the added user to the list
                         asyncResult.result?.sqlResult?.forEach {
-                            followingUsersResponse.value?.result?.add(it)
+                            following.value?.add(it)
                         }
 
-                        followingUsersResponse.notifyObserver()
+                        following.notifyObserver()
 
-                        //Update following user cache
-                        FollowingUserCache.get(context, null).updateCache(context, null)
+                        followingUserCacheManager.checkForUpdates()
                     }
                 }
-
-        )
     }
 
 

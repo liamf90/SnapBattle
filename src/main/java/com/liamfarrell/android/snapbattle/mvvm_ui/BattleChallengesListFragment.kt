@@ -10,6 +10,10 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.NavController
+import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.facebook.AccessToken
 import com.facebook.CallbackManager
 import com.facebook.FacebookCallback
@@ -24,6 +28,8 @@ import com.liamfarrell.android.snapbattle.di.Injectable
 import com.liamfarrell.android.snapbattle.model.Battle
 import com.liamfarrell.android.snapbattle.mvvm_ui.create_battle.ChooseVotingFragment
 import com.liamfarrell.android.snapbattle.viewmodels.BattleChallengesViewModel
+import kotlinx.android.synthetic.main.fragment_challenges_list.*
+import kotlinx.android.synthetic.main.fragment_friends_battle_list.*
 import java.util.*
 import javax.inject.Inject
 
@@ -43,15 +49,20 @@ class BattleChallengesListFragment : Fragment(), BattleChallengesAdapterCallback
 
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(BattleChallengesViewModel::class.java)
         binding.recyclerList.adapter = adapter
+        binding.recyclerList.addItemDecoration(DividerItemDecoration(context, LinearLayoutManager.VERTICAL))
         binding.viewModel = viewModel
-
-        subscribeUi(adapter)
+        subscribeUi(binding, adapter)
         return binding.root
     }
 
-    private fun subscribeUi(adapter: BattleChallengesListAdapter) {
+    private fun subscribeUi(binding : FragmentChallengesListBinding, adapter: BattleChallengesListAdapter) {
         viewModel.battles.observe(viewLifecycleOwner, Observer { battlesList ->
-            battlesList?.let{adapter.submitList(battlesList.toList())}
+            battlesList?.let{
+                adapter.submitList(battlesList.toList())
+
+                if (it.isEmpty()) binding.noBattlesTextView.visibility = View.VISIBLE
+                else binding.noBattlesTextView.visibility = View.GONE
+            }
         })
 
         viewModel.errorMessage.observe(viewLifecycleOwner, Observer {
@@ -62,15 +73,14 @@ class BattleChallengesListFragment : Fragment(), BattleChallengesAdapterCallback
     override fun onBattleAccepted(holder : BattleChallengesListAdapter.ViewHolder, battle: Battle) {
         if (battle.voting.votingChoice === ChooseVotingFragment.VotingChoice.MUTUAL_FACEBOOK) {
             if (doesUserHaveUserFriendsPermission()) {
-                viewModel.onBattleAccepted(battle)
+                viewModel.onBattleAccepted(findNavController(), battle)
             } else {
                 Toast.makeText(activity, R.string.need_accept_permission_user_friends, Toast.LENGTH_SHORT).show()
                 requestUserFriendsPermission(holder, battle)
             }
         } else {
-            viewModel.onBattleAccepted(battle)
+            viewModel.onBattleAccepted(findNavController(), battle)
         }
-        viewModel.onBattleAccepted(battle)
     }
 
     override fun onBattleDeclined(battle: Battle) {
@@ -92,7 +102,7 @@ class BattleChallengesListFragment : Fragment(), BattleChallengesAdapterCallback
         LoginManager.getInstance().registerCallback(callbackManager,
                 object : FacebookCallback<LoginResult> {
                     override fun onSuccess(loginResult: LoginResult) {
-                        viewModel.onBattleAccepted(battle)
+                        viewModel.onBattleAccepted(findNavController(), battle)
                     }
                     override fun onCancel() {
                         //User Friends Permission Not accepted.. Do nothing

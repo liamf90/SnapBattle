@@ -22,6 +22,7 @@ import com.liamfarrell.android.snapbattle.adapters.FollowFacebookFriendsListAdap
 import com.liamfarrell.android.snapbattle.databinding.FragmentAddFollowersBinding
 import com.liamfarrell.android.snapbattle.di.*
 import com.liamfarrell.android.snapbattle.viewmodels.AddFacebookFriendsAsFollowersViewModel
+import kotlinx.android.synthetic.main.fragment_add_followers.*
 import java.util.*
 import javax.inject.Inject
 
@@ -45,14 +46,20 @@ class FollowFacebookFriendsFragment : Fragment() , Injectable {
         binding.recyclerList.addItemDecoration(DividerItemDecoration(context, LinearLayoutManager.VERTICAL))
         binding.viewModel = viewModel
 
-        subscribeUi(adapter)
-        viewModel.getFacebookFriends (::requestUserFriendsPermission)
+        subscribeUi(binding, adapter)
+        viewModel.getFacebookFriendsWithFollowing (::requestUserFriendsPermission)
         return binding.root
     }
 
-    private fun subscribeUi(adapter: FollowFacebookFriendsListAdapter) {
+    private fun subscribeUi( binding : FragmentAddFollowersBinding, adapter: FollowFacebookFriendsListAdapter) {
         viewModel.following.observe(viewLifecycleOwner, Observer { followingList ->
-            followingList?.let{adapter.submitList(followingList)}
+                followingList?.let{
+                    adapter.submitList(followingList.toList())
+                    adapter.notifyDataSetChanged()
+
+                    if (followingList.isEmpty()) binding.noFacebookFriendsTextView.visibility = View.VISIBLE
+                    else binding.noFacebookFriendsTextView.visibility = View.GONE
+                }
         })
 
         viewModel.errorMessage.observe(viewLifecycleOwner, Observer {

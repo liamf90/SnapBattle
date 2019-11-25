@@ -26,6 +26,7 @@ class SearchUsersAndBattlesFragment : Fragment(){
         setHasOptionsMenu(true)
         val toolbar = view.findViewById(R.id.toolbar) as Toolbar
         (activity as AppCompatActivity).setSupportActionBar(toolbar)
+        (activity as AppCompatActivity).title = ""
         viewPager = view.findViewById(R.id.view_pager)
         tabs = view.findViewById(R.id.tabs)
         return view
@@ -53,9 +54,13 @@ class SearchUsersAndBattlesFragment : Fragment(){
             }
             override fun onPageSelected(position: Int) {
                 if (position == 0) {
+                    searchView.setQuery("", false);
+                    searchView.clearFocus();
                     battleNameSearchFragment.setOnQueryChangedListener(searchView)
                     //battleNameSearchFragment.onQueryTextChange("")
                 } else if (position == 1) {
+                    searchView.setQuery("", false);
+                    searchView.clearFocus();
                     userSearchFragment.setOnQueryChangedListener(searchView)
                     //userSearchFragment.onQueryTextChange("")
                 }

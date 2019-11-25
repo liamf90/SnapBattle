@@ -46,21 +46,21 @@ class BattlesByNamePagedListAdapter :
 
     private fun createThumbnailOnClickListener(battle: Battle): View.OnClickListener {
         return View.OnClickListener {
-            val direction = BattlesFromNameFragmentDirections.actionViewBattlesFromNameFragmentToNavigationFullBattleVideo (battle.battleId, battle.getServerFinalVideoUrl(battle.challengerCognitoID), battle.challengerUsername, battle.challengedUsername)
+            val direction = BattlesFromNameFragmentDirections.actionViewBattlesFromNameFragmentToNavigationFullBattleVideo(battle.battleId, battle.getServerFinalVideoUrl(battle.challengerCognitoID), battle.challengerUsername, battle.challengedUsername)
             it.findNavController().navigate(direction)
         }
     }
 
     private fun createChallengerOnClickListener(challengerCognitoID: String): View.OnClickListener {
         return View.OnClickListener {
-            val direction = SearchUsersAndBattlesFragmentDirections.actionSearchUsersAndBattlesFragmentToUsersBattlesFragment(challengerCognitoID)
+            val direction = BattlesFromNameFragmentDirections.actionViewBattlesFromNameFragmentToNavigationUsersBattles2(challengerCognitoID)
             it.findNavController().navigate(direction)
         }
     }
 
     private fun createChallengedOnClickListener(challengedCognitoID: String): View.OnClickListener {
         return View.OnClickListener {
-            val direction = SearchUsersAndBattlesFragmentDirections.actionSearchUsersAndBattlesFragmentToUsersBattlesFragment(challengedCognitoID)
+            val direction = BattlesFromNameFragmentDirections.actionViewBattlesFromNameFragmentToNavigationUsersBattles2(challengedCognitoID)
             it.findNavController().navigate(direction)
         }
     }
@@ -77,6 +77,7 @@ class BattlesByNamePagedListAdapter :
                 challengedUsernameClickListener = challengedOnClick
                 challengerUsernameClickListener = challengerOnClick
                 thumbnailClickListener = thumbnailOnClick
+                thumbnailSignedUrl = item.signedThumbnailUrl
                 executePendingBindings()
             }
         }

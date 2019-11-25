@@ -59,6 +59,7 @@
 
         <androidx.appcompat.widget.AppCompatButton
             android:text="@{user.isFollowing ? @string/unfollow : @string/follow}"
+            android:clickable="@{user.isFollowingChangeInProgress ? false : true}"
             android:onClick="@{onModifyClickListener}"
             app:backgroundTint="@color/colorPrimary"
             android:textColor="@color/primary_text"

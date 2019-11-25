@@ -1,5 +1,9 @@
 package com.liamfarrell.android.snapbattle.mvvm_ui
 
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.opengl.Visibility
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -13,6 +17,7 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
+import com.liamfarrell.android.snapbattle.MainActivity
 import com.liamfarrell.android.snapbattle.adapters.FollowingBattlesFeedPagingListAdapter
 import com.liamfarrell.android.snapbattle.databinding.FragmentFriendsBattleListBinding
 import com.liamfarrell.android.snapbattle.db.FollowingBattle
@@ -41,13 +46,14 @@ class FollowingBattlesFeedFragment : Fragment() , Injectable {
         adapter.setHasStableIds(true)
         binding.recyclerView.adapter = adapter
         binding.recyclerView.addItemDecoration(DividerItemDecoration(context, LinearLayoutManager.VERTICAL))
-
-
-        subscribeUi(adapter)
+        binding.recyclerView.itemAnimator = null
+        binding.swipeContainer.setOnRefreshListener {onSwipeToRefresh()}
+        subscribeUi(binding, adapter)
+        registerReceiver()
         return binding.root
     }
 
-    private fun subscribeUi(adapter: FollowingBattlesFeedPagingListAdapter) {
+    private fun subscribeUi(binding : FragmentFriendsBattleListBinding, adapter: FollowingBattlesFeedPagingListAdapter) {
         viewModel.battles.observe(viewLifecycleOwner, Observer { followingBattleResult ->
             adapter.submitList(followingBattleResult)
         })
@@ -61,13 +67,44 @@ class FollowingBattlesFeedFragment : Fragment() , Injectable {
         })
 
         viewModel.isNoBattlesInFeed.observe(viewLifecycleOwner, Observer {
-            if (it) NoBattlesTextView.visibility = View.VISIBLE
-            else NoBattlesTextView.visibility = View.GONE
+            if (it) binding.NoBattlesTextView.visibility = View.VISIBLE
+            else binding.NoBattlesTextView.visibility = View.GONE
         })
+
+        viewModel.spinner.observe(viewLifecycleOwner, Observer {
+            binding.swipeContainer.isRefreshing = it
+        })
+
+    }
+
+    private fun onSwipeToRefresh(){
+        viewModel.updateFollowingBattles()
     }
 
     private fun onBattleLoadedByAdapter(battle: Battle){
         viewModel.loadThumbnail(battle)
+    }
+
+    /**
+     * When the home button is pressed, a broadcast is sent to scroll up the battle feeds
+     */
+    private fun registerReceiver() {
+        //register receivers to update the list when a video is submitted (if fragment are still visible)
+        val filter = IntentFilter()
+        filter.addAction(MainActivity.HOME_BUTTON_PRESSED_INTENT)
+        activity?.registerReceiver(onScrollUpBroadcastReceiver, filter)
+    }
+
+    private val onScrollUpBroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            if (isVisible){
+            recycler_view.scrollToPosition(0)}
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        activity?.unregisterReceiver(onScrollUpBroadcastReceiver)
     }
 
 }

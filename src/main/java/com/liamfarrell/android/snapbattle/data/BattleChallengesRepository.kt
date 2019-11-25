@@ -6,6 +6,8 @@ import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserializat
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.DefaultResponse
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.GetChallengesResponse
 import com.liamfarrell.android.snapbattle.util.executeAWSFunction
+import io.reactivex.Observable
+import io.reactivex.Single
 import javax.inject.Inject
 
 class BattleChallengesRepository @Inject constructor
@@ -21,6 +23,9 @@ class BattleChallengesRepository @Inject constructor
         request.battleID = battleId
         return executeAWSFunction {lambdaFunctionsInterface.UpdateBattleAccepted(request)}
     }
+
+
+
 
 
 }

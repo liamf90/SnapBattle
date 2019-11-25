@@ -16,14 +16,13 @@ import androidx.navigation.fragment.findNavController
 import com.liamfarrell.android.snapbattle.R
 import com.liamfarrell.android.snapbattle.databinding.FragmentChooseNameStartupBinding
 import com.liamfarrell.android.snapbattle.di.*
-import com.liamfarrell.android.snapbattle.ui.FacebookLoginFragment
 import com.liamfarrell.android.snapbattle.viewmodels.startup.ChooseNameStartupViewModel
-import kotlinx.android.synthetic.main.fragment_choose_username_startup.*
 import java.lang.ClassCastException
 import javax.inject.Inject
 
 
 class ChooseNameStartupFragment : Fragment(), Injectable {
+
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
@@ -66,7 +65,7 @@ class ChooseNameStartupFragment : Fragment(), Injectable {
         val newName = binding.nameEditText.getText().toString()
         if (defaultName == newName) {
             val sharedPref = PreferenceManager.getDefaultSharedPreferences(activity!!.applicationContext)
-            sharedPref.edit().putString(FacebookLoginFragment.NAME_SHAREDPREFS, newName).commit()
+            sharedPref.edit().putString(LoggedInFragment.NAME_SHAREDPREFS, newName).commit()
             findNavController().navigate(R.id.action_chooseNameStartupFragment_to_chooseProfilePictureStartupFragment, arguments)
         } else {
             viewModel.updateName(newName) {findNavController().navigate(R.id.action_chooseNameStartupFragment_to_chooseProfilePictureStartupFragment, arguments)}

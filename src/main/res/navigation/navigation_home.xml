@@ -11,56 +11,31 @@
         android:label="activity_home_fragment"
         tools:layout="@layout/activity_home_fragment" >
         <action
-            android:id="@+id/action_navigation_home_to_fullBattleVideoPlayerFragment"
-            app:destination="@id/fullBattleVideoPlayerFragment"
-            app:popUpTo="@+id/navigation_home" />
+            android:id="@+id/action_navigation_home_to_navigation_users_battles"
+            app:destination="@id/navigation_users_battles">
+            <argument
+                android:name="cognitoId"
+                app:argType="string" />
+        </action>
+
         <action
-            android:id="@+id/action_navigation_home_to_usersBattlesFragment2"
-            app:destination="@id/usersBattlesFragment2"
-            app:popUpTo="@+id/navigation_home" />
-        <action
-            android:id="@+id/action_navigation_home_to_viewBattleFragment2"
-            app:destination="@id/viewBattleFragment2" />
+            android:id="@+id/action_navigation_home_to_navigation_full_battle_video"
+            app:destination="@id/navigation_full_battle_video">
+            <argument
+                android:name="battleId"
+                app:argType="integer" />
+            <argument
+                android:name="filepath"
+                app:argType="string" />
+            <argument
+                android:name="challengerName"
+                app:argType="string" />
+            <argument
+                android:name="challengedName"
+                app:argType="string" />
+        </action>
     </fragment>
-    <fragment
-        android:id="@+id/fullBattleVideoPlayerFragment"
-        android:name="com.liamfarrell.android.snapbattle.ui.FullBattleVideoPlayerFragment"
-        android:label="FullBattleVideoPlayerFragment" >
-        <argument
-            android:name="battleId"
-            app:argType="integer" />
-        <argument
-            android:name="filepath"
-            app:argType="string" />
-        <argument
-            android:name="challengerName"
-            app:argType="string" />
-        <argument
-            android:name="challengedName"
-            app:argType="string" />
-        <action
-            android:id="@+id/action_fullBattleVideoPlayerFragment_to_viewCommentsFragment"
-            app:destination="@id/viewCommentsFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/usersBattlesFragment2"
-        android:name="com.liamfarrell.android.snapbattle.mvvm_ui.UsersBattlesFragment"
-        android:label="UsersBattlesFragment" >
-        <argument
-            android:name="cognitoId"
-            app:argType="string" />
-    </fragment>
-    <fragment
-        android:id="@+id/viewBattleFragment2"
-        android:name="com.liamfarrell.android.snapbattle.mvvm_ui.ViewBattleFragment"
-        android:label="ViewBattleFragment" />
-    <fragment
-        android:id="@+id/viewCommentsFragment"
-        android:name="com.liamfarrell.android.snapbattle.mvvm_ui.ViewCommentsFragment"
-        android:label="ViewCommentsFragment" >
-        <argument
-            android:name="battleId"
-            app:argType="integer" />
-    </fragment>
+    <include app:graph="@navigation/navigation_users_battles" />
+    <include app:graph="@navigation/navigation_full_battle_video" />
 
 </navigation>

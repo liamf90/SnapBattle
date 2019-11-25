@@ -10,6 +10,7 @@ import com.liamfarrell.android.snapbattle.data.FollowingUserCacheManager
 import com.liamfarrell.android.snapbattle.data.OtherUsersProfilePicUrlRepository
 import com.liamfarrell.android.snapbattle.data.UserSearchRepository
 import com.liamfarrell.android.snapbattle.model.AsyncTaskResult
+import com.liamfarrell.android.snapbattle.model.Battle
 import com.liamfarrell.android.snapbattle.model.User
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.GetUsersResponse
 import com.liamfarrell.android.snapbattle.util.getErrorMessage
@@ -188,6 +189,7 @@ class UserSearchViewModel @Inject constructor(private val context: Application, 
              getUsersResponse.sqlResult = followingUserCacheManager.searchUsersInCache(searchQuery)
              AsyncTaskResult(getUsersResponse)
     }
+
 
     private suspend fun getProfilePicSignedUrls(userList: List<User>) : List<User>{
         userList.forEach {

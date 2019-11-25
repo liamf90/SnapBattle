@@ -13,6 +13,9 @@
         <variable
             name="CurrentCognitoID"
             type="String" />
+        <variable
+            name="profilePicOnClickListener"
+            type="android.view.View.OnClickListener"/>
     </data>
 
     <LinearLayout
@@ -40,6 +43,7 @@
                 android:layout_width="@dimen/profile_pic_small_width"
                 android:layout_height="@dimen/profile_pic_small_height"
                 android:layout_gravity="center_vertical|center_horizontal"
+                android:onClick="@{profilePicOnClickListener}"
                 app:profileImage="@{safeUnbox(battle.getOpponentProfilePicCount(CurrentCognitoID)) != 0 ? battle.ProfilePicSmallSignedUrl : null}"
                 />
 

@@ -32,15 +32,12 @@ import android.util.Log;
 
 import com.amazonaws.mobile.auth.core.IdentityManager;
 import com.google.android.gms.gcm.GcmListenerService;
-import com.liamfarrell.android.snapbattle.ActivityMainNavigationDrawer;
 import com.liamfarrell.android.snapbattle.R;
-import com.liamfarrell.android.snapbattle.ui.FacebookLoginFragment;
 import com.liamfarrell.android.snapbattle.notifications.BattleAcceptedNotification;
 import com.liamfarrell.android.snapbattle.notifications.TaggedInCommentNotification;
 import com.liamfarrell.android.snapbattle.notifications.NewBattleRequestNotification;
 import com.liamfarrell.android.snapbattle.notifications.NewCommentNotification;
 import com.liamfarrell.android.snapbattle.notifications.NewFollowerNotification;
-import com.liamfarrell.android.snapbattle.caches.NotificationCache;
 import com.liamfarrell.android.snapbattle.notifications.VideoSubmittedNotification;
 import com.liamfarrell.android.snapbattle.notifications.VotingCompleteNotification;
 
@@ -220,7 +217,7 @@ public class MyGcmListenerService extends GcmListenerService {
 
         Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
-                .setSmallIcon(R.drawable.battle_icon_selected)
+                .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle("Snap Battle")
                 .setContentText(message)
                 .setAutoCancel(true)

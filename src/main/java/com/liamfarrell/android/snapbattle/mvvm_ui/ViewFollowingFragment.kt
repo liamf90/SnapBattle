@@ -18,6 +18,8 @@ import com.liamfarrell.android.snapbattle.viewmodels.FollowingViewModel
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.liamfarrell.android.snapbattle.di.Injectable
+import kotlinx.android.synthetic.main.fragment_completed_list.view.*
+import kotlinx.android.synthetic.main.fragment_view_followers.*
 import javax.inject.Inject
 
 
@@ -35,19 +37,24 @@ class ViewFollowingFragment : Fragment() , Injectable {
         binding.lifecycleOwner = viewLifecycleOwner
 
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(FollowingViewModel::class.java)
-        val adapter = FollowingListAdapter(viewModel)
+        val adapter = FollowingListAdapter(::removeFollowing, ::addFollowing)
         binding.recyclerList.adapter = adapter
         binding.recyclerList.addItemDecoration(DividerItemDecoration(context, LinearLayoutManager.VERTICAL))
         binding.EnterUsernameManuallyButton.setOnClickListener{launchEnterUsernameDialog()}
         binding.viewModel = viewModel
 
-        subscribeUi(adapter)
+        subscribeUi(binding, adapter)
         return binding.root
     }
 
-    private fun subscribeUi(adapter: FollowingListAdapter) {
+    private fun subscribeUi(binding : FragmentViewFollowersBinding, adapter: FollowingListAdapter) {
         viewModel.following.observe(viewLifecycleOwner, Observer { followingList ->
             adapter.submitList(followingList)
+            adapter.notifyDataSetChanged()
+
+
+            if (followingList.isEmpty()) binding.noFollowingTextView.visibility = View.VISIBLE
+            else binding.noFollowingTextView.visibility = View.GONE
         })
 
         viewModel.errorMessage.observe(viewLifecycleOwner, Observer {
@@ -68,6 +75,14 @@ class ViewFollowingFragment : Fragment() , Injectable {
                         viewModel.addFollowing(usernameEditText.text.toString())
                     }
                     .create().show()
+    }
+
+    private fun addFollowing(cognitoId: String) {
+        viewModel.followUser(cognitoId)
+    }
+
+    private fun removeFollowing(cognitoId: String) {
+        viewModel.removeFollowing(cognitoId)
     }
 
 

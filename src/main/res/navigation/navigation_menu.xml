@@ -40,6 +40,10 @@
         <action
             android:id="@+id/action_bottomNavigationDrawerFragment_to_viewBattleFragment"
             app:destination="@+id/viewBattleFragment" />
+        <argument
+            android:name="displaySnackbarMessageResourceId"
+            app:argType="integer"
+            android:defaultValue="-1" />
     </fragment>
     <fragment
         android:id="@+id/battleCurrentListFragment"
@@ -49,6 +53,13 @@
             android:id="@+id/action_battleCurrentListFragment_to_viewBattleFragment"
             app:destination="@id/viewBattleFragment"
             app:popUpTo="@+id/battleCurrentListFragment" />
+        <action
+            android:id="@+id/action_battleCurrentListFragment_to_navigation_users_battles"
+            app:destination="@id/navigation_users_battles">
+            <argument
+                android:name="cognitoId"
+                app:argType="string" />
+        </action>
     </fragment>
     <fragment
         android:id="@+id/battleCompletedListFragment"
@@ -65,15 +76,38 @@
         <action
             android:id="@+id/action_battleChallengesListFragment_to_viewBattleFragment"
             app:destination="@id/viewBattleFragment" />
+        <action
+            android:id="@+id/action_battleChallengesListFragment_to_navigation_users_battles"
+            app:destination="@id/navigation_users_battles">
+            <argument
+                android:name="cognitoId"
+                app:argType="string" />
+        </action>
     </fragment>
     <fragment
         android:id="@+id/followFacebookFriendsFragment"
         android:name="com.liamfarrell.android.snapbattle.mvvm_ui.FollowFacebookFriendsFragment"
-        android:label="FollowFacebookFriendsFragment" />
+        android:label="FollowFacebookFriendsFragment" >
+        <action
+            android:id="@+id/action_followFacebookFriendsFragment_to_navigation_users_battles2"
+            app:destination="@id/navigation_users_battles">
+            <argument
+                android:name="facebookId"
+                app:argType="string" />
+        </action>
+    </fragment>
     <fragment
         android:id="@+id/viewFollowingFragment"
         android:name="com.liamfarrell.android.snapbattle.mvvm_ui.ViewFollowingFragment"
-        android:label="ViewFollowingFragment" />
+        android:label="ViewFollowingFragment" >
+        <action
+            android:id="@+id/action_viewFollowingFragment_to_navigation_users_battles"
+            app:destination="@id/navigation_users_battles">
+            <argument
+                android:name="cognitoId"
+                app:argType="string" />
+        </action>
+    </fragment>
     <fragment
         android:id="@+id/chooseBattleTypeFragment"
         android:name="com.liamfarrell.android.snapbattle.mvvm_ui.create_battle.ChooseBattleTypeFragment"
@@ -89,6 +123,21 @@
         <action
             android:id="@+id/action_chooseOpponentFragment_to_chooseRoundsFragment"
             app:destination="@id/chooseRoundsFragment" />
+        <action
+            android:id="@+id/action_chooseOpponentFragment_to_navigation_users_battles"
+            app:destination="@id/navigation_users_battles">
+            <argument
+                android:name="cognitoId"
+                app:argType="string" />
+        </action>
+        <action
+            android:id="@+id/action_chooseOpponentFragment_to_navigation_users_battles2"
+            app:destination="@id/navigation_users_battles">
+            <argument
+                android:name="facebookId"
+                app:argType="string" />
+        </action>
+
     </fragment>
     <fragment
         android:id="@+id/chooseRoundsFragment"
@@ -155,15 +204,46 @@
         <argument
             android:name="battleId"
             app:argType="integer" />
+        <action
+            android:id="@+id/action_viewBattleFragment_to_navigation_users_battles"
+            app:destination="@id/navigation_users_battles">
+            <argument
+                android:name="cognitoId"
+                app:argType="string" />
+        </action>
+        <action
+            android:id="@+id/action_viewBattleFragment_to_videoViewFragment"
+            app:destination="@id/videoViewFragment" />
+        <action
+            android:id="@+id/action_viewBattleFragment_to_viewCommentsFragment"
+            app:destination="@id/viewCommentsFragment" />
+
     </fragment>
     <fragment
         android:id="@+id/logoutFragment"
-        android:name="com.liamfarrell.android.snapbattle.ui.LogoutFragment"
+        android:name="com.liamfarrell.android.snapbattle.mvvm_ui.to_be_converted.LogoutFragment"
         android:label="fragment_logout"
         tools:layout="@layout/fragment_logout" />
     <fragment
         android:id="@+id/aboutUsFragment"
-        android:name="com.liamfarrell.android.snapbattle.ui.AboutUsFragment"
+        android:name="com.liamfarrell.android.snapbattle.mvvm_ui.to_be_converted.AboutUsFragment"
         android:label="content_about_us"
         tools:layout="@layout/content_about_us" />
+    <include app:graph="@navigation/navigation_users_battles" />
+    <fragment
+        android:id="@+id/videoViewFragment"
+        android:name="com.liamfarrell.android.snapbattle.mvvm_ui.to_be_converted.VideoViewFragment"
+        android:label="VideoViewFragment" >
+        <argument
+            android:name="filepath"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/viewCommentsFragment"
+        android:name="com.liamfarrell.android.snapbattle.mvvm_ui.ViewCommentsFragment"
+        android:label="ViewCommentsFragment" >
+        <argument
+            android:name="battleId"
+            app:argType="integer" />
+    </fragment>
 </navigation>

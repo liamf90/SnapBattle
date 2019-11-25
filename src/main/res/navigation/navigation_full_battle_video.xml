@@ -6,7 +6,7 @@
 
     <fragment
         android:id="@+id/fullBattleVideoPlayerFragment4"
-        android:name="com.liamfarrell.android.snapbattle.ui.FullBattleVideoPlayerFragment"
+        android:name="com.liamfarrell.android.snapbattle.mvvm_ui.to_be_converted.FullBattleVideoPlayerFragment"
         android:label="FullBattleVideoPlayerFragment" >
         <action
             android:id="@+id/action_fullBattleVideoPlayerFragment4_to_viewCommentsFragment3"
@@ -31,5 +31,16 @@
         <argument
             android:name="battleId"
             app:argType="integer" />
+        <action
+            android:id="@+id/action_viewCommentsFragment3_to_usersBattlesFragment"
+            app:destination="@id/usersBattlesFragment4" />
+    </fragment>
+    <fragment
+        android:id="@+id/usersBattlesFragment4"
+        android:name="com.liamfarrell.android.snapbattle.mvvm_ui.UsersBattlesFragment"
+        android:label="UsersBattlesFragment" >
+        <argument
+            android:name="cognitoId"
+            app:argType="string" />
     </fragment>
 </navigation>

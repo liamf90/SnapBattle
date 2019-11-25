@@ -7,18 +7,11 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.liamfarrell.android.snapbattle.databinding.ListItemCommentBinding
-import com.liamfarrell.android.snapbattle.model.Comment
-import androidx.appcompat.widget.PopupMenu
 import androidx.navigation.findNavController
 import com.liamfarrell.android.snapbattle.R
 import com.liamfarrell.android.snapbattle.databinding.ListItemBattleFriendsBinding
 import com.liamfarrell.android.snapbattle.model.Battle
 import com.liamfarrell.android.snapbattle.mvvm_ui.BattleCompletedListFragmentDirections
-import com.liamfarrell.android.snapbattle.mvvm_ui.BattleCurrentListFragmentDirections
-import com.liamfarrell.android.snapbattle.ui.FacebookLoginFragment
-import com.liamfarrell.android.snapbattle.viewmodels.CommentViewModel
-import kotlinx.android.synthetic.main.media_controller_battle.view.*
 
 
 /**
@@ -39,10 +32,8 @@ class CompletedBattlesListAdapter :
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val battle = getItem(position)
         holder.apply {
-            bind(battle)
+            bind(battle, getOnClickListener(battle.battleId))
             itemView.tag = battle
-
-            holder.itemView.setOnClickListener(getOnClickListener(battle.battleID))
         }
     }
 
@@ -60,10 +51,11 @@ class CompletedBattlesListAdapter :
             private val binding: ListItemBattleFriendsBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(item: Battle) {
+        fun bind(item: Battle, thumbnailClickListener : View.OnClickListener) {
             with(binding) {
                 battle = item
                 thumbnailSignedUrl = item.signedThumbnailUrl
+                this.thumbnailClickListener  = thumbnailClickListener
                 executePendingBindings()
             }
         }

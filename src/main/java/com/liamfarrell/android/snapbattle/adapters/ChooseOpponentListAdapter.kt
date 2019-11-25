@@ -5,12 +5,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import androidx.databinding.DataBindingUtil
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.liamfarrell.android.snapbattle.R
 import com.liamfarrell.android.snapbattle.databinding.ListItemOpponentSelectBinding
 import com.liamfarrell.android.snapbattle.model.User
+import com.liamfarrell.android.snapbattle.mvvm_ui.create_battle.ChooseOpponentFragmentDirections
 
 
 /**
@@ -30,14 +32,26 @@ class ChooseOpponentListAdapter(val opponentSelectedCallback : (user: User) -> U
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val user = getItem(position)
         holder.apply {
-            bind(user, createOnProfilePicClickListener(), createOnItemClickListener(user))
+            if (user.cognitoId != null){
+                bind(user, createOnProfilePicClickListener(user.cognitoId), createOnItemClickListener(user))
+            } else {
+                bind(user, createOnProfilePicClickListenerFacebookFriend(user.facebookUserId), createOnItemClickListener(user))
+            }
             itemView.tag = user
         }
     }
 
-    private fun createOnProfilePicClickListener(): View.OnClickListener {
+    private fun createOnProfilePicClickListener(cognitoId: String): View.OnClickListener {
         return View.OnClickListener {
-            //TODO:  GO TO PROFILE FRAGMENT
+            val direction = ChooseOpponentFragmentDirections.actionChooseOpponentFragmentToNavigationUsersBattles(cognitoId)
+            it.findNavController().navigate(direction)
+        }
+    }
+
+    private fun createOnProfilePicClickListenerFacebookFriend(facebookId: String): View.OnClickListener {
+        return View.OnClickListener {
+            val direction = ChooseOpponentFragmentDirections.actionChooseOpponentFragmentToNavigationUsersBattles2(facebookId)
+            it.findNavController().navigate(direction)
         }
     }
 

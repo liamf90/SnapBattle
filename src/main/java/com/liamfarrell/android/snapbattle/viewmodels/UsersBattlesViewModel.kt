@@ -1,10 +1,7 @@
 package com.liamfarrell.android.snapbattle.viewmodels
 
 import android.app.Application
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.liamfarrell.android.snapbattle.app.SnapBattleApp
 import com.liamfarrell.android.snapbattle.data.OtherUsersProfilePicUrlRepository
 import com.liamfarrell.android.snapbattle.data.ThumbnailSignedUrlCacheRepository
@@ -36,12 +33,21 @@ class UsersBattlesViewModel @Inject constructor(private val context: Application
         }
     }
 
-    val battles : LiveData<List<Battle>> =  Transformations.map (battlesResult) { result ->
-        result.result?.user_battles?.filter { !it.isDeleted }
-    }
+    val battles = MediatorLiveData<List<Battle>>()
+    val user = MediatorLiveData<User>()
 
-    val user : LiveData<User> =  Transformations.map (battlesResult) { result ->
-        result.result?.user_profile
+
+    init {
+        battles.addSource(battlesResult){
+            if (it.error == null) {
+                battles.value = it.result?.user_battles?.filter { !it.isDeleted }
+            }
+        }
+        user.addSource(battlesResult){
+            if (it.error == null) {
+                user.value = it.result?.user_profile
+            }
+        }
     }
 
 
@@ -63,29 +69,57 @@ class UsersBattlesViewModel @Inject constructor(private val context: Application
                 })
     }
 
+    fun setFacebookId(facebookId: String){
+        awsLambdaFunctionCall(true,
+                suspend {
+                    val response =  usersBattlesRepository.getUsersBattlesWithFacebookId(facebookId)
+                    if (response.error == null) {
+                        cognitoId = response.result.user_profile.cognitoId
+                        //check if profile pic url in cache else use new signed url
+                        val profile = response.result.user_profile
+                        if (profile.profilePicCount > 0) {
+                            response.result.user_profile.profilePicSignedUrl =  otherUsersProfilePicUrlRepository.getOrUpdateProfilePicSignedUrl(profile.cognitoId,  profile.profilePicCount , profile.profilePicSignedUrl )
+                        }
+                        response.result.user_battles = getThumbnailSignedUrls(response.result.user_battles)
+                    }
+                    battlesResult.value = response
+
+                })
+    }
+
     fun followUser(){
         awsLambdaFunctionCall(false,
                 suspend {
+                    user.value?.isFollowingChangeInProgress = true
+                    user.value?.isFollowing = true
+                    user.notifyObserver()
                     val response = usersBattlesRepository.followUser(cognitoId)
-                    if (response.error == null){
-                        battlesResult.value?.result?.user_profile?.isFollowing = true
-                        battlesResult.notifyObserver()
-                    } else{
-                        battlesResult.value?.error = response.error
-                        battlesResult.notifyObserver()
+                    if (response.error != null){
+                        user.value?.isFollowingChangeInProgress = false
+                        user.value?.isFollowing = false
+                        user.notifyObserver()
+                        battlesResult.value = AsyncTaskResult(response.error)
+                    } else {
+                        user.value?.isFollowingChangeInProgress = false
+                        user.notifyObserver()
                     }})
     }
 
     fun unfollowUser(){
         awsLambdaFunctionCall(false,
                 suspend {
+                    user.value?.isFollowingChangeInProgress = true
+                    user.value?.isFollowing = false
+                    user.notifyObserver()
                     val response = usersBattlesRepository.unfollowUser(cognitoId)
-                    if (response.error == null){
-                        battlesResult.value?.result?.user_profile?.isFollowing = false
-                        battlesResult.notifyObserver()
-                    } else{
-                        battlesResult.value?.error = response.error
-                        battlesResult.notifyObserver()
+                    if (response.error != null){
+                        user.value?.isFollowing = true
+                        user.value?.isFollowingChangeInProgress = false
+                        user.notifyObserver()
+                        battlesResult.value = AsyncTaskResult(response.error)
+                    } else {
+                        user.value?.isFollowingChangeInProgress = false
+                        user.notifyObserver()
                     }
                 }
         )

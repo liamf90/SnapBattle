@@ -1,44 +1,23 @@
 package com.liamfarrell.android.snapbattle.adapters
 
-import android.content.Context
-import android.content.Intent
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.widget.PopupMenu
 import androidx.databinding.DataBindingUtil
-import androidx.databinding.Observable
-import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.amazonaws.mobile.auth.core.IdentityManager
-import com.karumi.dexter.Dexter
-import com.karumi.dexter.MultiplePermissionsReport
-import com.karumi.dexter.PermissionToken
-import com.karumi.dexter.listener.DexterError
-import com.karumi.dexter.listener.PermissionRequest
-import com.karumi.dexter.listener.PermissionRequestErrorListener
-import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.liamfarrell.android.snapbattle.R
 import com.liamfarrell.android.snapbattle.data.UsersBattleRepository
-import com.liamfarrell.android.snapbattle.databinding.ListItemCommentBinding
 import com.liamfarrell.android.snapbattle.databinding.ListItemVideoUserBinding
 import com.liamfarrell.android.snapbattle.model.Battle
-import com.liamfarrell.android.snapbattle.model.Comment
 import com.liamfarrell.android.snapbattle.model.Video
-import com.liamfarrell.android.snapbattle.ui.FacebookLoginFragment
-import com.liamfarrell.android.snapbattle.ui.VideoRecordActivity
-import com.liamfarrell.android.snapbattle.ui.VideoViewActivity
-import com.liamfarrell.android.snapbattle.ui.VideoViewFragment
+import com.liamfarrell.android.snapbattle.mvvm_ui.ViewBattleFragmentDirections
 import com.liamfarrell.android.snapbattle.viewmodels.BattleVideoItemViewModel
-import com.liamfarrell.android.snapbattle.viewmodels.CommentViewModel
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.io.File
@@ -67,7 +46,7 @@ class BattleVideoAdapter (val battle: Battle, val recordButtonOnClickCallback: (
         holder.apply {
             bind(video,battle, viewModel,
                     createRecordButtonOnClickListener(video),
-                    createPlayButtonOnClickListener(itemView.context, video),
+                    createPlayButtonOnClickListener(video),
                     createSubmitButtonOnClickListener(viewModel))
         }
     }
@@ -96,18 +75,17 @@ class BattleVideoAdapter (val battle: Battle, val recordButtonOnClickCallback: (
 
 
 
-    private fun createPlayButtonOnClickListener(context: Context, video: Video) : View.OnClickListener{
+    private fun createPlayButtonOnClickListener(video: Video) : View.OnClickListener{
         return View.OnClickListener {
-            val filepath = context.getFilesDir().getAbsolutePath() + "/" + video.getVideoFilename()
+            val filepath = it.context.getFilesDir().getAbsolutePath() + "/" + video.getVideoFilename()
             val file = File(filepath)
 
             if (!file.exists()) {
-                playWithCloudFrontSignedUrl(context, video.getVideoFilename())
+                playWithCloudFrontSignedUrl(it, video.videoFilename)
             } else {
                 //Go to view video
-                // val intent = Intent(getCallbacks(), VideoViewActivity::class.java)
-                //intent.putExtra(VIDEO_FILEPATH_EXTRA, filepath)
-                //startActivity(intent)
+                val direction =   ViewBattleFragmentDirections.actionViewBattleFragmentToVideoViewFragment(filepath)
+                it.findNavController().navigate(direction)
             }
         }
     }
@@ -128,12 +106,11 @@ class BattleVideoAdapter (val battle: Battle, val recordButtonOnClickCallback: (
     }
 
 
-    private fun playWithCloudFrontSignedUrl(context: Context, s3Path: String) {
+    private fun playWithCloudFrontSignedUrl(view: View, s3Path: String) {
         val url = "https://djbj27vmux1mw.cloudfront.net/" + IdentityManager.getDefaultIdentityManager().getCachedUserID() + "/" + s3Path
-        Battle.getSignedUrlFromServer(url, context) { signedUrl ->
-            val intent = Intent(context, VideoViewActivity::class.java)
-            intent.putExtra(VideoViewFragment.VIDEO_FILEPATH_EXTRA, signedUrl)
-            //startActivity(intent)
+        Battle.getSignedUrlFromServer(url, view.context) { signedUrl ->
+            val direction =  ViewBattleFragmentDirections.actionViewBattleFragmentToVideoViewFragment(signedUrl)
+            view.findNavController().navigate(direction)
         }
     }
 

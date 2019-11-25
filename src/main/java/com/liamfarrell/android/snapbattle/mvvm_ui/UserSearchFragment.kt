@@ -2,7 +2,6 @@ package com.liamfarrell.android.snapbattle.mvvm_ui
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.appcompat.widget.SearchView
@@ -10,19 +9,20 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
-import com.liamfarrell.android.snapbattle.adapters.BattleNameSearchSuggestionAdapter
 import com.liamfarrell.android.snapbattle.adapters.UserSearchSuggestionAdapter
-import com.liamfarrell.android.snapbattle.databinding.FragmentBattleNameSearchBinding
 import com.liamfarrell.android.snapbattle.databinding.FragmentUserSearchBinding
 import com.liamfarrell.android.snapbattle.di.*
-import com.liamfarrell.android.snapbattle.ui.UserSearchFragment
 import com.liamfarrell.android.snapbattle.viewmodels.UserSearchViewModel
-import io.reactivex.Observable
-import io.reactivex.ObservableOnSubscribe
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class UserSearchFragment : Fragment(), Injectable {
+
+    enum class State {
+        LOADING,
+        NO_RESULTS,
+        SHOW_LIST
+    }
+
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
 

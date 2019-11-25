@@ -7,6 +7,8 @@
     <data>
         <import type="android.view.View"/>
 
+        <import type="com.liamfarrell.android.snapbattle.viewmodels.BattleViewModel.UserCanVote"/>
+
         <variable
             name="viewModel"
             type="com.liamfarrell.android.snapbattle.viewmodels.BattleViewModel"/>
@@ -74,6 +76,7 @@
                     android:onClick="@{thumbnailClickListener}"
                     app:battleThumbnail="@{thumbnailSignedUrl}"
                    />
+
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
@@ -213,8 +216,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/list_item_elements_default_spacing"
-                        android:visibility="@{viewModel.canVote != null ? View.VISIBLE : View.GONE}"
-                        android:text="@{safeUnbox(viewModel.canVote) ? @string/can_vote : @string/can_not_vote}"
+                        android:visibility="@{viewModel.canVoteLiveData != null ? View.VISIBLE : View.GONE}"
+                        android:text="@{viewModel.canVoteLiveData == UserCanVote.HAS_VOTED ? @string/have_voted : (viewModel.canVoteLiveData == UserCanVote.CANNOT_VOTE ? @string/can_not_vote : @string/can_vote)}"
                         card_view:layout_constraintBaseline_toBaselineOf="@+id/time_until_vote_endsTextView"
                         card_view:layout_constraintStart_toStartOf="parent" />
 
@@ -225,7 +228,7 @@
                         android:layout_marginTop="8dp"
                         android:layout_marginEnd="8dp"
                         android:textSize="12sp"
-                        android:text="@{battle.voting.votingState == VotingState.VOTING_STILL_GOING ? UtilFunctions.getTimeUntil(context, battle.voting.votingTimeEnd) : null}"
+                        android:text="@{battle.voting.votingState == VotingState.VOTING_STILL_GOING ? @string/voting_time_left(UtilFunctions.getTimeUntil(context, battle.voting.votingTimeEnd)) : null}"
                         android:visibility="@{battle.voting.votingState == VotingState.VOTING_STILL_GOING ? View.VISIBLE : View.GONE}"
                         card_view:layout_constraintBottom_toBottomOf="parent"
                         card_view:layout_constraintEnd_toEndOf="parent"

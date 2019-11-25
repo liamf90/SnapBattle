@@ -1,22 +1,12 @@
 package com.liamfarrell.android.snapbattle.data
 
-import android.os.Bundle
-import android.os.Parcel
-import android.os.Parcelable
-import android.preference.PreferenceManager
-import android.util.Log
-import android.view.View
-import android.widget.Toast
 import com.facebook.*
-import com.liamfarrell.android.snapbattle.R
 import com.liamfarrell.android.snapbattle.model.AsyncTaskResult
 import com.liamfarrell.android.snapbattle.model.User
-import com.liamfarrell.android.snapbattle.ui.FacebookLoginFragment
 import org.json.JSONException
 import org.json.JSONObject
 import java.util.ArrayList
 import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
 

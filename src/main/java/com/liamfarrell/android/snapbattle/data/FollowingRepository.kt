@@ -38,6 +38,14 @@ class FollowingRepository @Inject constructor
         return executeAWSFunction{lambdaFunctionsInterface.AddFollower(request)}
     }
 
+    suspend fun addFollowingCognitoId(cognitoId: String) : AsyncTaskResult<ResponseFollowing> {
+        val request = AddFollowerRequestWithCognitoIDs()
+        val cognitoList = ArrayList<String>()
+        cognitoList.add(cognitoId)
+        request.cognitoIDFollowList = cognitoList
+        return executeAWSFunction{lambdaFunctionsInterface.AddFollower(request)}
+    }
+
     suspend fun addFollowing(facebookIDList : List<String>) :  AsyncTaskResult<ResponseFollowing>{
         val addFollowerRequest = FollowUserWithFacebookIDsRequest()
         addFollowerRequest.facebookFriendIdList = ArrayList(facebookIDList)

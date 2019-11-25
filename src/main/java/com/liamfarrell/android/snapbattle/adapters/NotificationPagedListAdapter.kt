@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.liamfarrell.android.snapbattle.R
 import com.liamfarrell.android.snapbattle.databinding.ListItemNotificationBinding
+import com.liamfarrell.android.snapbattle.model.Battle
 import com.liamfarrell.android.snapbattle.model.Video
 import com.liamfarrell.android.snapbattle.mvvm_ui.NotificationListFragmentDirections
 import com.liamfarrell.android.snapbattle.notifications.*
@@ -55,7 +56,7 @@ class NotificationPagedListAdapter(val onNotificationLoadedByAdapter : (n : Noti
                 is NewBattleRequestNotification -> NotificationListFragmentDirections.actionNotificationListFragmentToBattleChallengesListFragment2()
                 is NewCommentNotification -> NotificationListFragmentDirections.actionNotificationListFragmentToViewBattleFragment(notification.battleId)
                 is NewFollowerNotification -> NotificationListFragmentDirections.actionNotificationListFragmentToViewFollowingFragment2()
-                is TaggedInCommentNotification -> NotificationListFragmentDirections.actionNotificationListFragmentToFullBattleVideoPlayerFragment2()
+                is TaggedInCommentNotification -> NotificationListFragmentDirections.actionNotificationListFragmentToNavigationFullBattleVideo(notification.battleId, Battle.getServerFinalVideoUrlStatic(notification.challengerCognitoId, notification.battleId), notification.challengerUsername, notification.challengedUsername)
                 is VideoSubmittedNotification -> NotificationListFragmentDirections.actionNotificationListFragmentToViewBattleFragment(notification.battleId)
                 is VotingCompleteNotification -> NotificationListFragmentDirections.actionNotificationListFragmentToViewBattleFragment(notification.battleId)
                 else -> throw IllegalArgumentException("Notification type on click not specified")

@@ -12,7 +12,6 @@ import androidx.lifecycle.ViewModelProviders
 import com.liamfarrell.android.snapbattle.adapters.BattleNameSearchSuggestionAdapter
 import com.liamfarrell.android.snapbattle.databinding.FragmentBattleNameSearchBinding
 import com.liamfarrell.android.snapbattle.di.Injectable
-import com.liamfarrell.android.snapbattle.ui.UserSearchFragment
 import com.liamfarrell.android.snapbattle.viewmodels.BattleNameSearchViewModel
 import io.reactivex.Observable
 import io.reactivex.ObservableOnSubscribe
@@ -40,11 +39,10 @@ class BattleNameSearchFragment : Fragment(), Injectable {
 
     private fun subscribeUi() {
         viewModel.searchResult.observe(viewLifecycleOwner, Observer { searchResult ->
-            if (searchResult.isEmpty()){
-                adapter.state = UserSearchFragment.State.NO_RESULTS
-            }
-            else {
-                adapter.state = UserSearchFragment.State.SHOW_LIST
+            when {
+                searchResult == null -> adapter.state = UserSearchFragment.State.SHOW_LIST
+                searchResult.isEmpty() -> adapter.state = UserSearchFragment.State.NO_RESULTS
+                else -> adapter.state = UserSearchFragment.State.SHOW_LIST
             }
             adapter.submitList(searchResult)
             adapter.notifyDataSetChanged()
@@ -71,7 +69,13 @@ class BattleNameSearchFragment : Fragment(), Injectable {
         Observable.create(ObservableOnSubscribe<String> { subscriber ->
             searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                 override fun onQueryTextChange(newText: String?): Boolean {
-                    subscriber.onNext(newText!!)
+                    viewModel.setSearchQueryText(newText)
+
+                    if (newText == null || newText  == "") {
+                        viewModel.searchBattle("")
+                    } else {
+                        subscriber.onNext(newText)
+                    }
                     Timber.i("On next: %s", newText)
                     return false
                 }

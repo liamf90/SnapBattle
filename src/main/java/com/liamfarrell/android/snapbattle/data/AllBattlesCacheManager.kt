@@ -1,9 +1,12 @@
 package com.liamfarrell.android.snapbattle.data
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.liamfarrell.android.snapbattle.db.AllBattlesDynamoDataDao
 import com.liamfarrell.android.snapbattle.db.BattleDao
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.*
 import javax.inject.Inject
@@ -41,11 +44,13 @@ class AllBattlesCacheManager @Inject constructor(
             val endIndex = startIndex + NETWORK_PAGE_SIZE - 1
 
             val moreBattlesIDList = allBattlesDynamoRepository.loadListFromDynamo(startIndex, endIndex)
+            Log.i("TESTING", "More Battles List: $moreBattlesIDList, startIndex: $startIndex, endIndex: $endIndex")
             val moreBattlesResponse = battlesApi.getFriendsBattles(moreBattlesIDList)
             if (moreBattlesResponse.error == null) {
                 if (moreBattlesResponse.result.sqlResult.size != NETWORK_PAGE_SIZE) {
                     noMoreBattles.postValue(true)
                 }
+                Log.i("TESTING", "Inserting into dao")
                 battleDao.insertAll(moreBattlesResponse.result.sqlResult)
             } else{
                 //ERROR
@@ -136,13 +141,44 @@ class AllBattlesCacheManager @Inject constructor(
             allBattlesDynamoInfoDao.insert(AllBattlesDynamoCount())
             battleDao.deleteAllBattles()
         }
+    }
 
+    fun increaseLikeCount(battleId: Int){
+        GlobalScope.launch (Dispatchers.IO) {
+            battleDao.increaseLikeCount (battleId)
+        }
+    }
+
+    fun decreaseLikeCount(battleId: Int){
+        GlobalScope.launch (Dispatchers.IO) {
+            battleDao.decreaseLikeCount (battleId)
+        }
+    }
+
+    fun increaseDislikeCount(battleId: Int){
+        GlobalScope.launch (Dispatchers.IO) {
+            battleDao.increaseDislikeCount (battleId)
+        }
+    }
+
+    fun decreaseDislikeCount(battleId: Int){
+        GlobalScope.launch (Dispatchers.IO) {
+            battleDao.decreaseDislikeCount (battleId)
+        }
+    }
+
+    fun setHasVoted(battleId: Int) {
+        GlobalScope.launch (Dispatchers.IO) {
+            battleDao.setHasVoted(battleId)
+        }
     }
 
     companion object {
         private const val NETWORK_PAGE_SIZE = 5
         const val DATABASE_TRIM_SIZE = 10
     }
+
+
 
 
 

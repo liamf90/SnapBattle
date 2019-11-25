@@ -22,6 +22,14 @@ class UsersBattlesRepository @Inject constructor
         return executeAWSFunction {lambdaFunctionsInterface.GetUsersBattles(request)}
     }
 
+    suspend fun getUsersBattlesWithFacebookId(facebookId: String) : AsyncTaskResult<GetUsersBattlesResponse> {
+        val request = GetUsersBattlesRequest()
+        request.getAfterBattleID = -1
+        request.facebookId = facebookId
+        request.fetchLimit = -1
+        return executeAWSFunction {lambdaFunctionsInterface.GetUsersBattles(request)}
+    }
+
     suspend fun followUser(cognitoID: String) : AsyncTaskResult<ResponseFollowing>{
         val request = AddFollowerRequestWithCognitoIDs()
         val cognitoIDFollowList = ArrayList<String>()

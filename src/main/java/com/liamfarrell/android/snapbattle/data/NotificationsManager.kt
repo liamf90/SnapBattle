@@ -7,7 +7,6 @@ import com.liamfarrell.android.snapbattle.db.NotificationsDynamoInfo
 import com.liamfarrell.android.snapbattle.notifications.NotificationDb
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -18,15 +17,15 @@ class NotificationsManager @Inject constructor(
         private val notificationsDao: NotificationDao)
 {
 
-    val noMoreBattles = MutableLiveData<Boolean>()
-    val loadingMoreBattles = MutableLiveData<Boolean>()
-    val loadingNewBattles = MutableLiveData<Boolean>()
+    val noMoreNotifications = MutableLiveData<Boolean>()
+    val loadingMoreNotifications = MutableLiveData<Boolean>()
+    val loadingNewNotifications = MutableLiveData<Boolean>()
 
 
     init{
-        noMoreBattles.value = false
-        loadingMoreBattles.value = false
-        loadingNewBattles.value = false
+        noMoreNotifications.value = false
+        loadingMoreNotifications.value = false
+        loadingNewNotifications.value = false
     }
 
     suspend fun checkHasAllNotificationsBeenSeen(){
@@ -39,8 +38,8 @@ class NotificationsManager @Inject constructor(
     }
 
     suspend fun requestMoreBattles() {
-        loadingMoreBattles.postValue(true)
-        noMoreBattles.postValue(false)
+        loadingMoreNotifications.postValue(true)
+        noMoreNotifications.postValue(false)
 
         val notificationCount = notificationsDao.getCountAllNotifications()
         val totalNotificationsCountDynamo = notificationsDynamoDbRepository.getNotificationCountDynamo()
@@ -53,9 +52,9 @@ class NotificationsManager @Inject constructor(
             notificationsDao.insertAll(moreNotificationsList.map{NotificationDb(it)})
             notificationsDynamoInfoDao.updateNotificationsDynamoCount(totalNotificationsCountDynamo)
         } else {
-            noMoreBattles.postValue(true)
+            noMoreNotifications.postValue(true)
         }
-        loadingMoreBattles.postValue(false)
+        loadingMoreNotifications.postValue(false)
     }
 
 
@@ -63,9 +62,15 @@ class NotificationsManager @Inject constructor(
         val notificationCountDynamo = notificationsDynamoDbRepository.getNotificationCountDynamo()
         val lastNotificationsDynamoCount = notificationsDynamoInfoDao.getNotificationDynamoCount()
 
+        if (notificationCountDynamo == 0) {
+            noMoreNotifications.postValue(true)
+            return
+        }
+
+
         //if there is more topBattles to be loaded from server to cache, get new ones then update old ones, else just update old ones
         if (notificationCountDynamo != lastNotificationsDynamoCount) {
-            loadingNewBattles.postValue(true)
+            loadingNewNotifications.postValue(true)
 
             // new topBattles list
             val startIndex = 0
@@ -82,7 +87,7 @@ class NotificationsManager @Inject constructor(
             notificationsDao.insertAll(newNotificationsList.map { NotificationDb(it) })
             notificationsDynamoInfoDao.updateNotificationsDynamoCount(notificationCountDynamo)
         }
-        loadingNewBattles.postValue(false)
+        loadingNewNotifications.postValue(false)
     }
 
     suspend fun deleteAllNotifications(){

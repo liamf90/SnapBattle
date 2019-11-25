@@ -2,12 +2,10 @@ package com.liamfarrell.android.snapbattle.data
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
 import androidx.paging.DataSource
 import com.liamfarrell.android.snapbattle.model.Battle
 import kotlinx.coroutines.CoroutineScope
-import java.lang.Exception
-import java.util.concurrent.Executor
-import javax.inject.Inject
 
 /**
  * A simple data source factory which also provides a way to observe the last created data source.
@@ -16,16 +14,17 @@ import javax.inject.Inject
  */
 class BattlesByNameDataSourceFactory (
         private val battlesRepository: BattlesFromNameRepository,
+        private val thumbnailSignedUrlCacheRepository: ThumbnailSignedUrlCacheRepository,
         private val battleName: String,
         private val coroutineScope: CoroutineScope) : DataSource.Factory<Int, Battle>() {
 
     val sourceLiveData = MutableLiveData<ItemKeyedBattlesByNameDataSource>()
-    var errorLiveData = MutableLiveData<Exception>()
+    var errorLiveData : LiveData<Exception> = Transformations.switchMap(sourceLiveData){it.errors}
+    val spinnerLiveData : LiveData<Boolean> = Transformations.switchMap(sourceLiveData){it.spinner}
 
     override fun create(): DataSource<Int, Battle> {
-        val source = ItemKeyedBattlesByNameDataSource(battlesRepository, battleName, coroutineScope)
+        val source = ItemKeyedBattlesByNameDataSource(battlesRepository, thumbnailSignedUrlCacheRepository,  battleName, coroutineScope)
         sourceLiveData.postValue(source)
-        errorLiveData = source._errors
         return source
     }
 }

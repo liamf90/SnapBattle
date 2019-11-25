@@ -8,10 +8,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import com.liamfarrell.android.snapbattle.R
-import com.liamfarrell.android.snapbattle.app.SnapBattleApp
 import com.liamfarrell.android.snapbattle.data.UserUpdateRepository
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.UpdateNameResponse
-import com.liamfarrell.android.snapbattle.ui.FacebookLoginFragment
+import com.liamfarrell.android.snapbattle.mvvm_ui.startup.LoggedInFragment
 import com.liamfarrell.android.snapbattle.util.CustomError
 import com.liamfarrell.android.snapbattle.util.getErrorMessage
 import com.liamfarrell.android.snapbattle.viewmodels.ViewModelLaunch
@@ -39,7 +38,7 @@ class ChooseNameStartupViewModel @Inject constructor(private val context : Appli
                         error.postValue(NameTooLongError)
                     } else if (response.result.result == UpdateNameResponse.getResultNameUpdated()){
                         val sharedPref = PreferenceManager.getDefaultSharedPreferences(context.applicationContext)
-                        sharedPref.edit().putString(FacebookLoginFragment.NAME_SHAREDPREFS, newName).commit()
+                        sharedPref.edit().putString(LoggedInFragment.NAME_SHAREDPREFS, newName).commit()
                         //Go to next fragment
                         nextFragmentCallback()
                     }

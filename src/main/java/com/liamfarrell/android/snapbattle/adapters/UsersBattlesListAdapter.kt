@@ -32,16 +32,33 @@ class UsersBattlesListAdapter :
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val battle = getItem(position)
         holder.apply {
-            bind(battle)
+            bind(battle,
+                    createChallengerOnClickListener(battle.challengerCognitoID),
+                    createChallengedOnClickListener(battle.challengedCognitoID),
+                    createThumbnailOnClickListener(battle))
             itemView.tag = battle
-            holder.itemView.setOnClickListener(getOnClickListener(battle))
         }
     }
 
-    private fun getOnClickListener(battle: Battle): View.OnClickListener {
+
+
+    private fun createThumbnailOnClickListener(battle: Battle): View.OnClickListener {
         return View.OnClickListener {
-            //go to video
-            val direction = UsersBattlesFragmentDirections.actionUsersBattlesFragmentToNavigationFullBattleVideo(battle.battleId, battle.getServerFinalVideoUrl(battle.challengerCognitoID), battle.challengerUsername, battle.challengedUsername)
+            val direction = UsersBattlesFragmentDirections.actionUsersBattlesFragment4ToNavigationFullBattleVideo(battle.battleId, battle.getServerFinalVideoUrl(battle.challengerCognitoID), battle.challengerUsername, battle.challengedUsername)
+            it.findNavController().navigate(direction)
+        }
+    }
+
+    private fun createChallengerOnClickListener(challengerCognitoID: String): View.OnClickListener {
+        return View.OnClickListener {
+            val direction = UsersBattlesFragmentDirections.actionUsersBattlesFragment4Self(challengerCognitoID)
+            it.findNavController().navigate(direction)
+        }
+    }
+
+    private fun createChallengedOnClickListener(challengedCognitoID: String): View.OnClickListener {
+        return View.OnClickListener {
+            val direction = UsersBattlesFragmentDirections.actionUsersBattlesFragment4Self(challengedCognitoID)
             it.findNavController().navigate(direction)
         }
     }
@@ -52,9 +69,12 @@ class UsersBattlesListAdapter :
             private val binding: ListItemBattleFriendsBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(item: Battle) {
+        fun bind(item: Battle, challengerOnClick : View.OnClickListener, challengedOnClick : View.OnClickListener, thumbnailOnClick : View.OnClickListener) {
             with(binding) {
                 battle = item
+                challengedUsernameClickListener = challengedOnClick
+                challengerUsernameClickListener = challengerOnClick
+                thumbnailClickListener = thumbnailOnClick
                 thumbnailSignedUrl = item.signedThumbnailUrl
                 executePendingBindings()
             }

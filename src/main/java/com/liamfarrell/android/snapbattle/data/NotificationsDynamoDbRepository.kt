@@ -1,20 +1,15 @@
 package com.liamfarrell.android.snapbattle.data
 
-import android.app.Application
-import android.util.Log
 import com.amazonaws.AmazonClientException
 import com.amazonaws.mobile.auth.core.IdentityManager
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient
 import com.amazonaws.services.dynamodbv2.model.AttributeValue
 import com.amazonaws.services.dynamodbv2.model.GetItemRequest
 import com.amazonaws.services.dynamodbv2.model.UpdateItemRequest
-import com.liamfarrell.android.snapbattle.BR.notification
-import com.liamfarrell.android.snapbattle.caches.NotificationCacheFile
-import com.liamfarrell.android.snapbattle.caches.NotificationType
+import com.liamfarrell.android.snapbattle.notifications.NotificationType
 import com.liamfarrell.android.snapbattle.notifications.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.w3c.dom.Attr
 import java.util.HashMap
 import javax.inject.Inject
 

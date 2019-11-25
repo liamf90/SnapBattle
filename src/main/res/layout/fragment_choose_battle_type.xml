@@ -93,7 +93,7 @@
                 />
             <ProgressBar
                 android:id="@+id/topBattlesLoadingProgressBar"
-                android:visibility="@{safeUnbox(viewModel.topBattlesLoading) ? View.VISIBLE : View.GONE}"
+                android:visibility="@{safeUnbox(viewModel.topBattlesLoading) || safeUnbox(viewModel.recentBattlesLoading) ? View.VISIBLE : View.GONE}"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:theme="@style/MyMaterialTheme.Base" />
@@ -207,7 +207,7 @@
             android:textStyle="bold"/>
         <ProgressBar
             android:id="@+id/recentBattlesLoadingProgressBar"
-            android:visibility="@{safeUnbox(viewModel.recentBattlesLoading) ? View.VISIBLE : View.GONE}"
+            android:visibility="@{safeUnbox(viewModel.recentBattlesLoading) || safeUnbox(viewModel.topBattlesLoading) ? View.VISIBLE : View.GONE}"
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:theme="@style/MyMaterialTheme.Base" />

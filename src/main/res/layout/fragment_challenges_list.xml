@@ -20,6 +20,19 @@
 			android:drawSelectorOnTop="false"
 			app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
 			/>
+
+		<TextView
+			android:id="@+id/noBattlesTextView"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginStart="24dp"
+			android:layout_marginEnd="24dp"
+			android:layout_gravity="center_vertical|center_horizontal"
+			android:text="@string/no_challenges"
+			android:textColor="@android:color/black"
+			android:visibility="gone"
+			android:textSize="24sp"
+			/>
 		<FrameLayout
 			android:id="@+id/challenges_list_progressContainer"
 			android:layout_width="match_parent"
@@ -32,7 +45,6 @@
 				android:layout_gravity="center"
 				android:theme="@style/MyMaterialTheme.Base"
 				/>
-
 		</FrameLayout>
 
 	</FrameLayout>

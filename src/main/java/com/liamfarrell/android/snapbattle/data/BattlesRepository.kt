@@ -8,12 +8,14 @@ import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserializat
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.CreateBattleResponse
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.GetFriendsBattlesResponse
 import com.liamfarrell.android.snapbattle.mvvm_ui.create_battle.ChooseVotingFragment
+import com.liamfarrell.android.snapbattle.testing.OpenForTesting
 import com.liamfarrell.android.snapbattle.util.executeAWSFunction
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
+@OpenForTesting
 class BattlesRepository @Inject constructor
 (private val lambdaFunctionsInterface: LambdaFunctionsInterface) {
 

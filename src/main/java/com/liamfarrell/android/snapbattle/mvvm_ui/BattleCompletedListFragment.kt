@@ -10,9 +10,11 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import com.liamfarrell.android.snapbattle.adapters.CompletedBattlesListAdapter
+import com.liamfarrell.android.snapbattle.databinding.FragmentCompletedBattleListBinding
 import com.liamfarrell.android.snapbattle.databinding.FragmentFriendsBattleListBinding
 import com.liamfarrell.android.snapbattle.di.Injectable
 import com.liamfarrell.android.snapbattle.viewmodels.CompletedBattlesViewModel
+import kotlinx.android.synthetic.main.fragment_friends_battle_list.*
 import javax.inject.Inject
 
 class BattleCompletedListFragment : Fragment(), Injectable {
@@ -24,7 +26,7 @@ class BattleCompletedListFragment : Fragment(), Injectable {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
-        val binding = FragmentFriendsBattleListBinding.inflate(inflater, container, false)
+        val binding = FragmentCompletedBattleListBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = viewLifecycleOwner
 
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(CompletedBattlesViewModel::class.java)
@@ -32,13 +34,19 @@ class BattleCompletedListFragment : Fragment(), Injectable {
         binding.recyclerView.adapter = adapter
         binding.showSpinner = viewModel.spinner
 
-        subscribeUi(adapter)
+        subscribeUi(binding, adapter)
         return binding.root
     }
 
-    private fun subscribeUi(adapter: CompletedBattlesListAdapter) {
+    private fun subscribeUi(binding : FragmentCompletedBattleListBinding, adapter: CompletedBattlesListAdapter) {
         viewModel.battles.observe(viewLifecycleOwner, Observer { battlesList ->
-            battlesList?.let{adapter.submitList(battlesList)}
+            battlesList?.let{
+                adapter.submitList(battlesList)
+
+                if (it.isEmpty()) binding.NoBattlesTextView.visibility = View.VISIBLE
+                else binding.NoBattlesTextView.visibility = View.GONE
+            }
+
         })
 
         viewModel.errorMessage.observe(viewLifecycleOwner, Observer {

@@ -10,11 +10,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.liamfarrell.android.snapbattle.databinding.ListItemCommentBinding
 import com.liamfarrell.android.snapbattle.model.Comment
 import androidx.appcompat.widget.PopupMenu
+import androidx.navigation.findNavController
 import com.amazonaws.mobile.auth.core.IdentityManager
 import com.liamfarrell.android.snapbattle.R
-import com.liamfarrell.android.snapbattle.ui.FacebookLoginFragment
+import com.liamfarrell.android.snapbattle.mvvm_ui.ViewCommentsFragmentDirections
 import com.liamfarrell.android.snapbattle.viewmodels.CommentViewModel
-import kotlinx.android.synthetic.main.media_controller_battle.view.*
 
 
 /**
@@ -35,9 +35,8 @@ class CommentsListAdapter (private  val viewModel : CommentViewModel, val viewHo
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val comment = getItem(position)
         holder.apply {
-            bind(comment)
+            bind(comment,  getProfilePicOnClickListener(comment.cognitoIdCommenter))
             itemView.tag = comment
-            //TODO CHANGE cached identity idTO DAGGER
             holder.itemView.setOnClickListener{viewHolderOnClick(comment.username)}
             if (comment.cognitoIdCommenter == IdentityManager.getDefaultIdentityManager().getCachedUserID()){
                 holder.itemView.setOnLongClickListener(getOnLongClickListenerOwnComment(comment.commentId))
@@ -47,6 +46,15 @@ class CommentsListAdapter (private  val viewModel : CommentViewModel, val viewHo
 
         }
     }
+
+    private fun getProfilePicOnClickListener(cognitoIdOpponent: String): View.OnClickListener {
+        return View.OnClickListener {
+            //go to user
+            val direction = ViewCommentsFragmentDirections.actionViewCommentsFragment3ToUsersBattlesFragment(cognitoIdOpponent)
+            it.findNavController().navigate(direction)
+        }
+    }
+
     private fun getOnLongClickListenerOwnComment(commentID: Int): View.OnLongClickListener {
         return View.OnLongClickListener {
             //Creating the instance of PopupMenu
@@ -84,9 +92,10 @@ class CommentsListAdapter (private  val viewModel : CommentViewModel, val viewHo
             private val binding: ListItemCommentBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(item: Comment) {
+        fun bind(item: Comment, profilePicOnClickListener: View.OnClickListener){
             with(binding) {
                 comment = item
+                this.profilePicOnClickListener = profilePicOnClickListener
                 executePendingBindings()
             }
         }

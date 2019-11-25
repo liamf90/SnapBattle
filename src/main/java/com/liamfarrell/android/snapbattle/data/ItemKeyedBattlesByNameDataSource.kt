@@ -1,12 +1,9 @@
 package com.liamfarrell.android.snapbattle.data
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.ItemKeyedDataSource
-import com.liamfarrell.android.snapbattle.model.AsyncTaskResult
 import com.liamfarrell.android.snapbattle.model.Battle
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.lang.Exception
 import javax.inject.Inject
@@ -16,12 +13,12 @@ import javax.inject.Inject
  */
 
 
-class ItemKeyedBattlesByNameDataSource @Inject constructor( val battlesFromNameRepository: BattlesFromNameRepository, val battleName: String, val viewModelScope: CoroutineScope) : ItemKeyedDataSource<Int, Battle>() {
+class ItemKeyedBattlesByNameDataSource @Inject constructor( val battlesFromNameRepository: BattlesFromNameRepository,
+                                                            val thumbnailSignedUrlCacheRepository: ThumbnailSignedUrlCacheRepository, val battleName: String, val viewModelScope: CoroutineScope) : ItemKeyedDataSource<Int, Battle>() {
 
-     val _errors = MutableLiveData<Exception>()
+     val errors = MutableLiveData<Exception>()
+    val spinner = MutableLiveData(false)
 
-//    val errors : LiveData<Exception>
-//        get() = _errors
 
     override fun loadBefore(params: LoadParams<Int>, callback: LoadCallback<Battle>) {
         //Ignored
@@ -31,11 +28,16 @@ class ItemKeyedBattlesByNameDataSource @Inject constructor( val battlesFromNameR
                              callback: LoadInitialCallback<Battle>) {
 
         viewModelScope.launch {
+            spinner.value = true
             val response = battlesFromNameRepository.getBattlesFromName(battleName)
-            if (response.error == null)
+            if (response.error == null) {
+                response.result.sqlResult = getThumbnailSignedUrls(response.result.sqlResult)
+                spinner.value = false
                 callback.onResult(response.result.sqlResult)
-            else{
-                _errors.value = response.error
+            }
+            else {
+                spinner.value = false
+                errors.value = response.error
             }
 
         }
@@ -45,13 +47,23 @@ class ItemKeyedBattlesByNameDataSource @Inject constructor( val battlesFromNameR
                            callback: LoadCallback<Battle>) {
         viewModelScope.launch {
             val response = battlesFromNameRepository.getBattlesFromName(battleName, params.key)
-            if (response.error == null)
+            if (response.error == null) {
+                response.result.sqlResult = getThumbnailSignedUrls(response.result.sqlResult)
                 callback.onResult(response.result.sqlResult)
+            }
             else{
-                _errors.value = response.error
+                errors.value = response.error
             }
         }
     }
+
+    private suspend fun getThumbnailSignedUrls(battleList: List<Battle>) : List<Battle>{
+        battleList.forEach {
+            it.signedThumbnailUrl = thumbnailSignedUrlCacheRepository.getThumbnailSignedUrl(it)
+        }
+        return battleList
+    }
+
 
     override fun getKey(item: Battle): Int {
         return item.battleID

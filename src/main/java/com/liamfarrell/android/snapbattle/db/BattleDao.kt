@@ -31,4 +31,19 @@ interface BattleDao {
 
     @Query("DELETE FROM all_battles")
     suspend fun deleteAllBattles()
+
+    @Query("UPDATE all_battles SET mUserHasVoted = 1 WHERE battle_id = :battleId")
+    suspend fun setHasVoted(battleId: Int)
+
+    @Query("UPDATE all_battles SET mLikeCount = mLikeCount + 1 WHERE battle_id = :battleId")
+    suspend fun increaseLikeCount(battleId: Int)
+
+    @Query("UPDATE all_battles SET mDislikeCount = mDislikeCount + 1 WHERE battle_id = :battleId")
+    suspend fun increaseDislikeCount(battleId: Int)
+
+    @Query("UPDATE all_battles SET mLikeCount = mLikeCount - 1 WHERE battle_id = :battleId")
+    suspend fun decreaseLikeCount(battleId: Int)
+
+    @Query("UPDATE all_battles SET mDislikeCount = mDislikeCount - 1 WHERE battle_id = :battleId")
+    suspend fun decreaseDislikeCount(battleId: Int)
 }

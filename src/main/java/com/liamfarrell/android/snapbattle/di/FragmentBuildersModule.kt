@@ -21,7 +21,7 @@ import com.liamfarrell.android.snapbattle.mvvm_ui.create_battle.ChooseBattleType
 import com.liamfarrell.android.snapbattle.mvvm_ui.create_battle.ChooseOpponentFragment
 import com.liamfarrell.android.snapbattle.mvvm_ui.create_battle.VerifyBattleFragment
 import com.liamfarrell.android.snapbattle.mvvm_ui.startup.*
-import com.liamfarrell.android.snapbattle.ui.FullBattleVideoPlayerFragment
+import com.liamfarrell.android.snapbattle.mvvm_ui.to_be_converted.FullBattleVideoPlayerFragment
 
 
 import dagger.Module

@@ -2,11 +2,10 @@ package com.liamfarrell.android.snapbattle.viewmodels.create_battle
 
 import android.app.Application
 import android.content.Context
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.viewModelScope
 import com.liamfarrell.android.snapbattle.R
-import com.liamfarrell.android.snapbattle.app.SnapBattleApp
 import com.liamfarrell.android.snapbattle.data.ChooseOpponentRepository
 import com.liamfarrell.android.snapbattle.data.FollowingRepository
 import com.liamfarrell.android.snapbattle.data.OtherUsersProfilePicUrlRepository
@@ -17,7 +16,6 @@ import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserializat
 import com.liamfarrell.android.snapbattle.util.CustomError
 import com.liamfarrell.android.snapbattle.util.getErrorMessage
 import com.liamfarrell.android.snapbattle.viewmodels.ViewModelLaunch
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
@@ -33,7 +31,8 @@ class ChooseOpponentViewModel @Inject constructor(private val context: Applicati
     var searchQuery = ""
 
     private val _userList = MediatorLiveData<List<User>>()
-    val userList = _userList
+     val userList : LiveData<List<User>> = _userList
+    val userListFilteredBySearch = MutableLiveData<List<User>>()
 
     private val followingResult = MutableLiveData<AsyncTaskResult<ResponseFollowing>>()
 
@@ -53,6 +52,21 @@ class ChooseOpponentViewModel @Inject constructor(private val context: Applicati
 
 
     init {
+            _userList.addSource(followingResult){
+                if (it.error == null){
+                    _userList.value = it.result.sqlResult
+                }
+            }
+            _userList.addSource(recentOpponentsResult){
+                if (it.error == null){
+                    _userList.value = it.result.sqlResult
+                }
+            }
+            _userList.addSource(facebookFollowingResult){
+                if (it.error == null){
+                    _userList.value = it.result
+                }
+            }
             errorMessage.addSource(followingResult){result ->
                 if (result.error != null){
                     errorMessage.value = getErrorMessage(context, result.error) }
@@ -65,21 +79,7 @@ class ChooseOpponentViewModel @Inject constructor(private val context: Applicati
                 if (result.error != null){
                     errorMessage.value = getErrorMessage(context, result.error) }
             }
-            _userList.addSource(followingResult){
-                if (it.error == null){
-                        _userList.value = it.result.sqlResult
-                }
-            }
-            _userList.addSource(recentOpponentsResult){
-                if (it.error == null){
-                        _userList.value = it.result.sqlResult
-                }
-            }
-            _userList.addSource(facebookFollowingResult){
-                if (it.error == null){
-                    _userList.value = it.result
-                }
-            }
+
         }
 
         fun usernameEnteredManually(username: String, nextFragmentCallback : (user: User) -> Unit) {
@@ -159,27 +159,34 @@ class ChooseOpponentViewModel @Inject constructor(private val context: Applicati
      *  factors such as a match to the start of the first name will display higher than a match to the part of the last name
      */
      fun filterResults(querySearchView: String) {
-        val sortMap  = mutableMapOf<Int, User>()
+        if (querySearchView == "") {
+            userListFilteredBySearch.value = _userList.value
+            return
+        }
+
+        val sortList  = mutableListOf<Pair<Int, User>>()
         _userList.value?.forEach {
             val resultComparison = getSearchMatchRanking(querySearchView.toLowerCase(), it)
             if (resultComparison != 0) {
-                sortMap.put(resultComparison,it) }
+                sortList.add(Pair(resultComparison,it))}
         }
-         _userList.value = sortMap.toSortedMap().values.toList()
+        sortList.sortBy { it.first }
+         userListFilteredBySearch.value = sortList.map { it.second }
+
     }
 
     private fun getSearchMatchRanking(querySearch : String, user : User) : Int {
         val query = querySearch.toLowerCase()
         var resultComparison = 0
         val fullNameSplit = user.facebookName.toLowerCase().split(" ".toRegex()).dropLastWhile { it.isEmpty() }.toList()
-        val username = user.username.toLowerCase()
+        val username : String? = user.username?.toLowerCase()
         when{
-            query == username -> resultComparison = 1 //highest ranking
-            fullNameSplit.contains(query) -> resultComparison = 2
-            username.startsWith(query) -> resultComparison = 3
-            fullNameSplit.any { it.startsWith(query) } -> resultComparison = 4
-            username.contains(query) -> resultComparison = 5
-            fullNameSplit.any{it.contains(query)} -> resultComparison = 6
+            query == username -> resultComparison = 6 //highest ranking
+            fullNameSplit.contains(query) -> resultComparison = 5
+            username != null && username.startsWith(query) -> resultComparison = 4
+            fullNameSplit.any { it.startsWith(query) } -> resultComparison = 3
+            username != null && username.contains(query) -> resultComparison = 2
+            fullNameSplit.any{it.contains(query)} -> resultComparison = 1
         }
         return resultComparison
     }

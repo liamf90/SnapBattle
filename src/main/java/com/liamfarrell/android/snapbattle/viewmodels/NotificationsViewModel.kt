@@ -7,7 +7,6 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagedList
 import com.liamfarrell.android.snapbattle.data.NotificationsRepository
 import com.liamfarrell.android.snapbattle.data.OtherUsersProfilePicUrlRepository
-import com.liamfarrell.android.snapbattle.db.OtherUsersProfilePicUrlCache
 import com.liamfarrell.android.snapbattle.model.NotificationsDatabaseResult
 import com.liamfarrell.android.snapbattle.notifications.NotificationDb
 import kotlinx.coroutines.launch
@@ -20,8 +19,8 @@ import javax.inject.Inject
 class NotificationsViewModel @Inject constructor(private val notificationsRepository: NotificationsRepository, private val otherUsersProfilePicUrlRepository: OtherUsersProfilePicUrlRepository) : ViewModelLaunch() {
 
     private val notificationsResult = MutableLiveData<NotificationsDatabaseResult>()
-    private val _noMoreOlderBattles =  notificationsRepository.isNoMoreOlderBattles
-    private val _loadingMoreBattles = notificationsRepository.isLoadingMoreBattles
+    private val _noMoreOlderNotifications =  notificationsRepository.isNoMoreOlderNotifications
+    private val _loadingMoreNotifications = notificationsRepository.isLoadingMoreNotifications
 
     private val cogntioIdSignedUrlServerCheckList = mutableListOf<String>()
 
@@ -31,13 +30,16 @@ class NotificationsViewModel @Inject constructor(private val notificationsReposi
     val networkErrors: LiveData<String> = Transformations.switchMap(notificationsResult) { it ->
         it.networkErrors
     }
-    val noMoreOlderBattles : LiveData<Boolean> = _noMoreOlderBattles
-    val isLoadingMoreBattles : LiveData<Boolean> = _loadingMoreBattles
-
+    val noMoreOlderNotifications : LiveData<Boolean> = _noMoreOlderNotifications
+    val isLoadingMoreNotifications : LiveData<Boolean> = _loadingMoreNotifications
+    val isNoNotifications = Transformations.map(_noMoreOlderNotifications) {
+        it && notifications.value?.size == 0
+    }
 
     init {
-
+        _spinner.value = true
         notificationsResult.value = notificationsRepository.loadAllNotifications(viewModelScope)
+        _spinner.value = false
         viewModelScope.launch {notificationsRepository.checkForUpdates()}
     }
 

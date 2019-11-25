@@ -3,6 +3,8 @@ package com.liamfarrell.android.snapbattle.data
 import androidx.lifecycle.MutableLiveData
 import com.liamfarrell.android.snapbattle.db.*
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.*
 import javax.inject.Inject
@@ -145,6 +147,36 @@ class FollowingBattlesFeedCacheManager @Inject constructor(
              followingBattleDao.deleteAllBattles()
          }
      }
+
+    fun increaseLikeCount(battleId: Int){
+        GlobalScope.launch (Dispatchers.IO) {
+            followingBattleDao.increaseLikeCount (battleId)
+        }
+    }
+
+    fun decreaseLikeCount(battleId: Int){
+        GlobalScope.launch (Dispatchers.IO) {
+            followingBattleDao.decreaseLikeCount (battleId)
+        }
+    }
+
+    fun increaseDislikeCount(battleId: Int){
+        GlobalScope.launch (Dispatchers.IO) {
+            followingBattleDao.increaseDislikeCount (battleId)
+        }
+    }
+
+    fun decreaseDislikeCount(battleId: Int){
+        GlobalScope.launch (Dispatchers.IO) {
+            followingBattleDao.decreaseDislikeCount (battleId)
+        }
+    }
+
+    fun setHasVoted(battleId: Int) {
+        GlobalScope.launch (Dispatchers.IO) {
+            followingBattleDao.setHasVoted(battleId)
+        }
+    }
 
     companion object {
         private const val NETWORK_PAGE_SIZE = 5

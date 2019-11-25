@@ -9,13 +9,9 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.liamfarrell.android.snapbattle.R
-import com.liamfarrell.android.snapbattle.databinding.ListItemSearchBattleBinding
 import com.liamfarrell.android.snapbattle.databinding.ListItemSearchUserBinding
-import com.liamfarrell.android.snapbattle.model.Battle
 import com.liamfarrell.android.snapbattle.model.User
-import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.SuggestionsResponse
 import com.liamfarrell.android.snapbattle.mvvm_ui.SearchUsersAndBattlesFragmentDirections
-import com.liamfarrell.android.snapbattle.ui.UserSearchFragment
 import com.liamfarrell.android.snapbattle.viewmodels.UserSearchViewModel
 import timber.log.Timber
 
@@ -110,7 +106,7 @@ class UserSearchSuggestionAdapter :
     private fun getOnClickListener(cognitoID: String): View.OnClickListener {
         return View.OnClickListener {
             //go to user
-            val direction = SearchUsersAndBattlesFragmentDirections.actionSearchUsersAndBattlesFragmentToUsersBattlesFragment(cognitoID)
+            val direction = SearchUsersAndBattlesFragmentDirections.actionSearchUsersAndBattlesFragmentToNavigationUsersBattles(cognitoID)
             it.findNavController().navigate(direction)
         }
     }

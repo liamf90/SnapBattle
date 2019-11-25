@@ -10,33 +10,13 @@
         android:name="com.liamfarrell.android.snapbattle.mvvm_ui.SearchUsersAndBattlesFragment"
         android:label="SearchUsersAndBattlesFragment" >
         <action
-            android:id="@+id/action_searchUsersAndBattlesFragment_to_usersBattlesFragment"
-            app:destination="@id/usersBattlesFragment" />
-        <action
             android:id="@+id/action_searchUsersAndBattlesFragment_to_viewBattlesFromNameFragment"
             app:destination="@id/viewBattlesFromNameFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/usersBattlesFragment"
-        android:name="com.liamfarrell.android.snapbattle.mvvm_ui.UsersBattlesFragment"
-        android:label="UsersBattlesFragment" >
-        <argument
-            android:name="cognitoId"
-            app:argType="string" />
         <action
-            android:id="@+id/action_usersBattlesFragment_to_navigation_full_battle_video"
-            app:destination="@id/navigation_full_battle_video">
+            android:id="@+id/action_searchUsersAndBattlesFragment_to_navigation_users_battles"
+            app:destination="@id/navigation_users_battles">
             <argument
-                android:name="battleId"
-                app:argType="integer" />
-            <argument
-                android:name="filepath"
-                app:argType="string" />
-            <argument
-                android:name="challengerName"
-                app:argType="string" />
-            <argument
-                android:name="challengedName"
+                android:name="cognitoId"
                 app:argType="string" />
         </action>
     </fragment>
@@ -63,6 +43,14 @@
             android:name="challengedName"
             app:argType="string" />
         </action>
+        <action
+            android:id="@+id/action_viewBattlesFromNameFragment_to_navigation_users_battles2"
+            app:destination="@id/navigation_users_battles">
+            <argument
+                android:name="cognitoId"
+                app:argType="string" />
+        </action>
 
     </fragment>
+    <include app:graph="@navigation/navigation_users_battles" />
 </navigation>

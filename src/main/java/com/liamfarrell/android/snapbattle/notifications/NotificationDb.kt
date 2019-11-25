@@ -1,9 +1,6 @@
 package com.liamfarrell.android.snapbattle.notifications
 
-import android.content.Context
 import androidx.room.*
-import com.liamfarrell.android.snapbattle.caches.NotificationType
-import com.liamfarrell.android.snapbattle.db.OtherUsersProfilePicUrlCache
 
 @Entity(tableName = "notifications")
 
@@ -39,17 +36,20 @@ class NotificationDb() {
                 opponentCognitoId = notification.opponentCognitoId
                 opponentName = notification.opponentName
                 battleAccepted = notification.isBattleAccepted
+                battleId = notification.battleId
             }
             is FullVideoUploadedNotification -> {
                 notificationType = NotificationType.FULL_VIDEO_CREATED
                 notificationIndex = notification.notificationIndex
                 battleName = notification.battleName
+                battleId = notification.battleId
             }
             is NewBattleRequestNotification -> {
                 notificationType = NotificationType.NEW_BATTLE_REQUEST
                 notificationIndex = notification.notificationIndex
                 challengerName = notification.challengerName
                 cognitoIdChallenger = notification.cognitoIdChallenger
+                battleId = notification.battleId
             }
             is NewCommentNotification -> {
                 notificationType = NotificationType.NEW_COMMENT
@@ -57,6 +57,7 @@ class NotificationDb() {
                 opponentCognitoId = notification.opponentCognitoId
                 opponentName = notification.opponentName
                 battleName = notification.battleName
+                battleId = notification.battleId
             }
             is NewFollowerNotification -> {
                 notificationType = NotificationType.NEW_FOLLOWER
@@ -74,12 +75,14 @@ class NotificationDb() {
                 challengedUsername = notification.challengedUsername
                 challengerCognitoId = notification.challengerCognitoId
                 challengedCognitoId = notification.challengedCognitoId
+                battleId = notification.battleId
             }
             is VideoSubmittedNotification -> {
                 notificationType = NotificationType.VIDEO_SUBMITTED
                 notificationIndex = notification.notificationIndex
                 opponentCognitoId = notification.opponentCognitoId
                 opponentName = notification.opponentName
+                battleId = notification.battleId
             }
             is VotingCompleteNotification -> {
                 notificationType = NotificationType.VOTE_COMPLETE
@@ -89,6 +92,7 @@ class NotificationDb() {
                 voteUser = notification.battleId
                 voteOpponent = notification.voteOpponent
                 votingResult = notification.votingResult
+                battleId = notification.battleId
             }
         }
 

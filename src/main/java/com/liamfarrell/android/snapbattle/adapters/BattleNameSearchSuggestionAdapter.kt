@@ -10,10 +10,9 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.liamfarrell.android.snapbattle.R
 import com.liamfarrell.android.snapbattle.databinding.ListItemSearchBattleBinding
-import com.liamfarrell.android.snapbattle.model.Battle
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.SuggestionsResponse
 import com.liamfarrell.android.snapbattle.mvvm_ui.SearchUsersAndBattlesFragmentDirections
-import com.liamfarrell.android.snapbattle.ui.UserSearchFragment
+import com.liamfarrell.android.snapbattle.mvvm_ui.UserSearchFragment
 
 /**
  * Adapter for the [RecyclerView] in [BattleNameSearchFragment].

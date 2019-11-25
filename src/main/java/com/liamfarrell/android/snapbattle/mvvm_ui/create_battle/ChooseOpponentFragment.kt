@@ -13,6 +13,8 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.tabs.TabLayout
 import com.liamfarrell.android.snapbattle.R
 import com.liamfarrell.android.snapbattle.adapters.ChooseOpponentListAdapter
@@ -20,9 +22,6 @@ import com.liamfarrell.android.snapbattle.databinding.FragmentOpponentListBindin
 import com.liamfarrell.android.snapbattle.di.Injectable
 import com.liamfarrell.android.snapbattle.model.User
 import com.liamfarrell.android.snapbattle.viewmodels.create_battle.ChooseOpponentViewModel
-import kotlinx.android.synthetic.main.fragment_opponent_list.*
-import kotlinx.android.synthetic.main.toolbar.view.*
-import timber.log.Timber
 import javax.inject.Inject
 
 class ChooseOpponentFragment : Fragment(), Injectable {
@@ -40,6 +39,8 @@ class ChooseOpponentFragment : Fragment(), Injectable {
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(ChooseOpponentViewModel::class.java)
         val adapter = ChooseOpponentListAdapter(::opponentSelected)
         binding.recyclerList.adapter = adapter
+        binding.recyclerList.addItemDecoration(DividerItemDecoration(context, LinearLayoutManager.VERTICAL))
+        binding.recyclerList.itemAnimator = null
         binding.viewModel = viewModel
         binding.EnterUsernameManuallyButton.setOnClickListener(getOnEnterUsernameButtonClickListener(viewModel))
         binding.opponentSelectorTabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
@@ -84,7 +85,7 @@ class ChooseOpponentFragment : Fragment(), Injectable {
     private fun setToolbar(toolbar : androidx.appcompat.widget.Toolbar){
         (activity as AppCompatActivity).setSupportActionBar(toolbar)
         (activity as AppCompatActivity).supportActionBar?.title = "Choose Opponent";
-        (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true);
+        (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false);
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater : MenuInflater) {
@@ -100,6 +101,10 @@ class ChooseOpponentFragment : Fragment(), Injectable {
 
 
     private fun subscribeUi(adapter: ChooseOpponentListAdapter) {
+        viewModel.userListFilteredBySearch.observe(viewLifecycleOwner, Observer { userList ->
+            userList?.let{adapter.submitList(it)}
+        })
+
         viewModel.userList.observe(viewLifecycleOwner, Observer { userList ->
             userList?.let{adapter.submitList(it)}
         })

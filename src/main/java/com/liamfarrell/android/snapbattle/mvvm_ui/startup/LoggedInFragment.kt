@@ -14,13 +14,10 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.amazonaws.mobile.auth.core.IdentityManager
 import com.facebook.AccessToken
-import com.liamfarrell.android.snapbattle.MainActivity
 import com.liamfarrell.android.snapbattle.R
 import com.liamfarrell.android.snapbattle.data.*
 import com.liamfarrell.android.snapbattle.di.Injectable
 import com.liamfarrell.android.snapbattle.service.RegistrationIntentService
-import com.liamfarrell.android.snapbattle.ui.FacebookLoginFragment
-import com.liamfarrell.android.snapbattle.ui.startup.StartupActivity
 import com.liamfarrell.android.snapbattle.util.getErrorMessage
 import dagger.android.DispatchingAndroidInjector
 import kotlinx.coroutines.*
@@ -28,11 +25,14 @@ import java.lang.ClassCastException
 import javax.inject.Inject
 
 class LoggedInFragment  : Fragment() , Injectable {
-    val USER_ALREADY_EXISTS_RESULT = "USER_ALREADY_EXISTS"
-    val USER_ADDED_RESULT = "NEW_USER_ADDED"
-    val USERNAME_SHAREDPREFS = "username"
-    val NAME_SHAREDPREFS = "facebook_name"
-    val COGNITO_ID_SHAREDPREFS = "cognito_id"
+
+    companion object{
+        val USER_ALREADY_EXISTS_RESULT = "USER_ALREADY_EXISTS"
+        val USER_ADDED_RESULT = "NEW_USER_ADDED"
+        val USERNAME_SHAREDPREFS = "username"
+        val NAME_SHAREDPREFS = "facebook_name"
+        val COGNITO_ID_SHAREDPREFS = "cognito_id"
+    }
 
     @Inject
     lateinit var dispatchingAndroidInjector: DispatchingAndroidInjector<Fragment>
@@ -99,8 +99,8 @@ class LoggedInFragment  : Fragment() , Injectable {
 
         if (response.result.userExists == USER_ALREADY_EXISTS_RESULT) {
             val sharedPref = PreferenceManager.getDefaultSharedPreferences(requireContext().getApplicationContext())
-            sharedPref.edit().putString(FacebookLoginFragment.NAME_SHAREDPREFS, response.result.name).commit()
-            sharedPref.edit().putString(FacebookLoginFragment.USERNAME_SHAREDPREFS, response.result.username).commit()
+            sharedPref.edit().putString(NAME_SHAREDPREFS, response.result.name).commit()
+            sharedPref.edit().putString(USERNAME_SHAREDPREFS, response.result.username).commit()
             findNavController().navigate(R.id.action_loggedInFragment_to_mainActivity)
             activity?.finish()
 

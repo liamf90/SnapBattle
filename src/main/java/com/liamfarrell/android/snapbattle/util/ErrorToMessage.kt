@@ -36,6 +36,30 @@ fun getErrorMessage(context: Context, error: Exception): String {
     }
 }
 
+fun getErrorMessage(context: Context, error: Throwable): String {
+    return when (error) {
+        is AmazonServiceException -> context.getString(R.string.server_error_toast)
+        is LambdaFunctionException -> {
+            val parser = JsonParser()
+            if (parser.parse(error.details).asJsonObject.get("errorType") != null) {
+                val errorType = parser.parse(error.details).asJsonObject.get("errorType").asString
+                if (errorType == LambdaFunctionsInterface.UPGRADE_REQUIRED_ERROR_MESSAGE) {
+                    return context.getString(R.string.upgrade_required_toast_message)
+                } else if (errorType == ALREADY_FOLLOWING_ERROR) {
+                    return context.getString(R.string.already_following_error)
+                } else {
+                    return context.getString(R.string.server_error_toast)
+                }
+            } else {
+                return context.getString(R.string.server_error_toast)
+            }
+        }
+        is AmazonClientException -> context.getString(R.string.no_internet_connection_toast)
+        is CustomError -> error.getErrorToastMessage(context)
+        else -> context.getString(R.string.server_error_toast)
+    }
+}
+
 
 abstract class CustomError() : Exception(){
     abstract fun getErrorToastMessage(context: Context) : String

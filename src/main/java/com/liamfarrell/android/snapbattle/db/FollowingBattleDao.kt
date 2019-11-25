@@ -11,8 +11,6 @@ import com.liamfarrell.android.snapbattle.model.Video
  */
 @Dao
 interface FollowingBattleDao {
-//    @Query("SELECT * FROM following_battle ORDER BY mLastVideoUploadTime DESC")
-//    fun getAllBattles(): DataSource.Factory<Int,FollowingBattle>
 
     @Query("SELECT * FROM following_battle " +
             " LEFT JOIN  thumbnail_signed_url " +
@@ -31,4 +29,22 @@ interface FollowingBattleDao {
 
     @Query("DELETE FROM following_battle")
     suspend fun deleteAllBattles()
+
+
+    @Query("UPDATE following_battle SET mUserHasVoted = 1 WHERE battle_id = :battleId")
+    suspend fun setHasVoted(battleId: Int)
+
+    @Query("UPDATE following_battle SET mLikeCount = mLikeCount + 1 WHERE battle_id = :battleId")
+    suspend fun increaseLikeCount(battleId: Int)
+
+    @Query("UPDATE following_battle SET mDislikeCount = mDislikeCount + 1 WHERE battle_id = :battleId")
+    suspend fun increaseDislikeCount(battleId: Int)
+
+    @Query("UPDATE following_battle SET mLikeCount = mLikeCount - 1 WHERE battle_id = :battleId")
+    suspend fun decreaseLikeCount(battleId: Int)
+
+    @Query("UPDATE following_battle SET mDislikeCount = mDislikeCount - 1 WHERE battle_id = :battleId")
+    suspend fun decreaseDislikeCount(battleId: Int)
+
+
 }

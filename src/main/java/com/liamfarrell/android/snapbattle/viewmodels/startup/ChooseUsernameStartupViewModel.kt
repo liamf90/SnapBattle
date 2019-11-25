@@ -8,11 +8,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import com.liamfarrell.android.snapbattle.R
-import com.liamfarrell.android.snapbattle.app.SnapBattleApp
 import com.liamfarrell.android.snapbattle.data.UserUpdateRepository
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.UpdateUsernameResponse
-import com.liamfarrell.android.snapbattle.ui.FacebookLoginFragment
-import com.liamfarrell.android.snapbattle.ui.startup.ChooseUsernameStartupFragment
+import com.liamfarrell.android.snapbattle.mvvm_ui.startup.ChooseUsernameStartupFragment
+import com.liamfarrell.android.snapbattle.mvvm_ui.startup.LoggedInFragment
 import com.liamfarrell.android.snapbattle.util.CustomError
 import com.liamfarrell.android.snapbattle.util.getErrorMessage
 import com.liamfarrell.android.snapbattle.viewmodels.ViewModelLaunch
@@ -45,7 +44,7 @@ class ChooseUsernameStartupViewModel @Inject constructor(val context : Applicati
                         error.postValue(UsernameAlreadyExistsError)}
                     else if (response.result.result == UpdateUsernameResponse.getResultUsernameUpdated()){
                         val sharedPref = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext())
-                        sharedPref.edit().putString(FacebookLoginFragment.USERNAME_SHAREDPREFS, newUsername).commit()
+                        sharedPref.edit().putString(LoggedInFragment.USERNAME_SHAREDPREFS, newUsername).commit()
                         nextActivityCallback()
                     }
                 })

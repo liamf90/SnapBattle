@@ -1,7 +1,6 @@
 package com.liamfarrell.android.snapbattle.mvvm_ui
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.*
 import android.content.pm.PackageManager
@@ -9,10 +8,8 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.OnClickListener
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -21,7 +18,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
-import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.amazonaws.mobile.auth.core.IdentityManager
@@ -29,30 +25,20 @@ import com.google.android.material.snackbar.Snackbar
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
-import com.karumi.dexter.listener.DexterError
 import com.karumi.dexter.listener.PermissionRequest
-import com.karumi.dexter.listener.PermissionRequestErrorListener
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.liamfarrell.android.snapbattle.R
-import com.liamfarrell.android.snapbattle.adapters.AllBattlesFeedPagingListAdapter
 import com.liamfarrell.android.snapbattle.adapters.BattleVideoAdapter
 import com.liamfarrell.android.snapbattle.data.UsersBattleRepository
-import com.liamfarrell.android.snapbattle.data.UsersBattlesRepository
-import com.liamfarrell.android.snapbattle.databinding.FragmentFriendsBattleListBinding
 import com.liamfarrell.android.snapbattle.databinding.FragmentViewBattleBinding
 import com.liamfarrell.android.snapbattle.di.*
 import com.liamfarrell.android.snapbattle.model.Battle
 import com.liamfarrell.android.snapbattle.model.Video
+import com.liamfarrell.android.snapbattle.mvvm_ui.to_be_converted.VideoRecordActivity
 import com.liamfarrell.android.snapbattle.service.MyGcmListenerService
-import com.liamfarrell.android.snapbattle.ui.FacebookLoginFragment
-import com.liamfarrell.android.snapbattle.ui.VideoRecordActivity
-import com.liamfarrell.android.snapbattle.ui.VideoViewActivity
-import com.liamfarrell.android.snapbattle.ui.VideoViewFragment
 import com.liamfarrell.android.snapbattle.util.downloadFileFromURL
 import com.liamfarrell.android.snapbattle.viewmodels.ViewOwnBattleViewModel
 import kotlinx.android.synthetic.main.fragment_view_comments.*
-import timber.log.Timber
-import java.io.File
 import javax.inject.Inject
 
 class ViewBattleFragment : Fragment(), Injectable {
@@ -78,10 +64,6 @@ class ViewBattleFragment : Fragment(), Injectable {
     private val args: ViewBattleFragmentArgs by navArgs()
 
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentViewBattleBinding.inflate(inflater, container, false)
@@ -89,9 +71,11 @@ class ViewBattleFragment : Fragment(), Injectable {
         battleID = args.battleId
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(ViewOwnBattleViewModel::class.java)
         binding.viewModel = viewModel
-
         binding.included.saveToDeviceButton.setOnClickListener {onSaveToDeviceButtonClicked()}
         binding.included.playWholeBattleButton.setOnClickListener {onPlayButtonClicked()}
+        binding.challengerNameTextView.setOnClickListener {goToChallengerUsersBattles()}
+        binding.challengedNameTextView.setOnClickListener {goToChallengedUsersBattles()}
+        binding.included.viewCommentsButton.setOnClickListener { showCommentsFragment() }
         registerReceiver()
         subscribeUi()
         viewModel.getBattle(battleID)
@@ -223,17 +207,30 @@ class ViewBattleFragment : Fragment(), Injectable {
         viewModel.getBattle(battleID)
     }
 
+    private fun goToChallengerUsersBattles(){
+        val direction =  ViewBattleFragmentDirections.actionViewBattleFragmentToNavigationUsersBattles(battle.challengerCognitoID)
+        findNavController().navigate(direction)
+    }
+
+    private fun goToChallengedUsersBattles(){
+        val direction = ViewBattleFragmentDirections.actionViewBattleFragmentToNavigationUsersBattles(battle.challengedCognitoID)
+        findNavController().navigate(direction)
+    }
+
+    private fun showCommentsFragment(){
+        val direction = ViewBattleFragmentDirections.actionViewBattleFragmentToViewCommentsFragment(battle.battleId)
+        findNavController().navigate(direction)
+    }
+
+
     private fun onPlayButtonClicked() {
         activity?.let {
                 //Stream the file
                 val filepath = battle.getServerFinalVideoUrl(IdentityManager.getDefaultIdentityManager().cachedUserID)
                 val callback = Battle.SignedUrlCallback { signedUrl ->
                     progressContainer.setVisibility(View.GONE)
-                    val intent = Intent(it, VideoViewActivity::class.java)
-                    intent.putExtra(VideoViewFragment.VIDEO_FILEPATH_EXTRA, signedUrl)
-                    intent.putExtra(VideoViewFragment.VIDEO_TYPE_EXTRA, VideoViewFragment.VIDEO_TYPE_STREAM)
-                    intent.putExtra(VideoViewFragment.VIDEO_ROTATION_LOCK_EXTRA, battle.getOrientationLock())
-                    startActivity(intent)
+                    val direction =  ViewBattleFragmentDirections.actionViewBattleFragmentToVideoViewFragment(signedUrl)
+                    findNavController().navigate(direction)
                 }
                 Battle.getSignedUrlFromServer(filepath, it, callback)
                 progressContainer.setVisibility(View.VISIBLE) }

@@ -6,11 +6,11 @@ import com.liamfarrell.android.snapbattle.data.FollowingBattlesFeedRepository
 import com.liamfarrell.android.snapbattle.data.ThumbnailSignedUrlCacheRepository
 import com.liamfarrell.android.snapbattle.db.FollowingBattle
 import com.liamfarrell.android.snapbattle.model.Battle
-import com.liamfarrell.android.snapbattle.model.BattlesSearchResult
 import com.liamfarrell.android.snapbattle.model.FollowingBattlesSearchResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 
@@ -41,18 +41,24 @@ class FollowingBattlesFeedViewModel @Inject constructor(private val followingBat
 
     init {
         allBattlesResult.value = followingBattlesFeedRepository.loadAllBattles(viewModelScope)
-        updateAllBattlesRepeating()
+        updateFollowingBattlesRepeating()
     }
 
-    private fun updateAllBattlesRepeating() {
+    private fun updateFollowingBattlesRepeating() {
         viewModelScope.launch (Dispatchers.IO){
             while(true) {
                 followingBattlesFeedRepository.updateBattles()
                 delay(HOW_OFTEN_CHECK_FOR_UPDATES_MILLISECONDS)
             }
         }
-
     }
+
+    fun updateFollowingBattles(){
+       awsLambdaFunctionCall(true){
+           withContext(Dispatchers.IO) {
+                followingBattlesFeedRepository.updateBattles()
+        }
+    }}
 
     fun loadThumbnail(b: Battle){
         if (battleIdsOfThumbnailsLoadedList.contains(b.battleId)) return

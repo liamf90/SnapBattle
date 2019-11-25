@@ -3,19 +3,23 @@ package com.liamfarrell.android.snapbattle.adapters
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.AppCompatButton
 import androidx.databinding.DataBindingUtil
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.kusu.loadingbutton.LoadingButton
 import com.liamfarrell.android.snapbattle.R
 import com.liamfarrell.android.snapbattle.databinding.ListItemFacebookFriendsBinding
 import com.liamfarrell.android.snapbattle.model.User
+import com.liamfarrell.android.snapbattle.mvvm_ui.FollowFacebookFriendsFragmentDirections
 
 
 /**
  * Adapter for the [RecyclerView] in [FollowFacebookFriendsFragment].
  */
-class FollowFacebookFriendsListAdapter(val addFollowingCallback : (username: String)->Unit, val removeFollowingCallback : (cognitoId: String)->Unit) :
+class FollowFacebookFriendsListAdapter(val addFollowingCallback : (facebookId: String)->Unit, val removeFollowingCallback : (facebookId: String)->Unit) :
         ListAdapter<User, FollowFacebookFriendsListAdapter.ViewHolder>(UserFacebookFriendDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -29,20 +33,25 @@ class FollowFacebookFriendsListAdapter(val addFollowingCallback : (username: Str
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val user = getItem(position)
         holder.apply {
-            bind(user, createOnProfilePicClickListener(), createOnModifyClickListener(user))
+            bind(user, createOnProfilePicClickListener(user.facebookUserId), createOnModifyClickListener(user))
             itemView.tag = user
         }
     }
 
-    private fun createOnProfilePicClickListener(): View.OnClickListener {
+    private fun createOnProfilePicClickListener(facebookUserId: String): View.OnClickListener {
         return View.OnClickListener {
-            //TODO:  GO TO PROFILE FRAGMENT
+            val direction = FollowFacebookFriendsFragmentDirections.actionFollowFacebookFriendsFragmentToNavigationUsersBattles2(facebookUserId)
+            it.findNavController().navigate(direction)
         }
     }
 
     private fun createOnModifyClickListener(user: User): View.OnClickListener {
         return View.OnClickListener {
-            if (user.isFollowing) removeFollowingCallback(user.cognitoId) else addFollowingCallback(user.facebookUserId)
+            if (user.isFollowing){
+                removeFollowingCallback(user.cognitoId)
+            } else {
+                addFollowingCallback(user.facebookUserId)
+            }
         }
     }
 

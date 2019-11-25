@@ -52,9 +52,7 @@ class AddFacebookFriendsAsFollowersStartupFragment : Fragment(), Injectable {
         setHasOptionsMenu(true)
         val binding = FragmentAddFollowersSelectBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = viewLifecycleOwner
-
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(AddFacebookFriendsAsFollowersViewModel::class.java)
-
         binding.recyclerList.adapter = adapter
         binding.recyclerList.addItemDecoration(DividerItemDecoration(context, LinearLayoutManager.VERTICAL))
         binding.viewModel = viewModel

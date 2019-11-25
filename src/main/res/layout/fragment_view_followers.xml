@@ -24,7 +24,8 @@
 					android:layout_height="wrap_content"
 					android:layout_gravity="center_horizontal"
 					android:textSize="14sp"
-					android:textColor="@color/secondary_text_dark"
+					android:textColor="@color/white"
+					android:background="@drawable/button_main_selector"
 					android:text="@string/add_follower_by_username"/>
 
 				<FrameLayout
@@ -39,6 +40,19 @@
 				  </FrameLayout>
 
 			</LinearLayout>
+
+		<TextView
+			android:id="@+id/noFollowingTextView"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginStart="24dp"
+			android:layout_marginEnd="24dp"
+			android:layout_gravity="center_vertical|center_horizontal"
+			android:text="@string/not_following_anyone"
+			android:textColor="@android:color/black"
+			android:visibility="gone"
+			android:textSize="24sp"
+			/>
 
 			<FrameLayout
 				android:id="@+id/follower_list_progressContainer"

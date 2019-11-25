@@ -18,6 +18,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Objects;
 import java.util.TimeZone;
 
 public class Voting implements Serializable {
@@ -286,5 +287,16 @@ public class Voting implements Serializable {
     }
 
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Voting voting = (Voting) o;
+        return mVotingChoice == voting.mVotingChoice &&
+                mVotingLength == voting.mVotingLength &&
+                Objects.equals(mVotingTimeEnd, voting.mVotingTimeEnd) &&
+                Objects.equals(mVoteChallenger, voting.mVoteChallenger) &&
+                Objects.equals(mVoteChallenged, voting.mVoteChallenged);
+    }
 
 }

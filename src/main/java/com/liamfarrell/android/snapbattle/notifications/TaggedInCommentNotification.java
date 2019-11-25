@@ -2,7 +2,6 @@ package com.liamfarrell.android.snapbattle.notifications;
 
 import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
@@ -11,10 +10,8 @@ import android.text.style.StyleSpan;
 
 import androidx.navigation.NavDeepLinkBuilder;
 
-import com.liamfarrell.android.snapbattle.app.SnapBattleApp;
-import com.liamfarrell.android.snapbattle.ui.FullBattleVideoPlayerActivity;
+import com.amazonaws.mobile.auth.core.IdentityManager;
 import com.liamfarrell.android.snapbattle.R;
-import com.liamfarrell.android.snapbattle.model.Battle;
 
 public class TaggedInCommentNotification extends Notification {
     private String mOpponentCognitoId;
@@ -43,11 +40,22 @@ public class TaggedInCommentNotification extends Notification {
         Bundle args = new Bundle();
         args.putInt("battleId", super.getBattleId());
 
-        return new NavDeepLinkBuilder(context)
-                .setGraph(R.navigation.navigation_menu)
-                .setDestination(R.id.viewBattleFragment)
-                .setArguments(args)
-                .createPendingIntent();
+        String cognitoID = IdentityManager.getDefaultIdentityManager().getCachedUserID();
+        if (cognitoID.equals(mChallengerCognitoId) || cognitoID.equals(mChallengedCognitoId)) {
+            return new NavDeepLinkBuilder(context)
+                    .setGraph(R.navigation.navigation_menu)
+                    .setDestination(R.id.viewBattleFragment)
+                    .setArguments(args)
+                    .createPendingIntent();
+
+        } else {
+            return new NavDeepLinkBuilder(context)
+                    .setGraph(R.navigation.navigation_menu)
+                    .setDestination(R.id.viewBattleFragment)
+                    .setArguments(args)
+                    .createPendingIntent();
+        }
+
 
 
 //        Intent intent = new Intent(context, FullBattleVideoPlayerActivity.class);

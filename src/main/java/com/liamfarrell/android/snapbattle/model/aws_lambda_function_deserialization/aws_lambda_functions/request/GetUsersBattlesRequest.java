@@ -5,6 +5,7 @@ public class GetUsersBattlesRequest
     private String cognitoIDUser;
     private int fetchLimit;
     private int getAfterBattleID;
+    private String facebookId;
 
     public String getCognitoIDUser() {
         return cognitoIDUser;
@@ -28,5 +29,13 @@ public class GetUsersBattlesRequest
 
     public void setGetAfterBattleID(int getAfterBattleID) {
         this.getAfterBattleID = getAfterBattleID;
+    }
+
+    public String getFacebookId() {
+        return facebookId;
+    }
+
+    public void setFacebookId(String facebookId) {
+        this.facebookId = facebookId;
     }
 }

@@ -1,17 +1,14 @@
 package com.liamfarrell.android.snapbattle.data
 
-import android.content.Context
-import android.util.Log
 import com.amazonaws.AmazonClientException
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient
 import com.amazonaws.services.dynamodbv2.model.AttributeValue
 import com.amazonaws.services.dynamodbv2.model.GetItemRequest
-import com.liamfarrell.android.snapbattle.ui.FacebookLoginFragment
-import java.util.ArrayList
+import com.liamfarrell.android.snapbattle.testing.OpenForTesting
 import java.util.HashMap
 import javax.inject.Inject
 
-
+@OpenForTesting
 class AllBattlesFeedDynamodbRepository @Inject constructor(val ddbClient : AmazonDynamoDBClient){
 
 

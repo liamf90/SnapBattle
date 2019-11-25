@@ -46,7 +46,7 @@ class FollowingUserCacheManager @Inject constructor(
             val cognitoIDsToAdd = actionList.filter { it.m["ACTION"]?.s == ACTION_ADD }.mapNotNull { it.m["COGNITO_ID"]?.s }
             val usersResponse = followingUserFollowingRepository.getUsers(cognitoIDsToAdd)
             if (usersResponse.error == null){
-                actionList.forEach {
+                actionList.forEach { it ->
                     val action = it.m["ACTION"]?.s
                     val cognitoId = it.m["COGNITO_ID"]?.s
                     if (action == ACTION_ADD) {
@@ -55,6 +55,15 @@ class FollowingUserCacheManager @Inject constructor(
                         }
                     } else if (action == ACTION_REMOVE){
                          if (cognitoId != null) userDao.deleteFromUser(cognitoId)
+                    }
+                    else if (action == ACTION_UPDATE_NAME){
+                        val name =  it.m["NAME"]?.s
+                        if (cognitoId != null && name != null) userDao.updateName(cognitoId, name)
+                    }
+                    else if (action == ACTION_UPDATE_USERNAME){
+                        val username = it.m["USERNAME"]?.s
+                        if (cognitoId != null && username != null) userDao.updateUsername(cognitoId, username)
+
                     }
                 }
             }
@@ -76,6 +85,8 @@ class FollowingUserCacheManager @Inject constructor(
     companion object {
         private const val ACTION_ADD = "ADD"
         private const val ACTION_REMOVE = "REMOVE"
+        private const val ACTION_UPDATE_USERNAME = "UPDATE_USERNAME"
+        private const val ACTION_UPDATE_NAME = "UPDATE_NAME"
     }
 
 

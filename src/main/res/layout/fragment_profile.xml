@@ -53,9 +53,11 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_gravity="center_horizontal"
+			android:layout_marginTop="@dimen/element_vertical_spacing_default"
 			style="@style/transparent"
 			android:onClick="@{updateProfilePicOnClickListener}"
-			android:textColor="@color/secondary_text_dark"
+			android:textColor="@color/primary_text"
+			android:background="@drawable/button_main_selector"
 			android:text="@string/change_profile_picture"/>
 
 

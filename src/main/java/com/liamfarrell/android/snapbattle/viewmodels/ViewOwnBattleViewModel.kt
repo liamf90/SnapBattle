@@ -25,10 +25,8 @@ class ViewOwnBattleViewModel @Inject constructor(private val context: Applicatio
     }
 
 
-
-
     fun getBattle(battleID : Int){
-        awsLambdaFunctionCall(true,
+        awsLambdaFunctionCall(battle.value == null,
                 suspend {battleResult.value = usersBattleRepository.getBattle(battleID)})
     }
 

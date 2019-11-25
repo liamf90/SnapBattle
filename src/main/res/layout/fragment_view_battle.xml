@@ -11,9 +11,6 @@
             type="com.liamfarrell.android.snapbattle.viewmodels.ViewOwnBattleViewModel" />
 
         <variable
-            name="battle"
-            type="LiveData&lt;com.liamfarrell.android.snapbattle.model.Battle>" />
-        <variable
             name="battleStatus"
             type="String" />
 
@@ -35,8 +32,6 @@
 		<androidx.constraintlayout.widget.ConstraintLayout
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:layout_marginStart="@dimen/activity_horizontal_margin"
-			android:layout_marginEnd="16dp"
 			android:layout_marginTop="@dimen/activity_vertical_margin"
 			android:background="@drawable/view_battle_header_background"
             android:elevation="@dimen/view_battle_header_elevation"
@@ -156,7 +151,7 @@
 
                 <TextView
                     android:id="@+id/statusTextView"
-                    android:visibility="@{(!battle.isBattleAccepted ||  battle.isBattleDone()) ? View.VISIBLE : View.GONE}"
+                    android:visibility="@{(!viewModel.battle.isBattleAccepted ||  viewModel.battle.isBattleDone()) ? View.VISIBLE : View.GONE}"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@{battleStatus}"
@@ -164,7 +159,7 @@
 
                 <ProgressBar
                     android:id="@+id/finalTranscodingProgressBar"
-                    android:visibility='@{battle.isBattleDone() &amp;&amp; !battle.isFinalVideoReady ? View.VISIBLE : View.GONE}'
+                    android:visibility='@{viewModel.battle.isBattleDone() &amp;&amp; !viewModel.battle.isFinalVideoReady ? View.VISIBLE : View.GONE}'
                     android:layout_width="@dimen/transcoding_progress_spinner_width_height"
                     android:layout_height="@dimen/transcoding_progress_spinner_width_height"
                     android:layout_marginStart="@dimen/element_horizontal_spacing_default"
@@ -180,7 +175,7 @@
                 android:layout_marginTop="@dimen/header_element_spacing"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:visibility="@{battle.isFinalVideoReady ? View.VISIBLE : View.GONE}"
+                android:visibility="@{viewModel.battle.isFinalVideoReady ? View.VISIBLE : View.GONE}"
                 app:layout_constraintTop_toBottomOf="@+id/statusTextViewLinearLayout" />
 		</androidx.constraintlayout.widget.ConstraintLayout>
 

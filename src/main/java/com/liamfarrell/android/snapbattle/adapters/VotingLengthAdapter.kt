@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.CheckedTextView
-import com.liamfarrell.android.snapbattle.ui.createbattle.ChooseVotingFragment
+import com.liamfarrell.android.snapbattle.mvvm_ui.create_battle.ChooseVotingFragment
 
 
 class VotingLengthAdapter(private val con: Context) : ArrayAdapter<ChooseVotingFragment.VotingLength>(con, 0, ChooseVotingFragment.VotingLength.values()) {

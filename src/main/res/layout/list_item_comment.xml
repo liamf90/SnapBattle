@@ -11,6 +11,9 @@
             type="com.liamfarrell.android.snapbattle.model.Comment"/>
         <import
             type="com.liamfarrell.android.snapbattle.model.Video" />
+        <variable
+            name="profilePicOnClickListener"
+            type="android.view.View.OnClickListener"/>
     </data>
 
 
@@ -25,6 +28,7 @@
         android:id="@+id/profilePicSmall"
         android:layout_gravity="center_vertical|center_horizontal"
         app:profileImage="@{comment.commenterProfilePicCount != 0 ? comment.commenterProfilePicSmallSignedUrl : null}"
+        android:onClick="@{profilePicOnClickListener}"
         android:layout_width="@dimen/profile_pic_small_width"
         android:layout_height="@dimen/profile_pic_small_height" />
 

@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
@@ -37,23 +38,29 @@ class NotificationListFragment : Fragment(), Injectable {
 
         binding.recyclerView.adapter = adapter
         binding.recyclerView.addItemDecoration(DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL));
-
-        subscribeUi(adapter)
+        binding.viewModel = viewModel
+        subscribeUi(binding, adapter)
         return binding.root
     }
 
-    private fun subscribeUi(adapter: NotificationPagedListAdapter) {
+    private fun subscribeUi(binding : FragmentNotificationListBinding, adapter: NotificationPagedListAdapter) {
         viewModel.notifications.observe(viewLifecycleOwner, Observer { notificationsList ->
             adapter.submitList(notificationsList)
             if (this.isVisible){
                 viewModel.updateSeenAllBattles()
             }
         })
+
+        viewModel.isNoNotifications.observe(viewLifecycleOwner, Observer {
+            if (it) binding.noNotificationsTextView.visibility = View.VISIBLE
+            else binding.noNotificationsTextView.visibility = View.GONE
+        })
     }
 
     private fun onNotificationLoadedByAdapter(notification: Notification){
         viewModel.getProfilePic(notification.opponentCognitoId)
     }
+
 
 
 }

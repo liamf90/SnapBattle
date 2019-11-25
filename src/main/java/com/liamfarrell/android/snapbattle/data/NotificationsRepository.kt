@@ -17,17 +17,17 @@ class NotificationsRepository @Inject constructor(
 {
 
     private val _networkErrors = MutableLiveData<String>()
-    private val _isLoadingMoreBattles = notificationsManager.loadingMoreBattles
-    private val _isNoMoreOlderBattles = notificationsManager.noMoreBattles
+    private val _isLoadingMoreNotifications = notificationsManager.loadingMoreNotifications
+    private val _isNoMoreOlderNotifications = notificationsManager.noMoreNotifications
 
     // LiveData of network errors.
     val networkErrors: LiveData<String>
         get() = _networkErrors
 
-    val isLoadingMoreBattles : LiveData<Boolean>
-        get() = _isLoadingMoreBattles
+    val isLoadingMoreNotifications : LiveData<Boolean>
+        get() = _isLoadingMoreNotifications
 
-    val isNoMoreOlderBattles = _isNoMoreOlderBattles
+    val isNoMoreOlderNotifications = _isNoMoreOlderNotifications
 
 
 

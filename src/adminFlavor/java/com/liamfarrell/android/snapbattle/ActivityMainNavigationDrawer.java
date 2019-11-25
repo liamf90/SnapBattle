@@ -30,16 +30,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.liamfarrell.android.snapbattle.ui.AboutUsActivity;
-import com.liamfarrell.android.snapbattle.ui.BattleChallengesListFragment;
-import com.liamfarrell.android.snapbattle.ui.BattleCompletedListFragment;
 import com.liamfarrell.android.snapbattle.ui.CommentsReportedFragment;
-import com.liamfarrell.android.snapbattle.ui.FacebookLoginFragment;
-import com.liamfarrell.android.snapbattle.ui.FollowFacebookFriendsFragment;
-import com.liamfarrell.android.snapbattle.ui.FollowingBattleListFragment;
 import com.liamfarrell.android.snapbattle.ui.LogoutFragment;
-import com.liamfarrell.android.snapbattle.ui.NotificationListActivity;
-import com.liamfarrell.android.snapbattle.ui.ProfileFragment;
-import com.liamfarrell.android.snapbattle.ui.SearchUsersAndBattlesActivity;
 import com.liamfarrell.android.snapbattle.mvvm_ui.ViewFollowingFragment;
 import com.liamfarrell.android.snapbattle.ui.createbattle.CreateBattleActivity;
 import com.liamfarrell.android.snapbattle.ui.createbattle.VerifyBattleFragment;
