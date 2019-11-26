@@ -7,8 +7,17 @@ package com.liamfarrell.android.snapbattle.model;
  */
 
 public class AsyncTaskResult<T> {
+
     private T mResult;
     private Exception mError;
+
+    public void setResult(T result) {
+        mResult = result;
+    }
+
+    public void setError(Exception error) {
+        mError = error;
+    }
 
     public T getResult() {
         return mResult;

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/navigation_startup"
+    app:startDestination="@id/loggedInFragment">
+
+    <fragment
+        android:id="@+id/chooseUsernameStartupFragment"
+        android:name="com.liamfarrell.android.snapbattle.mvvm_ui.startup.ChooseUsernameStartupFragment"
+        android:label="ChooseUsernameStartupFragment" >
+        <action
+            android:id="@+id/action_chooseUsernameStartupFragment_to_mainActivity"
+            app:destination="@id/mainActivity" />
+        <argument
+            android:name="defaultUsername"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/chooseProfilePictureStartupFragment"
+        android:name="com.liamfarrell.android.snapbattle.mvvm_ui.startup.ChooseProfilePictureStartupFragment"
+        android:label="ChooseProfilePictureStartupFragment" >
+        <action
+            android:id="@+id/action_chooseProfilePictureStartupFragment_to_chooseUsernameStartupFragment"
+            app:destination="@id/chooseUsernameStartupFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/chooseNameStartupFragment"
+        android:name="com.liamfarrell.android.snapbattle.mvvm_ui.startup.ChooseNameStartupFragment"
+        android:label="ChooseNameStartupFragment" >
+        <action
+            android:id="@+id/action_chooseNameStartupFragment_to_chooseProfilePictureStartupFragment"
+            app:destination="@id/chooseProfilePictureStartupFragment" />
+        <argument
+            android:name="defaultName"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/addFacebookFriendsAsFollowersStartupFragment"
+        android:name="com.liamfarrell.android.snapbattle.mvvm_ui.startup.AddFacebookFriendsAsFollowersStartupFragment"
+        android:label="AddFacebookFriendsAsFollowersStartupFragment" >
+        <action
+            android:id="@+id/action_addFacebookFriendsAsFollowersStartupFragment_to_chooseNameStartupFragment"
+            app:destination="@id/chooseNameStartupFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/loggedInFragment"
+        android:name="com.liamfarrell.android.snapbattle.mvvm_ui.startup.LoggedInFragment"
+        android:label="LoggedInFragment" >
+        <action
+            android:id="@+id/action_loggedInFragment_to_addFacebookFriendsAsFollowersStartupFragment"
+            app:destination="@id/addFacebookFriendsAsFollowersStartupFragment" />
+        <action
+            android:id="@+id/action_loggedInFragment_to_mainActivity"
+            app:destination="@id/mainActivity" />
+    </fragment>
+    <activity
+        android:id="@+id/mainActivity"
+        android:name="com.liamfarrell.android.snapbattle.MainActivity"
+        android:label="MainActivity" />
+</navigation>

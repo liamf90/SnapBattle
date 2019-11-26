@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.liamfarrell.android.snapbattle"
     android:versionCode="5"
     android:versionName="1.4">
-
-    <uses-sdk android:targetSdkVersion="22" />
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
@@ -30,16 +29,38 @@
         android:required="false" />
 
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <!-- android:name="android.support.multidex.MultiDexApplication" -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" /> <!-- android:name="android.support.multidex.MultiDexApplication" -->
     <uses-permission android:name="com.liamfarrell.android.snapbattle.mygcmlistenerservice.PRIVATE" />
 
     <application
-        android:name=".app.App"
+        android:name=".app.SnapBattleApp"
         android:allowBackup="false"
-        android:icon="@drawable/battle_icon_selected"
+        android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/MyMaterialTheme">
+        <activity android:name=".mvvm_ui.startup.StartupActivity" />
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/title_activity_main"
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".mvvm_ui.LoggedInActivity" />
+        <activity android:name=".testing.SingleFragmentActivity"/>
+
+        <provider
+            android:name="androidx.work.impl.WorkManagerInitializer"
+            android:authorities="${applicationId}.workmanager-init"
+            android:exported="false"
+            tools:node="remove" />
+
+        <activity android:name=".mvvm_ui.AuthenticatorActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
@@ -48,65 +69,28 @@
             android:resource="@array/preloaded_fonts" />
 
         <activity
-            android:name=".activity.FacebookLoginActivity"
-            android:label="@string/app_name"
-            android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".activity.VideoRecordActivity"
-            android:label="@string/app_name"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
-        <activity
-            android:name=".activity.ViewBattleActivity"
+            android:name=".ui.FacebookLoginActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.createbattle.CreateBattleActivity"
+            android:name=".ui.createbattle.CreateBattleActivity"
             android:label="Create Battle"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.BattleChallengesListActivity"
+            android:name=".ui.BattleChallengesListActivity"
             android:label="Battle Challenges"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".activity.VideoViewActivity"
-            android:label="@string/app_name" />
-        <activity
-            android:name=".activity.ViewFollowingActivity"
-            android:label="View Following"
             android:screenOrientation="portrait" />
         <activity
             android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
             android:theme="@style/Base.Theme.AppCompat" />
         <activity
-            android:name=".activity.UsersBattlesActivity"
-            android:label="User Battles"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".activity.SearchUsersAndBattlesActivity"
-            android:label="User Battles"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".activity.ViewBattlesFromNameActivity"
-            android:label="View Battles"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".activity.NotificationListActivity"
+            android:name=".ui.NotificationListActivity"
             android:label="Notifications"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.startup.StartupActivity"
+            android:name=".ui.startup.StartupActivity"
             android:label="Startup"
             android:screenOrientation="portrait" />
-        <activity
-            android:name=".activity.FullBattleVideoPlayerActivity"
-            android:configChanges="orientation|screenSize"
-            android:label="Video" />
         <activity
             android:name="com.facebook.FacebookActivity"
             android:exported="true"
@@ -168,22 +152,12 @@
             android:enabled="true" />
 
         <activity
-            android:name="ActivityMainNavigationDrawer"
-            android:label="@string/title_activity_main_navigation_drawer"
-            android:screenOrientation="portrait"
-            android:theme="@style/MyMaterialTheme.NoActionBar" />
-        <activity
-            android:name="ReportingsActivity"
+            android:name=".ReportingsActivity"
             android:label="@string/title_activity_reportings"
             android:screenOrientation="portrait"
             android:theme="@style/MyMaterialTheme.NoActionBar" />
         <activity
-            android:name=".activity.ViewCommentsActivity"
-            android:label="View Comments"
-            android:screenOrientation="portrait"
-            android:theme="@style/MyMaterialTheme" />
-        <activity
-            android:name=".activity.AboutUsActivity"
+            android:name=".mvvm_ui.to_be_converted.AboutUsFragment"
             android:label="@string/title_activity_about_us"
             android:theme="@style/MyMaterialTheme.NoActionBar" />
     </application>

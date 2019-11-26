@@ -1,33 +1,56 @@
 package com.liamfarrell.android.snapbattle.notifications;
 
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.text.SpannableStringBuilder;
 
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
 import java.io.Serializable;
 
-/**
- * Created by Liam on 5/11/2017.
- */
 
 public abstract class Notification implements Serializable{
+
+    private int mNotificationIndex;
+
+
     private int mBattleId;
     private String signedUrlProfilePicOpponent;
     private int mOpponentProfilePicCount;
 
-    public Notification()
+    //TODO DELETE THIS METHOD
+   // public Notification()
     {
         mBattleId = -1;
     }
-    public Notification(int BattleId)
+
+    //TODO DELETE THIS METHOD
+//    public Notification(int BattleId)
+//    {
+//        mBattleId = BattleId;
+//        mOpponentProfilePicCount = -1;
+//    }
+
+    public Notification(int notificationIndex)
     {
+        mNotificationIndex = notificationIndex;
+        mBattleId = -1;
+    }
+
+    public Notification(int notificationIndex, int BattleId)
+    {
+        mNotificationIndex = notificationIndex;
         mBattleId = BattleId;
         mOpponentProfilePicCount = -1;
     }
 
-    public abstract Intent getIntent(Context context);
 
-    public abstract SpannableStringBuilder getMessage();
+    public abstract PendingIntent getIntent(Context context);
+
+    public abstract SpannableStringBuilder getMessage(Context context);
 
     public int getBattleId()
     {
@@ -53,9 +76,12 @@ public abstract class Notification implements Serializable{
         return mOpponentProfilePicCount;
     }
 
-
-
-
+    public void setBattleId(int battleId) {
+        mBattleId = battleId;
+    }
+    public int getNotificationIndex() {
+        return mNotificationIndex;
+    }
 }
 
 

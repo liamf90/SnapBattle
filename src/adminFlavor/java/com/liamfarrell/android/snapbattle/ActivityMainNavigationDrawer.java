@@ -10,18 +10,18 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.LocalBroadcastManager;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.snackbar.Snackbar;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -29,25 +29,16 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.liamfarrell.android.snapbattle.activity.AboutUsActivity;
-import com.liamfarrell.android.snapbattle.activity.BattleChallengesListFragment;
-import com.liamfarrell.android.snapbattle.activity.BattleCompletedListFragment;
-import com.liamfarrell.android.snapbattle.activity.BattleCurrentListFragment;
-import com.liamfarrell.android.snapbattle.activity.FacebookLoginFragment;
-import com.liamfarrell.android.snapbattle.activity.FollowFacebookFriendsFragment;
-import com.liamfarrell.android.snapbattle.activity.FollowingBattleListFragment;
-import com.liamfarrell.android.snapbattle.activity.LogoutFragment;
-import com.liamfarrell.android.snapbattle.activity.NotificationListActivity;
-import com.liamfarrell.android.snapbattle.activity.ProfileFragment;
-import com.liamfarrell.android.snapbattle.activity.SearchUsersAndBattlesActivity;
-import com.liamfarrell.android.snapbattle.activity.ViewFollowingFragment;
-import com.liamfarrell.android.snapbattle.activity.createbattle.CreateBattleActivity;
-import com.liamfarrell.android.snapbattle.activity.createbattle.VerifyBattleFragment;
-import com.liamfarrell.android.snapbattle.activity.startup.ChooseProfilePictureStartupFragment;
+import com.liamfarrell.android.snapbattle.ui.AboutUsActivity;
+import com.liamfarrell.android.snapbattle.ui.CommentsReportedFragment;
+import com.liamfarrell.android.snapbattle.ui.LogoutFragment;
+import com.liamfarrell.android.snapbattle.mvvm_ui.ViewFollowingFragment;
+import com.liamfarrell.android.snapbattle.ui.createbattle.CreateBattleActivity;
+import com.liamfarrell.android.snapbattle.ui.createbattle.VerifyBattleFragment;
+import com.liamfarrell.android.snapbattle.ui.startup.ChooseProfilePictureStartupFragment;
 import com.liamfarrell.android.snapbattle.caches.CurrentUsersProfilePicCacheManager;
 import com.liamfarrell.android.snapbattle.caches.NotificationCache;
 import com.liamfarrell.android.snapbattle.notifications.Notification;
-import com.liamfarrell.android.snapbattle.caches.NotificationCache;
 import com.squareup.picasso.Picasso;
 
 import java.util.LinkedList;
@@ -165,7 +156,7 @@ public class ActivityMainNavigationDrawer extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        // Unregister since the activity is about to be closed.
+        // Unregister since the callbacks is about to be closed.
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
         super.onDestroy();
     }
@@ -387,11 +378,11 @@ public class ActivityMainNavigationDrawer extends AppCompatActivity {
                 // create battle
                 //CreateBattleActivity createActivity = new CreateBattleActivity();
                 //return createActivity;
-                BattleCurrentListFragment currentBattlesFragment = new BattleCurrentListFragment();
+                CommentsReportedFragment currentBattlesFragment = new CommentsReportedFragment();
                 return currentBattlesFragment;
             case 2:
                 // current fragment
-                BattleCurrentListFragment currentBattlesFragment2 = new BattleCurrentListFragment();
+                CommentsReportedFragment currentBattlesFragment2 = new CommentsReportedFragment();
                 return currentBattlesFragment2;
             case 3:
                 // current fragment
@@ -487,10 +478,10 @@ public class ActivityMainNavigationDrawer extends AppCompatActivity {
                         break;
 
 
-                    case R.id.nav_admin_reportings:
-
-                        startActivityForResult(new Intent(ActivityMainNavigationDrawer.this, ReportingsActivity.class), 200);
-                        break;
+//                    case R.id.nav_admin_reportings:
+//
+//                        startActivityForResult(new Intent(ActivityMainNavigationDrawer.this, ReportingsActivity.class), 200);
+//                        break;
 
                     case R.id.nav_about_us:
                         // launch new intent instead of loading fragment
@@ -606,7 +597,7 @@ public class ActivityMainNavigationDrawer extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+        // as you specify a parent callbacks in AndroidManifest.xml.
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement

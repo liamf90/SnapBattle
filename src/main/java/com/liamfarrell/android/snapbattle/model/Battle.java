@@ -4,24 +4,32 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import androidx.room.ColumnInfo;
+import androidx.room.Embedded;
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
+
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
+import com.amazonaws.mobile.auth.core.IdentityManager;
 import com.amazonaws.mobileconnectors.lambdainvoker.LambdaFunctionException;
 import com.amazonaws.mobileconnectors.lambdainvoker.LambdaInvokerFactory;
 import com.amazonaws.regions.Regions;
-import com.google.gson.annotations.SerializedName;
 import com.liamfarrell.android.snapbattle.R;
-import com.liamfarrell.android.snapbattle.activity.FacebookLoginFragment;
-import com.liamfarrell.android.snapbattle.app.App;
+import com.liamfarrell.android.snapbattle.app.SnapBattleApp;
+import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.UrlLambdaRequest;
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.LambdaFunctionsInterface;
-import com.liamfarrell.android.snapbattle.model.lambda_function_request_objects.UrlLambdaRequest;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Objects;
+
+import timber.log.Timber;
 
 
-
+@Entity(tableName = "all_battles")
 public class Battle implements Serializable
 {
 	public static final String ORIENTATION_LOCK_PORTRAIT = "PORTRAIT";
@@ -31,11 +39,13 @@ public class Battle implements Serializable
 	private static final String TAG = "Battle";
 
 
-    private int mBattleID;
+    @PrimaryKey
+    @ColumnInfo(name = "battle_id")
+    private Integer mBattleID;
     private String mBattleName;
     private String mChallengerCognitoId;
     private String mChallengedCognitoId;
-    private int mRounds;
+    private Integer mRounds;
 
     private String mChallengerFacebookUserId;
     private String mChallengedFacebookUserId;
@@ -48,9 +58,11 @@ public class Battle implements Serializable
     private String mChallengedName;
 
     private Date mLastVideoUploadTime;
-    private int mVideosUploaded;
+    private Integer mVideosUploaded;
+    @Ignore
     private ArrayList<Video> mVideos;
     private Integer mVideoViewCount;
+    @Embedded
     private Voting mVoting;
     private int mLikeCount;
     private int mDislikeCount;
@@ -70,17 +82,37 @@ public class Battle implements Serializable
     private int mCommentCount;
     private String mSignedThumbnailUrl;
     private Boolean mUserHasVoted;
+    private Boolean mIsFollowingFeedBattle;
 
-    public String getCompletedBattleStatus()
+    public Battle(int battleID, String challengerCognitoId, String challengedCognitoId, String battleName, int rounds)
+    {
+        mBattleID = battleID;
+        mChallengerCognitoId = challengerCognitoId;
+        mChallengedCognitoId = challengedCognitoId;
+        mBattleName = battleName;
+        mRounds = rounds;
+    }
+
+
+
+    public String getCompletedBattleStatus(Context context)
     {
         if (mLastVideoUploadTime == null)
         {
             return "";
         }
-        return Video.getTimeSince(mLastVideoUploadTime);
+        return Video.getTimeSince(context, mLastVideoUploadTime);
     }
 
-    public Boolean hasUserVoted() {
+    public Boolean getIsFollowingFeedBattle() {
+        return mIsFollowingFeedBattle;
+    }
+
+    public void setIsFollowingFeedBattle(Boolean followingFeedBattle) {
+        mIsFollowingFeedBattle = followingFeedBattle;
+    }
+
+    public Boolean getUserHasVoted() {
         return mUserHasVoted;
     }
 
@@ -88,7 +120,7 @@ public class Battle implements Serializable
         mUserHasVoted = userHasVoted;
     }
 
-    public boolean isBattleAccepted() {
+    public boolean getIsBattleAccepted() {
         return mBattleAccepted;
     }
 
@@ -100,11 +132,11 @@ public class Battle implements Serializable
         mDeleted = deleted;
     }
 
-    public boolean isFinalVideoReady() {
+    public boolean getIsFinalVideoReady() {
         return mIsFinalVideoReady;
     }
 
-    public void setFinalVideoReady(boolean finalVideoReady) {
+    public void setIsFinalVideoReady(boolean finalVideoReady) {
         mIsFinalVideoReady = finalVideoReady;
     }
 
@@ -130,7 +162,7 @@ public class Battle implements Serializable
         mVoting = voting;
     }
 
-    public int getLikeCount() {
+    public Integer getLikeCount() {
         return mLikeCount;
     }
 
@@ -138,7 +170,7 @@ public class Battle implements Serializable
         mLikeCount = likeCount;
     }
 
-    public int getDislikeCount() {
+    public Integer getDislikeCount() {
         return mDislikeCount;
     }
 
@@ -146,7 +178,7 @@ public class Battle implements Serializable
         mDislikeCount = dislikeCount;
     }
 
-    public int getCommentCount() {
+    public Integer getCommentCount() {
         return mCommentCount;
     }
 
@@ -162,16 +194,16 @@ public class Battle implements Serializable
         mSignedThumbnailUrl = signedThumbnailUrl;
     }
 
-    public String getChallengedTimeSinceStatus()
+    public String getChallengedTimeSinceStatus(Context context)
     {
-        return Video.getTimeSince(mChallengedTime);
+        return Video.getTimeSince(context, mChallengedTime);
     }
 
-    public int getChallengerProfilePicCount() {
+    public Integer getChallengerProfilePicCount() {
         return mChallengerProfilePicCount;
     }
 
-    public void setChallengerProfilePicCount(int challengerProfilePicCount) {
+    public void setChallengerProfilePicCount(Integer challengerProfilePicCount) {
         mChallengerProfilePicCount = challengerProfilePicCount;
     }
 
@@ -206,14 +238,6 @@ public class Battle implements Serializable
 	    void onReceivedSignedUrl(String signedUrl);
 	}
 
-	public Battle(int battleID, String challengerCognitoId, String challengedCognitoId, String battleName, int rounds)
-    {
-		mBattleID = battleID;
-		mChallengerCognitoId = challengerCognitoId;
-		mChallengedCognitoId = challengedCognitoId;
-		mBattleName = battleName;
-		mRounds = rounds;
-    }
 
 
     public String getOrientationLock() {
@@ -272,42 +296,66 @@ public class Battle implements Serializable
     }
 
 
-    public String getCurrentBattleStatus()
+    public String getCurrentBattleStatus(Context context)
     {
         //get last uploaded videos time upload difference
         String currentBattleStatus = "";
         //if your turn
         if (mWhoTurn == Who_turn.YOUR_TURN)
         {
-            currentBattleStatus = App.getContext().getResources().getString(R.string.your_turn);
+            currentBattleStatus = context.getResources().getString(R.string.your_turn);
         }
         else if ((mWhoTurn == Who_turn.OPPONENT_TURN))
         {
-            currentBattleStatus = App.getContext().getResources().getString(R.string.opponent_turn);
+            currentBattleStatus = context.getResources().getString(R.string.opponent_turn);
         }
         return currentBattleStatus;
     }
 
-    public String getTimeSinceLastVideosUploaded()
+    public String getTimeSinceLastVideosUploaded(Context context)
     {
         String timeSinceString;
         if (mVideosUploaded == 0)
         {
-            timeSinceString = App.getContext().getResources().getString(R.string.battle_challenged_ago,Video.getTimeSince(mChallengedTime) );
+            timeSinceString = context.getResources().getString(R.string.battle_challenged_ago,Video.getTimeSince(context, mChallengedTime) );
         }
         else {
-            timeSinceString = App.getContext().getResources().getString(R.string.last_video_updated_time_ago,Video.getTimeSince(mLastVideoUploadTime) );
+            timeSinceString = context.getResources().getString(R.string.last_video_updated_time_ago,Video.getTimeSince(context, mLastVideoUploadTime) );
         }
         return  timeSinceString;
     }
 
-    public int getOpponentProfilePicCount(String cogntitoIDcurrent)
+    public String getBattleStatus(Context context) {
+        if (!mBattleAccepted) {
+            return context.getString(R.string.declined_battle_status_message, mChallengedUsername);
+        } else if (isBattleDone() && !mIsFinalVideoReady) {
+            return context.getString(R.string.final_video_transcoding_status_message);
+        } else if (isBattleDone() && mIsFinalVideoReady) {
+            return getCompletedBattleStatus(context);
+        } else return "";
+    }
+
+    public Integer getOpponentProfilePicCount(String cogntitoIDcurrent)
     {
         if (mChallengerCognitoId.equals(cogntitoIDcurrent))
         {
             return mChallengedProfilePicCount;
         }
         else if (mChallengedCognitoId.equals(cogntitoIDcurrent))
+        {
+            return mChallengerProfilePicCount;
+        }
+        else return 0;
+    }
+
+    public Integer getOpponentProfilePicCount()
+    {
+        String cognitoIDCurrent = IdentityManager.getDefaultIdentityManager().getCachedUserID();
+        if (mChallengerCognitoId.equals(cognitoIDCurrent))
+        {
+            return mChallengedProfilePicCount;
+        }
+        else if (mChallengedCognitoId.equals(cognitoIDCurrent))
         {
             return mChallengerProfilePicCount;
         }
@@ -333,7 +381,7 @@ public class Battle implements Serializable
         mVideos = videos;
     }
 
-    public int getBattleID() {
+    public Integer getBattleID() {
         return mBattleID;
     }
 
@@ -368,7 +416,7 @@ public class Battle implements Serializable
         mBattleName = battleName;
     }
 
-    public Date getLastVideoUploadedTime()
+    public Date getLastVideoUploadTime()
 	 {
 		 return mLastVideoUploadTime;
 	 }
@@ -376,6 +424,7 @@ public class Battle implements Serializable
     public void setLastVideoUploadTime(Date lastVideoUploadTime) {
         mLastVideoUploadTime = lastVideoUploadTime;
     }
+
 
     public String getProfilePicSmallSignedUrl() {
         return mProfilePicSmallSignedUrl;
@@ -385,7 +434,7 @@ public class Battle implements Serializable
         mProfilePicSmallSignedUrl = profilePicSmallSignedUrl;
     }
 
-    public int getVideosUploaded() {
+    public Integer getVideosUploaded() {
 		return mVideosUploaded;
 	}
 	private String getThumbnailFilename()
@@ -463,7 +512,7 @@ public class Battle implements Serializable
 	}
 
 
-	public int getRounds() {
+	public Integer getRounds() {
 		return mRounds;
 	}
 	public ArrayList<Video> getVideos() {
@@ -480,12 +529,14 @@ public class Battle implements Serializable
 	}
 
 
+
+
 	public String getFinalVideoFilename()
 	{
 		return mBattleID + "_final.mp4";
 	}
 
-    public static String getFinalVideoFilename(int battleID)
+    private static String getFinalVideoFilename(int battleID)
     {
         return battleID + "_final.mp4";
     }
@@ -508,7 +559,7 @@ public class Battle implements Serializable
 
 				context.getApplicationContext(),
 				Regions.US_EAST_1,
-				FacebookLoginFragment.getCredentialsProvider(context));
+                IdentityManager.getDefaultIdentityManager().getCredentialsProvider());
 
 		// Create the Lambda proxy object with default Json data binder.
 		// You can provide your own data binder by implementing
@@ -527,16 +578,16 @@ public class Battle implements Serializable
 				try {
 					return lambdaFunctionsInterface.getSignedUrl(params[0]);
 				} catch (LambdaFunctionException lfe) {
-					Log.e(TAG, "Failed to invoke echo", lfe);
+                    Timber.e(lfe, "Failed to invoke echo");
 					return null;
 				}
                 catch (AmazonServiceException ase) {
                     // invalid credentials, incorrect AWS signature, etc
-                    Log.i("ERROR", ase.getErrorMessage());
+                    Timber.i(ase.getErrorMessage());
                     return null;
                 } catch (AmazonClientException ace) {
                     // Network issue
-                    Log.i("ERROR", ace.toString());
+                    Timber.i(ace.toString());
                     return null;
                 }
 			}
@@ -554,23 +605,50 @@ public class Battle implements Serializable
 	}
 
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Battle battle = (Battle) o;
+        return mLikeCount == battle.mLikeCount &&
+                mDislikeCount == battle.mDislikeCount &&
+                mDeleted == battle.mDeleted &&
+                mIsFinalVideoReady == battle.mIsFinalVideoReady &&
+                mCommentCount == battle.mCommentCount &&
+                mBattleID.equals(battle.mBattleID) &&
+                Objects.equals(mBattleName, battle.mBattleName) &&
+                Objects.equals(mChallengerCognitoId, battle.mChallengerCognitoId) &&
+                Objects.equals(mChallengedCognitoId, battle.mChallengedCognitoId) &&
+                Objects.equals(mRounds, battle.mRounds) &&
+                Objects.equals(mChallengerFacebookUserId, battle.mChallengerFacebookUserId) &&
+                Objects.equals(mChallengedFacebookUserId, battle.mChallengedFacebookUserId) &&
+                Objects.equals(mBattleAccepted, battle.mBattleAccepted) &&
+                Objects.equals(mChallengerUsername, battle.mChallengerUsername) &&
+                Objects.equals(mChallengedUsername, battle.mChallengedUsername) &&
+                Objects.equals(mOpponentUsername, battle.mOpponentUsername) &&
+                Objects.equals(mChallengerName, battle.mChallengerName) &&
+                Objects.equals(mChallengedName, battle.mChallengedName) &&
+                Objects.equals(mLastVideoUploadTime, battle.mLastVideoUploadTime) &&
+                Objects.equals(mVideosUploaded, battle.mVideosUploaded) &&
+                Objects.equals(mVideos, battle.mVideos) &&
+                Objects.equals(mVideoViewCount, battle.mVideoViewCount) &&
+                Objects.equals(mVoting, battle.mVoting) &&
+                mWhoTurn == battle.mWhoTurn &&
+                Objects.equals(mChallengedTime, battle.mChallengedTime) &&
+                Objects.equals(mProfilePicSmallSignedUrl, battle.mProfilePicSmallSignedUrl) &&
+                Objects.equals(mChallengerProfilePicCount, battle.mChallengerProfilePicCount) &&
+                Objects.equals(mChallengedProfilePicCount, battle.mChallengedProfilePicCount) &&
+                Objects.equals(mChallengerProfilePicSignedUrl, battle.mChallengerProfilePicSignedUrl) &&
+                Objects.equals(mOrientationLock, battle.mOrientationLock) &&
+                Objects.equals(mSignedThumbnailUrl, battle.mSignedThumbnailUrl) &&
+                Objects.equals(mUserHasVoted, battle.mUserHasVoted) &&
+                Objects.equals(mIsFollowingFeedBattle, battle.mIsFollowingFeedBattle);
+    }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    @Override
+    public int hashCode() {
+        return Objects.hash(mBattleID, mBattleName, mChallengerCognitoId, mChallengedCognitoId, mRounds, mChallengerFacebookUserId, mChallengedFacebookUserId, mBattleAccepted, mChallengerUsername, mChallengedUsername, mOpponentUsername, mChallengerName, mChallengedName, mLastVideoUploadTime, mVideosUploaded, mVideos, mVideoViewCount, mVoting, mLikeCount, mDislikeCount, mWhoTurn, mChallengedTime, mProfilePicSmallSignedUrl, mChallengerProfilePicCount, mChallengedProfilePicCount, mChallengerProfilePicSignedUrl, mOrientationLock, mDeleted, mIsFinalVideoReady, mCommentCount, mSignedThumbnailUrl, mUserHasVoted, mIsFollowingFeedBattle);
+    }
 }
 
 

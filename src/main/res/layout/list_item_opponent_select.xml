@@ -1,4 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <variable
+            name="onItemClickListener"
+            type="android.view.View.OnClickListener" />
+        <variable
+            name="onProfilePictureClickListener"
+            type="android.view.View.OnClickListener" />
+        <variable
+            name="user"
+            type="com.liamfarrell.android.snapbattle.model.User" />
+    </data>
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -9,13 +22,18 @@
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/profileImageView"
         android:layout_width="@dimen/profile_pic_small_width"
-        android:layout_height="@dimen/profile_pic_small_height" />
+        android:layout_height="@dimen/profile_pic_small_height"
+        app:profileImage="@{user.profilePicSignedUrl}"
+        android:onClickListener="@{onProfilePictureClickListener}"
+        />
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:onClickListener="@{onItemClickListener}"
+        >
         <TextView
             android:textSize="14sp"
             android:textColor="@color/secondary_text_dark"
@@ -23,6 +41,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity= "center_vertical"
+            android:text="@{user.username}"
             android:id="@+id/UsernameTextView"/>
         <TextView
             android:textSize="12sp"
@@ -30,6 +49,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity= "center_vertical"
+            android:text="@{user.facebookName}"
             android:id="@+id/NameTextView"/>
 
 
@@ -38,3 +58,4 @@
 
 
 </LinearLayout>
+</layout>

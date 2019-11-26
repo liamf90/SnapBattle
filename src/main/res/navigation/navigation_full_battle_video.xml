@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/navigation_full_battle_video"
+    app:startDestination="@id/fullBattleVideoPlayerFragment4">
+
+    <fragment
+        android:id="@+id/fullBattleVideoPlayerFragment4"
+        android:name="com.liamfarrell.android.snapbattle.mvvm_ui.to_be_converted.FullBattleVideoPlayerFragment"
+        android:label="FullBattleVideoPlayerFragment" >
+        <action
+            android:id="@+id/action_fullBattleVideoPlayerFragment4_to_viewCommentsFragment3"
+            app:destination="@id/viewCommentsFragment3" />
+        <argument
+            android:name="battleId"
+            app:argType="integer" />
+        <argument
+            android:name="filepath"
+            app:argType="string" />
+        <argument
+            android:name="challengerName"
+            app:argType="string" />
+        <argument
+            android:name="challengedName"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/viewCommentsFragment3"
+        android:name="com.liamfarrell.android.snapbattle.mvvm_ui.ViewCommentsFragment"
+        android:label="ViewCommentsFragment" >
+        <argument
+            android:name="battleId"
+            app:argType="integer" />
+        <action
+            android:id="@+id/action_viewCommentsFragment3_to_usersBattlesFragment"
+            app:destination="@id/usersBattlesFragment4" />
+    </fragment>
+    <fragment
+        android:id="@+id/usersBattlesFragment4"
+        android:name="com.liamfarrell.android.snapbattle.mvvm_ui.UsersBattlesFragment"
+        android:label="UsersBattlesFragment" >
+        <argument
+            android:name="cognitoId"
+            app:argType="string" />
+    </fragment>
+</navigation>

@@ -2,10 +2,6 @@
 
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="battleTypeTextSize">20sp</dimen>
-    <dimen name="tab_max_width">264dp</dimen>
-    <dimen name="tab_padding_bottom">16dp</dimen>
-    <dimen name="tab_label">14sp</dimen>
-    <dimen name="custom_tab_layout_height">72dp</dimen>
     <dimen name="appbar_padding_top">8dp</dimen>
     <dimen name="appbar_toolbar_padding_end">8dp</dimen>
 
@@ -22,11 +18,9 @@
     <dimen name="row_vertical_padding">8dp</dimen>
     <dimen name="element_vertical_spacing_default">16dp</dimen>
     <dimen name="element_horizontal_spacing_default">16dp</dimen>e
-    <dimen name="element_height_default">48dp</dimen>
     <dimen name="card_view_elevation">3dp</dimen>
     <dimen name="card_view_corner_radius">1dp</dimen>
     <dimen name="list_item_elements_default_spacing">8dp</dimen>
-    <dimen name="default_button_padding">4dp</dimen>
     <dimen name="progress_container_height">398dp</dimen>
     <dimen name="icon_width_default">48dp</dimen>
     <dimen name="icon_height_default">48dp</dimen>
@@ -53,13 +47,11 @@
 
     <!-- completed battle layout -->
     <dimen name="button_padding">4dp</dimen>
-    <dimen name="comment_and_likes_height">72dp</dimen>
-    <dimen name="like_button_comment_spacing">40dp</dimen>
+    <dimen name="like_button_comment_spacing">28dp</dimen>
     <dimen name="text_view_to_text_padding">4dp</dimen>
     <dimen name="view_comments_button_height">40dp</dimen>
 
     <!--choose battle type fragment -->
-    <dimen name="battle_type_edit_text_min_width">400dp</dimen>
 
     <!-- choose profile pic fragment -->
     <dimen name="profile_pic_margin_bottom">32dp</dimen>
@@ -73,9 +65,8 @@
     <dimen name="add_comment_button_padding">4dp</dimen>
 
     <!--login fragment-->
-    <dimen name="logo_image_height">48dp</dimen>
-    <dimen name="logo_image_width">48dp</dimen>
-    <dimen name="login_button_margin_top">160dp</dimen>
+    <dimen name="logo_image_height">88dp</dimen>
+    <dimen name="logo_image_width">88dp</dimen>
 
     <!--logout fragment -->
     <dimen name="logout_button_margin">48dp</dimen>
@@ -86,23 +77,20 @@
 
     <!-- view battle fragment -->
     <dimen name="view_battle_header_elevation">3dp</dimen>
-    <dimen name="view_battle_header_padding">8dp</dimen>
     <dimen name="header_element_spacing">8dp</dimen>
-    <dimen name="challenged_name_textview_height">24dp</dimen>
     <dimen name="battle_rounds_textview_height">16dp</dimen>
-    <dimen name="voting_type_textview_width">88dp</dimen>
     <dimen name="listview_margin_top">8dp</dimen>
     <dimen name="transcoding_progress_spinner_width_height">24dp</dimen>
 
 
-    <!--activity about us -->
+    <!--callbacks about us -->
     <dimen name="about_us_margin_top">32dp</dimen>
     <dimen name="about_us_spacing_textviews">24dp</dimen>
 
-    <!-- activity users battles -->
+    <!-- callbacks users topBattles -->
     <dimen name="elevation_user_header">2dp</dimen>
 
-    <!-- activity video capture -->
+    <!-- callbacks video capture -->
     <dimen name="change_camera_icon_width">48dp</dimen>
     <dimen name="change_camera_icon_height">48dp</dimen>
     <dimen name="change_camera_icon_margin">16dp</dimen>
@@ -113,10 +101,6 @@
     <dimen name="rotate_message_margin">16dp</dimen>
 
     <!-- battle challenge list item -->
-    <dimen name="decline_accept_button_margin">48dp</dimen>
-    <dimen name="accept_decline_layout_padding_top">16dp</dimen>
-    <dimen name="accept_decline_layout_padding_bottom">16dp</dimen>
-    <dimen name="profile_pic_frame_width">96dp</dimen>
 
     <!-- current battle list item -->
     <dimen name="who_turn_layout_width">130dp</dimen>
@@ -125,8 +109,6 @@
     <!--list_item_battle_friends-->
     <dimen name="card_view_margin">8dp</dimen>
     <dimen name="card_view_padding">8dp</dimen>
-    <dimen name="video_view_count_textview_width">104dp</dimen>
-    <dimen name="video_view_count_textview_height">24dp</dimen>
 
     <!--notification list_item-->
     <dimen name="notification_list_item_height">64dp</dimen>
@@ -134,9 +116,7 @@
     <!-- view battle opponent/user list items-->
     <dimen name="video_icon_width">48dp</dimen>
     <dimen name="video_icon_height">48dp</dimen>
-    <dimen name="video_owner_name_text_view_width">128dp</dimen>
     <dimen name="video_linear_layout_padding">8dp</dimen>
-    <dimen name="video_linear_layout_padding_offset">28dp</dimen>
 
 
     <!-- user info header -->
@@ -146,13 +126,15 @@
     <dimen name="user_info_header_profile_pic_margin_start">32dp</dimen>
     <dimen name="user_info_header_margins_default">8dp</dimen>
     <dimen name="name_text_view_margin_top">28dp</dimen>
-    <dimen name="followers_count_margin_end">28dp</dimen>
 
     <!-- username dialog -->
     <dimen name="username_edit_text_width">120dp</dimen>
 
-
-
+    <!-- video battle list item -->
+    <dimen name="left_margin_current_user">32dp</dimen>
+    <dimen name="right_margin_current_user">8dp</dimen>
+    <dimen name="left_margin_opponent">8dp</dimen>
+    <dimen name="right_margin_opponent">32dp</dimen>
 
 
 </resources>

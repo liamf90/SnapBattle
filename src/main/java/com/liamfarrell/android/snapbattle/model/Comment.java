@@ -1,8 +1,17 @@
 package com.liamfarrell.android.snapbattle.model;
 
+import android.widget.ImageView;
+
+import androidx.databinding.BindingAdapter;
+
 import com.google.gson.annotations.SerializedName;
+import com.liamfarrell.android.snapbattle.R;
+import com.squareup.picasso.Picasso;
 
 import java.util.Date;
+import java.util.Objects;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class Comment {
     @SerializedName("COMMENT_ID")   private int mCommentId;
@@ -105,4 +114,18 @@ public class Comment {
     public void setCommenterProfilePicSmallSignedUrl(String commenterProfilePicSmallSignedUrl) {
         mCommenterProfilePicSmallSignedUrl = commenterProfilePicSmallSignedUrl;
     }
+
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Comment comment = (Comment) o;
+        return mCommentId == comment.mCommentId &&
+                mBattleId == comment.mBattleId &&
+                mIsDeleted == comment.mIsDeleted &&
+                mCommenterProfilePicCount == comment.mCommenterProfilePicCount;
+    }
+
 }

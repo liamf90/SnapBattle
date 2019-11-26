@@ -1,47 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-	xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-	android:layout_marginTop="@dimen/activity_vertical_margin">
-		<LinearLayout
-		    android:layout_width="match_parent"
-		    android:layout_height="match_parent" 
-		    android:orientation="vertical">
-			<Button
-				android:id="@+id/EnterUsernameManuallyButton"
-				android:layout_marginBottom="@dimen/element_vertical_spacing_default"
-				android:layout_width = "wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_gravity="center_horizontal"
-                android:textSize="14sp"
-                android:textColor="@color/secondary_text_dark"
-				android:text="@string/add_follower_by_username"/>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto">
 
-            <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-		      <android.support.v7.widget.RecyclerView
-				  android:id="@+id/recyclerList"
-		            android:layout_width="match_parent"
-		            android:layout_height="wrap_content"
-		            android:drawSelectorOnTop="false" />
-		      </FrameLayout>
-		
-		</LinearLayout>
+	<data>
+		<variable
+			name="viewModel"
+			type="com.liamfarrell.android.snapbattle.viewmodels.FollowingViewModel"/>
+	</data>
 
-		<FrameLayout
-		    android:id="@+id/follower_list_progressContainer"
-		    android:layout_width="match_parent"
-		    android:layout_height="match_parent"
-		    android:clickable="true"
-			android:focusable="true">
+	<androidx.coordinatorlayout.widget.CoordinatorLayout
+		android:id="@+id/parentCoordinatorLayout"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:layout_marginTop="@dimen/activity_vertical_margin">
+			<LinearLayout
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:orientation="vertical">
+				<Button
+					android:id="@+id/EnterUsernameManuallyButton"
+					android:layout_marginBottom="@dimen/element_vertical_spacing_default"
+					android:layout_width = "wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_gravity="center_horizontal"
+					android:textSize="14sp"
+					android:textColor="@color/white"
+					android:background="@drawable/button_main_selector"
+					android:text="@string/add_follower_by_username"/>
 
-			    <ProgressBar
-					android:theme="@style/MyMaterialTheme.Base"
-			        android:layout_width="wrap_content"
-			        android:layout_height="wrap_content"
-			        android:layout_gravity="center"/>
-			    
-			</FrameLayout>
-</FrameLayout>
+				<FrameLayout
+					android:layout_width="match_parent"
+					android:layout_height="match_parent">
+				  <androidx.recyclerview.widget.RecyclerView
+					  android:id="@+id/recyclerList"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+					  app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+					  android:drawSelectorOnTop="false" />
+				  </FrameLayout>
+
+			</LinearLayout>
+
+		<TextView
+			android:id="@+id/noFollowingTextView"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginStart="24dp"
+			android:layout_marginEnd="24dp"
+			android:layout_gravity="center_vertical|center_horizontal"
+			android:text="@string/not_following_anyone"
+			android:textColor="@android:color/black"
+			android:visibility="gone"
+			android:textSize="24sp"
+			/>
+
+			<FrameLayout
+				android:id="@+id/follower_list_progressContainer"
+				app:showProgress="@{safeUnbox(viewModel.spinner)}"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:clickable="true"
+				android:focusable="true">
+
+					<ProgressBar
+						android:theme="@style/MyMaterialTheme.Base"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_gravity="center"/>
+
+				</FrameLayout>
+	</androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+</layout>

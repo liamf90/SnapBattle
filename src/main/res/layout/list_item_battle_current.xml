@@ -1,76 +1,111 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingBottom="@dimen/row_vertical_padding"
-    android:paddingTop="@dimen/row_vertical_padding"
-    >
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+
+        <import type="com.liamfarrell.android.snapbattle.model.Battle.Who_turn"/>
+
+        <variable
+        name="battle"
+        type="com.liamfarrell.android.snapbattle.model.Battle"/>
+
+        <variable
+            name="CurrentCognitoID"
+            type="String" />
+        <variable
+            name="profilePicOnClickListener"
+            type="android.view.View.OnClickListener"/>
+    </data>
 
     <LinearLayout
-        android:id="@+id/whoTurnLinearLayout"
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingRight="@dimen/activity_horizontal_margin"
-        android:layout_width="@dimen/who_turn_layout_width"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:orientation="vertical">
-
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/profilePic"
-            android:layout_width="@dimen/profile_pic_small_width"
-            android:layout_height="@dimen/profile_pic_small_height"
-            android:layout_gravity="center_vertical|center_horizontal" />
-
-        <TextView
-            android:id="@+id/battle_status_TextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical|center_horizontal"
-            android:gravity="center_horizontal"
-            android:lines="2"
-            android:maxLines="2"
-            android:textSize="18sp" />
-    </LinearLayout>
+        android:paddingBottom="@dimen/row_vertical_padding"
+        android:paddingTop="@dimen/row_vertical_padding"
+        android:background="@{battle.whoTurn == Who_turn.YOUR_TURN ? @color/your_turn_background : @color/opponent_turn_background}"
+        >
 
         <LinearLayout
-            android:id="@+id/battleInfoLayout"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            >
+            android:id="@+id/whoTurnLinearLayout"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:layout_width="@dimen/who_turn_layout_width"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/profilePic"
+                android:layout_width="@dimen/profile_pic_small_width"
+                android:layout_height="@dimen/profile_pic_small_height"
+                android:layout_gravity="center_vertical|center_horizontal"
+                android:onClick="@{profilePicOnClickListener}"
+                app:profileImage="@{safeUnbox(battle.getOpponentProfilePicCount(CurrentCognitoID)) != 0 ? battle.ProfilePicSmallSignedUrl : null}"
+                />
 
             <TextView
-                android:id = "@+id/battle_list_item_battle_name_TextView"
-                android:layout_gravity="start"
-                android:layout_width = "wrap_content"
-                android:layout_height= "wrap_content"
-                android:textSize="20sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id = "@+id/battle_list_item_opponent_name_TextView"
-                android:layout_width = "wrap_content"
-                android:layout_height= "wrap_content"
-                android:layout_marginTop="@dimen/battle_info_vertical_spacing"
-                android:textSize="20sp" />
-
-            <TextView
-                android:id = "@+id/battle_rounds_TextView"
-                android:layout_width = "wrap_content"
-                android:layout_height= "wrap_content"
-                android:layout_marginTop="@dimen/battle_info_vertical_spacing"
-                android:textSize="16sp" />
-
-            <TextView
-                android:id = "@+id/time_ago_TextView"
-                android:layout_width = "wrap_content"
-                android:layout_height= "wrap_content"
-                android:layout_marginTop="@dimen/battle_info_vertical_spacing"
-                android:textSize="16sp"/>
+                android:id="@+id/battle_status_TextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|center_horizontal"
+                android:gravity="center_horizontal"
+                android:lines="2"
+                android:maxLines="2"
+                android:textSize="18sp"
+                android:text="@{battle.getCurrentBattleStatus(context)}"
+                />
         </LinearLayout>
 
-</LinearLayout>
+            <LinearLayout
+                android:id="@+id/battleInfoLayout"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                >
+
+                <TextView
+                    android:id = "@+id/battle_list_item_battle_name_TextView"
+                    android:layout_gravity="start"
+                    android:layout_width = "wrap_content"
+                    android:layout_height= "wrap_content"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:text="@{@string/battle_name(battle.battleName)}"
+                    />
+
+                <TextView
+                    android:id = "@+id/battle_list_item_opponent_name_TextView"
+                    android:layout_width = "wrap_content"
+                    android:layout_height= "wrap_content"
+                    android:layout_marginTop="@dimen/battle_info_vertical_spacing"
+                    android:textSize="20sp"
+                    android:text="@{@string/vsOpponent(battle.getOpponentName(CurrentCognitoID))}"
+                    />
+
+                <TextView
+                    android:id = "@+id/battle_rounds_TextView"
+                    android:layout_width = "wrap_content"
+                    android:layout_height= "wrap_content"
+                    android:layout_marginTop="@dimen/battle_info_vertical_spacing"
+                    android:textSize="16sp"
+                    android:text="@{@plurals/rounds(battle.rounds, battle.rounds)}"
+                    />
+
+                <TextView
+                    android:id = "@+id/time_ago_TextView"
+                    android:layout_width = "wrap_content"
+                    android:layout_height= "wrap_content"
+                    android:layout_marginTop="@dimen/battle_info_vertical_spacing"
+                    android:textSize="16sp"
+                    android:text="@{battle.getTimeSinceLastVideosUploaded(context)}"
+                    />
+            </LinearLayout>
+
+    </LinearLayout>
+
+</layout>

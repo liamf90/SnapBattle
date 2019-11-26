@@ -1,24 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-	xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-	  <android.support.v7.widget.RecyclerView
-		  android:id="@+id/recyclerList"
-			android:layout_width="match_parent"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto">
+
+	<data>
+		<variable
+			name="viewModel"
+			type="com.liamfarrell.android.snapbattle.viewmodels.AddFacebookFriendsAsFollowersViewModel"/>
+	</data>
+	<FrameLayout
+		android:layout_width="match_parent"
+		android:layout_height="match_parent">
+		  <androidx.recyclerview.widget.RecyclerView
+			  android:id="@+id/recyclerList"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+			  	app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+				android:drawSelectorOnTop="false" />
+			<FrameLayout
+				android:id="@+id/opponent_list_progressContainer"
+				android:layout_width="match_parent"
+				android:layout_height="@dimen/progress_container_height"
+				app:showProgress="@{safeUnbox(viewModel.spinner)}"
+				android:clickable="true"
+				android:focusable="true">
+					<ProgressBar
+						android:theme="@style/MyMaterialTheme.Base"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_gravity="center"/>
+
+				</FrameLayout>
+
+		<TextView
+			android:id="@+id/noFacebookFriendsTextView"
+			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:drawSelectorOnTop="false" />
-		<FrameLayout
-		    android:id="@+id/opponent_list_progressContainer"
-		    android:layout_width="match_parent"
-            android:layout_height="@dimen/progress_container_height"
-		    android:clickable="true"
-			android:focusable="true">
-			    <ProgressBar
-					android:theme="@style/MyMaterialTheme.Base"
-			        android:layout_width="wrap_content"
-			        android:layout_height="wrap_content"
-			        android:layout_gravity="center"/>
-			    
-			</FrameLayout>
-</FrameLayout>
+			android:layout_marginStart="24dp"
+			android:layout_marginEnd="24dp"
+			android:layout_gravity="center_vertical|center_horizontal"
+			android:text="@string/no_facebook_friends"
+			android:textColor="@android:color/black"
+			android:visibility="gone"
+			android:textSize="24sp"
+			/>
+	</FrameLayout>
+
+</layout>

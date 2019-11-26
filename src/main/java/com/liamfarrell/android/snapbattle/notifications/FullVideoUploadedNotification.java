@@ -1,13 +1,14 @@
 package com.liamfarrell.android.snapbattle.notifications;
 
+import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
+import android.os.Bundle;
 import android.text.SpannableStringBuilder;
 
-import com.liamfarrell.android.snapbattle.app.App;
+import androidx.navigation.NavDeepLinkBuilder;
+
+import com.liamfarrell.android.snapbattle.MainActivity;
 import com.liamfarrell.android.snapbattle.R;
-import com.liamfarrell.android.snapbattle.activity.ViewBattleActivity;
-import com.liamfarrell.android.snapbattle.activity.ViewBattleFragment;
 
 /**
  * Created by Liam on 10/11/2017.
@@ -15,25 +16,32 @@ import com.liamfarrell.android.snapbattle.activity.ViewBattleFragment;
 
 public class FullVideoUploadedNotification extends Notification {
     private String mBattleName;
-    public FullVideoUploadedNotification(int battleID, String battleName)
+    public FullVideoUploadedNotification(int notificationIndex,int battleID, String battleName)
     {
-        super(battleID);
+        super(notificationIndex, battleID);
         mBattleName = battleName;
 
     }
 
     @Override
-    public Intent getIntent(Context context) {
-        Intent intent = new Intent(context, ViewBattleActivity.class);
-        intent.putExtra(ViewBattleFragment.BATTLE_ID_EXTRA, Integer.toString(super.getBattleId()) );
-        return intent;
+    public PendingIntent getIntent(Context context) {
+        Bundle args = new Bundle();
+        args.putInt("battleId", super.getBattleId());
+
+        return new NavDeepLinkBuilder(context)
+                .setComponentName(MainActivity.class)
+                .setGraph(R.navigation.navigation_menu)
+                .setDestination(R.id.viewBattleFragment)
+                .setArguments(args)
+                .createPendingIntent();
+
     }
 
     @Override
-    public SpannableStringBuilder getMessage()
+    public SpannableStringBuilder getMessage(Context context)
     {
         SpannableStringBuilder longDescription = new SpannableStringBuilder();
-        longDescription.append(App.getContext().getResources().getString(R.string.full_video_uploaded_notification_append, mBattleName));
+        longDescription.append(context.getResources().getString(R.string.full_video_uploaded_notification_append, mBattleName));
         return longDescription;
     }
 
@@ -42,4 +50,7 @@ public class FullVideoUploadedNotification extends Notification {
         return null;
     }
 
+    public String getBattleName() {
+        return mBattleName;
+    }
 }

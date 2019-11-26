@@ -6,11 +6,10 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import com.liamfarrell.android.snapbattle.activity.createbattle.ChooseVotingFragment;
+import com.liamfarrell.android.snapbattle.mvvm_ui.create_battle.ChooseVotingFragment;
 import com.liamfarrell.android.snapbattle.model.Battle;
 import com.liamfarrell.android.snapbattle.model.Video;
 import com.liamfarrell.android.snapbattle.model.Voting;
-import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.deserializers.JSONDeserializerHelperMethods;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -47,7 +46,7 @@ public class BattleDeserializer implements JsonDeserializer<Battle> {
             b.setChallengedUsername(jsonObject.get("challenged_username").getAsString());
         }
         if (jsonObject.has("final_video_ready")) {
-            b.setFinalVideoReady(JSONDeserializerHelperMethods.getBooleanFromMysqlBool(jsonObject.get("final_video_ready").getAsInt()));
+            b.setIsFinalVideoReady(JSONDeserializerHelperMethods.getBooleanFromMysqlBool(jsonObject.get("final_video_ready").getAsInt()));
         }
 
         if (jsonObject.has("video_number_recorded")) {
@@ -156,7 +155,7 @@ public class BattleDeserializer implements JsonDeserializer<Battle> {
                 String creatorCognitoId = videoJsonObject.get("creator_cognito_id").getAsString();
                 Boolean uploaded = JSONDeserializerHelperMethods.getBooleanFromMysqlBool(videoJsonObject.get("uploaded").getAsInt());
                 Date dateUploaded = JSONDeserializerHelperMethods.getDateFromString(videoJsonObject.get("date_uploaded").getAsString());
-                Video vid = new Video(videoID, dateUploaded, videoNumber, creatorCognitoId, videoCreatorName, uploaded);
+                Video vid = new Video(b.getBattleID(), videoID, dateUploaded, videoNumber, creatorCognitoId, videoCreatorName, uploaded);
                 videoList.add(vid);
             }
             b.setVideos(videoList);

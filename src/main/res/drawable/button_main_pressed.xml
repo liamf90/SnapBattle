@@ -5,7 +5,7 @@ android:shape="rectangle">
 <corners android:radius="16dp" />
     <size android:height="20dp"
         android:width="40dp"/>
-    <stroke android:width="2dp" android:color="@color/colorPrimary" />
-    <solid android:color="@color/colorAccent"/>
+    <stroke android:width="2dp" android:color="@color/main_button_background" />
+    <solid  android:color="@color/main_button_background" />
 </shape>
 

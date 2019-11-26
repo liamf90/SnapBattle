@@ -161,6 +161,11 @@ public class VideoControllerView extends VideoController {
         mVoteButton.setEnabled(false);
     }
 
+    public void setVoteButtonVoting()
+    {
+        mVoteButton.setText(R.string.voting_submitting);
+    }
+
     public void setReportButtonReporting()
     {
         mReportButton.setText(R.string.reporting);

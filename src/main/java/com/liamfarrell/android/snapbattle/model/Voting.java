@@ -1,14 +1,14 @@
 package com.liamfarrell.android.snapbattle.model;
 
+import android.content.Context;
+
 import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.HttpMethod;
 import com.liamfarrell.android.snapbattle.R;
-import com.liamfarrell.android.snapbattle.activity.FacebookLoginActivity;
-import com.liamfarrell.android.snapbattle.activity.FacebookLoginFragment;
-import com.liamfarrell.android.snapbattle.activity.createbattle.ChooseVotingFragment;
-import com.liamfarrell.android.snapbattle.app.App;
+import com.liamfarrell.android.snapbattle.app.SnapBattleApp;
+import com.liamfarrell.android.snapbattle.mvvm_ui.create_battle.ChooseVotingFragment;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -18,6 +18,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Objects;
 import java.util.TimeZone;
 
 public class Voting implements Serializable {
@@ -25,6 +26,12 @@ public class Voting implements Serializable {
     {
         CHALLENGER,
         CHALLENGED
+    }
+    public enum VotingState{
+        NO_VOTING,
+        VOTING_NOT_YET_BEGUN,
+        VOTING_STILL_GOING,
+        VOTING_FINISHED
     }
 
     public interface MutualFriendCallbacks
@@ -68,33 +75,33 @@ public class Voting implements Serializable {
         return mVoteChallenged;
     }
 
-    public String getChallengerVotingResult()
+    public String getChallengerVotingResult(Context context)
     {
         if (getVoteChallenger() > getVoteChallenged())
         {
-            return App.getContext().getResources().getString(R.string.winner);
+            return context.getResources().getString(R.string.winner);
         }
         else if (getVoteChallenger() < getVoteChallenged())
         {
-            return App.getContext().getResources().getString(R.string.loser);
+            return context.getResources().getString(R.string.loser);
         }
         else
         {
-            return App.getContext().getResources().getString(R.string.draw);
+            return context.getResources().getString(R.string.draw);
         }
     }
-    public String getChallengedVotingResult()
+    public String getChallengedVotingResult(Context context)
     {
         if (getVoteChallenged() > getVoteChallenger())
         {
-            return App.getContext().getResources().getString(R.string.winner);		}
+            return context.getResources().getString(R.string.winner);		}
         else if (getVoteChallenged() < getVoteChallenger())
         {
-            return App.getContext().getResources().getString(R.string.loser);
+            return context.getResources().getString(R.string.loser);
         }
         else
         {
-            return App.getContext().getResources().getString(R.string.draw);
+            return context.getResources().getString(R.string.draw);
         }
     }
 
@@ -110,6 +117,22 @@ public class Voting implements Serializable {
 
     }
 
+
+    public VotingState getVotingState(){
+        if (mVotingChoice == ChooseVotingFragment.VotingChoice.NONE){
+            return VotingState.NO_VOTING;
+        }
+
+        if (mVotingTimeEnd == null){
+            return VotingState.VOTING_NOT_YET_BEGUN;
+        }
+
+        if (mVotingTimeEnd.after(new Date(System.currentTimeMillis()))){
+            return VotingState.VOTING_STILL_GOING;
+        } else {
+            return VotingState.VOTING_FINISHED;
+        }
+    }
     public void canUserVote(String currentUserCognitoId, String challengerCognitoId, String challengedCognitoId, String challengerFacebookId, String challengedFacebookId, Voting.MutualFriendCallbacks callback)
     {
 
@@ -264,5 +287,16 @@ public class Voting implements Serializable {
     }
 
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Voting voting = (Voting) o;
+        return mVotingChoice == voting.mVotingChoice &&
+                mVotingLength == voting.mVotingLength &&
+                Objects.equals(mVotingTimeEnd, voting.mVotingTimeEnd) &&
+                Objects.equals(mVoteChallenger, voting.mVoteChallenger) &&
+                Objects.equals(mVoteChallenged, voting.mVoteChallenged);
+    }
 
 }

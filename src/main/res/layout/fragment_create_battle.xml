@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
+<layout>
 
-<android.support.design.widget.CoordinatorLayout
+	<data>
+		<import type="android.view.View"/>
+		<import type="com.liamfarrell.android.snapbattle.mvvm_ui.create_battle.ChooseVotingFragment.VotingChoice"
+			alias="VotingChoice" />
+		<variable
+			name="viewModel"
+			type="com.liamfarrell.android.snapbattle.viewmodels.VerifyBattleViewModel" />
+	</data>
+
+<androidx.coordinatorlayout.widget.CoordinatorLayout
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
 	android:paddingTop="@dimen/activity_vertical_margin"
@@ -28,6 +38,7 @@
 				android:id="@+id/battleName"
 				android:layout_height="wrap_content"
 				android:layout_width="match_parent"
+				android:text="@{@string/battle_name(viewModel.battle.battleName)}"
 				android:textSize="18sp"
 				/>
 		</LinearLayout>
@@ -40,11 +51,12 @@
 				android:text="@string/number_of_rounds"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				 android:textStyle = "bold"/>
+				android:textStyle = "bold"/>
 			<TextView
 				android:id="@+id/numberOfRounds"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
+				android:text="@{@plurals/rounds(viewModel.battle.rounds, viewModel.battle.rounds)}"
 				android:textSize="18sp"/>
 		  </LinearLayout>
 		 <LinearLayout
@@ -61,6 +73,7 @@
 				android:id="@+id/chosenOpponent"
 			   android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
+				android:text="@{viewModel.battle.challengedCognitoId == null ? viewModel.battle.challengedName : viewModel.battle.challengedUsername}"
 				android:textSize="18sp"/>
 
 		</LinearLayout>
@@ -78,6 +91,7 @@
 				android:id="@+id/chosenVotingTextView"
 			   android:layout_width="wrap_content"
 			   android:layout_height="wrap_content"
+				android:text="@{viewModel.battle.voting.votingChoice.toLongStyleString(context)}"
 				android:textSize="18sp"/>
 
 		</LinearLayout>
@@ -87,6 +101,7 @@
 			 android:layout_width="match_parent"
              android:layout_marginTop="@dimen/element_vertical_spacing_default"
 			 android:layout_height="wrap_content"
+			 android:visibility="@{viewModel.battle.voting.votingChoice != VotingChoice.NONE ? View.VISIBLE : View.GONE}"
 			 android:orientation="vertical">
 			 <TextView
 				 android:layout_width= "wrap_content"
@@ -97,6 +112,7 @@
 				 android:id="@+id/votingLengthTextView"
 				 android:layout_width="wrap_content"
 				 android:layout_height="wrap_content"
+				 android:text="@{viewModel.battle.voting.votingLength.toString(context)}"
 				 android:textSize="18sp"/>
 		  </LinearLayout>
 		 <Button
@@ -106,12 +122,16 @@
 			 android:layout_height="wrap_content"
 			 android:layout_gravity="bottom|end"
 			 android:layout_marginBottom="@dimen/activity_vertical_margin"
-			 android:layout_marginEnd="@dimen/activity_horizontal_margin"/>
+			 android:layout_marginEnd="@dimen/activity_horizontal_margin"
+			 android:background="@drawable/button_main_selector"
+			 android:textColor="@color/primary_text"
+			 android:onClick="@{(v)-> viewModel.createBattle(v)}"
+			 />
 
 	</LinearLayout>
 	<FrameLayout
 	android:id="@+id/progressContainer"
-        android:visibility="gone"
+	android:visibility="@{viewModel.spinner ? View.VISIBLE : View.GONE}"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
 	android:clickable="true"
@@ -124,5 +144,6 @@
 		/>
 
 	</FrameLayout>
-</android.support.design.widget.CoordinatorLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
 
+</layout>

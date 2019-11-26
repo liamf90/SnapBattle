@@ -1,5 +1,7 @@
 package com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response;
 
+import java.util.Objects;
+
 public class SuggestionsResponse
 {
     private String battle_name;
@@ -20,4 +22,14 @@ public class SuggestionsResponse
     public void setCount(int count) {
         this.count = count;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SuggestionsResponse that = (SuggestionsResponse) o;
+        return count == that.count &&
+                Objects.equals(battle_name, that.battle_name);
+    }
+
 }

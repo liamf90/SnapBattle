@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/searchUsersAndBattlesFragment">
+    <include app:graph="@navigation/navigation_full_battle_video" />
+    <fragment
+        android:id="@+id/searchUsersAndBattlesFragment"
+        android:name="com.liamfarrell.android.snapbattle.mvvm_ui.SearchUsersAndBattlesFragment"
+        android:label="SearchUsersAndBattlesFragment" >
+        <action
+            android:id="@+id/action_searchUsersAndBattlesFragment_to_viewBattlesFromNameFragment"
+            app:destination="@id/viewBattlesFromNameFragment" />
+        <action
+            android:id="@+id/action_searchUsersAndBattlesFragment_to_navigation_users_battles"
+            app:destination="@id/navigation_users_battles">
+            <argument
+                android:name="cognitoId"
+                app:argType="string" />
+        </action>
+    </fragment>
+    <fragment
+        android:id="@+id/viewBattlesFromNameFragment"
+        android:name="com.liamfarrell.android.snapbattle.mvvm_ui.BattlesFromNameFragment"
+        android:label="ViewBattlesFromNameFragment" >
+        <argument
+            android:name="battleName"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_viewBattlesFromNameFragment_to_navigation_full_battle_video"
+            app:destination="@id/navigation_full_battle_video">
+        <argument
+            android:name="battleId"
+            app:argType="integer" />
+        <argument
+            android:name="filepath"
+            app:argType="string" />
+        <argument
+            android:name="challengerName"
+            app:argType="string" />
+        <argument
+            android:name="challengedName"
+            app:argType="string" />
+        </action>
+        <action
+            android:id="@+id/action_viewBattlesFromNameFragment_to_navigation_users_battles2"
+            app:destination="@id/navigation_users_battles">
+            <argument
+                android:name="cognitoId"
+                app:argType="string" />
+        </action>
+
+    </fragment>
+    <include app:graph="@navigation/navigation_users_battles" />
+</navigation>

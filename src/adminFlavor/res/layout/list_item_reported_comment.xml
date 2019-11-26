@@ -1,4 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
+<layout>
+    <data>
+        <import type="android.view.View"/>
+        <variable
+            name="reportedComment"
+            type="com.liamfarrell.android.snapbattle.model.ReportedComment" />
+        <variable
+            name="callbacks"
+            type="com.liamfarrell.android.snapbattle.adapters.ReportedCommentCallback"/>
+        <variable
+            name="banDaysLength"
+            type="String"/>
+
+    </data>
+
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -14,6 +29,7 @@
         <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+            android:text="@{reportedComment.comment}"
         android:id="@+id/commentTextView"/>
     </LinearLayout>
     <LinearLayout
@@ -27,6 +43,7 @@
             <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+                android:text="@{reportedComment.userReportedName}"
             android:id="@+id/nameTextView"/>
     </LinearLayout>
     <LinearLayout
@@ -40,12 +57,14 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="@{reportedComment.userReportedUsername}"
             android:id="@+id/usernameTextView"/>
     </LinearLayout>
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/deleteButton"
+        android:onClick="@{() -> callbacks.onDeleteComment(reportedComment.commentId)}"
         android:text="@string/delete_comment"/>
     <LinearLayout
         android:layout_width="match_parent"
@@ -59,6 +78,7 @@
             android:id="@+id/banDaysEditText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="@={banDaysLength}"
             android:inputType="number">
 
         </EditText>
@@ -67,11 +87,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/banButton"
+        android:onClick="@{() -> callbacks.onBanUser(reportedComment.commentId, reportedComment.cognitoIdCommenter , Integer.valueOf(banDaysLength))}"
         android:text="@string/ban_user"/>
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/ignoreButton"
+        android:onClick="@{() -> callbacks.onIgnoreComment(reportedComment.commentId)}"
         android:text="@string/ignore_comment_report"/>
    <Button
        android:layout_width="match_parent"
@@ -84,7 +106,7 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:textColor="#ff0000"
-        android:visibility="gone"
+        android:visibility="@{reportedComment.userIsBanned ? View.VISIBLE : View.GONE}"
         android:text="@string/user_banned"/>
 
     <TextView
@@ -92,14 +114,16 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:textColor="#ff0000"
-        android:visibility="gone"
+        android:visibility="@{reportedComment.commentDeleted ? View.VISIBLE : View.GONE}"
         android:text="@string/comment_deleted"/>
     <TextView
         android:id="@+id/commentIgnoredTextView"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:textColor="#ff0000"
-        android:visibility="gone"
+        android:visibility="@{reportedComment.commentIgnored ? View.VISIBLE : View.GONE}"
         android:text="@string/comment_ignored"/>
 
 </LinearLayout>
+
+</layout>

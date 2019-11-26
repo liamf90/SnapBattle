@@ -4,8 +4,26 @@ import com.amazonaws.mobileconnectors.lambdainvoker.LambdaFunction;
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.AddCommentRequest;
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.AddDislikeRequest;
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.BanUserRequest;
+import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.BattleTypeSuggestionsSearchRequest;
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.CompletedBattlesRequest;
+import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.CreateBattleRequest;
+import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.CreateUserRequest;
+import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.CurrentBattlesRequest;
+import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.DoVoteRequest;
+import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.GetBattlesByNameRequest;
+import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.GetCommentsRequest;
+import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.GetFriendsBattlesRequest;
+import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.GetFriendsBattlesRequestOld;
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.GetUsersBattlesRequest;
+import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.RemoveFollowerRequest;
+import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.SignedUrlsRequest;
+import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.UpdateNameRequest;
+import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.UpdateUsernameRequest;
+import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.UrlLambdaRequest;
+import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.UsernameToFacebookIDRequest;
+import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.UsersSearchRequest;
+import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.VerifyUserRequest;
+import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.VideoSubmittedRequest;
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.BanUserResponse;
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.BattleRequest;
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.FriendBattleRequest;
@@ -61,25 +79,8 @@ import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserializat
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.VerifyUserResponse;
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.VideoSubmittedResponse;
 import com.liamfarrell.android.snapbattle.model.lambda_function_request_objects.AddLikeRequest;
-import com.liamfarrell.android.snapbattle.model.lambda_function_request_objects.BattleTypeSuggestionsSearchRequest;
-import com.liamfarrell.android.snapbattle.model.lambda_function_request_objects.CreateBattleRequest;
-import com.liamfarrell.android.snapbattle.model.lambda_function_request_objects.CreateUserRequest;
-import com.liamfarrell.android.snapbattle.model.lambda_function_request_objects.CurrentBattlesRequest;
-import com.liamfarrell.android.snapbattle.model.lambda_function_request_objects.DoVoteRequest;
-import com.liamfarrell.android.snapbattle.model.lambda_function_request_objects.GetBattlesByNameRequest;
-import com.liamfarrell.android.snapbattle.model.lambda_function_request_objects.GetCommentsRequest;
-import com.liamfarrell.android.snapbattle.model.lambda_function_request_objects.GetFriendsBattlesRequest;
-import com.liamfarrell.android.snapbattle.model.lambda_function_request_objects.RemoveFollowerRequest;
-import com.liamfarrell.android.snapbattle.model.lambda_function_request_objects.SignedUrlsRequest;
 import com.liamfarrell.android.snapbattle.model.lambda_function_request_objects.UndoDislikeRequest;
 import com.liamfarrell.android.snapbattle.model.lambda_function_request_objects.UndoLikeRequest;
-import com.liamfarrell.android.snapbattle.model.lambda_function_request_objects.UpdateNameRequest;
-import com.liamfarrell.android.snapbattle.model.lambda_function_request_objects.UpdateUsernameRequest;
-import com.liamfarrell.android.snapbattle.model.lambda_function_request_objects.UrlLambdaRequest;
-import com.liamfarrell.android.snapbattle.model.lambda_function_request_objects.UsernameToFacebookIDRequest;
-import com.liamfarrell.android.snapbattle.model.lambda_function_request_objects.UsersSearchRequest;
-import com.liamfarrell.android.snapbattle.model.lambda_function_request_objects.VerifyUserRequest;
-import com.liamfarrell.android.snapbattle.model.lambda_function_request_objects.VideoSubmittedRequest;
 
 /*
  * A holder for lambda functions
@@ -127,6 +128,9 @@ public interface LambdaFunctionsInterface {
 
 
     @LambdaFunction (functionName = "getFriendsBattles")
+    GetFriendsBattlesResponse GetFriendsBattles(GetFriendsBattlesRequestOld request);
+
+    @LambdaFunction (functionName = "getFriendsBattles")
     GetFriendsBattlesResponse GetFriendsBattles(GetFriendsBattlesRequest request);
 
     @LambdaFunction (functionName = "getFollowing")
@@ -156,13 +160,13 @@ public interface LambdaFunctionsInterface {
     DefaultResponse UpdateBattleAccepted(UpdateBattleAcceptedRequest request);
 
     @LambdaFunction (functionName = "addFollower")
-    DefaultResponse AddFollower(FollowUserWithFacebookIDsRequest request);
+    ResponseFollowing AddFollower(FollowUserWithFacebookIDsRequest request);
 
     @LambdaFunction (functionName = "addFollower")
-    DefaultResponse AddFollower(AddFollowerRequestWithUsername request);
+    ResponseFollowing AddFollower(AddFollowerRequestWithUsername request);
 
     @LambdaFunction (functionName = "addFollower")
-    DefaultResponse AddFollower(AddFollowerRequestWithCognitoIDs request);
+    ResponseFollowing AddFollower(AddFollowerRequestWithCognitoIDs request);
 
 
     @LambdaFunction (functionName = "getProfile")
@@ -243,7 +247,7 @@ public interface LambdaFunctionsInterface {
     DeleteCommentResponse DeleteCommentAdmin(DeleteCommentRequest request);
 
 
-    @LambdaFunction (functionName = "getReportedComments")
+    @LambdaFunction (functionName = "getReportedBattles")
     ReportedCommentsResponse GetReportedComments(ReportedCommentsRequest request);
 
 

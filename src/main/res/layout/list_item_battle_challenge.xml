@@ -1,7 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout>
+
+	<data>
+
+		<import type="android.view.View"/>
+		<import type="com.liamfarrell.android.snapbattle.mvvm_ui.create_battle.ChooseVotingFragment.VotingChoice"
+			alias="VotingChoice"/>
+
+		<variable
+			name="enableAcceptButton"
+			type="Boolean"/>
+
+		<variable
+			name="enableDeclineButton"
+			type="Boolean"/>
+		<variable
+			name="battle"
+			type="com.liamfarrell.android.snapbattle.model.Battle"/>
+
+		<variable
+			name="acceptButtonOnClickListener"
+			type="android.view.View.OnClickListener"/>
+
+		<variable
+			name="declineButtonOnClickListener"
+			type="android.view.View.OnClickListener"/>
+
+		<variable
+			name="profilePicOnClickListener"
+			type="android.view.View.OnClickListener"/>
+	</data>
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
-	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
 	android:orientation="vertical"
@@ -17,7 +48,8 @@
 		android:layout_marginTop="@dimen/list_item_elements_default_spacing"
 		android:layout_marginEnd="@dimen/list_item_elements_default_spacing"
 		android:layout_marginBottom="@dimen/list_item_elements_default_spacing"
-		android:src="@drawable/default_profile_pic100x100"
+		android:onClick="@{profilePicOnClickListener}"
+		app:profileImage="@{safeUnbox(battle.getOpponentProfilePicCount()) != 0 ? battle.ProfilePicSmallSignedUrl : null}"
 		app:layout_constraintBottom_toTopOf="@+id/linearLayout3"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintTop_toTopOf="parent" />
@@ -31,6 +63,7 @@
 		android:textColor="@color/secondary_text_dark"
 		android:textSize="20sp"
 		android:textStyle="bold"
+		android:text="@{@string/battle_name(battle.battleName)}"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toTopOf="parent" />
 
@@ -42,6 +75,7 @@
 		android:layout_marginTop="@dimen/list_item_elements_default_spacing"
 		android:textSize="20sp"
 		app:layout_constraintStart_toStartOf="parent"
+		android:text="@{@string/vsOpponent(battle.challengerUsername)}"
 		app:layout_constraintTop_toBottomOf="@+id/battle_list_item_battle_name_TextView" />
 
 	<LinearLayout
@@ -58,6 +92,7 @@
 			android:id="@+id/chosenVotingTextView"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
+			android:text="@{battle.voting.votingChoice.toLongStyleString(context)}"
 			android:textSize="18sp" />
 
 		<LinearLayout
@@ -66,7 +101,7 @@
 			android:layout_height="wrap_content"
 			android:layout_marginTop="@dimen/list_item_elements_default_spacing"
 			android:orientation="horizontal"
-			android:visibility="visible">
+			android:visibility="@{battle.voting.votingChoice != VotingChoice.NONE ? View.VISIBLE : View.GONE}">
 
 			<TextView
 				android:id="@+id/votingLengthTitleTextView"
@@ -82,6 +117,7 @@
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:layout_marginStart="@dimen/element_horizontal_spacing_default"
+				android:text="@{battle.voting.votingLength.toString(context)}"
 				android:textSize="18sp"
 				android:visibility="visible" />
 		</LinearLayout>
@@ -104,6 +140,7 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_gravity="center_vertical"
+			android:text="@{@plurals/rounds(battle.rounds, battle.rounds)}"
 			android:textSize="16sp" />
 
 		<TextView
@@ -112,7 +149,9 @@
 			android:layout_height="wrap_content"
 			android:layout_gravity="center_vertical"
 			android:layout_marginStart="@dimen/element_horizontal_spacing_default"
-			android:textSize="14sp" />
+			android:textSize="14sp"
+			android:text="@{battle.getChallengedTimeSinceStatus(context)}"
+			/>
 	</LinearLayout>
 
 
@@ -125,9 +164,11 @@
 		android:layout_marginStart="@dimen/list_item_elements_default_spacing"
 		android:layout_marginTop="@dimen/element_vertical_spacing_default"
 		android:layout_marginBottom="@dimen/list_item_elements_default_spacing"
-		android:background="@drawable/button_shape"
+		android:background="@drawable/button_accept_decline_selector"
 		android:text="@string/accept"
+		android:onClick="@{acceptButtonOnClickListener}"
 		android:textColor="@color/secondary_text_light"
+		android:enabled="@{enableAcceptButton}"
 		app:layout_constraintBottom_toBottomOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toBottomOf="@+id/linearLayout4" />
@@ -138,15 +179,17 @@
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_marginEnd="@dimen/list_item_elements_default_spacing"
-		android:background="@drawable/button_shape"
+		android:background="@drawable/button_accept_decline_selector"
 		android:text="@string/decline"
 		android:textColor="@color/secondary_text_light"
+		android:onClick="@{declineButtonOnClickListener}"
+		android:enabled="@{enableDeclineButton}"
 		app:layout_constraintBaseline_toBaselineOf="@+id/battle_list_item_accept_button"
 		app:layout_constraintEnd_toEndOf="parent" />
 
 
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
 
-
+</layout>
 
 

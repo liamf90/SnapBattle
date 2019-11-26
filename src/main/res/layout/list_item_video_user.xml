@@ -1,75 +1,109 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:app="http://schemas.android.com/apk/res-auto"
-	xmlns:tools="http://schemas.android.com/tools"
-	android:layout_width="match_parent"
-  android:layout_height="fill_parent"
-  android:orientation="vertical"
-    android:paddingTop="@dimen/row_vertical_padding">
 
-		<TextView
-	        android:id = "@+id/round_number"
-            android:layout_marginStart="@dimen/list_item_elements_default_spacing"
-	        android:layout_width = "match_parent"
-	        android:layout_height= "wrap_content"
-	        android:textStyle="bold" />
+<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools">
+	<data>
 
-	    <LinearLayout
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:orientation="horizontal"
-			android:paddingStart="@dimen/video_linear_layout_padding"
-			android:paddingEnd="@dimen/video_linear_layout_padding"
-			android:gravity="center_vertical"
-			android:background="@drawable/video_view_user"
-			android:id="@+id/videoLinearLayout">
 
+		<import type="android.view.View"/>
+		<import type="android.view.View.OnClickListener"/>
+		<import type="android.util.DisplayMetrics" />
+
+		<variable
+			name="viewModel"
+			type="com.liamfarrell.android.snapbattle.viewmodels.BattleVideoItemViewModel"/>
+
+		<variable
+			name="video"
+			type="com.liamfarrell.android.snapbattle.model.Video" />
+		<variable
+			name="recordButtonOnClick"
+			type="OnClickListener" />
+		<variable
+			name="playButtonOnClick"
+			type="OnClickListener" />
+		<variable
+			name="submitButtonOnClick"
+			type="OnClickListener" />
+	</data>
+
+	<LinearLayout
+		android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:orientation="vertical"
+		android:paddingTop="@dimen/row_vertical_padding">
 
 			<TextView
-				android:id="@+id/name1"
-				android:layout_width="0dp"
-				android:layout_weight = "1"
+				android:id = "@+id/round_number"
+				android:visibility="@{(video.videoNumber %2) != 0 ? View.VISIBLE : View.GONE}"
+				android:textColor="@{video.videoNumber > viewModel.videosUploaded + 1 ? @color/dark_gray : @color/secondary_text_dark}"
+				android:layout_marginStart="@dimen/list_item_elements_default_spacing"
+				android:layout_width = "match_parent"
+				android:layout_height= "wrap_content"
+				android:text = "@{@string/round_number(video.roundNumber, video.roundNumber)}"
+				android:textStyle="bold" />
+
+			<LinearLayout
+				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:layout_gravity="center_vertical"
-				android:layout_marginStart="8dp"
-				tools:text="Sent 4 hours ago"
-				android:layout_marginTop="8dp"
-				android:layout_marginEnd="8dp"
-				android:layout_marginBottom="8dp"
-				android:textColor="@color/battle_video_view_text_color" />
+				android:orientation="horizontal"
+				android:paddingStart="@dimen/video_linear_layout_padding"
+				android:paddingEnd="@dimen/video_linear_layout_padding"
+				app:layout_marginLeft = "@{safeUnbox(viewModel.isCurrentUser) ? @dimen/left_margin_current_user : @dimen/left_margin_opponent}"
+				app:layout_marginRight = "@{safeUnbox(viewModel.isCurrentUser) ? @dimen/right_margin_current_user : @dimen/right_margin_opponent}"
+				android:background = "@{video.videoNumber &lt;= viewModel.videosUploaded + 1 ? (safeUnbox(viewModel.isCurrentUser) ? @drawable/video_view_user : @drawable/video_view_opponent) : (@drawable/video_view_future)}"
+				android:gravity="center_vertical"
+				android:id="@+id/videoLinearLayout">
 
-			<Button
-				android:id="@+id/playButton1"
-				android:layout_width="@dimen/video_icon_width"
-				android:layout_height="@dimen/video_icon_height"
-				android:layout_marginTop="@dimen/video_linear_layout_padding"
-				android:layout_marginEnd="@dimen/video_linear_layout_padding"
-				android:layout_marginBottom="@dimen/video_linear_layout_padding"
-				android:background="@drawable/start_96px" />
+				<TextView
+					android:id="@+id/name1"
+					android:layout_width="0dp"
+					android:layout_weight = "1"
+					android:layout_height="wrap_content"
+					android:layout_gravity="center_vertical"
+					android:layout_marginStart="8dp"
+					tools:text="Sent 4 hours ago"
+					android:text="@{viewModel.nameText}"
+					android:layout_marginTop="8dp"
+					android:layout_marginEnd="8dp"
+					android:layout_marginBottom="8dp"
+					android:textColor="@color/battle_video_view_text_color" />
 
-			<Button
-				android:id="@+id/recordButton1"
-				android:layout_width="@dimen/video_icon_width"
-				android:layout_height="@dimen/video_icon_height"
-				android:layout_marginTop="@dimen/video_linear_layout_padding"
-				android:layout_marginBottom="@dimen/video_linear_layout_padding"
-				android:layout_marginEnd="16dp"
-				android:background="@drawable/camera_96px" />
+				<Button
+					android:id="@+id/playButton1"
+					android:layout_width="@dimen/video_icon_width"
+					android:layout_height="@dimen/video_icon_height"
+					android:layout_marginTop="@dimen/video_linear_layout_padding"
+					android:layout_marginEnd="@dimen/video_linear_layout_padding"
+					android:layout_marginBottom="@dimen/video_linear_layout_padding"
+					android:visibility="@{safeUnbox(viewModel.displayPlayButton) ? View.VISIBLE : View.INVISIBLE}"
+					android:onClick="@{playButtonOnClick}"
+					android:background="@drawable/start_96px" />
 
-			<Button
-				android:id="@+id/submitButton1"
-				android:layout_width="@dimen/video_icon_width"
-				android:layout_height="@dimen/video_icon_height"
-				android:layout_gravity="end|center_vertical"
-				android:layout_marginTop="@dimen/video_linear_layout_padding"
-				android:layout_marginBottom="@dimen/video_linear_layout_padding"
-				android:layout_marginEnd="@dimen/video_linear_layout_padding"
-				android:background="@drawable/button_submitted"
-				 />
-	     </LinearLayout>
-  
-    
-    
+				<Button
+					android:id="@+id/recordButton1"
+					android:layout_width="@dimen/video_icon_width"
+					android:layout_height="@dimen/video_icon_height"
+					android:layout_marginTop="@dimen/video_linear_layout_padding"
+					android:layout_marginBottom="@dimen/video_linear_layout_padding"
+					android:layout_marginEnd="16dp"
+					android:visibility="@{safeUnbox(viewModel.displayRecordButton) ? View.VISIBLE : View.INVISIBLE}"
+					android:onClick="@{recordButtonOnClick}"
+					android:background="@drawable/camera_96px" />
 
-
-</LinearLayout>
+				<Button
+					android:id="@+id/submitButton1"
+					android:layout_width="@dimen/video_icon_width"
+					android:layout_height="@dimen/video_icon_height"
+					android:layout_gravity="end|center_vertical"
+					android:layout_marginTop="@dimen/video_linear_layout_padding"
+					android:layout_marginBottom="@dimen/video_linear_layout_padding"
+					android:layout_marginEnd="@dimen/video_linear_layout_padding"
+					android:visibility="@{safeUnbox(viewModel.displaySubmitButton) ? View.VISIBLE : View.INVISIBLE}"
+					android:onClick="@{submitButtonOnClick}"
+					android:enabled = "@{safeUnbox(viewModel.submitButtonEnabled)}"
+					android:background="@drawable/button_submitted" />
+			 </LinearLayout>
+	</LinearLayout>
+</layout>

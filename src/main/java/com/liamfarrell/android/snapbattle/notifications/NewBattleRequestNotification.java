@@ -1,15 +1,16 @@
 package com.liamfarrell.android.snapbattle.notifications;
 
 
+import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
 
-import com.liamfarrell.android.snapbattle.app.App;
-import com.liamfarrell.android.snapbattle.activity.BattleChallengesListActivity;
+import androidx.navigation.NavDeepLinkBuilder;
+
+import com.liamfarrell.android.snapbattle.MainActivity;
 import com.liamfarrell.android.snapbattle.R;
 
 /**
@@ -20,25 +21,29 @@ public class NewBattleRequestNotification extends Notification {
 
     private String mChallengerName;
     private String mCognitoIdChallenger;
-    public NewBattleRequestNotification(int battleID, String cognitoIDChallenger, String challengerName)
+    public NewBattleRequestNotification(int notificationIndex, int battleID, String cognitoIDChallenger, String challengerName)
     {
-        super(battleID);
+        super(notificationIndex,battleID);
         mChallengerName = challengerName;
         mCognitoIdChallenger = cognitoIDChallenger;
 
     }
 
     @Override
-    public Intent getIntent(Context context) {
-        Intent intent = new Intent(context, BattleChallengesListActivity.class);
-        return intent;
+    public PendingIntent getIntent(Context context) {
+
+        return new NavDeepLinkBuilder(context)
+                .setComponentName(MainActivity.class)
+                .setGraph(R.navigation.navigation_menu)
+                .setDestination(R.id.battleChallengesListFragment)
+                .createPendingIntent();
     }
 
     @Override
-    public SpannableStringBuilder getMessage()
+    public SpannableStringBuilder getMessage(Context context)
     {
         SpannableStringBuilder longDescription = new SpannableStringBuilder();
-        longDescription.append(App.getContext().getResources().getString(R.string.battle_request_notification_append));
+        longDescription.append(context.getResources().getString(R.string.battle_request_notification_append));
         int start = longDescription.length();
         longDescription.append(mChallengerName);
         longDescription.setSpan(new ForegroundColorSpan(0xFFCC5500), start, longDescription.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -51,4 +56,11 @@ public class NewBattleRequestNotification extends Notification {
         return mCognitoIdChallenger;
     }
 
+    public String getChallengerName() {
+        return mChallengerName;
+    }
+
+    public String getCognitoIdChallenger() {
+        return mCognitoIdChallenger;
+    }
 }

@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
+import com.amazonaws.mobile.auth.core.IdentityManager;
 import com.amazonaws.mobileconnectors.lambdainvoker.LambdaFunctionException;
 import com.amazonaws.mobileconnectors.lambdainvoker.LambdaInvokerFactory;
 import com.amazonaws.regions.Regions;
@@ -14,9 +15,7 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.GetItemRequest;
 import com.amazonaws.services.dynamodbv2.model.GetItemResult;
-import com.liamfarrell.android.snapbattle.activity.FacebookLoginFragment;
 import com.liamfarrell.android.snapbattle.model.AsyncTaskResult;
-import com.liamfarrell.android.snapbattle.model.Battle;
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.LambdaFunctionsInterface;
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.pjos.RecentBattleNamePOJO;
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.RecentBattleResponse;
@@ -72,7 +71,7 @@ public class TopAndRecentBattleTypeRetriever
         LambdaInvokerFactory factory = new LambdaInvokerFactory(
                 activityReference.get().getApplicationContext(),
                 Regions.US_EAST_1,
-                FacebookLoginFragment.getCredentialsProvider(activityReference.get().getApplicationContext()));
+                IdentityManager.getDefaultIdentityManager().getCredentialsProvider());
         final LambdaFunctionsInterface lambdaFunctionsInterface = factory.build(LambdaFunctionsInterface.class);
                 try {
                     RecentBattleResponse response =  lambdaFunctionsInterface.GetRecentBattleNames();
@@ -99,7 +98,7 @@ public class TopAndRecentBattleTypeRetriever
 
             @Override
             protected void onPostExecute(AsyncTaskResult<RecentBattleResponse> asyncResult) {
-                // get a reference to the activity and fragment if it is still there
+                // get a reference to the callbacks and fragment if it is still there
                 Activity activity = activityReference.get();
                 if (activity == null || activity.isFinishing()) return;
 
@@ -123,7 +122,7 @@ public class TopAndRecentBattleTypeRetriever
     {
         try {
             AmazonDynamoDBClient ddbClient = new AmazonDynamoDBClient(
-                    FacebookLoginFragment.getCredentialsProvider(context));
+                    IdentityManager.getDefaultIdentityManager().getCredentialsProvider());
             Map<String, AttributeValue> key = new HashMap<String, AttributeValue>();
             AttributeValue val = new AttributeValue();
             val.setS("english");

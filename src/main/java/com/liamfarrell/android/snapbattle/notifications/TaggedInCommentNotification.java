@@ -1,19 +1,17 @@
 package com.liamfarrell.android.snapbattle.notifications;
 
+import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
+import android.os.Bundle;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
 
-import com.liamfarrell.android.snapbattle.activity.FullBattleVideoPlayerActivity;
-import com.liamfarrell.android.snapbattle.app.App;
+import androidx.navigation.NavDeepLinkBuilder;
+
+import com.amazonaws.mobile.auth.core.IdentityManager;
 import com.liamfarrell.android.snapbattle.R;
-import com.liamfarrell.android.snapbattle.activity.ViewBattleActivity;
-import com.liamfarrell.android.snapbattle.activity.ViewBattleFragment;
-import com.liamfarrell.android.snapbattle.model.Battle;
-import com.liamfarrell.android.snapbattle.util.UserFollowingChecker;
 
 public class TaggedInCommentNotification extends Notification {
     private String mOpponentCognitoId;
@@ -24,9 +22,9 @@ public class TaggedInCommentNotification extends Notification {
     private String mChallengerCognitoId;
     private String mChallengedCognitoId;
 
-    public TaggedInCommentNotification(int battleID , String battleName, String opponent_cognito_id, String opponentName, String challengerUsername, String challengedUsername, String challengerCognitoId, String challengedCognitoId)
+    public TaggedInCommentNotification(int notificationIndex, int battleID , String battleName, String opponent_cognito_id, String opponentName, String challengerUsername, String challengedUsername, String challengerCognitoId, String challengedCognitoId)
     {
-        super(battleID);
+        super(notificationIndex,battleID);
         mOpponentCognitoId = opponent_cognito_id;
         mOpponentName = opponentName;
         mBattleName = battleName;
@@ -37,23 +35,44 @@ public class TaggedInCommentNotification extends Notification {
     }
 
     @Override
-    public Intent getIntent(Context context) {
+    public PendingIntent getIntent(Context context) {
 
-        Intent intent = new Intent(context, FullBattleVideoPlayerActivity.class);
-        intent.putExtra(FullBattleVideoPlayerActivity.EXTRA_BATTLEID, super.getBattleId());
-        intent.putExtra(FullBattleVideoPlayerActivity.EXTRA_FILE_VIDEO_PATH, Battle.getServerFinalVideoUrlStatic(mChallengerCognitoId, super.getBattleId()));
-        intent.putExtra(FullBattleVideoPlayerActivity.EXTRA_CHALLENGER_USERNAME, mChallengerUsername);
-        intent.putExtra(FullBattleVideoPlayerActivity.EXTRA_CHALLENGED_USERNAME, mChallengedUsername);
-        return intent;
+        Bundle args = new Bundle();
+        args.putInt("battleId", super.getBattleId());
+
+        String cognitoID = IdentityManager.getDefaultIdentityManager().getCachedUserID();
+        if (cognitoID.equals(mChallengerCognitoId) || cognitoID.equals(mChallengedCognitoId)) {
+            return new NavDeepLinkBuilder(context)
+                    .setGraph(R.navigation.navigation_menu)
+                    .setDestination(R.id.viewBattleFragment)
+                    .setArguments(args)
+                    .createPendingIntent();
+
+        } else {
+            return new NavDeepLinkBuilder(context)
+                    .setGraph(R.navigation.navigation_menu)
+                    .setDestination(R.id.viewBattleFragment)
+                    .setArguments(args)
+                    .createPendingIntent();
+        }
+
+
+
+//        Intent intent = new Intent(context, FullBattleVideoPlayerActivity.class);
+//        intent.putExtra(FullBattleVideoPlayerActivity.EXTRA_BATTLEID, super.getBattleId());
+//        intent.putExtra(FullBattleVideoPlayerActivity.EXTRA_FILE_VIDEO_PATH, Battle.getServerFinalVideoUrlStatic(mChallengerCognitoId, super.getBattleId()));
+//        intent.putExtra(FullBattleVideoPlayerActivity.EXTRA_CHALLENGER_USERNAME, mChallengerUsername);
+//        intent.putExtra(FullBattleVideoPlayerActivity.EXTRA_CHALLENGED_USERNAME, mChallengedUsername);
+//        return intent;
     }
 
     @Override
-    public SpannableStringBuilder getMessage() {
+    public SpannableStringBuilder getMessage(Context context) {
         SpannableStringBuilder longDescription = new SpannableStringBuilder();
         longDescription.append(mOpponentName);
         longDescription.setSpan(new ForegroundColorSpan(0xFFCC5500), 0, longDescription.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         longDescription.setSpan(new StyleSpan(android.graphics.Typeface.BOLD), 0, longDescription.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        longDescription.append(App.getContext().getResources().getString(R.string.tagged_in_comment_notification_append, mBattleName));
+        longDescription.append(context.getResources().getString(R.string.tagged_in_comment_notification_append, mBattleName));
 
         return longDescription;
     }
@@ -61,5 +80,29 @@ public class TaggedInCommentNotification extends Notification {
     @Override
     public String getOpponentCognitoId() {
         return mOpponentCognitoId;
+    }
+
+    public String getOpponentName() {
+        return mOpponentName;
+    }
+
+    public String getBattleName() {
+        return mBattleName;
+    }
+
+    public String getChallengerUsername() {
+        return mChallengerUsername;
+    }
+
+    public String getChallengedUsername() {
+        return mChallengedUsername;
+    }
+
+    public String getChallengerCognitoId() {
+        return mChallengerCognitoId;
+    }
+
+    public String getChallengedCognitoId() {
+        return mChallengedCognitoId;
     }
 }

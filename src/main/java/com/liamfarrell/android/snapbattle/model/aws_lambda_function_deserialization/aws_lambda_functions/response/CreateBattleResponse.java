@@ -2,6 +2,13 @@ package com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserializa
 
 public class CreateBattleResponse
 {
+    //Error names
+    public static final String battleNameTooLongError = "BATTLE_NAME_TOO_LONG";
+    public static final String ROUNDS_WRONG_AMOUNT_ERROR = "ROUNDS_WRONG_AMOUNT";
+    public static final String NOT_BEEN_LONG_ENOUGH_ERROR = "NOT_BEEN_LONG_ENOUGH_ERROR";
+    public static final String USER_BANNED_ERROR = "USER_BANNED_ERROR";
+
+
     private int battleID;
     private String error;
     private String time_ban_ends;

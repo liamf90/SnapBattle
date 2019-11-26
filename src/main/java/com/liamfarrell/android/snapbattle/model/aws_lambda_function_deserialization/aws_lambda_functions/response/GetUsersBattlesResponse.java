@@ -14,6 +14,10 @@ public class GetUsersBattlesResponse
         return user_battles;
     }
 
+    public void setUser_battles(List<Battle> user_battles) {
+        this.user_battles = user_battles;
+    }
+
     public void setUserBattles(List<Battle> user_battles) {
         this.user_battles = user_battles;
     }

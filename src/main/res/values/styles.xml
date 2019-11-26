@@ -3,31 +3,8 @@
         Base application theme, dependent on API level. This theme is replaced
         by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
     -->
-    <style name="AppBaseTheme" parent="android:Theme.Light">
-        <!--
-            Theme customizations available in newer API levels can go in
-            res/values-vXX/styles.xml, while customizations related to
-            backward-compatibility can go here.
-        -->
-    </style>
 
     <!-- Application theme. -->
-    <style name="AppTheme" parent="AppBaseTheme">
-
-        <!-- All customizations that are NOT specific to a particular API-level can go here. -->
-    </style>
-
-    <style name="AppBackground">
-        <item name="android:background">#BFA77A</item>
-    </style>
-
-    <style name="UserVideoBackground">
-        <item name="android:background">#5DDEC6</item>
-    </style>
-
-    <style name="OpponentVideoBackground">
-        <item name="android:background">#4BEB86</item>
-    </style>
 
     <style name="battleTypeSuggestionTextView">
         <item name="android:background">@drawable/battle_name_suggestion_background</item>
@@ -42,19 +19,6 @@
 
 
     </style>
-
-    <style name="MainButton">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:textSize">20sp</item>
-        <item name="android:paddingLeft">8dp</item>
-        <item name="android:paddingRight">8dp</item>
-        <item name="android:paddingTop">2dp</item>
-        <item name="android:paddingBottom">2dp</item>
-
-        <item name="android:background">@drawable/button_shape</item>
-    </style>
-
 
 
     <style name="MyMaterialTheme" parent="MyMaterialTheme.Base">
@@ -77,47 +41,14 @@
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="RobotoTextViewStyle" parent="android:Widget.TextView">
-        <item name="android:fontFamily">sans-serif</item>
-    </style>
-
-    <style name="RobotoButtonStyle" parent="android:Widget.Holo.Button">
-        <item name="android:fontFamily">sans-serif</item>
-    </style>
-
     <style name="MyMaterialTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="MyMaterialTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
-
-    <style name="FullscreenTheme" parent="MyMaterialTheme">
-        <item name="android:actionBarStyle">@style/FullscreenActionBarStyle</item>
-        <item name="android:windowActionBarOverlay">true</item>
-        <item name="android:windowBackground">@null</item>
-        <item name="metaButtonBarStyle">?android:attr/buttonBarStyle</item>
-        <item name="metaButtonBarButtonStyle">?android:attr/buttonBarButtonStyle</item>
-    </style>
-
-    <style name="FullscreenActionBarStyle" parent="Widget.AppCompat.ActionBar">
-        <item name="android:background">@color/black_overlay</item>
-    </style>
-
-    <style name="AppTheme.BlueAccent" parent="Theme.AppCompat">
-        <item name="colorAccent">@color/colorAccent</item> <!-- Whatever color you want-->
-    </style>
 
     <style name="Divider">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">1dp</item>
         <item name="android:background">?android:attr/listDivider</item>
-    </style>
-
-    <style name="Disliked">
-        <item name="android:tint">@android:color/white</item>
-    </style>
-
-    <style name="Liked">
-
-        <item name="android:tint">@android:color/white</item>
     </style>
 
     <style name="NotLikedButton">
@@ -137,10 +68,6 @@
     <style name="userTitleExpanded">
         <item name="android:fontFamily">@font/roboto</item>
         <item name="android:textSize">16sp</item>
-    </style>
-
-    <style name="allTextFont">
-        <item name="android:fontFamily">@font/roboto</item>
     </style>
 
 

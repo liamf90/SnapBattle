@@ -1,25 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_width="match_parent"
-	android:layout_height="match_parent">
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
 
-	<android.support.v7.widget.RecyclerView
-		android:id="@+id/recyclerList"
+	<data>
+		<variable
+		name="viewModel"
+		type="com.liamfarrell.android.snapbattle.viewmodels.BattleChallengesViewModel" />
+
+	</data>
+
+
+	<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
 		android:layout_width="match_parent"
-		android:layout_height="match_parent"
-		android:drawSelectorOnTop="false" />
-	<FrameLayout
-		android:id="@+id/challenges_list_progressContainer"
-		android:layout_width="match_parent"
-		android:layout_height="@dimen/progress_container_height"
-		android:clickable="true">
-		<ProgressBar
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_gravity="center"
-			android:theme="@style/MyMaterialTheme.Base"
+		android:layout_height="match_parent">
+
+		<androidx.recyclerview.widget.RecyclerView
+			android:id="@+id/recyclerList"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:drawSelectorOnTop="false"
+			app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
 			/>
 
-	</FrameLayout>
+		<TextView
+			android:id="@+id/noBattlesTextView"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginStart="24dp"
+			android:layout_marginEnd="24dp"
+			android:layout_gravity="center_vertical|center_horizontal"
+			android:text="@string/no_challenges"
+			android:textColor="@android:color/black"
+			android:visibility="gone"
+			android:textSize="24sp"
+			/>
+		<FrameLayout
+			android:id="@+id/challenges_list_progressContainer"
+			android:layout_width="match_parent"
+			app:showProgress="@{safeUnbox(viewModel.spinner)}"
+			android:layout_height="@dimen/progress_container_height"
+			android:clickable="true">
+			<ProgressBar
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_gravity="center"
+				android:theme="@style/MyMaterialTheme.Base"
+				/>
+		</FrameLayout>
 
-</FrameLayout>
+	</FrameLayout>
+</layout>

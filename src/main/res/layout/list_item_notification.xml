@@ -1,26 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="@dimen/notification_list_item_height"
-    android:gravity="center_vertical"
-    android:orientation="horizontal"
-    android:paddingBottom="@dimen/row_vertical_padding"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/row_vertical_padding">
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <variable
+            name="signedUrl"
+            type="androidx.lifecycle.LiveData&lt;String>" />
+        <variable
+            name="notification"
+            type="com.liamfarrell.android.snapbattle.notifications.Notification" />
+    </data>
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/profileImageView"
-        android:layout_width="@dimen/profile_pic_notifcation_width"
-        android:layout_height="@dimen/profile_pic_notifcation_height" />
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/notification_list_item_height"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingBottom="@dimen/row_vertical_padding"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/row_vertical_padding">
 
-    <TextView
-        android:layout_weight="1"
-        android:textSize="14sp"
-        android:layout_marginStart="@dimen/list_item_elements_default_spacing"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:id="@+id/notificationMessageTextView"/>
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/profileImageView"
+            android:layout_width="@dimen/profile_pic_notifcation_width"
+            android:layout_height="@dimen/profile_pic_notifcation_height"
+            app:profileImage="@{notification.opponentProfilePicCount != 0 ? notification.signedUrlProfilePicOpponent : null}"
+            />
+
+        <TextView
+            android:layout_weight="1"
+            android:textSize="14sp"
+            android:layout_marginStart="@dimen/list_item_elements_default_spacing"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/notificationMessageTextView"
+            android:text="@{notification.getMessage(context)}"
+            />
 
 
-</LinearLayout>
+    </LinearLayout>
+
+</layout>

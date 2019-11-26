@@ -3,7 +3,7 @@ package com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserializa
 public class UpdateUsernameResponse
 {
     private final static String resultExistsAlready = "USERNAME_ALREADY_EXISTS";
-    private final static String resultUsernameUpdated = "USERNAME_CHANGED";
+    public final static String resultUsernameUpdated = "USERNAME_CHANGED";
     private String result;
 
     public static String getResultExistsAlready() {

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/navigation_home">
+
+    <fragment
+        android:id="@+id/navigation_home"
+        android:name="com.liamfarrell.android.snapbattle.mvvm_ui.HomeFragment"
+        android:label="activity_home_fragment"
+        tools:layout="@layout/activity_home_fragment" >
+        <action
+            android:id="@+id/action_navigation_home_to_navigation_users_battles"
+            app:destination="@id/navigation_users_battles">
+            <argument
+                android:name="cognitoId"
+                app:argType="string" />
+        </action>
+
+        <action
+            android:id="@+id/action_navigation_home_to_navigation_full_battle_video"
+            app:destination="@id/navigation_full_battle_video">
+            <argument
+                android:name="battleId"
+                app:argType="integer" />
+            <argument
+                android:name="filepath"
+                app:argType="string" />
+            <argument
+                android:name="challengerName"
+                app:argType="string" />
+            <argument
+                android:name="challengedName"
+                app:argType="string" />
+        </action>
+    </fragment>
+    <include app:graph="@navigation/navigation_users_battles" />
+    <include app:graph="@navigation/navigation_full_battle_video" />
+
+</navigation>
