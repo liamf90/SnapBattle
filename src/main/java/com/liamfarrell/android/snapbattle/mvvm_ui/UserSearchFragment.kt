@@ -43,7 +43,7 @@ class UserSearchFragment : Fragment(), Injectable {
     }
 
     private fun subscribeUi() {
-        viewModel.searchResult.observe(viewLifecycleOwner, Observer { searchResult ->
+        viewModel.searchList.observe(viewLifecycleOwner, Observer { searchResult ->
             adapter.submitList(searchResult)
             adapter.notifyDataSetChanged()
         })
