@@ -7,6 +7,8 @@ import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserializat
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.BattleTypeSuggestionsSearchResponse
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.GetUsersResponse
 import com.liamfarrell.android.snapbattle.util.executeAWSFunction
+import io.reactivex.Single
+import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -19,5 +21,12 @@ class UserSearchRepository @Inject constructor
         val request = UsersSearchRequest()
         request.userSearchQuery = searchQuery
         return executeAWSFunction {lambdaFunctionsInterface.UserSearch(request)}
+    }
+
+    fun searchUserRx(searchQuery : String) : Single<GetUsersResponse> {
+        Timber.i("UserSearchRequest")
+        val request = UsersSearchRequest()
+        request.userSearchQuery = searchQuery
+        return Single.fromCallable {lambdaFunctionsInterface.UserSearch(request)}
     }
 }

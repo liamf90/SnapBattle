@@ -2,9 +2,11 @@ package com.liamfarrell.android.snapbattle.viewmodels.create_battle
 
 import android.app.Application
 import android.content.Context
+import android.preference.PreferenceManager
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
 import com.liamfarrell.android.snapbattle.R
 import com.liamfarrell.android.snapbattle.data.ChooseOpponentRepository
 import com.liamfarrell.android.snapbattle.data.FollowingRepository
@@ -13,9 +15,14 @@ import com.liamfarrell.android.snapbattle.model.AsyncTaskResult
 import com.liamfarrell.android.snapbattle.model.User
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.GetUsersResponse
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.ResponseFollowing
+import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.UpdateNameResponse
+import com.liamfarrell.android.snapbattle.mvvm_ui.startup.LoggedInFragment
 import com.liamfarrell.android.snapbattle.util.CustomError
 import com.liamfarrell.android.snapbattle.util.getErrorMessage
 import com.liamfarrell.android.snapbattle.viewmodels.ViewModelLaunch
+import com.liamfarrell.android.snapbattle.viewmodels.startup.ChooseNameStartupViewModel
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 
@@ -30,19 +37,15 @@ class ChooseOpponentViewModel @Inject constructor(private val context: Applicati
     private var tabIndexSelected = 0
     var searchQuery = ""
 
-    private val _userList = MediatorLiveData<List<User>>()
+    private val _userList = MutableLiveData<List<User>>()
      val userList : LiveData<List<User>> = _userList
     val userListFilteredBySearch = MutableLiveData<List<User>>()
 
-    private val followingResult = MutableLiveData<AsyncTaskResult<ResponseFollowing>>()
 
-    private val recentOpponentsResult = MutableLiveData<AsyncTaskResult<GetUsersResponse>>()
-
-    private val facebookFollowingResult = MutableLiveData<AsyncTaskResult<List<User>>>()
-
-
-
-    val errorMessage = MediatorLiveData<String>()
+    val error = MutableLiveData<Throwable>()
+    val errorMessage : LiveData<String> = Transformations.map(error){
+        getErrorMessage(context, it)
+    }
 
     object UsernameNotFoundError : CustomError(){
         override fun getErrorToastMessage(context: Context): String {
@@ -51,50 +54,27 @@ class ChooseOpponentViewModel @Inject constructor(private val context: Applicati
     }
 
 
-    init {
-            _userList.addSource(followingResult){
-                if (it.error == null){
-                    _userList.value = it.result.sqlResult
-                }
-            }
-            _userList.addSource(recentOpponentsResult){
-                if (it.error == null){
-                    _userList.value = it.result.sqlResult
-                }
-            }
-            _userList.addSource(facebookFollowingResult){
-                if (it.error == null){
-                    _userList.value = it.result
-                }
-            }
-            errorMessage.addSource(followingResult){result ->
-                if (result.error != null){
-                    errorMessage.value = getErrorMessage(context, result.error) }
-            }
-            errorMessage.addSource(recentOpponentsResult){result ->
-                if (result.error != null){
-                    errorMessage.value = getErrorMessage(context, result.error) }
-            }
-            errorMessage.addSource(facebookFollowingResult){result ->
-                if (result.error != null){
-                    errorMessage.value = getErrorMessage(context, result.error) }
-            }
-
-        }
 
         fun usernameEnteredManually(username: String, nextFragmentCallback : (user: User) -> Unit) {
-            awsLambdaFunctionCall(true,
-                    suspend {
-                        val response = chooseOpponentRepository.getUsernameToCognitoId(username)
-                        if (response.error != null){
-                            errorMessage.postValue(getErrorMessage(context, response.error))
-                        } else if (response.result.sqlResult.isEmpty()){
-                            errorMessage.postValue(getErrorMessage(context, UsernameNotFoundError))
-                        } else {
-                            //go to next fragment
-                            nextFragmentCallback(response.result.sqlResult.get(0))
-                        }
-                    })
+            compositeDisposable.add(chooseOpponentRepository.getUsernameToCognitoIdRx(username)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .doOnSubscribe{_spinner.value = true}
+                    .subscribe(
+                            { onSuccessResponse ->
+                                _spinner.value = false
+                                if (onSuccessResponse.sqlResult.isEmpty()){
+                                    error.value = UsernameNotFoundError
+                                } else {
+                                    //go to next fragment
+                                    nextFragmentCallback(onSuccessResponse.sqlResult.get(0))
+                                }
+                            },
+                            {onError : Throwable ->
+                                _spinner.value = false
+                                error.value = onError
+                            }
+                    ))
         }
 
 
@@ -102,51 +82,80 @@ class ChooseOpponentViewModel @Inject constructor(private val context: Applicati
         fun followingTabSelected(){
             tabIndexSelected = 0
             _userList.value = listOf()
-            awsLambdaFunctionCall(true,
-                    suspend {
-                        val response = chooseOpponentRepository.getFollowing()
-                        if (response.error == null) {
-                            response.result.sqlResult = getProfilePicSignedUrls(response.result.sqlResult)
-                        }
-                        if (tabIndexSelected == 0){
-                            followingResult.value = response
-                        } })
+
+            compositeDisposable.add( chooseOpponentRepository.getFollowingRx()
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(Schedulers.io())
+                    .doOnSubscribe{_spinner.value = true}
+                    .map { getProfilePicSignedUrls(it.sqlResult).toMutableList() }
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(
+                            { onSuccessResponse ->
+                                _spinner.value = false
+                                if (tabIndexSelected == 0){
+                                    _userList.value = onSuccessResponse
+                                }
+                            },
+                            {onError : Throwable ->
+                                _spinner.value = false
+                                error.value = onError
+                            }
+                    ))
         }
+
+
 
         fun recentOpponentsTabSelected(){
             tabIndexSelected = 1
             _userList.value = listOf()
-            awsLambdaFunctionCall(true,
-                    suspend {
-                        val response =  chooseOpponentRepository.getRecentOpponents()
-                        if (response.error == null) {
-                            response.result.sqlResult = getProfilePicSignedUrls(response.result.sqlResult)
-                        }
-                        if (tabIndexSelected == 1){
-                            recentOpponentsResult.value = response
-                        }
-                    })
+            compositeDisposable.add(chooseOpponentRepository.getRecentOpponentsRx()
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(Schedulers.io())
+                    .doOnSubscribe{_spinner.value = true}
+                    .map { getProfilePicSignedUrls(it.sqlResult).toMutableList() }
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(
+                            { onSuccessResponse ->
+                                _spinner.value = false
+                                if (tabIndexSelected == 1){
+                                    _userList.value = onSuccessResponse
+                                }
+                            },
+                            {onError : Throwable ->
+                                _spinner.value = false
+                                error.value = onError
+                            }
+                    ))
         }
 
         fun facebookFriendsTabSelected(){
             tabIndexSelected = 2
             _userList.value = listOf()
-            awsLambdaFunctionCall(true,
-                    suspend {
-                        val response = followingRepository.getFacebookFriends()
-                        if (tabIndexSelected == 2){
-                            facebookFollowingResult.value = response
-                        }
-                    })
+            compositeDisposable.add(followingRepository.getFacebookFriendsRx()
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .doOnSubscribe{_spinner.value = true}
+                    .subscribe(
+                            { onSuccessResponse ->
+                                _spinner.value = false
+                                if (tabIndexSelected == 2){
+                                    _userList.value = onSuccessResponse
+                                }
+                            },
+                            {onError : Throwable ->
+                                _spinner.value = false
+                                error.value = onError
+                            }
+                    ))
         }
 
-    private suspend fun getProfilePicSignedUrls(userList: List<User>) : List<User>{
+    private fun getProfilePicSignedUrls(userList: List<User>) : List<User>{
         userList.forEach {
             if (it.profilePicCount != 0) {
                 if (profilePicMap.containsKey(it.cognitoId)){
                     it.profilePicSignedUrl = profilePicMap[it.cognitoId]
                 } else {
-                    it.profilePicSignedUrl = otherUsersProfilePicUrlRepository.getOrUpdateProfilePicSignedUrl(it.cognitoId,  it.profilePicCount , it.profilePicSignedUrl )
+                    it.profilePicSignedUrl = otherUsersProfilePicUrlRepository.getOrUpdateProfilePicSignedUrlRx(it.cognitoId,  it.profilePicCount , it.profilePicSignedUrl )
                 }
             }
         }

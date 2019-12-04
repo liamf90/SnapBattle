@@ -11,5 +11,5 @@ import com.liamfarrell.android.snapbattle.db.FollowingBattle
  */
 data class BattlesSearchResult(
         val data: LiveData<PagedList<AllBattlesBattle>>,
-        val networkErrors: LiveData<String>
+        val networkErrors: LiveData<Throwable>
 )

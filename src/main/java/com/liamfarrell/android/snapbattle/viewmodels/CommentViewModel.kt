@@ -9,6 +9,7 @@ import com.liamfarrell.android.snapbattle.app.SnapBattleApp
 import com.liamfarrell.android.snapbattle.R
 import com.liamfarrell.android.snapbattle.data.OtherUsersProfilePicUrlRepository
 import com.liamfarrell.android.snapbattle.model.AsyncTaskResult
+import com.liamfarrell.android.snapbattle.model.Battle
 import com.liamfarrell.android.snapbattle.model.User
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.VerifyUserResponse
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.AddCommentResponse
@@ -16,6 +17,8 @@ import com.liamfarrell.android.snapbattle.util.AlreadyFollowingError
 import com.liamfarrell.android.snapbattle.util.BannedError
 import com.liamfarrell.android.snapbattle.util.getErrorMessage
 import com.liamfarrell.android.snapbattle.util.notifyObserver
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -25,13 +28,15 @@ import javax.inject.Inject
  */
 class CommentViewModel @Inject constructor(private val context: Application, private val commentRepository : CommentRepository,  private val otherUsersProfilePicUrlRepository: OtherUsersProfilePicUrlRepository) : ViewModelLaunch() {
 
-    private val commentsResult = MutableLiveData<AsyncTaskResult<MutableList<Comment>>>()
+    private val _comments = MutableLiveData<MutableList<Comment>>()
+    val comments : LiveData<MutableList<Comment>> = _comments
 
-    val errorMessage : LiveData<String?> = Transformations.map(commentsResult) { result ->
-        result.error?.let{getErrorMessage(context, it)}
+    private val error = MutableLiveData<Throwable>()
+    val errorMessage : LiveData<String> = Transformations.map(error){
+        getErrorMessage(context, it)
     }
 
-    val comments = MediatorLiveData<MutableList<Comment>>()
+
 
     private val profilePicMap = mutableMapOf<String, String>()
 
@@ -40,101 +45,130 @@ class CommentViewModel @Inject constructor(private val context: Application, pri
 
 
     init {
-        comments.addSource(commentsResult){
-            if (it.error == null){
-                    comments.value = it.result
-            }
-        }
         _showAddCommentProgressBar.value = false
     }
 
     fun getComments(battleID: Int){
-        awsLambdaFunctionCall(true) {
-            val response = commentRepository.getComments(battleID)
-            if (response.error == null) {
-                response.result = getProfilePicSignedUrls(response.result).toMutableList()
-            }
-            commentsResult.value = response
-        }
+        compositeDisposable.add(  commentRepository.getCommentsRx(battleID)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe{_spinner.value = true}
+                .map { getProfilePicSignedUrls(it.sql_result).toMutableList() }
+                .subscribe(
+                        { onSuccessResponse ->
+                            _spinner.value = false
+                            _comments.value = onSuccessResponse
+                        },
+                        {onError : Throwable ->
+                            _spinner.value = false
+                            error.value = onError
+                        }
+                ))
     }
 
     fun deleteComment(commentID: Int) {
-        awsLambdaFunctionCall(false
-        ) {
-            val result = commentRepository.deleteComment(commentID)
-            if (result.error != null) {
-                commentsResult.value = AsyncTaskResult(result.error)
-            } else {
-                if (result.result.affectedRows == 1) {
-                    val deletedComment = commentsResult.value?.result?.find { commentID == commentID }
-                    deletedComment?.let {
-                        comments.value?.find { it.commentId == commentID}?.isDeleted = true
-                        comments.notifyObserver()}}
-            }}
+        compositeDisposable.add(   commentRepository.deleteCommentRx(commentID)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        { onSuccessResponse ->
+                            if (onSuccessResponse.affectedRows == 1) {
+                                val deletedComment = _comments.value?.find { commentID == commentID }
+                                deletedComment?.let {
+                                    _comments.value?.find { it.commentId == commentID}?.isDeleted = true
+                                    _comments.notifyObserver()}}
+                        },
+                        {onError : Throwable ->
+                            error.value = onError
+                        }
+                ))
     }
 
-    fun addComment(battleID: Int, comment: String, usernamesToTag : List<String>, requestUserFriends: ()->Unit){
-        awsLambdaFunctionCall(false
-        ) {
-            _showAddCommentProgressBar.value = true
-            val asyncResult = commentRepository.addComment(battleID, comment, usernamesToTag)
-
-            if (asyncResult.error != null){
-                commentsResult.value = AsyncTaskResult(asyncResult.error)
-            } else if (asyncResult.result.error != null && asyncResult.result.error == AddCommentResponse.getUserNotMinimumFriendsError()) {
-                //User not verified with enough facebook friends to post comments.. Verify User
-                //first check if user has user_friends permission allowed
-                _showAddCommentProgressBar.value = false
-                if (doesUserHaveUserFriendsPermission()) {
-                    verifyUser(battleID, comment, usernamesToTag)
-                } else {
-                    commentsResult.value =  AsyncTaskResult(AlreadyFollowingError())
-                    requestUserFriends() }
-            } else if (asyncResult.result.error != null && asyncResult.result.error == AddCommentResponse.getUserBannedError()) {
-                //User is banned.
-                _showAddCommentProgressBar.value = false
-                commentsResult.value = AsyncTaskResult(BannedError(asyncResult.result.timeBanEnds))
-            } else {
-                //no error
-                //get profile pic
-                asyncResult.result.sqlResult?.let{asyncResult.result.sqlResult = getProfilePicSignedUrls(it)}
-                comments.value?.add(asyncResult.result.sqlResult.get(0))
-                comments.notifyObserver()
-                _showAddCommentProgressBar.value = false }
-        }
+    fun addComment(battleID: Int, comment: String, usernamesToTag : List<String>, requestUserFriends: ()->Unit) {
+        compositeDisposable.add(commentRepository.addCommentRx(battleID, comment, usernamesToTag)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe { _showAddCommentProgressBar.value = true }
+                .subscribe(
+                        { onSuccessResponse ->
+                            if (onSuccessResponse.error != null && onSuccessResponse.error == AddCommentResponse.getUserNotMinimumFriendsError()) {
+                                //User not verified with enough facebook friends to post comments.. Verify User
+                                //first check if user has user_friends permission allowed
+                                _showAddCommentProgressBar.value = false
+                                if (doesUserHaveUserFriendsPermission()) {
+                                    verifyUser(battleID, comment, usernamesToTag)
+                                } else {
+                                    error.value =  AlreadyFollowingError()
+                                    requestUserFriends() }
+                            } else if (onSuccessResponse.error != null && onSuccessResponse.error == AddCommentResponse.getUserBannedError()) {
+                                //User is banned.
+                                _showAddCommentProgressBar.value = false
+                                error.value = BannedError(onSuccessResponse.timeBanEnds)
+                            } else {
+                                //no error
+                                //get profile pic
+                                onSuccessResponse.sqlResult?.let{onSuccessResponse.sqlResult = getProfilePicSignedUrls(it)}
+                                _comments.value?.add(onSuccessResponse.sqlResult.get(0))
+                                _comments.notifyObserver()
+                                _showAddCommentProgressBar.value = false }
+                        },
+                        {onError : Throwable ->
+                            error.value = onError
+                        }
+                ))
     }
+
+
 
     fun reportComment(commentID: Int) {
-        awsLambdaFunctionCall(true
-        ) {
-            val asyncResult = commentRepository.reportComment(commentID)
-            if (asyncResult.result.affectedRows == 1) {
-                _snackBarMessage.value = context.getString(R.string.comment_reported_toast)
-            } else {
-                _snackBarMessage.value = context.getString(R.string.comment_already_reported_toast)
-            }
-        }
+        compositeDisposable.add(commentRepository.reportCommentRx(commentID)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe{_spinner.value = true}
+                .subscribe(
+                        { onSuccessResponse ->
+                            _spinner.value = false
+                            if (onSuccessResponse.affectedRows == 1) {
+                                _snackBarMessage.value = context.getString(R.string.comment_reported_toast)
+                            } else {
+                                _snackBarMessage.value = context.getString(R.string.comment_already_reported_toast)
+                            }
+                        },
+                        {onError : Throwable ->
+                            _spinner.value = false
+                            error.value = onError
+                        }
+                ))
     }
 
     fun verifyUser(battleID: Int, comment: String, usernameTagsList: List<String>){
-        awsLambdaFunctionCall(true
-        ) {
-            val asyncResult = commentRepository.verifyUser()
-            if (asyncResult.result.getResult().equals(VerifyUserResponse.USER_VERIFIED_RESULT)) {
-                addComment(battleID, comment, usernameTagsList){}
-            } else if (asyncResult.result.getResult().equals(VerifyUserResponse.USER_NOT_VERIFIED_RESULT)) {
-                _snackBarMessage.value = context.getString(R.string.not_enough_facebook_friends_toast)
-            }
-        }
+        compositeDisposable.add(  commentRepository.verifyUserRx()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe{_spinner.value = true}
+                .subscribe(
+                        { onSuccessResponse ->
+                            _spinner.value = false
+                            if (onSuccessResponse.result.equals(VerifyUserResponse.USER_VERIFIED_RESULT)) {
+                                addComment(battleID, comment, usernameTagsList){}
+                            } else if (onSuccessResponse.result.equals(VerifyUserResponse.USER_NOT_VERIFIED_RESULT)) {
+                                _snackBarMessage.value = context.getString(R.string.not_enough_facebook_friends_toast)
+                            }
+                        },
+                        {onError : Throwable ->
+                            _spinner.value = false
+                            error.value = onError
+                        }
+                ))
     }
 
-    private suspend fun getProfilePicSignedUrls(commentList: List<Comment>) : List<Comment>{
+    private fun getProfilePicSignedUrls(commentList: List<Comment>) : List<Comment>{
         commentList.forEach {
             if (it.commenterProfilePicCount != 0){
                 if (profilePicMap.containsKey(it.cognitoIdCommenter)){
                     it.commenterProfilePicSmallSignedUrl = profilePicMap[it.cognitoIdCommenter]
                 } else {
-                    it.commenterProfilePicSmallSignedUrl = otherUsersProfilePicUrlRepository.getOrUpdateProfilePicSignedUrl(it.cognitoIdCommenter,  it.commenterProfilePicCount , it.commenterProfilePicSmallSignedUrl )
+                    it.commenterProfilePicSmallSignedUrl = otherUsersProfilePicUrlRepository.getOrUpdateProfilePicSignedUrlRx(it.cognitoIdCommenter,  it.commenterProfilePicCount , it.commenterProfilePicSmallSignedUrl )
                     profilePicMap[it.cognitoIdCommenter] = it.commenterProfilePicSmallSignedUrl
                 }
             }

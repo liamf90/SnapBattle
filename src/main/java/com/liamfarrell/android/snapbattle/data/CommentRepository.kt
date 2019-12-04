@@ -18,6 +18,7 @@ import javax.inject.Singleton
 import com.facebook.AccessToken
 import com.liamfarrell.android.snapbattle.model.Comment
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.*
+import io.reactivex.Single
 
 
 @Singleton
@@ -33,6 +34,13 @@ class CommentRepository @Inject constructor
         return executeAWSFunction {lambdaFunctionsInterface.GetComments(commentRequest).sql_result}
     }
 
+
+    fun getCommentsRx(battleID: Int) : Single<GetCommentsResponse> {
+        val commentRequest = GetCommentsRequest()
+        commentRequest.battleID = battleID
+        return  Single.fromCallable{lambdaFunctionsInterface.GetComments(commentRequest)}
+    }
+
     suspend fun addComment(battleID: Int, comment: String, usernamesToTag : List<String>) : AsyncTaskResult<AddCommentResponse> {
         val commentRequest = AddCommentRequest()
         commentRequest.battleID = battleID
@@ -41,10 +49,24 @@ class CommentRepository @Inject constructor
         return executeAWSFunction {lambdaFunctionsInterface.AddComment(commentRequest)}
     }
 
+    fun addCommentRx(battleID: Int, comment: String, usernamesToTag : List<String>) : Single<AddCommentResponse> {
+        val commentRequest = AddCommentRequest()
+        commentRequest.battleID = battleID
+        commentRequest.comment = comment
+        commentRequest.usernamesToTag = usernamesToTag
+        return  Single.fromCallable{lambdaFunctionsInterface.AddComment(commentRequest)}
+    }
+
     suspend fun reportComment(commentID: Int) : AsyncTaskResult<ReportCommentResponse> {
         val reportCommentRequest = ReportCommentRequest()
         reportCommentRequest.setCommentID(commentID);
         return executeAWSFunction {lambdaFunctionsInterface.ReportComment(reportCommentRequest)}
+    }
+
+    fun reportCommentRx(commentID: Int) : Single<ReportCommentResponse> {
+        val reportCommentRequest = ReportCommentRequest()
+        reportCommentRequest.setCommentID(commentID);
+        return  Single.fromCallable{lambdaFunctionsInterface.ReportComment(reportCommentRequest)}
     }
 
     suspend fun verifyUser() : AsyncTaskResult<VerifyUserResponse> {
@@ -53,10 +75,22 @@ class CommentRepository @Inject constructor
         return executeAWSFunction {lambdaFunctionsInterface.VerifyUser(request)}
     }
 
+    fun verifyUserRx() : Single<VerifyUserResponse> {
+        val request = VerifyUserRequest()
+        request.setAccessToken(AccessToken.getCurrentAccessToken().token)
+        return  Single.fromCallable{lambdaFunctionsInterface.VerifyUser(request)}
+    }
+
     suspend fun deleteComment(commentID: Int) :   AsyncTaskResult<DeleteCommentResponse> {
         val deleteRequest = DeleteCommentRequest()
         deleteRequest.commentID = commentID
         return executeAWSFunction {lambdaFunctionsInterface.DeleteComment(deleteRequest)}
+    }
+
+    fun deleteCommentRx(commentID: Int) :   Single<DeleteCommentResponse> {
+        val deleteRequest = DeleteCommentRequest()
+        deleteRequest.commentID = commentID
+        return  Single.fromCallable{lambdaFunctionsInterface.DeleteComment(deleteRequest)}
     }
 
 

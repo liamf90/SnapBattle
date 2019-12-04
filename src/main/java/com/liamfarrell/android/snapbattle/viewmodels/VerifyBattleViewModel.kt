@@ -17,6 +17,8 @@ import com.liamfarrell.android.snapbattle.util.BannedError
 import com.liamfarrell.android.snapbattle.util.CustomError
 import com.liamfarrell.android.snapbattle.util.getErrorMessage
 import com.liamfarrell.android.snapbattle.util.mysqlDateStringToDate
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 /**
@@ -24,29 +26,41 @@ import javax.inject.Inject
  */
 class VerifyBattleViewModel @Inject constructor(private val context: Application, private val battlesRepository: BattlesRepository) : ViewModelLaunch() {
 
-    val battle = MutableLiveData<Battle>()
+    private val _battle = MutableLiveData<Battle>()
+    val battle : LiveData<Battle> = _battle
 
-    val errorMessage = MutableLiveData<String>()
+    private val error = MutableLiveData<Throwable>()
+    val errorMessage : LiveData<String> = Transformations.map(error){
+        getErrorMessage(context, it)
+    }
 
+    fun setBattle(b: Battle){
+        _battle.value = b
+    }
 
     fun createBattle(view: View){
         val b = battle.value
         if (b != null){
-            awsLambdaFunctionCall(true,
-                suspend {
-                    val response = battlesRepository.createBattle(b.challengedFacebookUserId, b.challengedCognitoID, b.battleName, b.rounds, b.voting.votingChoice, b.voting.votingLength)
-                    when {
-                        response.error != null -> errorMessage.value = getErrorMessage(context.applicationContext, response.error)
-                        response.result.error != null -> errorMessage.value = getErrorMessage(context, getCreateBattleError(response.result))
-                        else -> {
-                            //successfully created battle, go to next fragment
-                            // set snackbar data to (R.string.battle_request_sent_snackbar_message)
-                            val directions = VerifyBattleFragmentDirections.actionVerifyBattleFragmentToBottomNavigationDrawerFragment(R.string.battle_request_sent_snackbar_message)
-                            view.findNavController().navigate(directions)
-
-                        }
-                    }
-                })
+            compositeDisposable.add(battlesRepository.createBattleRx(b.challengedFacebookUserId, b.challengedCognitoID, b.battleName, b.rounds, b.voting.votingChoice, b.voting.votingLength)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .doOnSubscribe{_spinner.value = true}
+                    .subscribe(
+                            { onSuccessResponse ->
+                                _spinner.value = false
+                                if (onSuccessResponse.error != null){ error.value = getCreateBattleError(onSuccessResponse)}
+                                else {
+                                    //successfully created battle, go to next fragment
+                                    // set snackbar data to (R.string.battle_request_sent_snackbar_message)
+                                    val directions = VerifyBattleFragmentDirections.actionVerifyBattleFragmentToBottomNavigationDrawerFragment(R.string.battle_request_sent_snackbar_message)
+                                    view.findNavController().navigate(directions)
+                                }
+                            },
+                            {onError : Throwable ->
+                                _spinner.value = false
+                                error.value = onError
+                            }
+                    ))
         }
     }
 

@@ -3,6 +3,7 @@ package com.liamfarrell.android.snapbattle.data
 import com.facebook.*
 import com.liamfarrell.android.snapbattle.model.AsyncTaskResult
 import com.liamfarrell.android.snapbattle.model.User
+import io.reactivex.Single
 import org.json.JSONException
 import org.json.JSONObject
 import java.util.ArrayList
@@ -30,6 +31,28 @@ suspend fun getFriendsList() : AsyncTaskResult<List<User>> =
     ).executeAsync()
 
 }
+
+
+fun getFriendsListRx() : Single<List<User>> =
+        Single.create<List<User>> {emitter->
+            /* make the API call */
+            GraphRequest(
+                    AccessToken.getCurrentAccessToken(),
+                    "/me/friends?fields=id,name,picture", null,
+                    HttpMethod.GET,
+                    GraphRequest.Callback { response ->
+                        if (response.error != null && response.error.errorCode == FacebookRequestError.INVALID_ERROR_CODE){
+                            emitter.onError(response.error.exception)
+                        }
+                        else{
+                            emitter.onSuccess(graphResponseToOpponentList(response))
+                        }
+
+                    }
+            ).executeAsync()
+        }
+
+
 
 
 

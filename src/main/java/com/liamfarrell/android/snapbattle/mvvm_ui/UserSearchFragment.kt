@@ -13,6 +13,10 @@ import com.liamfarrell.android.snapbattle.adapters.UserSearchSuggestionAdapter
 import com.liamfarrell.android.snapbattle.databinding.FragmentUserSearchBinding
 import com.liamfarrell.android.snapbattle.di.*
 import com.liamfarrell.android.snapbattle.viewmodels.UserSearchViewModel
+import io.reactivex.Observable
+import io.reactivex.ObservableOnSubscribe
+import timber.log.Timber
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class UserSearchFragment : Fragment(), Injectable {
@@ -43,7 +47,7 @@ class UserSearchFragment : Fragment(), Injectable {
     }
 
     private fun subscribeUi() {
-        viewModel.searchResult.observe(viewLifecycleOwner, Observer { searchResult ->
+        viewModel.searchList.observe(viewLifecycleOwner, Observer { searchResult ->
             adapter.submitList(searchResult)
             adapter.notifyDataSetChanged()
         })
@@ -59,6 +63,10 @@ class UserSearchFragment : Fragment(), Injectable {
            adapter.notifyDataSetChanged()
         })
     }
+
+
+
+
 
     @SuppressLint("CheckResult")
     fun setOnQueryChangedListener(searchView: SearchView){

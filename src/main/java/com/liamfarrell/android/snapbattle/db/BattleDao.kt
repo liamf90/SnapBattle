@@ -4,6 +4,7 @@ import com.liamfarrell.android.snapbattle.model.Battle
 import androidx.paging.DataSource
 import androidx.room.*
 import com.liamfarrell.android.snapbattle.model.Video
+import io.reactivex.Completable
 
 
 /**
@@ -11,9 +12,6 @@ import com.liamfarrell.android.snapbattle.model.Video
  */
 @Dao
 interface BattleDao {
-//    @Query("SELECT * FROM all_battles ORDER BY mLastVideoUploadTime DESC")
-//    fun getAllBattles(): DataSource.Factory<Int,Battle>
-
     @Query("SELECT * FROM all_battles " +
             " LEFT JOIN  thumbnail_signed_url " +
             " ON thumbnail_signed_url.battle_id = all_battles.battle_id "  +
@@ -21,29 +19,32 @@ interface BattleDao {
     fun getAllBattles(): DataSource.Factory<Int,AllBattlesBattle>
 
     @Query("SELECT battle_id FROM all_battles")
-    suspend fun getAllBattleIDs(): List<Int>
+    fun getAllBattleIDs(): List<Int>
 
     @Query("SELECT COUNT(*) FROM all_battles")
-    suspend fun getCountAllBattles(): Int
+    fun getCountAllBattles(): Int
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(battles: List<Battle>)
+    fun insertAll(battles: List<Battle>)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+     fun insertAllRx(battles: List<Battle>)
 
     @Query("DELETE FROM all_battles")
-    suspend fun deleteAllBattles()
+    fun deleteAllBattles() : Completable
 
     @Query("UPDATE all_battles SET mUserHasVoted = 1 WHERE battle_id = :battleId")
-    suspend fun setHasVoted(battleId: Int)
+    fun setHasVoted(battleId: Int) : Completable
 
     @Query("UPDATE all_battles SET mLikeCount = mLikeCount + 1 WHERE battle_id = :battleId")
-    suspend fun increaseLikeCount(battleId: Int)
+    fun increaseLikeCount(battleId: Int) : Completable
 
     @Query("UPDATE all_battles SET mDislikeCount = mDislikeCount + 1 WHERE battle_id = :battleId")
-    suspend fun increaseDislikeCount(battleId: Int)
+    fun increaseDislikeCount(battleId: Int) : Completable
 
     @Query("UPDATE all_battles SET mLikeCount = mLikeCount - 1 WHERE battle_id = :battleId")
-    suspend fun decreaseLikeCount(battleId: Int)
+    fun decreaseLikeCount(battleId: Int) : Completable
 
     @Query("UPDATE all_battles SET mDislikeCount = mDislikeCount - 1 WHERE battle_id = :battleId")
-    suspend fun decreaseDislikeCount(battleId: Int)
+    fun decreaseDislikeCount(battleId: Int) : Completable
 }

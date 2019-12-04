@@ -8,9 +8,16 @@ import com.liamfarrell.android.snapbattle.data.FollowingRepository
 import com.liamfarrell.android.snapbattle.data.FollowingUserCacheManager
 import com.liamfarrell.android.snapbattle.model.AsyncTaskResult
 import com.liamfarrell.android.snapbattle.model.User
+import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.ResponseFollowing
 import com.liamfarrell.android.snapbattle.util.getErrorMessage
 import com.liamfarrell.android.snapbattle.util.notifyObserver
+import io.reactivex.Single
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.functions.BiFunction
+import io.reactivex.schedulers.Schedulers
+import io.reactivex.schedulers.Schedulers.io
 import kotlinx.coroutines.async
+import okhttp3.Response
 import javax.inject.Inject
 
 /**
@@ -19,157 +26,165 @@ import javax.inject.Inject
 class AddFacebookFriendsAsFollowersViewModel @Inject constructor(private val context: Application, private val followingRepository : FollowingRepository,
                                                                  private val followingUserCacheManager: FollowingUserCacheManager) : ViewModelLaunch() {
 
-    private val followingUsers = MutableLiveData<AsyncTaskResult<MutableList<User>>>()
+    private val _following = MutableLiveData<MutableList<User>>()
+    val following : LiveData<MutableList<User>> = _following
 
-    val errorMessage : LiveData<String?> = Transformations.map(followingUsers) { asyncResult ->
-        if (asyncResult.error != null){
-            getErrorMessage(context.applicationContext, asyncResult.error)
-        } else {
-            null
-        }
+    private val error = MutableLiveData<Throwable>()
+    val errorMessage : LiveData<String> = Transformations.map(error){
+        getErrorMessage(context, it)
     }
 
-    val following = MediatorLiveData<MutableList<User>>()
 
-    init {
-        following.addSource(followingUsers){
-            if (it.error == null) {
-                following.value = it.result
-            }
-        }
 
-        followingUsers.value = AsyncTaskResult(null)
-    }
 
     fun getFacebookFriends(requestFacebookFriendsPermission : ()->Unit ){
-                val facebookFriendsDeferred = viewModelScope.async{followingRepository.getFacebookFriends()}
-
-                awsLambdaFunctionCall(true) {
-                    val facebookFriends = facebookFriendsDeferred.await()
-                    if (facebookFriends.error != null){
-                        followingUsers.value = AsyncTaskResult(facebookFriends.error)
-                        return@awsLambdaFunctionCall}
-
-                    //if the user_friends permission has not been approved by the user, the returned reponse will have 0 friends.
-                    //so if the response has 0 friends check if the user_friends permission has not been approved and ask the user if they would like to accept it.
-                    if (facebookFriends.result.isEmpty() && !doesUserHaveUserFriendsPermission()) {
-                        _snackBarMessage.value = context.getString(R.string.need_accept_permission_user_friends)
-                        requestFacebookFriendsPermission()
-                    } else {
-                        followingUsers.value = AsyncTaskResult(facebookFriends.result.toMutableList())
-                    }
-                }
+        compositeDisposable.add(  followingRepository.getFacebookFriendsRx()
+                .subscribeOn(io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe{_spinner.value = true}
+                .subscribe(
+                        { facebookFriendsList ->
+                            _spinner.value = false
+                            //if the user_friends permission has not been approved by the user, the returned reponse will have 0 friends.
+                            //so if the response has 0 friends check if the user_friends permission has not been approved and ask the user if they would like to accept it.
+                            if (facebookFriendsList.isEmpty() && !doesUserHaveUserFriendsPermission()) {
+                                _snackBarMessage.value = context.getString(R.string.need_accept_permission_user_friends)
+                                requestFacebookFriendsPermission()
+                            } else {
+                                _following.value = facebookFriendsList.toMutableList()
+                            }
+                        },
+                        {onError : Throwable ->
+                            _spinner.value = false
+                            error.value = onError
+                        }
+                ))
     }
 
-    fun getFacebookFriendsWithFollowing(requestFacebookFriendsPermission : ()->Unit ){
-        val facebookFriendsDeferred = viewModelScope.async{followingRepository.getFacebookFriends()}
-        val followingUsersResponseDeferred = viewModelScope.async { followingRepository.getFollowing() }
-        awsLambdaFunctionCall(true) {
-            val facebookFriends = facebookFriendsDeferred.await()
-            val following = followingUsersResponseDeferred.await()
-            if (facebookFriends.error == null && following.error == null){
-                facebookFriends.result.forEach {
-                    val followingUser = following.result.find {u -> u.facebookUserId == it.facebookUserId}
-                    if (followingUser != null){
-                        it.isFollowing = true
-                        it.cognitoId = followingUser.cognitoId
-                    }
-                }
-            } else {
-                if (facebookFriends.error != null) followingUsers.value = AsyncTaskResult(facebookFriends.error)
-                else if (following.error != null) followingUsers.value = AsyncTaskResult(following.error)
-                return@awsLambdaFunctionCall
-            }
 
-            //if the user_friends permission has not been approved by the user, the returned reponse will have 0 friends.
-            //so if the response has 0 friends check if the user_friends permission has not been approved and ask the user if they would like to accept it.
-            if (facebookFriends.result.isEmpty() && !doesUserHaveUserFriendsPermission()) {
-                _snackBarMessage.value = context.getString(R.string.need_accept_permission_user_friends)
-                requestFacebookFriendsPermission()
-            } else {
-                followingUsers.value = AsyncTaskResult(facebookFriends.result.toMutableList())
-            }
-        }
+    fun getFacebookFriendsWithFollowing(requestFacebookFriendsPermission : ()->Unit) {
+        compositeDisposable.add(  Single.zip(followingRepository.getFacebookFriendsRx().subscribeOn(io()),
+                followingRepository.getFollowingRx().subscribeOn(io()),
+                BiFunction<List<User>, ResponseFollowing, List<User>> {
+                    facebookFriends : List<User>, following : ResponseFollowing ->
+                        facebookFriends.forEach {
+                            val followingUser = following.sqlResult.find { u -> u.facebookUserId == it.facebookUserId }
+                            if (followingUser != null) {
+                                it.isFollowing = true
+                                it.cognitoId = followingUser.cognitoId
+                            }
+                        }
+                    return@BiFunction facebookFriends
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe{_spinner.value = true}
+                .subscribe(
+                        { onSuccessResponse ->
+                            _spinner.value = false
+                            //if the user_friends permission has not been approved by the user, the returned reponse will have 0 friends.
+                            //so if the response has 0 friends check if the user_friends permission has not been approved and ask the user if they would like to accept it.
+                            if (onSuccessResponse.isEmpty() && !doesUserHaveUserFriendsPermission()) {
+                                _snackBarMessage.value = context.getString(R.string.need_accept_permission_user_friends)
+                                requestFacebookFriendsPermission()
+                            } else {
+                                _following.value = onSuccessResponse.toMutableList()
+                            }
+                        },
+                        {onError : Throwable ->
+                            _spinner.value = false
+                            error.value = onError
+                        }
+                ))
     }
-
 
 
     fun addFollowing(nextFragmentCallback : ()-> Unit) {
         //follow the checked users, if none are checked proceed straight to the next fragment
         val facebookIDListToFollow = following.value?.filter { it.isFollowing }?.mapNotNull { it.facebookUserId }
         if (facebookIDListToFollow != null && facebookIDListToFollow.isNotEmpty()) {
-            awsLambdaFunctionCall(true,
-                    suspend {
-                        val asyncResult = followingRepository.addFollowing(facebookIDListToFollow)
-                        if (asyncResult.error != null) {
-                            followingUsers.value = AsyncTaskResult(asyncResult.error)
-                        } else {
-                            followingUserCacheManager.checkForUpdates()
+            compositeDisposable.add( followingRepository.addFollowingRx(facebookIDListToFollow)
+                    .subscribeOn(io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .doOnSubscribe{_spinner.value = true}
+                    .subscribe(
+                            { _ ->
+                                _spinner.value = false
+                                //TODO followingUserCacheManager.checkForUpdates()
 
-                            //go to nextfragment
-                            nextFragmentCallback()
-                        }
-                    }
-
-            )
+                                //go to next fragment
+                                nextFragmentCallback()
+                            },
+                            { onError : Throwable ->
+                                _spinner.value = false
+                                error.value = onError
+                            }
+                    ))
         }
     }
 
     fun removeFollowing(cognitoIDUnfollow: String) {
-        awsLambdaFunctionCall(false) {
-                following.value?.find { it.cognitoId == cognitoIDUnfollow }?.apply {
-                    isFollowing = false
-                    isFollowingChangeInProgress = true
-                }
-                following.notifyObserver()
-
-                val asyncResult = followingRepository.removeFollowing(cognitoIDUnfollow)
-                if (asyncResult.error != null){
-                    following.value?.find { it.cognitoId == cognitoIDUnfollow }?.run {
-                        isFollowing = true
-                        isFollowingChangeInProgress = false
+        compositeDisposable.add( followingRepository.removeFollowingRx(cognitoIDUnfollow)
+                .subscribeOn(io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe{
+                    _following.value?.find { it.cognitoId == cognitoIDUnfollow }?.apply {
+                        isFollowing = false
+                        isFollowingChangeInProgress = true
                     }
-                    following.notifyObserver()
-                    followingUsers.value  = AsyncTaskResult(asyncResult.error)
-                } else {
-                    //unfollow on list
-                    following.value?.find { it.cognitoId == cognitoIDUnfollow }?.isFollowingChangeInProgress = false
-                    following.notifyObserver()
-
-                    followingUserCacheManager.checkForUpdates()
-                    Unit
-                 }
+                    _following.notifyObserver()
                 }
+                .subscribe(
+                        { _ ->
+                            //unfollow on list
+                            _following.value?.find { it.cognitoId == cognitoIDUnfollow }?.isFollowingChangeInProgress = false
+                            _following.notifyObserver()
+
+                            //TODO followingUserCacheManager.checkForUpdates()
+                        },
+                        { onError : Throwable ->
+                            _following.value?.find { it.cognitoId == cognitoIDUnfollow }?.run {
+                                isFollowing = true
+                                isFollowingChangeInProgress = false
+                            }
+                            _following.notifyObserver()
+                            error.value = onError
+                        }
+                ))
     }
 
 
     fun addFollowing(facebookUserId: String) {
-        awsLambdaFunctionCall(false) {
-                    following.value?.find { it.facebookUserId == facebookUserId }?.apply {
+        compositeDisposable.add(  followingRepository.addFollowingRx(listOf(facebookUserId))
+                .subscribeOn(io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe{
+                    _following.value?.find { it.facebookUserId == facebookUserId }?.apply {
                         isFollowing = true
                         isFollowingChangeInProgress = true
                     }
-                    following.notifyObserver()
-
-                    val asyncResult = followingRepository.addFollowing(listOf(facebookUserId))
-                    if (asyncResult.error != null){
-                        following.value?.find { it.facebookUserId == facebookUserId }?.apply {
-                            isFollowing = false
-                            isFollowingChangeInProgress = false
-                        }
-                        following.notifyObserver()
-                        followingUsers.value = AsyncTaskResult(asyncResult.error)
-                    } else {
-                            following.value?.find { it.facebookUserId == facebookUserId }?.apply{
+                    _following.notifyObserver()
+                }
+                .subscribe(
+                        { response ->
+                            _following.value?.find { it.facebookUserId == facebookUserId }?.apply{
                                 isFollowingChangeInProgress = false
-                                cognitoId = asyncResult.result.sqlResult[0].cognitoId
+                                cognitoId = response.sqlResult[0].cognitoId
                             }
-                            following.notifyObserver()
+                            _following.notifyObserver()
 
-                            followingUserCacheManager.checkForUpdates()
+                            //TODO followingUserCacheManager.checkForUpdates()
                             Unit
+                        },
+                        { onError : Throwable ->
+                            _following.value?.find { it.facebookUserId == facebookUserId }?.apply {
+                                isFollowing = false
+                                isFollowingChangeInProgress = false
+                            }
+                            _following.notifyObserver()
+                            error.value = onError
                         }
-                    }
+                ))
+
     }
 
 

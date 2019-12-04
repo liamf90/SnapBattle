@@ -6,6 +6,8 @@ import androidx.paging.LivePagedListBuilder
 import com.liamfarrell.android.snapbattle.db.AllBattlesBoundaryCallback
 import com.liamfarrell.android.snapbattle.db.BattleDao
 import com.liamfarrell.android.snapbattle.model.BattlesSearchResult
+import io.reactivex.Completable
+import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.CoroutineScope
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -16,12 +18,12 @@ class AllBattlesRepository @Inject constructor(
         private val battleDao: BattleDao)
 {
 
-    private val _networkErrors = MutableLiveData<String>()
+    private val _networkErrors = MutableLiveData<Throwable>()
     private val _isLoadingMoreBattles = allBattlesCacheManager.loadingMoreBattles
     private val _isNoMoreOlderBattles = allBattlesCacheManager.noMoreBattles
 
     // LiveData of network errors.
-    val networkErrors: LiveData<String>
+    val networkErrors: LiveData<Throwable>
         get() = _networkErrors
 
     val isLoadingMoreBattles : LiveData<Boolean>
@@ -32,7 +34,7 @@ class AllBattlesRepository @Inject constructor(
 
 
 
-      fun loadAllBattles(coroutineScope: CoroutineScope) : BattlesSearchResult {
+      fun loadAllBattles(compositeDisposable: CompositeDisposable) : BattlesSearchResult {
 
         // Get data source factory from the local cache
         val dataSourceFactory = battleDao.getAllBattles()
@@ -41,7 +43,7 @@ class AllBattlesRepository @Inject constructor(
         // every new query creates a new BoundaryCallback
         // The BoundaryCallback will observe when the user reaches to the edges of
         // the list and update the database with extra data
-        val boundaryCallback = AllBattlesBoundaryCallback (allBattlesCacheManager,coroutineScope)
+        val boundaryCallback = AllBattlesBoundaryCallback (allBattlesCacheManager,compositeDisposable, _networkErrors)
 
 
         // Get the paged list
@@ -53,8 +55,8 @@ class AllBattlesRepository @Inject constructor(
         return BattlesSearchResult(data, networkErrors)
     }
 
-    suspend fun updateBattles(){
-        allBattlesCacheManager.checkForUpdates()
+    fun updateBattles() : Completable{
+        return Completable.fromCallable {allBattlesCacheManager.checkForUpdates()}
     }
 
 

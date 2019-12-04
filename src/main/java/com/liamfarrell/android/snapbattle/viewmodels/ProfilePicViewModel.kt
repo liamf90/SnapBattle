@@ -13,19 +13,14 @@ class ProfilePicViewModel @Inject constructor(val otherUsersProfilePicUrlReposit
     private val _signedUrl = MutableLiveData<String>()
     val signedUrl : LiveData<String> = _signedUrl
 
-    val job: Job
 
     init {
-        job = GlobalScope.launch (Dispatchers.Main){
-            _signedUrl.value = otherUsersProfilePicUrlRepository.getOrUpdateProfilePicSignedUrl(cognitoID, profilePicCount, signedUrlNew)
-        }
+            _signedUrl.value = otherUsersProfilePicUrlRepository.getOrUpdateProfilePicSignedUrlRx(cognitoID, profilePicCount, signedUrlNew)
     }
 
 
 
-    fun cancelJob(){
-        job.cancel()
-    }
+
 
 
 }

@@ -8,6 +8,8 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.liamfarrell.android.snapbattle.model.Battle
 import com.liamfarrell.android.snapbattle.model.User
+import io.reactivex.Maybe
+import io.reactivex.Single
 
 
 /**
@@ -33,5 +35,8 @@ interface FollowingUserDao {
 
     @Query("SELECT * FROM user WHERE LOWER(mUsername) LIKE LOWER(:searchQuery) || '%' OR LOWER(mFacebookName) LIKE LOWER(:searchQuery) || '%' OR LOWER(mFacebookName) LIKE '% ' || LOWER(:searchQuery) || '%'")
     suspend fun searchUsersInCache(searchQuery: String): List<User>
+
+    @Query("SELECT * FROM user WHERE LOWER(mUsername) LIKE LOWER(:searchQuery) || '%' OR LOWER(mFacebookName) LIKE LOWER(:searchQuery) || '%' OR LOWER(mFacebookName) LIKE '% ' || LOWER(:searchQuery) || '%'")
+    fun searchUsersInCacheRx(searchQuery: String): Single<List<User>>
 
 }

@@ -2,18 +2,17 @@ package com.liamfarrell.android.snapbattle.viewmodels
 
 import android.app.Application
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
-import androidx.lifecycle.viewModelScope
-import com.liamfarrell.android.snapbattle.app.SnapBattleApp
 import com.liamfarrell.android.snapbattle.data.FollowingUserCacheManager
 import com.liamfarrell.android.snapbattle.data.OtherUsersProfilePicUrlRepository
 import com.liamfarrell.android.snapbattle.data.UserSearchRepository
-import com.liamfarrell.android.snapbattle.model.AsyncTaskResult
-import com.liamfarrell.android.snapbattle.model.Battle
 import com.liamfarrell.android.snapbattle.model.User
-import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.GetUsersResponse
 import com.liamfarrell.android.snapbattle.util.getErrorMessage
+import io.reactivex.Completable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers.*
 import javax.inject.Inject
 import kotlinx.coroutines.*
 import timber.log.Timber
@@ -32,33 +31,55 @@ class UserSearchViewModel @Inject constructor(private val context: Application, 
         SERVER_AND_CACHE_RESULT
     }
 
-     val searchState = MutableLiveData<State>()
+    private val _searchState = MutableLiveData<State>()
+    val searchState : LiveData<State> = _searchState
 
     private val profilePicMap = mutableMapOf<String, String>()
 
-    private val searchResultResponse = MutableLiveData<AsyncTaskResult<GetUsersResponse>>()
-
     private var searchQueryCurrent = ""
 
-    val searchResult : LiveData<List<User>> =  Transformations.map(searchResultResponse) { asyncResult ->
-        asyncResult.result.sqlResult }
+    private val followingCacheSearchResult = MutableLiveData<List<User>>()
+    private  val serverSearchCacheSearchResult = MutableLiveData<List<User>>()
+    private val  _searchList = MediatorLiveData<List<User>>()
+    val searchList : LiveData<List<User>> = _searchList
 
-    val errorMessage : LiveData<String?> = Transformations.map(searchResultResponse) { asyncResult ->
-        if (asyncResult.error != null){
-        getErrorMessage(context, asyncResult.error)}
-        else null
+    private val error = MutableLiveData<Throwable>()
+    val errorMessage : LiveData<String> = Transformations.map(error){
+        it.printStackTrace()
+        getErrorMessage(context, it)
     }
-
-    init {
-        searchState.value = State.CACHE_RESULT
-        GlobalScope.launch {followingUserCacheManager.checkForUpdates()}
-    }
-
-
 
     private var submitPressed = false
-    private var searchingCache = false
-    private var doServerSearchOverride = false
+
+
+    init {
+        _searchState.value = State.CACHE_RESULT
+        GlobalScope.launch {followingUserCacheManager.checkForUpdates()}
+
+        _searchList.addSource(followingCacheSearchResult){
+           it?.let {
+               if (serverSearchCacheSearchResult.value != null){
+                   val combinedList = addServerSearchToCacheList(it, serverSearchCacheSearchResult.value ?: listOf())
+                   _searchList.value = combinedList
+               } else {
+                   _searchList.value = it
+               }
+           }
+        }
+
+        _searchList.addSource(serverSearchCacheSearchResult){
+            it?.let{
+                _searchState.value = State.SERVER_AND_CACHE_RESULT
+                if (followingCacheSearchResult.value != null){
+                    val combinedList = addServerSearchToCacheList(followingCacheSearchResult.value ?: listOf(), it)
+                    _searchList.value = combinedList
+                } else {
+                    _searchList.value = it
+                }
+            }
+        }
+    }
+
 
 
     /**
@@ -66,51 +87,56 @@ class UserSearchViewModel @Inject constructor(private val context: Application, 
      * When the query length >= 3, a search is done on the server as well, with the the result appended to the Following Cache search users for distinct users only
      */
     fun searchQueryChange(searchQuery: String) {
-        doServerSearchOverride = false
+        compositeDisposable.clear()
         searchQueryCurrent = searchQuery
-        //clear the list
-        //searchResultResponse.value?.result?.sqlResult?.clear()
-        //searchResultResponse.value = AsyncTaskResult(GetUsersResponse())
+        _searchList.value = null
+        followingCacheSearchResult.value = null
+        serverSearchCacheSearchResult.value = null
 
-        if (searchQuery.isEmpty()){
-            searchResultResponse.value = AsyncTaskResult(GetUsersResponse())
-            return}
+        if (searchQuery.isEmpty()){ return}
 
-        searchingCache = true
-        val searchCacheJob = getSearchFollowingCacheJobAsync(searchQuery)
+        //search the cache
+        compositeDisposable.add(followingUserCacheManager.searchUsersInCacheRx(searchQuery)
+                .subscribeOn(io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        { onSuccessResponse ->
+                            followingCacheSearchResult.value = onSuccessResponse
+                        },
+                        {onError : Throwable ->
+                            error.value = onError
+                        }
+                ))
 
-        viewModelScope.launch {
-            var serverSearchJob =
-                if (searchQuery.length >= 3) {
-                     searchState.value = State.SERVER_SEARCH
-                     getServerSearchJobAsync(searchQuery)
-                } else {
-                     searchState.value = State.CACHE_RESULT
-                     null
-                }
 
-            val followingResponse = searchCacheJob.await()
 
-            //Only continue if the search query has not been changed
-            if (searchQuery == searchQueryCurrent){
-                searchResultResponse.value = followingResponse
-                searchingCache = false
-                //doServerSearchOverride will be set to true when the search submit button is pressed and query length < 3 and the FollowingCache search has not yet been finished.
-                //In this case do the server search job now
-                if (doServerSearchOverride){
-                    serverSearchJob = getServerSearchJobAsync(searchQuery)
-                }
-                val searchUserResponse = serverSearchJob?.await()
-                if (searchUserResponse != null && searchQuery == searchQueryCurrent){
-                    val combinedList = addServerSearchToCacheList(followingResponse.result.sqlResult, searchUserResponse.result.sqlResult)
-                    searchUserResponse.result.sqlResult = combinedList
-                    searchUserResponse.result.sqlResult = getProfilePicSignedUrls(combinedList)
-                    searchState.value = State.SERVER_AND_CACHE_RESULT
-                    searchResultResponse.value = searchUserResponse
-                }
-            }
-            searchingCache = false
+        //search server if query length >=3
+        if (searchQuery.length >= 3) {
+            compositeDisposable.add(
+                    getDebounceWaitCompletable()
+                    .subscribeOn(newThread())
+                    .andThen(searchRepository.searchUserRx(searchQuery))
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeOn(AndroidSchedulers.mainThread())
+                    .doOnSubscribe {
+                        _searchState.value = State.SERVER_SEARCH
+                    }
+                    .subscribeOn(AndroidSchedulers.mainThread())
+                    .observeOn(single())
+                    .map {getProfilePicSignedUrls(it.sqlResult) }
+                    .observeOn(newThread())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeOn(io())
+                    .subscribe(
+                            { onSuccessResponse ->
+                                serverSearchCacheSearchResult.value = onSuccessResponse
+                            },
+                            { onError: Throwable ->
+                                error.value = onError
+                            }
+                    ))
         }
+
     }
 
 
@@ -126,37 +152,36 @@ class UserSearchViewModel @Inject constructor(private val context: Application, 
         //else return
         if (searchQuery.length >= 3){return}
 
-        //if currently searching following cache in searchQueryChange, set doServerSearchOverride = true so the searchQueryChange will do the server search after searching the following cache
-        //if the searchQueryChange method has finished searching the following cache, search the server in this method
-        if (searchingCache){
-            doServerSearchOverride = true
-        } else {
-            viewModelScope.launch {
-                searchState.value = State.SERVER_SEARCH
-                val serverJob = getServerSearchJobAsync(searchQuery)
-                val response = serverJob.await()
-                if (response != null && searchQuery == searchQueryCurrent){
-                    val cacheList = searchResultResponse.value?.result?.sqlResult
-                    if (cacheList != null){
-                        val combinedList = addServerSearchToCacheList(cacheList, response.result.sqlResult)
-                        response.result.sqlResult = combinedList
-                        searchState.value = State.SERVER_AND_CACHE_RESULT
-                        searchResultResponse.value = response
 
-                    }
-                } else {
-                    searchState.value = State.CACHE_RESULT
+        compositeDisposable.add(searchRepository.searchUserRx(searchQuery)
+                .subscribeOn(io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe {
+                    _searchState.value = State.SERVER_SEARCH
                 }
-            }
-        }
+                .observeOn(single())
+                .map { getProfilePicSignedUrls(it.sqlResult) }
+                .subscribe(
+                        { onSuccessResponse ->
+                            serverSearchCacheSearchResult.value = onSuccessResponse
+                        },
+                        { onError: Throwable ->
+                            error.value = onError
+                        }
+                ))
 
     }
+
 
     /**
      * Appends the server search list to the following cache list, but only with distinct Users
      */
     private fun addServerSearchToCacheList(cacheList : List<User>, serverList : List<User>) : List<User>{
         val cognitoIDCacheList = cacheList.map { it.cognitoId }
+        cacheList.forEach {
+            it.profilePicSignedUrl = serverList.find { user-> user.cognitoId == it.cognitoId }?.profilePicSignedUrl
+            it.profilePicCount = serverList.find { user-> user.cognitoId == it.cognitoId }?.profilePicCount ?: 0
+        }
         val serverListFiltered = serverList.filterNot {cognitoIDCacheList.contains(it.cognitoId)}
         val finalList =  mutableListOf<User>()
         finalList.addAll(cacheList)
@@ -164,40 +189,33 @@ class UserSearchViewModel @Inject constructor(private val context: Application, 
         return finalList
     }
 
-
-    private fun getServerSearchJobAsync(searchQuery : String) = viewModelScope.async {
+    private fun getDebounceWaitCompletable() : Completable {
+        return Completable.create {
             submitPressed = false
-            //debounce the search. if user pressed the submit search button, the debounce wait will stop and the search will occur straight away
             var delayCountMilliSeconds = 0
-            while (!submitPressed && delayCountMilliSeconds < 300){
-                delay(10)
+            while (!submitPressed && delayCountMilliSeconds < 2000) {
+                try {
+                    Thread.sleep(10)
+                } catch (e: InterruptedException){ }
                 delayCountMilliSeconds += 10
+                Timber.i("DelayCount %s", delayCountMilliSeconds)
             }
             submitPressed = false
-            //only do search if the search query is still the same
-            if (searchQuery == searchQueryCurrent){
-                return@async searchRepository.searchUser(searchQuery)
-            } else {
-                return@async null
-            }
+            it.onComplete()
+        }
+
     }
 
 
-    private fun getSearchFollowingCacheJobAsync(searchQuery: String) =
-         viewModelScope.async {
-             val getUsersResponse = GetUsersResponse()
-             getUsersResponse.sqlResult = followingUserCacheManager.searchUsersInCache(searchQuery)
-             AsyncTaskResult(getUsersResponse)
-    }
 
 
-    private suspend fun getProfilePicSignedUrls(userList: List<User>) : List<User>{
+    private  fun getProfilePicSignedUrls(userList: List<User>) : List<User>{
         userList.forEach {
             if (it.profilePicCount != 0) {
                 if (profilePicMap.containsKey(it.cognitoId)){
                     it.profilePicSignedUrl = profilePicMap[it.cognitoId]
                 } else {
-                    it.profilePicSignedUrl = otherUsersProfilePicUrlRepository.getOrUpdateProfilePicSignedUrl(it.cognitoId,  it.profilePicCount , it.profilePicSignedUrl )
+                    it.profilePicSignedUrl = otherUsersProfilePicUrlRepository.getOrUpdateProfilePicSignedUrlRx(it.cognitoId,  it.profilePicCount , it.profilePicSignedUrl )
                 }
             }
         }

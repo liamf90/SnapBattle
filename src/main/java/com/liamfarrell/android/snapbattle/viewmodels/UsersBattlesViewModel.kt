@@ -12,6 +12,8 @@ import com.liamfarrell.android.snapbattle.model.User
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.GetUsersBattlesResponse
 import com.liamfarrell.android.snapbattle.util.getErrorMessage
 import com.liamfarrell.android.snapbattle.util.notifyObserver
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -23,111 +25,134 @@ class UsersBattlesViewModel @Inject constructor(private val context: Application
 
     private lateinit var cognitoId : String
 
-    private val battlesResult = MutableLiveData<AsyncTaskResult<GetUsersBattlesResponse>>()
+    private val _battles = MutableLiveData<MutableList<Battle>>()
+    val battles : LiveData<MutableList<Battle>> = _battles
 
-    val errorMessage : LiveData<String?> = Transformations.map(battlesResult) { result ->
-        if (result.error != null){
-            getErrorMessage(context, result.error)
-        } else {
-            null
-        }
+    private val error = MutableLiveData<Throwable>()
+    val errorMessage : LiveData<String> = Transformations.map(error){
+        getErrorMessage(context, it)
     }
 
-    val battles = MediatorLiveData<List<Battle>>()
-    val user = MediatorLiveData<User>()
+    private val _user = MutableLiveData<User>()
+    val user : LiveData<User> = _user
 
 
-    init {
-        battles.addSource(battlesResult){
-            if (it.error == null) {
-                battles.value = it.result?.user_battles?.filter { !it.isDeleted }
-            }
-        }
-        user.addSource(battlesResult){
-            if (it.error == null) {
-                user.value = it.result?.user_profile
-            }
-        }
-    }
 
 
     fun setCognitoId(cognitoID: String){
         cognitoId = cognitoID
-        awsLambdaFunctionCall(true,
-                suspend {
-                    val response =  usersBattlesRepository.getUsersBattles(cognitoID)
-                    if (response.error == null) {
-                        //check if profile pic url in cache else use new signed url
-                        val profile = response.result.user_profile
-                        if (profile.profilePicCount > 0) {
-                            response.result.user_profile.profilePicSignedUrl =  otherUsersProfilePicUrlRepository.getOrUpdateProfilePicSignedUrl(profile.cognitoId,  profile.profilePicCount , profile.profilePicSignedUrl )
-                        }
-                        response.result.user_battles = getThumbnailSignedUrls(response.result.user_battles)
-                    }
-                    battlesResult.value = response
 
-                })
+        compositeDisposable.add(usersBattlesRepository.getUsersBattlesRx(cognitoID)
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .doOnSubscribe{_spinner.value = true}
+                .map {
+                    //check if profile pic url in cache else use new signed url
+                    val profile = it.user_profile
+                    if (profile.profilePicCount > 0) {
+                        it.user_profile.profilePicSignedUrl =  otherUsersProfilePicUrlRepository.getOrUpdateProfilePicSignedUrlRx(profile.cognitoId,  profile.profilePicCount , profile.profilePicSignedUrl )
+                    }
+                    it.user_battles = getThumbnailSignedUrls(it.user_battles)
+                    it.user_battles.filter {!it.isDeleted}
+                    return@map it
+                }
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        { onSuccessResponse ->
+                            _spinner.value = false
+                            _battles.value = onSuccessResponse.user_battles
+                            _user.value = onSuccessResponse.user_profile
+                        },
+                        {onError : Throwable ->
+                            onError.printStackTrace()
+                            _spinner.value = false
+                            error.value = onError
+                        }
+                ))
     }
 
     fun setFacebookId(facebookId: String){
-        awsLambdaFunctionCall(true,
-                suspend {
-                    val response =  usersBattlesRepository.getUsersBattlesWithFacebookId(facebookId)
-                    if (response.error == null) {
-                        cognitoId = response.result.user_profile.cognitoId
-                        //check if profile pic url in cache else use new signed url
-                        val profile = response.result.user_profile
-                        if (profile.profilePicCount > 0) {
-                            response.result.user_profile.profilePicSignedUrl =  otherUsersProfilePicUrlRepository.getOrUpdateProfilePicSignedUrl(profile.cognitoId,  profile.profilePicCount , profile.profilePicSignedUrl )
-                        }
-                        response.result.user_battles = getThumbnailSignedUrls(response.result.user_battles)
+        compositeDisposable.add( usersBattlesRepository.getUsersBattlesWithFacebookIdRx(facebookId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .doOnSubscribe{_spinner.value = true}
+                .map {
+                    //check if profile pic url in cache else use new signed url
+                    val profile = it.user_profile
+                    if (profile.profilePicCount > 0) {
+                        it.user_profile.profilePicSignedUrl =  otherUsersProfilePicUrlRepository.getOrUpdateProfilePicSignedUrlRx(profile.cognitoId,  profile.profilePicCount , profile.profilePicSignedUrl )
                     }
-                    battlesResult.value = response
-
-                })
+                    it.user_battles = getThumbnailSignedUrls(it.user_battles)
+                    it.user_battles.filter {!it.isDeleted}
+                    return@map it
+                }
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        { onSuccessResponse ->
+                            _spinner.value = false
+                            cognitoId = onSuccessResponse.user_profile.cognitoId
+                            _battles.value = onSuccessResponse.user_battles
+                            _user.value = onSuccessResponse.user_profile
+                        },
+                        {onError : Throwable ->
+                            onError.printStackTrace()
+                            _spinner.value = false
+                            error.value = onError
+                        }
+                ))
     }
 
     fun followUser(){
-        awsLambdaFunctionCall(false,
-                suspend {
-                    user.value?.isFollowingChangeInProgress = true
-                    user.value?.isFollowing = true
-                    user.notifyObserver()
-                    val response = usersBattlesRepository.followUser(cognitoId)
-                    if (response.error != null){
-                        user.value?.isFollowingChangeInProgress = false
-                        user.value?.isFollowing = false
-                        user.notifyObserver()
-                        battlesResult.value = AsyncTaskResult(response.error)
-                    } else {
-                        user.value?.isFollowingChangeInProgress = false
-                        user.notifyObserver()
-                    }})
+        compositeDisposable.add(  usersBattlesRepository.followUserRx(cognitoId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .doOnSubscribe {
+                    _user.value?.isFollowingChangeInProgress = true
+                    _user.value?.isFollowing = true
+                    _user.notifyObserver()
+                }
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        { onSuccessResponse ->
+                            _user.value?.isFollowingChangeInProgress = false
+                            _user.notifyObserver()
+                        },
+                        {onError : Throwable ->
+                            _user.value?.isFollowingChangeInProgress = false
+                            _user.value?.isFollowing = false
+                            _user.notifyObserver()
+                            error.value = onError
+                        }
+                ))
     }
 
     fun unfollowUser(){
-        awsLambdaFunctionCall(false,
-                suspend {
-                    user.value?.isFollowingChangeInProgress = true
-                    user.value?.isFollowing = false
-                    user.notifyObserver()
-                    val response = usersBattlesRepository.unfollowUser(cognitoId)
-                    if (response.error != null){
-                        user.value?.isFollowing = true
-                        user.value?.isFollowingChangeInProgress = false
-                        user.notifyObserver()
-                        battlesResult.value = AsyncTaskResult(response.error)
-                    } else {
-                        user.value?.isFollowingChangeInProgress = false
-                        user.notifyObserver()
-                    }
+        compositeDisposable.add(  usersBattlesRepository.unfollowUserRx(cognitoId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .doOnSubscribe {
+                    _user.value?.isFollowingChangeInProgress = true
+                    _user.value?.isFollowing = false
+                    _user.notifyObserver()
                 }
-        )
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        { onSuccessResponse ->
+                            _user.value?.isFollowingChangeInProgress = false
+                            _user.notifyObserver()
+                        },
+                        {onError : Throwable ->
+                            _user.value?.isFollowingChangeInProgress = false
+                            _user.value?.isFollowing = true
+                            _user.notifyObserver()
+                            error.value = onError
+                        }
+                ))
     }
 
-    private suspend fun getThumbnailSignedUrls(battleList: List<Battle>) : List<Battle>{
+    private fun getThumbnailSignedUrls(battleList: List<Battle>) : List<Battle>{
         battleList.forEach {
-            it.signedThumbnailUrl = thumbnailSignedUrlCacheRepository.getThumbnailSignedUrl(it)
+            it.signedThumbnailUrl = thumbnailSignedUrlCacheRepository.getThumbnailSignedUrlRx(it)
         }
         return battleList
     }

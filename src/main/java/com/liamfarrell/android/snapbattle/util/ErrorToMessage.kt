@@ -56,7 +56,7 @@ fun getErrorMessage(context: Context, error: Throwable): String {
         }
         is AmazonClientException -> context.getString(R.string.no_internet_connection_toast)
         is CustomError -> error.getErrorToastMessage(context)
-        else -> context.getString(R.string.server_error_toast)
+        else -> context.getString(R.string.generic_error_toast)
     }
 }
 

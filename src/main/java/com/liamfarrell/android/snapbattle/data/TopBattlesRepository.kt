@@ -5,6 +5,7 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient
 import com.amazonaws.services.dynamodbv2.model.AttributeValue
 import com.amazonaws.services.dynamodbv2.model.GetItemRequest
 import com.liamfarrell.android.snapbattle.util.executeAWSFunction
+import io.reactivex.Single
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.util.ArrayList
@@ -33,4 +34,23 @@ class TopBattlesRepository @Inject constructor(val ddbClient : AmazonDynamoDBCli
              }
          }
      }
+
+
+    fun getTopBattlesListFromDynamoRx(): Single<List<String>> {
+        return Single.fromCallable {try {
+            val key = HashMap<String, AttributeValue>()
+            val value = AttributeValue()
+            value.s = "english"
+            key["Language"] = value
+            val spec = GetItemRequest()
+                    .withTableName("Top_Battles").withKey(key).withAttributesToGet("BattleType")
+            val result = ddbClient.getItem(spec)
+            val list = result.item["BattleType"]
+            val topBattleTypeListAttribute = list?.getL()
+            topBattleTypeListAttribute?.map { it.s } ?: listOf()
+        } catch (e: AmazonClientException) {
+            //Network error. Return empty list
+            listOf<String>()
+        }
+    }}
 }

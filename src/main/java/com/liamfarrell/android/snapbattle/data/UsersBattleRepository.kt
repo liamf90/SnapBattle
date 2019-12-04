@@ -6,9 +6,11 @@ import com.liamfarrell.android.snapbattle.model.Battle
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.LambdaFunctionsInterface
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.BattleRequest
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.VideoSubmittedRequest
+import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.ResponseBattle
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.VideoSubmittedResponse
 import com.liamfarrell.android.snapbattle.util.executeAWSFunction
 import com.liamfarrell.android.snapbattle.util.uploadVideoJob
+import io.reactivex.Single
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -22,6 +24,13 @@ class UsersBattleRepository @Inject constructor
         val request = BattleRequest()
         request.battleID = battleID.toString()
         return executeAWSFunction { lambdaFunctionsInterface.getBattleFunction(request).sqlResult}
+    }
+
+
+    fun getBattleRx(battleID: Int) : Single<ResponseBattle> {
+        val request = BattleRequest()
+        request.battleID = battleID.toString()
+        return  Single.fromCallable{lambdaFunctionsInterface.getBattleFunction(request)}
     }
 
 

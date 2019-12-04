@@ -66,7 +66,7 @@ class AllBattlesFragment : Fragment(), Injectable {
             Snackbar.make(parentCoordinatorLayout, snackBarMessage, Snackbar.LENGTH_LONG).show()
         })
 
-        viewModel.networkErrors.observe(viewLifecycleOwner, Observer {
+        viewModel.errorMessage.observe(viewLifecycleOwner, Observer {
             Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
         })
 

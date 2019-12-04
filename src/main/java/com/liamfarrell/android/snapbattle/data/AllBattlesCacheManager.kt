@@ -31,7 +31,7 @@ class AllBattlesCacheManager @Inject constructor(
     }
 
 
-    suspend fun requestMoreBattles() {
+     fun requestMoreBattles() {
         loadingMoreBattles.postValue(true)
         noMoreBattles.postValue(false)
 
@@ -44,17 +44,14 @@ class AllBattlesCacheManager @Inject constructor(
             val endIndex = startIndex + NETWORK_PAGE_SIZE - 1
 
             val moreBattlesIDList = allBattlesDynamoRepository.loadListFromDynamo(startIndex, endIndex)
-            Log.i("TESTING", "More Battles List: $moreBattlesIDList, startIndex: $startIndex, endIndex: $endIndex")
-            val moreBattlesResponse = battlesApi.getFriendsBattles(moreBattlesIDList)
-            if (moreBattlesResponse.error == null) {
-                if (moreBattlesResponse.result.sqlResult.size != NETWORK_PAGE_SIZE) {
-                    noMoreBattles.postValue(true)
-                }
-                Log.i("TESTING", "Inserting into dao")
-                battleDao.insertAll(moreBattlesResponse.result.sqlResult)
-            } else{
-                //ERROR
+
+            val moreBattlesResponse = battlesApi.getFriendsBattlesSync(moreBattlesIDList)
+
+            if (moreBattlesResponse.sqlResult.size != NETWORK_PAGE_SIZE) {
+                noMoreBattles.postValue(true)
             }
+            battleDao.insertAll(moreBattlesResponse.sqlResult)
+
 
         } else {
             noMoreBattles.postValue(true)
@@ -63,7 +60,7 @@ class AllBattlesCacheManager @Inject constructor(
     }
 
 
-   suspend fun checkForUpdates() {
+    fun checkForUpdates() {
         val battleCountDynamo = allBattlesDynamoRepository.getBattlesCountDynamo()
         val lastAllBattlesDynamoCount = allBattlesDynamoInfoDao.getDynamoCount()
 
@@ -96,18 +93,15 @@ class AllBattlesCacheManager @Inject constructor(
             }
 
             val newBattlesList = allBattlesDynamoRepository.loadListFromDynamo(startIndex, endIndex)
-            val moreBattlesResponse = battlesApi.getFriendsBattles(newBattlesList)
-            if (moreBattlesResponse.error == null) {
-                if (moreBattlesResponse.result.sqlResult.size != newBattlesList.size) {
-                    noMoreBattles.postValue(true)
-                }
+            val moreBattlesResponse = battlesApi.getFriendsBattlesSync(newBattlesList)
 
-                battleDao.insertAll(moreBattlesResponse.result.sqlResult)
-                allBattlesDynamoInfoDao.updateAllBattlesDynamoCount(battleCountDynamo)
-
-            } else{
-                //ERROR
+            if (moreBattlesResponse.sqlResult.size != newBattlesList.size) {
+                noMoreBattles.postValue(true)
             }
+
+            battleDao.insertAll(moreBattlesResponse.sqlResult)
+            allBattlesDynamoInfoDao.updateAllBattlesDynamoCount(battleCountDynamo)
+
 
             // Update old topBattles
             updateBattles(oldBattlesList)
@@ -117,22 +111,17 @@ class AllBattlesCacheManager @Inject constructor(
     }
 
 
-     private suspend fun updateBattles(battlesIDsToUpdate : List<Int>) {
-        if (battlesIDsToUpdate.size > 0) {
+     private  fun updateBattles(battlesIDsToUpdate : List<Int>) {
+        if (battlesIDsToUpdate.isNotEmpty()) {
             val lastTimeAllBattlesUpdate = allBattlesDynamoInfoDao.getLastTimeBattlesUpdated()
 
             val resultList = lastTimeAllBattlesUpdate?.let {
-                battlesApi.getFriendsBattles(battlesIDsToUpdate, lastTimeAllBattlesUpdate)
-            } ?:   battlesApi.getFriendsBattles(battlesIDsToUpdate)
+                battlesApi.getFriendsBattlesSync(battlesIDsToUpdate, lastTimeAllBattlesUpdate)
+            } ?:   battlesApi.getFriendsBattlesSync(battlesIDsToUpdate)
 
-            if (resultList.error == null) {
-                battleDao.insertAll(resultList.result.sqlResult)
-                //update last update time
-                allBattlesDynamoInfoDao.updateLastTimeBattlesUpdated(Calendar.getInstance().time)
-
-            } else{
-                //ERROR
-            }
+            battleDao.insertAll(resultList.sqlResult)
+            //update last update time
+            allBattlesDynamoInfoDao.updateLastTimeBattlesUpdated(Calendar.getInstance().time)
         }
     }
 

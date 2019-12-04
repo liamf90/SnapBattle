@@ -12,9 +12,13 @@ import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserializat
 import com.liamfarrell.android.snapbattle.testing.OpenForTesting
 import com.liamfarrell.android.snapbattle.util.executeAWSFunction
 import com.liamfarrell.android.snapbattle.util.isSignedUrlInPicassoCache
+import com.liamfarrell.android.snapbattle.util.isSignedUrlInPicassoCacheRx
 import com.squareup.picasso.Callback
 import com.squareup.picasso.NetworkPolicy
 import com.squareup.picasso.Picasso
+import io.reactivex.Maybe
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers.io
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
 import timber.log.Timber
@@ -50,6 +54,31 @@ class OtherUsersProfilePicUrlRepository @Inject constructor(private val otherUse
         }
     }
 
+    fun getOrUpdateProfilePicSignedUrlRx(cognitoID: String, profilePicCount: Int, signedUrlNew: String) : String {
+        val profilePicCountSignedUrlDb = getUserSignedUrlAndProfilePicCountRx(cognitoID)
+        val otherUsersProfilePicUrlCache  = profilePicCountSignedUrlDb.blockingGet()
+        if (otherUsersProfilePicUrlCache != null) {
+            val profilePicCountDb = otherUsersProfilePicUrlCache.profile_pic_count
+            val signedUrlDb = otherUsersProfilePicUrlCache.last_saved_signed_url
+            return if (profilePicCount == profilePicCountDb) {
+                if (isSignedUrlInPicassoCacheRx(signedUrlDb).subscribeOn(AndroidSchedulers.mainThread()).blockingGet()) {
+                    signedUrlDb
+                } else {
+                    insertOrUpdateUserProfilePicSignedUrlRx(cognitoID, profilePicCount, signedUrlNew)
+                    signedUrlNew
+                }
+            } else {
+                insertOrUpdateUserProfilePicSignedUrlRx(cognitoID, profilePicCount, signedUrlNew)
+                signedUrlNew
+            }
+        } else {
+            insertOrUpdateUserProfilePicSignedUrlRx(cognitoID, profilePicCount, signedUrlNew)
+            return signedUrlNew
+        }
+    }
+
+
+
     suspend fun deleteOtherUsersProfilePicCache(){
         withContext(IO){
             otherUsersProfilePicUrlDao.deleteAllProfilePicSignedUrls()
@@ -73,11 +102,20 @@ class OtherUsersProfilePicUrlRepository @Inject constructor(private val otherUse
          }
     }
 
+    fun getUserSignedUrlAndProfilePicCountRx(cognitoID: String) : Maybe<OtherUsersProfilePicUrlCache> {
+            return otherUsersProfilePicUrlDao.getSignedUrlAndProfilePicForUserRx(cognitoID)
+    }
+
 
     private suspend fun insertOrUpdateUserProfilePicSignedUrl(cognitoIdUser: String, profilePicCount: Int, signedUrl: String){
         withContext(IO){
             otherUsersProfilePicUrlDao.insertSignedUrl(OtherUsersProfilePicUrlCache(cognitoIdUser, profilePicCount, signedUrl))
         }
+    }
+
+    fun insertOrUpdateUserProfilePicSignedUrlRx(cognitoIdUser: String, profilePicCount: Int, signedUrl: String){
+        otherUsersProfilePicUrlDao.insertSignedUrlRx(OtherUsersProfilePicUrlCache(cognitoIdUser, profilePicCount, signedUrl))
+
     }
 
 

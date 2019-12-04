@@ -46,7 +46,7 @@ class VerifyBattleFragment : Fragment(), Injectable {
         binding.lifecycleOwner = viewLifecycleOwner
 
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(VerifyBattleViewModel::class.java)
-        viewModel.battle.value = battle
+        viewModel.setBattle(battle)
         binding.viewModel = viewModel
         subscribeUi()
         return binding.root

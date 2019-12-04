@@ -43,7 +43,7 @@ class AllBattlesFeedDynamodbRepository @Inject constructor(val ddbClient : Amazo
 
 
     @Throws(AmazonClientException::class)
-    suspend fun getBattlesCountDynamo(): Int {
+     fun getBattlesCountDynamo(): Int {
         val key = HashMap<String, AttributeValue>()
         key["table"] = AttributeValue().apply {s = "main"}
 

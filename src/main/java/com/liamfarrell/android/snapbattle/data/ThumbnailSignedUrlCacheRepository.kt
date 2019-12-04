@@ -10,9 +10,13 @@ import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserializat
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.UrlLambdaRequest
 import com.liamfarrell.android.snapbattle.util.executeAWSFunction
 import com.liamfarrell.android.snapbattle.util.isSignedUrlInPicassoCache
+import com.liamfarrell.android.snapbattle.util.isSignedUrlInPicassoCacheRx
 import com.squareup.picasso.Callback
 import com.squareup.picasso.NetworkPolicy
 import com.squareup.picasso.Picasso
+import io.reactivex.Single
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers.io
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
 import java.lang.Exception
@@ -49,16 +53,52 @@ class ThumbnailSignedUrlCacheRepository @Inject constructor(private val thumbnai
         }
     }
 
+     fun getThumbnailSignedUrlRx(battle: Battle) : String? {
+
+        val signedUrlDb = getLastSavedThumbnailSignedUrlRx(battle.battleID)
+        if (signedUrlDb != null){
+            //thumbnail in db cache
+            //check if in picasso cache
+            return if (isSignedUrlInPicassoCacheRx(signedUrlDb).subscribeOn(AndroidSchedulers.mainThread()).blockingGet()){
+                signedUrlDb
+            } else {
+                //get from server and update cache
+                val signedUrlResponse = getSignedUrlFromServerRx(battle).subscribeOn(io()).onErrorReturn { null }.blockingGet()
+                return if (signedUrlResponse != null) {
+                    insertOrUpdateThumbnailSignedUrlRx(signedUrlResponse, battle.battleID)
+                    signedUrlResponse
+                } else null
+            }
+        } else {
+            //get from server and update cache
+            val signedUrlResponse = getSignedUrlFromServerRx(battle).subscribeOn(io()).onErrorReturn { null }.blockingGet()
+            return if (signedUrlResponse != null) {
+                insertOrUpdateThumbnailSignedUrlRx(signedUrlResponse, battle.battleID)
+                signedUrlResponse
+            } else null
+        }
+    }
+
     private suspend fun getSignedUrlFromServer(battle: Battle) : AsyncTaskResult<String>{
         val request = UrlLambdaRequest()
         request.url = battle.thumbnailServerUrl
         return executeAWSFunction { lambdaFunctionsInterface.getSignedUrl(request) }
     }
 
+    private fun getSignedUrlFromServerRx(battle: Battle) : Single<String> {
+        val request = UrlLambdaRequest()
+        request.url = battle.thumbnailServerUrl
+        return Single.fromCallable { lambdaFunctionsInterface.getSignedUrl(request) }
+    }
+
     suspend fun deleteOtherUsersProfilePicCache(){
         withContext(IO){
             thumbnailSignedUrlDao.deleteAllProfilePicSignedUrls()
         }
+    }
+
+    private  fun getLastSavedThumbnailSignedUrlRx(battleId: Int) : String?{
+            return thumbnailSignedUrlDao.getLastSavedThumbnailSignedUrlRx(battleId)
     }
 
     private suspend fun getLastSavedThumbnailSignedUrl(battleId: Int) : String?{
@@ -71,6 +111,11 @@ class ThumbnailSignedUrlCacheRepository @Inject constructor(private val thumbnai
         withContext(IO){
             thumbnailSignedUrlDao.insertSignedUrl(ThumbnailSignedUrlCache(battleId, thumbnailSignedUrl))
         }
+    }
+
+    private fun insertOrUpdateThumbnailSignedUrlRx(thumbnailSignedUrl: String, battleId: Int){
+            thumbnailSignedUrlDao.insertSignedUrlRx(ThumbnailSignedUrlCache(battleId, thumbnailSignedUrl))
+
     }
 
 

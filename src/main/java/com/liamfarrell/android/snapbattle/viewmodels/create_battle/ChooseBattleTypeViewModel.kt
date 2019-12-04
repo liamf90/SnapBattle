@@ -17,6 +17,8 @@ import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserializat
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.SuggestionsResponse
 import com.liamfarrell.android.snapbattle.util.getErrorMessage
 import com.liamfarrell.android.snapbattle.viewmodels.ViewModelLaunch
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers.io
 import javax.inject.Inject
 
 /**
@@ -33,48 +35,84 @@ class ChooseBattleTypeViewModel @Inject constructor(private val context: Applica
     val topBattlesLoading : LiveData<Boolean> = _topBattlesLoading
 
 
-    private val recentBattlesResponse = MutableLiveData<AsyncTaskResult<RecentBattleResponse>>()
+    private val recentBattlesResponse = MutableLiveData<RecentBattleResponse>()
     val recentBattles : LiveData<List<RecentBattleNamePOJO>> =  Transformations.map(recentBattlesResponse) { asyncResult ->
-        asyncResult.result.sqlResult }
+        asyncResult.sqlResult }
 
     private val _recentBattlesLoading = MutableLiveData<Boolean>()
     val recentBattlesLoading : LiveData<Boolean> = _recentBattlesLoading
 
 
-    private val battleNameSearchResponse = MutableLiveData<AsyncTaskResult<BattleTypeSuggestionsSearchResponse>>()
+    private val battleNameSearchResponse = MutableLiveData<BattleTypeSuggestionsSearchResponse>()
     val battleNameSearchList : LiveData<List<SuggestionsResponse>> =  Transformations.map(battleNameSearchResponse) { asyncResult ->
-        asyncResult.result.sqlResult}
+        asyncResult.sqlResult}
 
-    val errorMessage = MediatorLiveData<String>()
-
-
-
+    private val error = MutableLiveData<Throwable>()
+    val errorMessage : LiveData<String> = Transformations.map(error){
+        getErrorMessage(context, it)
+    }
 
 
     init {
-        errorMessage.addSource(recentBattlesResponse){
-            if (it.error != null){
-                getErrorMessage(context, it.error)
-            }
-        }
-
-        awsLambdaFunctionCall(false,
-                suspend {
-                    _topBattlesLoading.value = true
-                    recentBattlesResponse.value = chooseBattleTypeRepository.getRecentBattleList()
-                    _topBattlesLoading.value = false
-                })
-        awsLambdaFunctionCall(false,
-                suspend {
-                    _recentBattlesLoading.value = true
-                    topBattlesResponse.value = topBattlesRepository.getTopBattlesListFromDynamo()
-                    _recentBattlesLoading.value = false
-                })
+        getRecentBattleList()
+        getTopBattles()
     }
 
+
+
+    private fun getRecentBattleList(){
+        compositeDisposable.add(
+                chooseBattleTypeRepository.getRecentBattleListRx()
+                        .subscribeOn(io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .doOnSubscribe { _recentBattlesLoading.value = true }
+                        .subscribe(
+                                { onSuccessResponse ->
+                                    _recentBattlesLoading.value = false
+                                    recentBattlesResponse.value = onSuccessResponse
+                                },
+                                { onError : Throwable ->
+                                    _recentBattlesLoading.value = false
+                                    error.value = onError
+                                }
+                        ))
+    }
+
+    private fun getTopBattles(){
+        compositeDisposable.add(
+                topBattlesRepository.getTopBattlesListFromDynamoRx()
+                        .subscribeOn(io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .doOnSubscribe { _topBattlesLoading.value = true }
+                        .subscribe(
+                                { onSuccessResponse ->
+                                    _topBattlesLoading.value = false
+                                    topBattlesResponse.value = onSuccessResponse
+                                },
+                                { onError : Throwable ->
+                                    _topBattlesLoading.value = false
+                                    error.value = onError
+                                }
+                        ))
+    }
+
+
+
+
+
     fun doBattleNameSuggestionSearch(battleName : String){
-        awsLambdaFunctionCall(false,
-                suspend { battleNameSearchResponse.value = chooseBattleTypeRepository.battleTypeSearch(battleName)})
+        compositeDisposable.add(
+                chooseBattleTypeRepository.battleTypeSearchRx(battleName)
+                        .subscribeOn(io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(
+                                { onSuccessResponse ->
+                                    battleNameSearchResponse.value = onSuccessResponse
+                                },
+                                { onError : Throwable ->
+                                    error.value = onError
+                                }
+                        ))
     }
 
     fun onBattleNameSuggestionClick(view: TextView) {

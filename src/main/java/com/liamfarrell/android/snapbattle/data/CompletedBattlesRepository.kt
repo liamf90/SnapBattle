@@ -6,8 +6,10 @@ import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserializat
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.CompletedBattlesRequest
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.GetUsersBattlesRequest
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.CompletedBattlesResponse
+import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.GetChallengesResponse
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.GetUsersBattlesResponse
 import com.liamfarrell.android.snapbattle.util.executeAWSFunction
+import io.reactivex.Single
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -20,6 +22,11 @@ class CompletedBattlesRepository @Inject constructor
     suspend fun getCompletedBattles() : AsyncTaskResult<CompletedBattlesResponse>{
         val battlesRequest = CompletedBattlesRequest()
         return executeAWSFunction {lambdaFunctionsInterface.getCompletedBattles(battlesRequest)}
+    }
+
+    fun getCompletedBattlesRxJava() : Single<CompletedBattlesResponse> {
+        val battlesRequest = CompletedBattlesRequest()
+        return  Single.fromCallable{lambdaFunctionsInterface.getCompletedBattles(battlesRequest)}
     }
 
 }

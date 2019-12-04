@@ -6,9 +6,12 @@ import com.liamfarrell.android.snapbattle.data.FollowingRepository
 import com.liamfarrell.android.snapbattle.data.FollowingUserCacheManager
 import com.liamfarrell.android.snapbattle.data.OtherUsersProfilePicUrlRepository
 import com.liamfarrell.android.snapbattle.model.AsyncTaskResult
+import com.liamfarrell.android.snapbattle.model.Comment
 import com.liamfarrell.android.snapbattle.model.User
 import com.liamfarrell.android.snapbattle.util.getErrorMessage
 import com.liamfarrell.android.snapbattle.util.notifyObserver
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 /**
@@ -19,119 +22,130 @@ class FollowingViewModel @Inject constructor(private val context: Application, p
 
     private val profilePicMap = mutableMapOf<String, String>()
 
-    private val followingUsersResponse = MutableLiveData<AsyncTaskResult<MutableList<User>>>()
+    private val _following = MutableLiveData<MutableList<User>>()
+    val following : LiveData<MutableList<User>> = _following
 
-    val following = MediatorLiveData<MutableList<User>>()
+    private val error = MutableLiveData<Throwable>()
+    val errorMessage : LiveData<String> = Transformations.map(error){
+        getErrorMessage(context, it)
+    }
 
-    val errorMessage : LiveData<String?> = Transformations.map(followingUsersResponse) { asyncResult ->
-        if (asyncResult.error != null) {
-            getErrorMessage(context, asyncResult.error)
-        } else {
-            null
-        } }
 
 
     init {
-        following.addSource(followingUsersResponse){
-            if (it.error == null) {
-               following.value = it.result
-            }
-        }
+        getFollowing()
+    }
 
-        awsLambdaFunctionCall(true,
-                suspend {
-                    val response = followingRepository.getFollowing()
-                    if (response.error == null) {
-                        //set all users as following
-                        response.result.forEach { it.isFollowing = true }
-                        //get profile pic signed urls from either db cache (if they exist + are current pics) or use the new signed urls
-                        response.result = getProfilePicSignedUrls(response.result).toMutableList()
-                        followingUsersResponse.value = response
-                    }
-                    followingUsersResponse.value = response})
+    private fun getFollowing(){
+        compositeDisposable.add(  followingRepository.getFollowingRx()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe{_spinner.value = true}
+                .map { getProfilePicSignedUrls(it.sqlResult).toMutableList() }
+                .subscribe(
+                        { onSuccessResponse ->
+                            _spinner.value = false
+                            //set all users as following
+                            onSuccessResponse.forEach { it.isFollowing = true }
+                            //get profile pic signed urls from either db cache (if they exist + are current pics) or use the new signed urls
+                            _following.value = onSuccessResponse
+                        },
+                        {onError : Throwable ->
+                            _spinner.value = false
+                            error.value = onError
+                        }
+                ))
     }
 
     fun removeFollowing(cognitoIDUnfollow: String) {
-        awsLambdaFunctionCall(false) {
-            following.value?.find{it.cognitoId == cognitoIDUnfollow}?.apply {
-                isFollowing = false
-                isFollowingChangeInProgress = true
-            }
-            following.notifyObserver()
+        compositeDisposable.add(  followingRepository.removeFollowingRx(cognitoIDUnfollow)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe{
+                    _following.value?.find{it.cognitoId == cognitoIDUnfollow}?.apply {
+                        isFollowing = false
+                        isFollowingChangeInProgress = true
+                    }
+                    _following.notifyObserver() }
+                .subscribe(
+                        { onSuccessResponse ->
+                            _following.value?.find{it.cognitoId == cognitoIDUnfollow}?.isFollowingChangeInProgress = false
+                            _following.notifyObserver()
 
-            val response = followingRepository.removeFollowing(cognitoIDUnfollow)
-            if (response.error != null){
-                followingUsersResponse.value = AsyncTaskResult(response.error)
-                following.value?.find{it.cognitoId == cognitoIDUnfollow}?.run {
-                    isFollowing = true
-                    isFollowingChangeInProgress = false
-                }
-                following.notifyObserver()
-            } else {
-                following.value?.find{it.cognitoId == cognitoIDUnfollow}?.isFollowingChangeInProgress = false
-                following.notifyObserver()
-
-                followingUserCacheManager.checkForUpdates()
-            }
-        }
+                            //TODO followingUserCacheManager.checkForUpdates()
+                        },
+                        {onError : Throwable ->
+                            error.value = onError
+                            _following.value?.find{it.cognitoId == cognitoIDUnfollow}?.run {
+                                isFollowing = true
+                                isFollowingChangeInProgress = false
+                            }
+                            _following.notifyObserver()
+                        }
+                ))
     }
 
     fun followUser(cognitoID: String) {
-            awsLambdaFunctionCall(false) {
-                following.value?.find{it.cognitoId == cognitoID}?.apply {
-                    isFollowing = true
-                    isFollowingChangeInProgress = true
-                }
-                following.notifyObserver()
 
-
-                val response = followingRepository.addFollowingCognitoId(cognitoID)
-                if (response.error != null){
-                    followingUsersResponse.value = AsyncTaskResult(response.error)
-                    following.value?.find{it.cognitoId == cognitoID}?.run {
-                        isFollowing = false
-                        isFollowingChangeInProgress = false
+        compositeDisposable.add(  followingRepository.addFollowingCognitoIdRx(cognitoID)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe{
+                    _following.value?.find{it.cognitoId == cognitoID}?.apply {
+                        isFollowing = true
+                        isFollowingChangeInProgress = true
                     }
-                    following.notifyObserver()
-                } else {
-                    following.value?.find{it.cognitoId == cognitoID}?.isFollowingChangeInProgress = false
-                    following.notifyObserver()
+                    _following.notifyObserver() }
+                .subscribe(
+                        { onSuccessResponse ->
+                            _following.value?.find{it.cognitoId == cognitoID}?.isFollowingChangeInProgress = false
+                            _following.notifyObserver()
 
-                    followingUserCacheManager.checkForUpdates()
-                }
-            }
+                            //TODO followingUserCacheManager.checkForUpdates()
+                        },
+                        {onError : Throwable ->
+                            error.value = onError
+                            _following.value?.find{it.cognitoId == cognitoID}?.run {
+                                isFollowing = false
+                                isFollowingChangeInProgress = false
+                            }
+                            _following.notifyObserver()
+                        }
+                ))
         }
 
 
     fun addFollowing(username: String) {
-        awsLambdaFunctionCall(true) {
-                    val asyncResult = followingRepository.addFollowing(username)
-                    if (asyncResult.error != null){
-                        followingUsersResponse.value = AsyncTaskResult(asyncResult.error)
-                    } else {
-                        //Get the profle pic signed urls to use
-                        asyncResult.result?.sqlResult?.let { asyncResult.result.sqlResult = getProfilePicSignedUrls(it.toList())}
+        compositeDisposable.add(  followingRepository.addFollowingRx(username)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        { onSuccessResponse ->
+                            //Get the profle pic signed urls to use
+                            onSuccessResponse.sqlResult?.let { onSuccessResponse.sqlResult = getProfilePicSignedUrls(it.toList())}
 
-                        //Add the added user to the list
-                        asyncResult.result?.sqlResult?.forEach {
-                            following.value?.add(it)
+                            //Add the added user to the list
+                            onSuccessResponse.sqlResult?.forEach {
+                                _following.value?.add(it)
+                            }
+                            _following.notifyObserver()
+
+                            //TODO followingUserCacheManager.checkForUpdates()
+                        },
+                        { onError : Throwable ->
+                            error.value = onError
                         }
-
-                        following.notifyObserver()
-
-                        followingUserCacheManager.checkForUpdates()
-                    }
-                }
+                ))
     }
 
 
-     private suspend fun getProfilePicSignedUrls(userList: List<User>) : List<User>{
+     private fun getProfilePicSignedUrls(userList: List<User>) : List<User>{
         userList.forEach {
             if (it.profilePicCount != 0) {
                 if (profilePicMap.containsKey(it.cognitoId)){
                     it.profilePicSignedUrl = profilePicMap[it.cognitoId]
                 } else {
-                    it.profilePicSignedUrl = otherUsersProfilePicUrlRepository.getOrUpdateProfilePicSignedUrl(it.cognitoId,  it.profilePicCount , it.profilePicSignedUrl )
+                    it.profilePicSignedUrl = otherUsersProfilePicUrlRepository.getOrUpdateProfilePicSignedUrlRx(it.cognitoId,  it.profilePicCount , it.profilePicSignedUrl )
                 }
             }
         }

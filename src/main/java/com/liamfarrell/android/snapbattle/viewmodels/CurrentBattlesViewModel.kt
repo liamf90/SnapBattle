@@ -12,6 +12,8 @@ import com.liamfarrell.android.snapbattle.model.Battle
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.CurrentBattleResponse
 import com.liamfarrell.android.snapbattle.testing.OpenForTesting
 import com.liamfarrell.android.snapbattle.util.getErrorMessage
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -23,41 +25,47 @@ import javax.inject.Inject
 class CurrentBattlesViewModel @Inject constructor(private val context: Application, private val identityManager: IdentityManager, private val currentBattlesRepository: CurrentBattlesRepository, private val otherUsersProfilePicUrlRepository: OtherUsersProfilePicUrlRepository) : ViewModelLaunch() {
 
 
-    private val battlesResult = MutableLiveData<AsyncTaskResult<CurrentBattleResponse>>()
+    private val _battles = MutableLiveData<MutableList<Battle>>()
+    val battles : LiveData<MutableList<Battle>> = _battles
 
-    val errorMessage = MediatorLiveData<String>()
-    val battles = MediatorLiveData<List<Battle>>()
+    private val error = MutableLiveData<Throwable>()
+    val errorMessage : LiveData<String> = Transformations.map(error){
+        getErrorMessage(context, it)
+    }
 
 
     init {
-        errorMessage.addSource(battlesResult) { result ->
-             if (result.error != null){
-                 errorMessage.value = getErrorMessage(context.applicationContext, result.error)}
-        }
+        getCurrentBattles()
+    }
 
-        battles.addSource(battlesResult) { result ->
-                if (result.error == null){
-                   battles.value = result.result.sqlResult }
-        }
+    private fun getCurrentBattles(){
+        compositeDisposable.add(currentBattlesRepository.getCurrentBattlesRxJava()
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .doOnSubscribe{_spinner.value = true}
+                .map { getProfilePicSignedUrls(it.sqlResult).toMutableList() }
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        { onSuccessResponse ->
+                            _spinner.value = false
+                            _battles.value = onSuccessResponse
+                        },
+                        {onError : Throwable ->
+                            onError.printStackTrace()
+                            _spinner.value = false
+                            error.value = onError
+                        }
+                ))
 
-        awsLambdaFunctionCall(true,
-                suspend {
-                    val response = currentBattlesRepository.getCurrentBattles()
-                    if (response.error == null) {
-                        //get profile pic signed urls from either db cache (if they exist + are current pics) or use the new signed urls
-                        response.result.sqlResult = getProfilePicSignedUrls(response.result.sqlResult)
-                    }
-                    battlesResult.value = response
-                })
-       }
+    }
 
 
-     private suspend fun getProfilePicSignedUrls(battleList: List<Battle>) : List<Battle>{
+     private fun getProfilePicSignedUrls(battleList: List<Battle>) : List<Battle>{
         val currentCognitoId = identityManager.cachedUserID
         val cognitoIdList = battleList.distinctBy { it.getOpponentCognitoID(currentCognitoId)}
         val signedUrlMap = mutableMapOf<String, String>()
         cognitoIdList.forEach {
-            val signedUrlToUse = otherUsersProfilePicUrlRepository.getOrUpdateProfilePicSignedUrl(it.getOpponentCognitoID(currentCognitoId),  it.getOpponentProfilePicCount(currentCognitoId), it.profilePicSmallSignedUrl)
+            val signedUrlToUse = otherUsersProfilePicUrlRepository.getOrUpdateProfilePicSignedUrlRx(it.getOpponentCognitoID(currentCognitoId),  it.getOpponentProfilePicCount(currentCognitoId), it.profilePicSmallSignedUrl)
             signedUrlMap[it.getOpponentCognitoID(currentCognitoId)] = signedUrlToUse
         }
         battleList.forEach {

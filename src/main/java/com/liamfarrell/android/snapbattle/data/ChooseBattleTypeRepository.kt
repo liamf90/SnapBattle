@@ -7,6 +7,7 @@ import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserializat
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.GetProfileResponse
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.RecentBattleResponse
 import com.liamfarrell.android.snapbattle.util.executeAWSFunction
+import io.reactivex.Single
 import javax.inject.Inject
 
 class ChooseBattleTypeRepository @Inject constructor
@@ -18,7 +19,17 @@ class ChooseBattleTypeRepository @Inject constructor
         return executeAWSFunction { lambdaFunctionsInterface.BattleTypeSuggestionsSearch(request) }
     }
 
+    fun battleTypeSearchRx(searchName: String): Single<BattleTypeSuggestionsSearchResponse> {
+        val request = BattleTypeSuggestionsSearchRequest()
+        request.searchName = searchName
+        return Single.fromCallable{ lambdaFunctionsInterface.BattleTypeSuggestionsSearch(request) }
+    }
+
     suspend fun getRecentBattleList(): AsyncTaskResult<RecentBattleResponse> {
         return executeAWSFunction { lambdaFunctionsInterface.GetRecentBattleNames() }
+    }
+
+    fun getRecentBattleListRx(): Single<RecentBattleResponse> {
+        return Single.fromCallable { lambdaFunctionsInterface.GetRecentBattleNames() }
     }
 }

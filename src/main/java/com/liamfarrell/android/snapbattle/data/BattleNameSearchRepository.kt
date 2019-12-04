@@ -6,6 +6,7 @@ import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserializat
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.BattleTypeSuggestionsSearchResponse
 import com.liamfarrell.android.snapbattle.testing.OpenForTesting
 import com.liamfarrell.android.snapbattle.util.executeAWSFunction
+import io.reactivex.Single
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -19,5 +20,11 @@ class BattleNameSearchRepository @Inject constructor
         val request = BattleTypeSuggestionsSearchRequest()
         request.searchName = searchQuery
         return executeAWSFunction {lambdaFunctionsInterface.BattleTypeSuggestionsSearch(request)}
+    }
+
+    fun searchBattleNameRx(searchQuery : String) : Single<BattleTypeSuggestionsSearchResponse> {
+        val request = BattleTypeSuggestionsSearchRequest()
+        request.searchName = searchQuery
+        return Single.fromCallable {lambdaFunctionsInterface.BattleTypeSuggestionsSearch(request)}
     }
 }

@@ -10,6 +10,9 @@ import com.squareup.picasso.Callback
 import com.squareup.picasso.NetworkPolicy
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.Target
+import io.reactivex.Completable
+import io.reactivex.Observable
+import io.reactivex.Single
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import timber.log.Timber
@@ -135,6 +138,27 @@ fun getTimeUntil(context: Context, dateAfterNow: Date): String {
              })
          }
      }
+}
+
+
+fun isSignedUrlInPicassoCacheRx(signedUrl: String) : Single<Boolean> {
+    return Single.create {
+        Timber.i("url: %s", signedUrl)
+        Picasso.get().load(signedUrl).networkPolicy(NetworkPolicy.OFFLINE).into(object : Target {
+            override fun onPrepareLoad(placeHolderDrawable: Drawable?) {}
+            override fun onBitmapFailed(e: Exception?, errorDrawable: Drawable?) {
+                Timber.i("bitmap not in picasso cache. url= %s", signedUrl)
+                it.onSuccess(false)
+            }
+
+            override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
+                Timber.i("bitmap in picasso cache. url = %s", signedUrl)
+                it.onSuccess(true)
+            }
+        })
+
+    }
+
 }
 
 

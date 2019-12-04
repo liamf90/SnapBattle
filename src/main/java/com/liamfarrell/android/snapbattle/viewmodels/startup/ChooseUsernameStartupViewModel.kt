@@ -9,12 +9,15 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import com.liamfarrell.android.snapbattle.R
 import com.liamfarrell.android.snapbattle.data.UserUpdateRepository
+import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.UpdateNameResponse
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.UpdateUsernameResponse
 import com.liamfarrell.android.snapbattle.mvvm_ui.startup.ChooseUsernameStartupFragment
 import com.liamfarrell.android.snapbattle.mvvm_ui.startup.LoggedInFragment
 import com.liamfarrell.android.snapbattle.util.CustomError
 import com.liamfarrell.android.snapbattle.util.getErrorMessage
 import com.liamfarrell.android.snapbattle.viewmodels.ViewModelLaunch
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import java.lang.Exception
 import javax.inject.Inject
 
@@ -23,31 +26,40 @@ import javax.inject.Inject
  */
 class ChooseUsernameStartupViewModel @Inject constructor(val context : Application, val userUpdateRepository: UserUpdateRepository) : ViewModelLaunch() {
 
-    val error = MutableLiveData<Exception>()
+    val error = MutableLiveData<Throwable>()
     val errorMessage : LiveData<String?> = Transformations.map(error) { error ->
         getErrorMessage(context, error)
     }
 
     @SuppressLint("ApplySharedPref")
     fun updateUsername(newUsername : String, nextActivityCallback : ()->Unit){
-        awsLambdaFunctionCall(true,
-                suspend { val response = userUpdateRepository.updateUsername(newUsername)
-                    //Name Updated
-
-                    if (response.error != null) {
-                        error.postValue(response.error)
-                    } else if (response.result.result == ChooseUsernameStartupFragment.usernameTooLongErrorCode){
-                        error.postValue(UsernameTooLongError)}
-                    else if (response.result.result == ChooseUsernameStartupFragment.usernamameNotValidErorrCode){
-                        error.postValue(UsernameNotValidError)}
-                    else if (response.result.result == ChooseUsernameStartupFragment.usernameUsernameAlreadyExistsErrorCode){
-                        error.postValue(UsernameAlreadyExistsError)}
-                    else if (response.result.result == UpdateUsernameResponse.getResultUsernameUpdated()){
-                        val sharedPref = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext())
-                        sharedPref.edit().putString(LoggedInFragment.USERNAME_SHAREDPREFS, newUsername).commit()
-                        nextActivityCallback()
-                    }
-                })
+        compositeDisposable.add(userUpdateRepository.updateUsernameRx(newUsername)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe{_spinner.value = true}
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        { onSuccessResponse ->
+                            //Name Updated
+                            _spinner.value = false
+                            if (onSuccessResponse.result == ChooseUsernameStartupFragment.usernameTooLongErrorCode){
+                                error.postValue(UsernameTooLongError)}
+                            else if (onSuccessResponse.result == ChooseUsernameStartupFragment.usernamameNotValidErorrCode){
+                                error.postValue(UsernameNotValidError)}
+                            else if (onSuccessResponse.result == ChooseUsernameStartupFragment.usernameUsernameAlreadyExistsErrorCode){
+                                error.postValue(UsernameAlreadyExistsError)}
+                            else if (onSuccessResponse.result == UpdateUsernameResponse.getResultUsernameUpdated()){
+                                val sharedPref = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext())
+                                sharedPref.edit().putString(LoggedInFragment.USERNAME_SHAREDPREFS, newUsername).commit()
+                                nextActivityCallback()
+                            }
+                        },
+                        {onError : Throwable ->
+                            onError.printStackTrace()
+                            _spinner.value = false
+                            error.value = onError
+                        }
+                ))
     }
 
     private object UsernameTooLongError : CustomError(){

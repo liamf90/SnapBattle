@@ -5,13 +5,14 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
-import com.liamfarrell.android.snapbattle.app.SnapBattleApp
 import com.liamfarrell.android.snapbattle.data.CompletedBattlesRepository
 import com.liamfarrell.android.snapbattle.data.ThumbnailSignedUrlCacheRepository
 import com.liamfarrell.android.snapbattle.model.AsyncTaskResult
 import com.liamfarrell.android.snapbattle.model.Battle
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.CompletedBattlesResponse
 import com.liamfarrell.android.snapbattle.util.getErrorMessage
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 
@@ -20,27 +21,35 @@ import javax.inject.Inject
  */
 class CompletedBattlesViewModel @Inject constructor(private val context: Application, private val completedBattlesRepository: CompletedBattlesRepository, val thumbnailSignedUrlCacheRepository: ThumbnailSignedUrlCacheRepository) : ViewModelLaunch() {
 
-    private val battlesResult = MutableLiveData<AsyncTaskResult<CompletedBattlesResponse>>()
+    private val _battles = MutableLiveData<List<Battle>>()
+    val battles : LiveData<List<Battle>> = _battles
 
-    val errorMessage = MediatorLiveData<String>()
-    val battles = MediatorLiveData<List<Battle>>()
+    private val error = MutableLiveData<Throwable>()
+    val errorMessage : LiveData<String> = Transformations.map(error){
+        getErrorMessage(context, it)
+    }
 
 
     init {
-        errorMessage.addSource(battlesResult) { result ->
-            result?.error?.let { errorMessage.value = getErrorMessage(context, result.error) }
-        }
+        getCompletedBattles()
+    }
 
-        battles.addSource(battlesResult) { result ->
-            result?.let { battles.value = result.result.sqlResult }
-        }
-
-        awsLambdaFunctionCall(true,
-                suspend {
-                    val response = completedBattlesRepository.getCompletedBattles()
-                    response.result.sqlResult = getThumbnailSignedUrls(response.result.sqlResult)
-                    battlesResult.value = response
-                })
+    private final fun getCompletedBattles(){
+        compositeDisposable.add( completedBattlesRepository.getCompletedBattlesRxJava()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe{_spinner.value = true}
+                .subscribe(
+                        { onSuccessResponse ->
+                            //TODO response.result.sqlResult = getThumbnailSignedUrls(response.result.sqlResult)
+                            _spinner.value = false
+                            _battles.value = onSuccessResponse.sqlResult
+                        },
+                        {onError : Throwable ->
+                            _spinner.value = false
+                            error.value = onError
+                        }
+                ))
     }
 
     private suspend fun getThumbnailSignedUrls(battleList: List<Battle>) : List<Battle>{

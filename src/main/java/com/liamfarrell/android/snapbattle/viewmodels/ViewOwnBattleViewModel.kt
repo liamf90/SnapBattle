@@ -7,6 +7,8 @@ import com.liamfarrell.android.snapbattle.data.UsersBattleRepository
 import com.liamfarrell.android.snapbattle.model.AsyncTaskResult
 import com.liamfarrell.android.snapbattle.model.Battle
 import com.liamfarrell.android.snapbattle.util.getErrorMessage
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 /**
@@ -14,20 +16,34 @@ import javax.inject.Inject
  */
 class ViewOwnBattleViewModel @Inject constructor(private val context: Application, private val usersBattleRepository: UsersBattleRepository) : ViewModelLaunch() {
 
-    private val battleResult = MutableLiveData<AsyncTaskResult<Battle>>()
+    private val _battle = MutableLiveData<Battle>()
+    val battle : LiveData<Battle> = _battle
 
-    val errorMessage : LiveData<String?> = Transformations.map(battleResult) { asyncResult ->
-        asyncResult.error?.let{getErrorMessage(context, asyncResult.error)}
-    }
-
-    val battle : LiveData<Battle> =  Transformations.map(battleResult) { asyncResult ->
-        asyncResult.result
+    private val error = MutableLiveData<Throwable>()
+    val errorMessage : LiveData<String> = Transformations.map(error){
+        getErrorMessage(context, it)
     }
 
 
     fun getBattle(battleID : Int){
-        awsLambdaFunctionCall(battle.value == null,
-                suspend {battleResult.value = usersBattleRepository.getBattle(battleID)})
+        compositeDisposable.add(usersBattleRepository.getBattleRx(battleID)
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .doOnSubscribe{
+                    if (_battle.value == null) {
+                        _spinner.value = true }
+                    }
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        { onSuccessResponse ->
+                            _spinner.value = false
+                            _battle.value = onSuccessResponse.sqlResult
+                        },
+                        {onError : Throwable ->
+                            _spinner.value = false
+                            error.value = onError
+                        }
+                ))
     }
 
 

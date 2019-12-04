@@ -14,6 +14,8 @@ import com.liamfarrell.android.snapbattle.mvvm_ui.startup.LoggedInFragment
 import com.liamfarrell.android.snapbattle.util.CustomError
 import com.liamfarrell.android.snapbattle.util.getErrorMessage
 import com.liamfarrell.android.snapbattle.viewmodels.ViewModelLaunch
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import java.lang.Exception
 import javax.inject.Inject
 
@@ -22,27 +24,37 @@ import javax.inject.Inject
  */
 class ChooseNameStartupViewModel @Inject constructor(private val context : Application, private val userUpdateRepository: UserUpdateRepository) : ViewModelLaunch() {
 
-    val error = MutableLiveData<Exception>()
+    val error = MutableLiveData<Throwable>()
     val errorMessage : LiveData<String?> = Transformations.map(error) { error ->
         getErrorMessage(context,  error)
     }
 
     @SuppressLint("ApplySharedPref")
     fun updateName(newName : String, nextFragmentCallback : ()-> Unit){
-        awsLambdaFunctionCall(true,
-                suspend { val response = userUpdateRepository.updateName(newName)
-                    //Name Updated
-                    if (response.error != null) {
-                        error.postValue(response.error)
-                    } else if (response.result.result == UpdateNameResponse.getNameTooLongErrorCode()){
-                        error.postValue(NameTooLongError)
-                    } else if (response.result.result == UpdateNameResponse.getResultNameUpdated()){
-                        val sharedPref = PreferenceManager.getDefaultSharedPreferences(context.applicationContext)
-                        sharedPref.edit().putString(LoggedInFragment.NAME_SHAREDPREFS, newName).commit()
-                        //Go to next fragment
-                        nextFragmentCallback()
-                    }
-                })
+        compositeDisposable.add( userUpdateRepository.updateNameRx(newName)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe{_spinner.value = true}
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        { onSuccessResponse ->
+                            //Name Updated
+                            _spinner.value = false
+                            if (onSuccessResponse.result == UpdateNameResponse.getNameTooLongErrorCode()){
+                                error.postValue(NameTooLongError)
+                            } else if (onSuccessResponse.result == UpdateNameResponse.getResultNameUpdated()){
+                                val sharedPref = PreferenceManager.getDefaultSharedPreferences(context.applicationContext)
+                                sharedPref.edit().putString(LoggedInFragment.NAME_SHAREDPREFS, newName).commit()
+                                //Go to next fragment
+                                nextFragmentCallback()
+                            }
+                        },
+                        {onError : Throwable ->
+                            onError.printStackTrace()
+                            _spinner.value = false
+                            error.value = onError
+                        }
+                ))
     }
 
     private object NameTooLongError : CustomError(){

@@ -8,6 +8,7 @@ import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserializat
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.CurrentBattleResponse
 import com.liamfarrell.android.snapbattle.testing.OpenForTesting
 import com.liamfarrell.android.snapbattle.util.executeAWSFunction
+import io.reactivex.Single
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -19,5 +20,10 @@ class CurrentBattlesRepository @Inject constructor
     suspend fun getCurrentBattles() : AsyncTaskResult<CurrentBattleResponse> {
         val battlesRequest = CurrentBattlesRequest()
         return executeAWSFunction {lambdaFunctionsInterface.getCurrentBattle(battlesRequest)}
+    }
+
+    fun getCurrentBattlesRxJava() : Single<CurrentBattleResponse> {
+        val battlesRequest = CurrentBattlesRequest()
+        return  Single.fromCallable{lambdaFunctionsInterface.getCurrentBattle(battlesRequest)}
     }
 }

@@ -8,6 +8,8 @@ import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserializat
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.DefaultResponse
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.ResponseFollowing
 import com.liamfarrell.android.snapbattle.util.executeAWSFunction
+import io.reactivex.Single
+import okhttp3.Response
 import java.util.ArrayList
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -22,8 +24,18 @@ class FollowingRepository @Inject constructor
         return executeAWSFunction {lambdaFunctionsInterface.GetFollowing(request).sqlResult}
     }
 
+    fun getFollowingRx(): Single<ResponseFollowing> {
+        val request = FollowingRequest()
+        request.isShouldGetProfilePic = true
+        return  Single.fromCallable{lambdaFunctionsInterface.GetFollowing(request)}
+    }
+
     suspend fun getFacebookFriends() : AsyncTaskResult<List<User>> {
         return getFriendsList()
+    }
+
+    fun getFacebookFriendsRx() : Single<List<User>> {
+        return getFriendsListRx()
     }
 
     suspend fun removeFollowing(cognitoIDUnfollow: String) : AsyncTaskResult<DefaultResponse> {
@@ -32,10 +44,23 @@ class FollowingRepository @Inject constructor
         return  executeAWSFunction {lambdaFunctionsInterface.RemoveFollower(request)}
     }
 
+
+    fun removeFollowingRx(cognitoIDUnfollow: String) : Single<DefaultResponse> {
+        val request = RemoveFollowerRequest()
+        request.cognitoIDUnfollow = cognitoIDUnfollow
+        return  Single.fromCallable{lambdaFunctionsInterface.RemoveFollower(request)}
+    }
+
     suspend fun addFollowing(username: String) : AsyncTaskResult<ResponseFollowing> {
         val request = AddFollowerRequestWithUsername()
         request.usernameFollow = username
         return executeAWSFunction{lambdaFunctionsInterface.AddFollower(request)}
+    }
+
+    fun addFollowingRx(username: String) : Single<ResponseFollowing> {
+        val request = AddFollowerRequestWithUsername()
+        request.usernameFollow = username
+        return  Single.fromCallable{lambdaFunctionsInterface.AddFollower(request)}
     }
 
     suspend fun addFollowingCognitoId(cognitoId: String) : AsyncTaskResult<ResponseFollowing> {
@@ -46,10 +71,24 @@ class FollowingRepository @Inject constructor
         return executeAWSFunction{lambdaFunctionsInterface.AddFollower(request)}
     }
 
+    fun addFollowingCognitoIdRx(cognitoId: String) : Single<ResponseFollowing> {
+        val request = AddFollowerRequestWithCognitoIDs()
+        val cognitoList = ArrayList<String>()
+        cognitoList.add(cognitoId)
+        request.cognitoIDFollowList = cognitoList
+        return  Single.fromCallable{lambdaFunctionsInterface.AddFollower(request)}
+    }
+
     suspend fun addFollowing(facebookIDList : List<String>) :  AsyncTaskResult<ResponseFollowing>{
         val addFollowerRequest = FollowUserWithFacebookIDsRequest()
         addFollowerRequest.facebookFriendIdList = ArrayList(facebookIDList)
         return executeAWSFunction{lambdaFunctionsInterface.AddFollower(addFollowerRequest)}
+    }
+
+    fun addFollowingRx(facebookIDList : List<String>) :  Single<ResponseFollowing>{
+        val addFollowerRequest = FollowUserWithFacebookIDsRequest()
+        addFollowerRequest.facebookFriendIdList = ArrayList(facebookIDList)
+        return Single.fromCallable{lambdaFunctionsInterface.AddFollower(addFollowerRequest)}
 
     }
 

@@ -6,6 +6,7 @@ import com.liamfarrell.android.snapbattle.db.FollowingUserDynamoCount
 import com.liamfarrell.android.snapbattle.db.FollowingUserDynamoDataDao
 import com.liamfarrell.android.snapbattle.model.AsyncTaskResult
 import com.liamfarrell.android.snapbattle.model.User
+import io.reactivex.Single
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -78,6 +79,10 @@ class FollowingUserCacheManager @Inject constructor(
 
     suspend fun searchUsersInCache(searchQuery : String) : List<User> {
         return userDao.searchUsersInCache(searchQuery)
+    }
+
+    fun searchUsersInCacheRx(searchQuery : String) : Single<List<User>> {
+        return userDao.searchUsersInCacheRx(searchQuery)
     }
 
 
