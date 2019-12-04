@@ -92,6 +92,7 @@ class UserSearchViewModel @Inject constructor(private val context: Application, 
         _searchList.value = null
         followingCacheSearchResult.value = null
         serverSearchCacheSearchResult.value = null
+        _searchState.value = State.CACHE_RESULT
 
         if (searchQuery.isEmpty()){ return}
 
@@ -150,7 +151,7 @@ class UserSearchViewModel @Inject constructor(private val context: Application, 
         submitPressed = true
         //if searchQuery.length < 3 do a server search on search submit else it will occur anyway on search text changed
         //else return
-        if (searchQuery.length >= 3){return}
+        if (searchQuery.length >= 3 || searchQuery.isEmpty()){return}
 
 
         compositeDisposable.add(searchRepository.searchUserRx(searchQuery)
