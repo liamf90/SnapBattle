@@ -2,6 +2,7 @@ package com.liamfarrell.android.snapbattle.data
 
 import androidx.lifecycle.MutableLiveData
 import com.liamfarrell.android.snapbattle.db.*
+import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -29,7 +30,7 @@ class FollowingBattlesFeedCacheManager @Inject constructor(
     }
 
 
-    suspend fun requestMoreBattles() {
+     fun requestMoreBattles() {
         loadingMoreBattles.postValue(true)
         noMoreBattles.postValue(false)
 
@@ -43,17 +44,15 @@ class FollowingBattlesFeedCacheManager @Inject constructor(
             val endIndex = startIndex + NETWORK_PAGE_SIZE - 1
 
             val moreBattlesIDList = followingBattlesFeedDynamoRepository.loadListFromDynamo(startIndex, endIndex)
-            val moreBattlesResponse = battlesApi.getFriendsBattles(moreBattlesIDList)
-            if (moreBattlesResponse.error == null) {
-                followingBattleDao.insertAll( moreBattlesResponse.result.sqlResult.map { FollowingBattle(it.battleId, battle = it)})
+            val moreBattlesResponse = battlesApi.getFriendsBattlesSync(moreBattlesIDList)
 
-                if (moreBattlesResponse.result.sqlResult.size != NETWORK_PAGE_SIZE) {
-                    noMoreBattles.postValue(true)
-                }
+            followingBattleDao.insertAll( moreBattlesResponse.sqlResult.map { FollowingBattle(it.battleId, battle = it)})
 
-            } else{
-                //ERROR
+            if (moreBattlesResponse.sqlResult.size != NETWORK_PAGE_SIZE) {
+                noMoreBattles.postValue(true)
             }
+
+
 
         } else {
             noMoreBattles.postValue(true)
@@ -62,7 +61,7 @@ class FollowingBattlesFeedCacheManager @Inject constructor(
     }
 
 
-   suspend fun checkForUpdates() {
+    fun checkForUpdates() {
         val battleCountDynamo = followingBattlesFeedDynamoRepository.getBattlesCountDynamo()
         val lastAllBattlesDynamoCount = followingBattlesFeedDynamoInfoDao.getDynamoCount()
          val fullFeedUpdateDynamoCount = followingBattlesFeedDynamoRepository.getFullFeedUpdateCount()
@@ -105,13 +104,11 @@ class FollowingBattlesFeedCacheManager @Inject constructor(
                 }
 
                 val newBattlesList = followingBattlesFeedDynamoRepository.loadListFromDynamo(startIndex, endIndex)
-                val moreBattlesResponse = battlesApi.getFriendsBattles(newBattlesList)
-                if (moreBattlesResponse.error == null) {
-                    followingBattleDao.insertAll(moreBattlesResponse.result.sqlResult.map { FollowingBattle(it.battleId, it) })
-                    followingBattlesFeedDynamoInfoDao.updateFollowingBattlesDynamoCount(battleCountDynamo)
-                } else {
-                    //ERROR
-                }
+                val moreBattlesResponse = battlesApi.getFriendsBattlesSync(newBattlesList)
+
+                followingBattleDao.insertAll(moreBattlesResponse.sqlResult.map { FollowingBattle(it.battleId, it) })
+                followingBattlesFeedDynamoInfoDao.updateFollowingBattlesDynamoCount(battleCountDynamo)
+
 
                 // Update old topBattles
                 updateBattles(oldBattlesList)
@@ -122,22 +119,20 @@ class FollowingBattlesFeedCacheManager @Inject constructor(
     }
 
 
-     private suspend fun updateBattles(battlesIDsToUpdate : List<Int>) {
+     private  fun updateBattles(battlesIDsToUpdate : List<Int>) {
         if (battlesIDsToUpdate.isNotEmpty()) {
             val lastTimeAllBattlesUpdate = followingBattlesFeedDynamoInfoDao.getLastTimeBattlesUpdated()
 
             val resultList = lastTimeAllBattlesUpdate?.let {
-                battlesApi.getFriendsBattles(battlesIDsToUpdate, lastTimeAllBattlesUpdate)
-            } ?:   battlesApi.getFriendsBattles(battlesIDsToUpdate)
+                battlesApi.getFriendsBattlesSync(battlesIDsToUpdate, lastTimeAllBattlesUpdate)
+            } ?:   battlesApi.getFriendsBattlesSync(battlesIDsToUpdate)
 
-            if (resultList.error == null) {
-                followingBattleDao.insertAll(resultList.result.sqlResult.map { FollowingBattle(it.battleId, it) })
-                //update last update time
-                followingBattlesFeedDynamoInfoDao.updateLastTimeBattlesUpdated(Calendar.getInstance().time)
 
-            } else{
-                //ERROR
-            }
+            followingBattleDao.insertAll(resultList.sqlResult.map { FollowingBattle(it.battleId, it) })
+            //update last update time
+            followingBattlesFeedDynamoInfoDao.updateLastTimeBattlesUpdated(Calendar.getInstance().time)
+
+
         }
     }
 
@@ -149,33 +144,26 @@ class FollowingBattlesFeedCacheManager @Inject constructor(
      }
 
     fun increaseLikeCount(battleId: Int){
-        GlobalScope.launch (Dispatchers.IO) {
-            followingBattleDao.increaseLikeCount (battleId)
-        }
+        followingBattleDao.increaseLikeCount (battleId).subscribeOn(Schedulers.single()).subscribe()
+
     }
 
     fun decreaseLikeCount(battleId: Int){
-        GlobalScope.launch (Dispatchers.IO) {
-            followingBattleDao.decreaseLikeCount (battleId)
-        }
+        followingBattleDao.decreaseLikeCount (battleId).subscribeOn(Schedulers.single()).subscribe()
+
     }
 
     fun increaseDislikeCount(battleId: Int){
-        GlobalScope.launch (Dispatchers.IO) {
-            followingBattleDao.increaseDislikeCount (battleId)
-        }
+         followingBattleDao.increaseDislikeCount (battleId).subscribeOn(Schedulers.single()).subscribe()
     }
 
     fun decreaseDislikeCount(battleId: Int){
-        GlobalScope.launch (Dispatchers.IO) {
-            followingBattleDao.decreaseDislikeCount (battleId)
-        }
+         followingBattleDao.decreaseDislikeCount (battleId).subscribeOn(Schedulers.single()).subscribe()
+
     }
 
     fun setHasVoted(battleId: Int) {
-        GlobalScope.launch (Dispatchers.IO) {
-            followingBattleDao.setHasVoted(battleId)
-        }
+         followingBattleDao.setHasVoted(battleId).subscribeOn(Schedulers.single()).subscribe()
     }
 
     companion object {

@@ -19,22 +19,22 @@ import io.reactivex.Single
 interface FollowingUserDao {
 
     @Query("SELECT * FROM user")
-    suspend fun getAllFollowingUsers(): List<User>
+     fun getAllFollowingUsers(): List<User>
 
     @Query("UPDATE User SET mUsername = :username WHERE mCognitoId = :cognitoId")
-    suspend fun updateUsername(cognitoId: String, username: String)
+     fun updateUsername(cognitoId: String, username: String)
 
     @Query("UPDATE User SET mFacebookName = :name WHERE mCognitoId = :cognitoId")
-    suspend fun updateName(cognitoId: String, name: String)
+     fun updateName(cognitoId: String, name: String)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(users: List<User>)
+     fun insertAll(users: List<User>)
 
     @Query("DELETE FROM user WHERE mCognitoId = :userCognitoID")
-    suspend fun deleteFromUser(userCognitoID: String)
+     fun deleteFromUser(userCognitoID: String)
 
     @Query("SELECT * FROM user WHERE LOWER(mUsername) LIKE LOWER(:searchQuery) || '%' OR LOWER(mFacebookName) LIKE LOWER(:searchQuery) || '%' OR LOWER(mFacebookName) LIKE '% ' || LOWER(:searchQuery) || '%'")
-    suspend fun searchUsersInCache(searchQuery: String): List<User>
+     fun searchUsersInCache(searchQuery: String): List<User>
 
     @Query("SELECT * FROM user WHERE LOWER(mUsername) LIKE LOWER(:searchQuery) || '%' OR LOWER(mFacebookName) LIKE LOWER(:searchQuery) || '%' OR LOWER(mFacebookName) LIKE '% ' || LOWER(:searchQuery) || '%'")
     fun searchUsersInCacheRx(searchQuery: String): Single<List<User>>

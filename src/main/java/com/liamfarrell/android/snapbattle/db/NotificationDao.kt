@@ -30,11 +30,11 @@ interface NotificationDao {
     fun getAllNotificationsWithSignedUrls(): DataSource.Factory<Int, NotificationDb>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(notifications: List<NotificationDb>)
+     fun insertAll(notifications: List<NotificationDb>)
 
     @Query("DELETE FROM notifications")
-    suspend fun deleteAllNotifications()
+     fun deleteAllNotifications()
 
     @Query("SELECT COUNT(*) FROM notifications")
-    suspend fun getCountAllNotifications(): Int
+     fun getCountAllNotifications(): Int
 }

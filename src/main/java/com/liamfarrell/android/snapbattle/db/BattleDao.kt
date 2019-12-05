@@ -34,17 +34,17 @@ interface BattleDao {
     fun deleteAllBattles() : Completable
 
     @Query("UPDATE all_battles SET mUserHasVoted = 1 WHERE battle_id = :battleId")
-    fun setHasVoted(battleId: Int) : Completable
+    fun setHasVoted(battleId: Int)  : Completable
 
     @Query("UPDATE all_battles SET mLikeCount = mLikeCount + 1 WHERE battle_id = :battleId")
-    fun increaseLikeCount(battleId: Int) : Completable
+    fun increaseLikeCount(battleId: Int)  : Completable
 
     @Query("UPDATE all_battles SET mDislikeCount = mDislikeCount + 1 WHERE battle_id = :battleId")
-    fun increaseDislikeCount(battleId: Int) : Completable
+    fun increaseDislikeCount(battleId: Int)  : Completable
 
     @Query("UPDATE all_battles SET mLikeCount = mLikeCount - 1 WHERE battle_id = :battleId")
-    fun decreaseLikeCount(battleId: Int) : Completable
+    fun decreaseLikeCount(battleId: Int)  : Completable
 
     @Query("UPDATE all_battles SET mDislikeCount = mDislikeCount - 1 WHERE battle_id = :battleId")
-    fun decreaseDislikeCount(battleId: Int) : Completable
+    fun decreaseDislikeCount(battleId: Int)  : Completable
 }

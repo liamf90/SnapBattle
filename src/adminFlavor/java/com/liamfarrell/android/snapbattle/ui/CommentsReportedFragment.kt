@@ -9,10 +9,10 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.liamfarrell.android.snapbattle.adapters.ReportedCommentCallback
 import com.liamfarrell.android.snapbattle.adapters.ReportedCommentListAdapter
+import com.liamfarrell.android.snapbattle.app.SnapBattleApp
 import com.liamfarrell.android.snapbattle.databinding.FragmentReportingsBinding
-import com.liamfarrell.android.snapbattle.di.AWSLambdaModule
+import com.liamfarrell.android.snapbattle.di.ContextModule
 import com.liamfarrell.android.snapbattle.di.DaggerCommentsReportedComponent
-import com.liamfarrell.android.snapbattle.di.DaggerCurrentBattlesComponent
 import com.liamfarrell.android.snapbattle.viewmodel.CommentsReportedViewModel
 
 class CommentsReportedFragment : Fragment(), ReportedCommentCallback {
@@ -26,7 +26,7 @@ class CommentsReportedFragment : Fragment(), ReportedCommentCallback {
         binding.lifecycleOwner = viewLifecycleOwner
 
         val appComponent = DaggerCommentsReportedComponent.builder()
-                .aWSLambdaModule(AWSLambdaModule(requireContext()))
+                .contextModule(ContextModule(activity?.application!!))
                 .build()
 
 

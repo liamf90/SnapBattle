@@ -2,8 +2,14 @@ package com.liamfarrell.android.snapbattle.db
 
 import androidx.paging.PagedList
 import android.util.Log
+import androidx.lifecycle.MutableLiveData
+import com.liamfarrell.android.snapbattle.data.AllBattlesCacheManager
 import com.liamfarrell.android.snapbattle.data.FollowingBattlesFeedCacheManager
 import com.liamfarrell.android.snapbattle.model.Battle
+import io.reactivex.Completable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -14,20 +20,21 @@ import kotlinx.coroutines.launch
  **/
 class FollowingBattlesFeedBoundaryCallback(
         private val followingBattlesFeedCacheManager: FollowingBattlesFeedCacheManager,
-        private val coroutineScope: CoroutineScope
+        private val compositeDisposable: CompositeDisposable,
+        private val errorLiveData : MutableLiveData<Throwable>
 ) : PagedList.BoundaryCallback<FollowingBattle>() {
 
 
     override fun onZeroItemsLoaded() {
-        Log.d("RepoBoundaryCallback", "onZeroItemsLoaded")
     }
 
     /**
      * When all items in the database were loaded, we need to query the backend for more items.
      */
     override fun onItemAtEndLoaded(itemAtEnd: FollowingBattle) {
-        Log.d("RepoBoundaryCallback", "onItemAtEndLoaded")
-        coroutineScope.launch(Dispatchers.IO) { followingBattlesFeedCacheManager.requestMoreBattles()}
+        compositeDisposable.add(Completable.fromCallable {followingBattlesFeedCacheManager.requestMoreBattles()}.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .subscribe({},{onError: Throwable ->
+                    errorLiveData.value = onError}))
     }
 
 }

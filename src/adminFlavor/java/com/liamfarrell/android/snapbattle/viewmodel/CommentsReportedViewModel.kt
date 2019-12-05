@@ -1,5 +1,6 @@
 package com.liamfarrell.android.snapbattle.viewmodel
 
+import android.app.Application
 import android.content.Context
 import com.liamfarrell.android.snapbattle.viewmodels.ViewModelLaunch
 
@@ -7,7 +8,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import com.liamfarrell.android.snapbattle.R
-import com.liamfarrell.android.snapbattle.app.App
 import com.liamfarrell.android.snapbattle.data.BattleChallengesRepository
 import com.liamfarrell.android.snapbattle.data.ReportingsRepository
 import com.liamfarrell.android.snapbattle.model.AsyncTaskResult
@@ -17,25 +17,28 @@ import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserializat
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.ReportedCommentsResponse
 import com.liamfarrell.android.snapbattle.util.CustomError
 import com.liamfarrell.android.snapbattle.util.getErrorMessage
+import com.liamfarrell.android.snapbattle.util.notifyObserver
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
+import javax.inject.Inject
 
 /**
  * The ViewModel used in [CommentsReportedFragment].
  */
-class CommentsReportedViewModel(val reportingsRepository: ReportingsRepository) : ViewModelLaunch() {
+class CommentsReportedViewModel @Inject constructor(val context: Context, val reportingsRepository: ReportingsRepository) : ViewModelLaunch() {
     companion object{
         const val FETCH_AMOUNT = 50
     }
 
-    private val reportedCommentsResponse = MutableLiveData<AsyncTaskResult<ReportedCommentsResponse>>()
 
-    val reportedComments : LiveData<List<ReportedComment>> =  Transformations.map(reportedCommentsResponse) { asyncResult ->
-        asyncResult.result.sqlResult }
 
-    val errorMessage : LiveData<String?> = Transformations.map(reportedCommentsResponse) { asyncResult ->
-        if (asyncResult.error != null){
-            getErrorMessage(App.getContext(), asyncResult.error)}
-        else
-            null
+    private val _reportedComments = MutableLiveData<MutableList<ReportedComment>>()
+    val reportedComments : LiveData<MutableList<ReportedComment>> = _reportedComments
+
+
+    private val error = MutableLiveData<Throwable>()
+    val errorMessage : LiveData<String> = Transformations.map(error){
+        getErrorMessage(context, it)
     }
 
 
@@ -43,48 +46,83 @@ class CommentsReportedViewModel(val reportingsRepository: ReportingsRepository) 
         loadComments()
     }
 
-    fun loadComments(){
-        awsLambdaFunctionCall(true,
-                suspend {reportedCommentsResponse.value = reportingsRepository.getReportedComments(FETCH_AMOUNT)})
+    private fun loadComments(){
+        compositeDisposable.add(reportingsRepository.getReportedComments(FETCH_AMOUNT)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe{_spinner.value = true}
+                .subscribe(
+                        { onSuccessResponse ->
+                            _spinner.value = false
+                            _reportedComments.value = onSuccessResponse.sqlResult
+                        },
+                        {onError : Throwable ->
+                            _spinner.value = false
+                            error.value = onError
+                        }
+                ))
     }
 
     fun deleteComment(commentId: Int) {
-        awsLambdaFunctionCall(false,
-                suspend {
-                    val response = reportingsRepository.deleteCommentAdmin  (commentId)
-                    when {
-                        response.error != null -> reportedCommentsResponse.value?.error = response.error
-                        response.result.affectedRows == 1 -> reportedCommentsResponse.value?.result?.sqlResult?.find { it.commentId == commentId }?.isDeleted = true
-                        else -> reportedCommentsResponse.value?.error = NotAuthorisedToDeleteCommentError()
-                    }
-                    Unit
-                })
+        compositeDisposable.add( reportingsRepository.deleteCommentAdmin(commentId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        { onSuccessResponse ->
+                            if (onSuccessResponse.affectedRows == 1){
+                                _reportedComments.value?.find { it.commentId == commentId }?.isDeleted = true
+                                _reportedComments.notifyObserver()
+                            }
+
+                            else {
+                                error.value  = NotAuthorisedToDeleteCommentError()
+                            }
+                        },
+                        {onError : Throwable ->
+                            error.value = onError
+                        }
+                ))
     }
 
     fun ignoreComment(commentId: Int) {
-        awsLambdaFunctionCall(false,
-                suspend {
-                    val response = reportingsRepository.ignoreBattleAdmin  (commentId)
-                    when {
-                        response.error != null -> reportedCommentsResponse.value?.error = response.error
-                        response.result.affectedRows == 1 -> reportedCommentsResponse.value?.result?.sqlResult?.find { it.commentId == commentId }?.isCommentIgnored = true
-                        else -> reportedCommentsResponse.value?.error = NotAuthorisedToIgnoreCommentError()
-                    }
-                    Unit
-                })
+        compositeDisposable.add( reportingsRepository.ignoreCommentAdmin(commentId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        { onSuccessResponse ->
+                            if (onSuccessResponse.affectedRows == 1){
+                                _reportedComments.value?.find { it.commentId == commentId }?.isCommentIgnored = true
+                                _reportedComments.notifyObserver()
+                            }
+
+                            else {
+                                error.value  = NotAuthorisedToIgnoreCommentError()
+                            }
+                        },
+                        {onError : Throwable ->
+                            error.value = onError
+                        }
+                ))
+
     }
 
     fun banUser(cognitoIdUser: String, commentId: Int, banLengthDays: Int){
-        awsLambdaFunctionCall(false,
-                suspend {
-                    val response = reportingsRepository.banUserCommentAdmin(cognitoIdUser, commentId, banLengthDays)
-                    when {
-                        response.error != null -> reportedCommentsResponse.value?.error = response.error
-                        response.result.affectedRows == 1 -> reportedCommentsResponse.value?.result?.sqlResult?.find { it.commentId == commentId }?.isUserIsBanned = true
-                        else -> reportedCommentsResponse.value?.error = NotAuthorisedToBanUserError()
-                    }
-                    Unit
-                })
+        compositeDisposable.add( reportingsRepository.banUserCommentAdmin(cognitoIdUser, commentId, banLengthDays)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        { onSuccessResponse ->
+                            if (onSuccessResponse.affectedRows == 1){
+                                _reportedComments.value?.find { it.commentId == commentId }?.isUserIsBanned = true
+                                _reportedComments.notifyObserver()
+                            } else {
+                                error.value  = NotAuthorisedToBanUserError()
+                            }
+                        },
+                        {onError : Throwable ->
+                            error.value = onError
+                        }
+                ))
 
     }
 

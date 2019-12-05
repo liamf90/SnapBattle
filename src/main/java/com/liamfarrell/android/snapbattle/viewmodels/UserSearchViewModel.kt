@@ -54,7 +54,7 @@ class UserSearchViewModel @Inject constructor(private val context: Application, 
 
     init {
         _searchState.value = State.CACHE_RESULT
-        GlobalScope.launch {followingUserCacheManager.checkForUpdates()}
+        followingUserCacheManager.checkForUpdates().subscribeOn(io()).subscribe()
 
         _searchList.addSource(followingCacheSearchResult){
            it?.let {
@@ -161,7 +161,9 @@ class UserSearchViewModel @Inject constructor(private val context: Application, 
                     _searchState.value = State.SERVER_SEARCH
                 }
                 .observeOn(single())
-                .map { getProfilePicSignedUrls(it.sqlResult) }
+                .map {
+                    getProfilePicSignedUrls(it.sqlResult) }
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         { onSuccessResponse ->
                             serverSearchCacheSearchResult.value = onSuccessResponse

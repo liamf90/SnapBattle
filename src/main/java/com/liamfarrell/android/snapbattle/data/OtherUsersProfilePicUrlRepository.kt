@@ -17,6 +17,7 @@ import com.squareup.picasso.Callback
 import com.squareup.picasso.NetworkPolicy
 import com.squareup.picasso.Picasso
 import io.reactivex.Maybe
+import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers.io
 import kotlinx.coroutines.Dispatchers.IO
@@ -95,6 +96,16 @@ class OtherUsersProfilePicUrlRepository @Inject constructor(private val otherUse
         }
     }
 
+    fun insertOtherUsersProfilePicOnlyIfProfilePicCountDifferentRx(cognitoID: String, profilePicCount: Int, signedUrl: String){
+        val updatedSignedUrlAndProfilePicCount = OtherUsersProfilePicUrlCache(cognitoID, profilePicCount, signedUrl)
+
+        val signedUrlAndProfilePicCountDb = getUserSignedUrlAndProfilePicCountRx(cognitoID).blockingGet()
+        if (signedUrlAndProfilePicCountDb == null || signedUrlAndProfilePicCountDb.profile_pic_count != updatedSignedUrlAndProfilePicCount.profile_pic_count || !isSignedUrlInPicassoCacheRx(signedUrlAndProfilePicCountDb.last_saved_signed_url).subscribeOn(AndroidSchedulers.mainThread()).blockingGet()){
+            otherUsersProfilePicUrlDao.insertSignedUrlRx(updatedSignedUrlAndProfilePicCount)
+        }
+
+    }
+
 
      suspend fun getUserSignedUrlAndProfilePicCount(cognitoID: String) : OtherUsersProfilePicUrlCache?{
         return withContext(IO) {
@@ -123,6 +134,12 @@ class OtherUsersProfilePicUrlRepository @Inject constructor(private val otherUse
         val request = SignedUrlsRequest()
         request.cognitoIdToGetSignedUrlList = cognitoIdList
         return executeAWSFunction {lambdaFunctionsInterface.GetProfilePicSignedUrls(request)}
+    }
+
+    fun getSignedUrlsFromServerRx(cognitoIdList : List<String>) : Single<GetSignedUrlsResponse> {
+        val request = SignedUrlsRequest()
+        request.cognitoIdToGetSignedUrlList = cognitoIdList
+        return Single.fromCallable {lambdaFunctionsInterface.GetProfilePicSignedUrls(request)}
     }
 
 }

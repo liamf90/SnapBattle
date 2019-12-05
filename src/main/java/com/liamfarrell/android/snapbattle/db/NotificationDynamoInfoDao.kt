@@ -12,19 +12,19 @@ import androidx.room.Query
 @Dao
 interface NotificationDynamoInfoDao {
     @Query("SELECT notifications_dynamo_count FROM notifications_dynamo_info LIMIT 1")
-    suspend fun getNotificationDynamoCount(): Int
+     fun getNotificationDynamoCount(): Int
 
     @Query("UPDATE notifications_dynamo_info SET notifications_dynamo_count = :notificationsDynamoCount")
-    suspend fun updateNotificationsDynamoCount(notificationsDynamoCount: Int)
+     fun updateNotificationsDynamoCount(notificationsDynamoCount: Int)
 
     @Query("SELECT has_all_notifications_been_seen FROM notifications_dynamo_info LIMIT 1")
-    suspend fun getHasAllNotificationsBeenSeen(): Boolean
+     fun getHasAllNotificationsBeenSeen(): Boolean
 
     @Query("UPDATE notifications_dynamo_info SET has_all_notifications_been_seen = :hasAllNotificationsBeenSeen")
-    suspend fun updateHasAllNotificationsBeenSeen(hasAllNotificationsBeenSeen: Boolean)
+     fun updateHasAllNotificationsBeenSeen(hasAllNotificationsBeenSeen: Boolean)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(notificationsInfo : NotificationsDynamoInfo)
+     fun insert(notificationsInfo : NotificationsDynamoInfo)
 
 
 }

@@ -4,6 +4,7 @@ import com.liamfarrell.android.snapbattle.model.Battle
 import androidx.paging.DataSource
 import androidx.room.*
 import com.liamfarrell.android.snapbattle.model.Video
+import io.reactivex.Completable
 
 
 /**
@@ -19,32 +20,32 @@ interface FollowingBattleDao {
     fun getAllBattles(): DataSource.Factory<Int,FollowingBattle>
 
     @Query("SELECT battle_id_following FROM following_battle")
-    suspend fun getAllBattleIDs(): List<Int>
+    fun getAllBattleIDs(): List<Int>
 
     @Query("SELECT COUNT(*) FROM following_battle")
-    suspend fun getCountAllBattles(): Int
+    fun getCountAllBattles(): Int
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(battles: List<FollowingBattle>)
+    fun insertAll(battles: List<FollowingBattle>)
 
     @Query("DELETE FROM following_battle")
-    suspend fun deleteAllBattles()
+    fun deleteAllBattles()
 
 
     @Query("UPDATE following_battle SET mUserHasVoted = 1 WHERE battle_id = :battleId")
-    suspend fun setHasVoted(battleId: Int)
+    fun setHasVoted(battleId: Int)  : Completable
 
     @Query("UPDATE following_battle SET mLikeCount = mLikeCount + 1 WHERE battle_id = :battleId")
-    suspend fun increaseLikeCount(battleId: Int)
+    fun increaseLikeCount(battleId: Int)  : Completable
 
     @Query("UPDATE following_battle SET mDislikeCount = mDislikeCount + 1 WHERE battle_id = :battleId")
-    suspend fun increaseDislikeCount(battleId: Int)
+    fun increaseDislikeCount(battleId: Int)  : Completable
 
     @Query("UPDATE following_battle SET mLikeCount = mLikeCount - 1 WHERE battle_id = :battleId")
-    suspend fun decreaseLikeCount(battleId: Int)
+    fun decreaseLikeCount(battleId: Int)  : Completable
 
     @Query("UPDATE following_battle SET mDislikeCount = mDislikeCount - 1 WHERE battle_id = :battleId")
-    suspend fun decreaseDislikeCount(battleId: Int)
+    fun decreaseDislikeCount(battleId: Int)  : Completable
 
 
 }

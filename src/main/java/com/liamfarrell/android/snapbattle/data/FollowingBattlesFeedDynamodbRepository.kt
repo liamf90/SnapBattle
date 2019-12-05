@@ -46,7 +46,7 @@ class FollowingBattlesFeedDynamodbRepository @Inject constructor(val context: Ap
 
 
     @Throws(AmazonClientException::class)
-    suspend fun getBattlesCountDynamo(): Int {
+     fun getBattlesCountDynamo(): Int {
         val cognitoID = IdentityManager.getDefaultIdentityManager().cachedUserID
         val key = HashMap<String, AttributeValue>()
         key["CognitoID"] = AttributeValue().apply {s = cognitoID}
@@ -68,7 +68,7 @@ class FollowingBattlesFeedDynamodbRepository @Inject constructor(val context: Ap
     }
 
     @Throws(AmazonClientException::class)
-    suspend fun getFullFeedUpdateCount(): Int {
+     fun getFullFeedUpdateCount(): Int {
         val cognitoID = IdentityManager.getDefaultIdentityManager().cachedUserID
         val key = HashMap<String, AttributeValue>()
         key["CognitoID"] = AttributeValue().apply {s = cognitoID}

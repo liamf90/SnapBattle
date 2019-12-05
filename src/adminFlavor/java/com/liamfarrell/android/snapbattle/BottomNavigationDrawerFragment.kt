@@ -29,7 +29,7 @@ class BottomNavigationDrawerFragment: Fragment() {
                 R.id.nav_create_battle -> findNavController().navigate(R.id.chooseBattleTypeFragment)
                 R.id.nav_current_battles -> findNavController().navigate(R.id.battleCurrentListFragment)
                 R.id.nav_completed_battles -> findNavController().navigate(R.id.battleCompletedListFragment)
-                R.id.nav_challenges -> findNavController().navigate(R.id.battleChallengesListFragment2)
+                R.id.nav_challenges -> findNavController().navigate(R.id.battleChallengesListFragment)
                 R.id.nav_profile -> context!!.toast("dd")
                 R.id.nav_add_followers -> findNavController().navigate(R.id.battleCurrentListFragment)
                 R.id.nav_view_followers -> findNavController().navigate(R.id.viewFollowingFragment)

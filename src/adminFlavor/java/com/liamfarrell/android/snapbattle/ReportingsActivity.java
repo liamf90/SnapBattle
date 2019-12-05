@@ -2,6 +2,9 @@ package com.liamfarrell.android.snapbattle;
 
 import android.os.Bundle;
 import com.google.android.material.tabs.TabLayout;
+import com.liamfarrell.android.snapbattle.ui.BattlesReportedFragment;
+import com.liamfarrell.android.snapbattle.ui.CommentsReportedFragment;
+
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;

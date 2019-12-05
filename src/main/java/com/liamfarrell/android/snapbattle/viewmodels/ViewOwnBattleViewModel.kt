@@ -9,6 +9,7 @@ import com.liamfarrell.android.snapbattle.model.Battle
 import com.liamfarrell.android.snapbattle.util.getErrorMessage
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import timber.log.Timber
 import javax.inject.Inject
 
 /**
@@ -28,7 +29,6 @@ class ViewOwnBattleViewModel @Inject constructor(private val context: Applicatio
     fun getBattle(battleID : Int){
         compositeDisposable.add(usersBattleRepository.getBattleRx(battleID)
                 .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.io())
                 .doOnSubscribe{
                     if (_battle.value == null) {
                         _spinner.value = true }

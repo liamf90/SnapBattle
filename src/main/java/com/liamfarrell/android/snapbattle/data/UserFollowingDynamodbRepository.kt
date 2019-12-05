@@ -15,8 +15,7 @@ class UserFollowingDynamodbRepository @Inject constructor(val ddbClient : Amazon
 
 
     @Throws(AmazonClientException::class)
-    suspend fun getActionListFromDynamo(startIndex: Int, endIndex: Int): List<AttributeValue> {
-        return withContext(Dispatchers.IO) {
+     fun getActionListFromDynamo(startIndex: Int, endIndex: Int): List<AttributeValue> {
             // DynamoDBMapper mapper = new DynamoDBMapper(ddbClient);
             // BattleFeed selectedBattle = mapper.load(BattleFeed.class, "45");
 
@@ -38,20 +37,19 @@ class UserFollowingDynamodbRepository @Inject constructor(val ddbClient : Amazon
             val result = ddbClient.getItem(spec)
             val res = result.item
             val list = res["Following_Action_List"]
-            return@withContext list?.l?.reversed() ?: listOf()
+            return list?.l?.reversed() ?: listOf()
 
 //        var actionMap: Map<String, AttributeValue>
 //        var action: String?
 //        var cognitoID: String?
 //        //Get all the cognitoId's of users to add, so we can get the information to retrieve from server
 //        return  actionList.filter { it.m["ACTION"]?.s == ACTION_ADD }.mapNotNull { it.m["COGNITO_ID"]?.s }
-        }
+
     }
 
 
     @Throws(AmazonClientException::class)
-    suspend fun getFollowingUpdateCountDynamo(): Int {
-        return withContext(Dispatchers.IO) {
+     fun getFollowingUpdateCountDynamo(): Int {
             val key = HashMap<String, AttributeValue>()
             key["CognitoID"] = AttributeValue().apply { s = IdentityManager.getDefaultIdentityManager().cachedUserID }
 
@@ -68,8 +66,7 @@ class UserFollowingDynamodbRepository @Inject constructor(val ddbClient : Amazon
                 val item_count = res["Following_updated_count"]
                 following_update_count = Integer.parseInt(item_count?.getN() ?: "0")
             }
-            return@withContext following_update_count
-        }
+            return following_update_count
     }
 
 

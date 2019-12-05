@@ -6,6 +6,8 @@ import androidx.paging.LivePagedListBuilder
 import com.liamfarrell.android.snapbattle.db.NotificationDao
 import com.liamfarrell.android.snapbattle.db.NotificationsBoundaryCallback
 import com.liamfarrell.android.snapbattle.model.NotificationsDatabaseResult
+import io.reactivex.Completable
+import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.CoroutineScope
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -16,12 +18,12 @@ class NotificationsRepository @Inject constructor(
         private val notificationsDao: NotificationDao)
 {
 
-    private val _networkErrors = MutableLiveData<String>()
+    private val _networkErrors = MutableLiveData<Throwable>()
     private val _isLoadingMoreNotifications = notificationsManager.loadingMoreNotifications
     private val _isNoMoreOlderNotifications = notificationsManager.noMoreNotifications
 
     // LiveData of network errors.
-    val networkErrors: LiveData<String>
+    val networkErrors: LiveData<Throwable>
         get() = _networkErrors
 
     val isLoadingMoreNotifications : LiveData<Boolean>
@@ -32,7 +34,7 @@ class NotificationsRepository @Inject constructor(
 
 
 
-    fun loadAllNotifications(coroutineScope: CoroutineScope) : NotificationsDatabaseResult {
+    fun loadAllNotifications(compositeDisposable: CompositeDisposable) : NotificationsDatabaseResult {
 
         // Get data source factory from the local cache
         val dataSourceFactory = notificationsDao.getAllNotificationsWithSignedUrls()
@@ -41,7 +43,7 @@ class NotificationsRepository @Inject constructor(
         // every new query creates a new BoundaryCallback
         // The BoundaryCallback will observe when the user reaches to the edges of
         // the list and update the database with extra data
-        val boundaryCallback = NotificationsBoundaryCallback (notificationsManager,coroutineScope)
+        val boundaryCallback = NotificationsBoundaryCallback (notificationsManager,compositeDisposable, _networkErrors)
 
 
         // Get the paged list
@@ -53,13 +55,13 @@ class NotificationsRepository @Inject constructor(
         return NotificationsDatabaseResult(data, networkErrors)
     }
 
-    suspend fun checkForUpdates(){
-        notificationsManager.checkForUpdates()
+     fun checkForUpdates() : Completable {
+       return Completable.fromCallable { notificationsManager.checkForUpdates()}
     }
 
 
-    suspend fun updateSeenAllBattles(){
-        notificationsManager.updateAllNotificationsHaveBeenSeen()
+     fun updateSeenAllBattles() : Completable{
+        return Completable.fromCallable {notificationsManager.updateAllNotificationsHaveBeenSeen()}
     }
 
 

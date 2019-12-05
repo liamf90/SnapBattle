@@ -1,5 +1,6 @@
 package com.liamfarrell.android.snapbattle.viewmodel
 
+import android.app.Application
 import android.content.Context
 import com.liamfarrell.android.snapbattle.viewmodels.ViewModelLaunch
 
@@ -7,35 +8,34 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import com.liamfarrell.android.snapbattle.R
-import com.liamfarrell.android.snapbattle.app.App
 import com.liamfarrell.android.snapbattle.data.ReportingsRepository
-import com.liamfarrell.android.snapbattle.model.AsyncTaskResult
 import com.liamfarrell.android.snapbattle.model.ReportedBattle
-import com.liamfarrell.android.snapbattle.model.ReportedComment
-import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.ReportedBattlesResponse
-import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.ReportedCommentsResponse
 import com.liamfarrell.android.snapbattle.util.CustomError
 import com.liamfarrell.android.snapbattle.util.getErrorMessage
+import com.liamfarrell.android.snapbattle.util.notifyObserver
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
+import javax.inject.Inject
 
 /**
  * The ViewModel used in [CommentsReportedFragment].
  */
-class BattlesReportedViewModel(val reportingsRepository: ReportingsRepository) : ViewModelLaunch() {
+class BattlesReportedViewModel (val context: Context, val reportingsRepository: ReportingsRepository) : ViewModelLaunch() {
     companion object{
         const val FETCH_AMOUNT = 50
     }
 
-    private val reportedBattlesResponse = MutableLiveData<AsyncTaskResult<ReportedBattlesResponse>>()
 
-    val reportedBattles : LiveData<List<ReportedBattle>> =  Transformations.map(reportedBattlesResponse) { asyncResult ->
-        asyncResult.result.sqlResult }
+    private val _reportedBattles = MutableLiveData<MutableList<ReportedBattle>>()
+    val reportedBattles : LiveData<MutableList<ReportedBattle>> = _reportedBattles
 
-    val errorMessage : LiveData<String?> = Transformations.map(reportedBattlesResponse) { asyncResult ->
-        if (asyncResult.error != null){
-            getErrorMessage(App.getContext(), asyncResult.error)}
-        else
-            null
+    private val error = MutableLiveData<Throwable>()
+    val errorMessage : LiveData<String> = Transformations.map(error){
+        getErrorMessage(context, it)
     }
+
+
+
 
 
     init {
@@ -43,60 +43,106 @@ class BattlesReportedViewModel(val reportingsRepository: ReportingsRepository) :
     }
 
     fun loadBattles(){
-        awsLambdaFunctionCall(true,
-                suspend {reportedBattlesResponse.value = reportingsRepository.getReportedBattles(FETCH_AMOUNT)})
+        compositeDisposable.add(reportingsRepository.getReportedBattlesRx(FETCH_AMOUNT)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe{_spinner.value = true}
+                .subscribe(
+                        { onSuccessResponse ->
+                            _spinner.value = false
+                            _reportedBattles.value = onSuccessResponse.sqlResult
+                        },
+                        {onError : Throwable ->
+                            _spinner.value = false
+                            error.value = onError
+                        }
+                ))
     }
 
     fun deleteBattle(battleId: Int) {
-        awsLambdaFunctionCall(false,
-                suspend {
-                    val response = reportingsRepository.deleteCommentAdmin  (battleId)
-                    when {
-                        response.error != null -> reportedBattlesResponse.value?.error = response.error
-                        response.result.affectedRows == 1 -> reportedBattlesResponse.value?.result?.sqlResult?.find { it.battleID == battleId }?.isDeleted = true
-                        else -> reportedBattlesResponse.value?.error = NotAuthorisedToDeleteBattleError()
-                    }
-                    Unit
-                })
+
+        compositeDisposable.add( reportingsRepository.deleteCommentAdminRx(battleId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        { onSuccessResponse ->
+                           if (onSuccessResponse.affectedRows == 1){
+                               _reportedBattles.value?.find { it.battleID == battleId }?.isDeleted = true
+                               _reportedBattles.notifyObserver()
+                           }
+
+                           else {
+                               error.value  = NotAuthorisedToDeleteBattleError()
+                            }
+                        },
+                        {onError : Throwable ->
+                            error.value = onError
+                        }
+                ))
     }
 
     fun ignoreBattle(battleId: Int) {
-        awsLambdaFunctionCall(false,
-                suspend {
-                    val response = reportingsRepository.ignoreBattleAdmin  (battleId)
-                    when {
-                        response.error != null -> reportedBattlesResponse.value?.error = response.error
-                        response.result.affectedRows == 1 -> reportedBattlesResponse.value?.result?.sqlResult?.find { it.battleId == battleId }?.isBattleIgnored = true
-                        else -> reportedBattlesResponse.value?.error = NotAuthorisedToIgnoreBattleError()
-                    }
-                    Unit
-                })
+        compositeDisposable.add( reportingsRepository.ignoreBattleAdminRx(battleId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        { onSuccessResponse ->
+                            if (onSuccessResponse.affectedRows == 1){
+                                _reportedBattles.value?.find { it.battleID == battleId }?.isBattleIgnored = true
+                                _reportedBattles.notifyObserver()
+                            }
+
+                            else {
+                                error.value  = NotAuthorisedToIgnoreBattleError()
+                            }
+                        },
+                        {onError : Throwable ->
+                            error.value = onError
+                        }
+                ))
     }
 
     fun banChallenger(battleId: Int, cognitoIdUserBan: String, banLengthDays: Int){
-        awsLambdaFunctionCall(false,
-                suspend {
-                    val response = reportingsRepository.banUserBattleAdmin(battleId, cognitoIdUserBan, banLengthDays)
-                    when {
-                        response.error != null -> reportedBattlesResponse.value?.error = response.error
-                        response.result.affectedRows == 1 -> reportedBattlesResponse.value?.result?.sqlResult?.find { it.battleId == battleId }?.isChallengerBanned = true
-                        else -> reportedBattlesResponse.value?.error = NotAuthorisedToBanUserError()
-                    }
-                    Unit
-                })
+        compositeDisposable.add( reportingsRepository.banUserBattleAdminRx(battleId, cognitoIdUserBan, banLengthDays)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        { onSuccessResponse ->
+                            if (onSuccessResponse.affectedRows == 1){
+                                _reportedBattles.value?.find { it.battleID == battleId }?.isChallengerBanned = true
+                                _reportedBattles.notifyObserver()
+                            }
+
+                            else {
+                                error.value  = NotAuthorisedToBanUserError()
+                            }
+                        },
+                        {onError : Throwable ->
+                            error.value = onError
+                        }
+                ))
+
     }
 
     fun banChallenged(battleId: Int, cognitoIdUserBan: String, banLengthDays: Int){
-        awsLambdaFunctionCall(false,
-                suspend {
-                    val response = reportingsRepository.banUserBattleAdmin(battleId, cognitoIdUserBan, banLengthDays)
-                    when {
-                        response.error != null -> reportedBattlesResponse.value?.error = response.error
-                        response.result.affectedRows == 1 -> reportedBattlesResponse.value?.result?.sqlResult?.find { it.battleId == battleId }?.isChallengedBanned = true
-                        else -> reportedBattlesResponse.value?.error = NotAuthorisedToBanUserError()
-                    }
-                    Unit
-                })
+        compositeDisposable.add( reportingsRepository.banUserBattleAdminRx(battleId, cognitoIdUserBan, banLengthDays)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        { onSuccessResponse ->
+                            if (onSuccessResponse.affectedRows == 1){
+                                _reportedBattles.value?.find { it.battleID == battleId }?.isChallengedBanned = true
+                                _reportedBattles.notifyObserver()
+                            }
+
+                            else {
+                                error.value  = NotAuthorisedToBanUserError()
+                            }
+                        },
+                        {onError : Throwable ->
+                            error.value = onError
+                        }
+                ))
     }
 
 }

@@ -17,8 +17,8 @@ class NotificationsDynamoDbRepository @Inject constructor(val ddbClient : Amazon
 
 
     @Throws(AmazonClientException::class)
-    suspend fun getNotificationListFromDynamo(startIndex: Int, endIndex: Int): List<Notification> {
-        return withContext(Dispatchers.IO) {
+     fun getNotificationListFromDynamo(startIndex: Int, endIndex: Int): List<Notification> {
+
             val key = hashMapOf<String, AttributeValue>()
             key["CognitoID"] = AttributeValue().apply { s = IdentityManager.getDefaultIdentityManager().cachedUserID }
 
@@ -47,7 +47,7 @@ class NotificationsDynamoDbRepository @Inject constructor(val ddbClient : Amazon
             notificationsDynamo?.let {
                 val pairs = notificationIndexList zip (notificationsDynamo)
 
-                return@withContext pairs.map { it ->
+                return pairs.map { it ->
                     val index = it.first
                     when (NotificationType.valueOf(it.second.m["TYPE"]?.s
                             ?: throw IllegalArgumentException())) {
@@ -111,18 +111,18 @@ class NotificationsDynamoDbRepository @Inject constructor(val ddbClient : Amazon
 
                 }
 
-            } ?: listOf<Notification>()
+            } ?: return listOf<Notification>()
 
 
 
-        }
+
 
     }
 
 
     @Throws(AmazonClientException::class)
-    suspend fun getNotificationCountDynamo(): Int {
-        return withContext(Dispatchers.IO) {
+     fun getNotificationCountDynamo(): Int {
+
             val key = HashMap<String, AttributeValue>()
             key["CognitoID"] = AttributeValue().apply { s = IdentityManager.getDefaultIdentityManager().cachedUserID }
 
@@ -139,15 +139,14 @@ class NotificationsDynamoDbRepository @Inject constructor(val ddbClient : Amazon
                 val item_count = res["notification_count"]
                 notification_count = Integer.parseInt(item_count?.getN() ?: "0")
             }
-            return@withContext notification_count
+            return notification_count
 
-        }
     }
 
 
     @Throws(AmazonClientException::class)
-    suspend fun getDynamoHasSeenAllNotifications(): Boolean {
-        return withContext(Dispatchers.IO) {
+     fun getDynamoHasSeenAllNotifications(): Boolean {
+
             val key = HashMap<String, AttributeValue>()
             key["CognitoID"] = AttributeValue().apply { s = IdentityManager.getDefaultIdentityManager().cachedUserID }
 
@@ -159,7 +158,7 @@ class NotificationsDynamoDbRepository @Inject constructor(val ddbClient : Amazon
             val result = ddbClient.getItem(spec)
             val res = result.item
 
-            return@withContext if (res == null) {
+            return if (res == null) {
                 true
             } else {
                 val hasSeenNotifications = res["notifications_seen"]
@@ -169,12 +168,12 @@ class NotificationsDynamoDbRepository @Inject constructor(val ddbClient : Amazon
                     true
                 }
             }
-        }
+
     }
 
     @Throws(AmazonClientException::class)
-    suspend fun updateDynamoSeenAllNotifications(){
-        withContext(Dispatchers.IO) {
+     fun updateDynamoSeenAllNotifications(){
+
             val key = HashMap<String, AttributeValue>()
             key["CognitoID"] = AttributeValue().apply { s = IdentityManager.getDefaultIdentityManager().cachedUserID }
             val notificationSeenAttribute = HashMap<String, AttributeValue>()
@@ -188,6 +187,5 @@ class NotificationsDynamoDbRepository @Inject constructor(val ddbClient : Amazon
                     .withKey(key).withUpdateExpression(updateExpression)
                     .withExpressionAttributeValues(notificationSeenAttribute)
             ddbClient.updateItem(uir)
-        }
     }
 }

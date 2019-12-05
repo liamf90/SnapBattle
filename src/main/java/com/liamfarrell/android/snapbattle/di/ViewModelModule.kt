@@ -136,6 +136,7 @@ abstract class ViewModelModule {
     @ViewModelKey(ViewOwnBattleViewModel::class)
     abstract fun bindViewOwnBattleViewModel(viewOwnBattleViewModel: ViewOwnBattleViewModel): ViewModel
 
+
     @Binds
     abstract fun bindViewModelFactory(factory: SnapBattleViewModelFactory): ViewModelProvider.Factory
 }

@@ -28,16 +28,16 @@ class NotificationsManager @Inject constructor(
         loadingNewNotifications.value = false
     }
 
-    suspend fun checkHasAllNotificationsBeenSeen(){
+    fun checkHasAllNotificationsBeenSeen(){
         notificationsDynamoInfoDao.updateHasAllNotificationsBeenSeen(notificationsDynamoDbRepository.getDynamoHasSeenAllNotifications())
     }
 
-    suspend fun updateAllNotificationsHaveBeenSeen(){
+     fun updateAllNotificationsHaveBeenSeen(){
         notificationsDynamoInfoDao.updateHasAllNotificationsBeenSeen(true)
         notificationsDynamoDbRepository.updateDynamoSeenAllNotifications()
     }
 
-    suspend fun requestMoreBattles() {
+     fun requestMoreNotifications() {
         loadingMoreNotifications.postValue(true)
         noMoreNotifications.postValue(false)
 
@@ -58,7 +58,7 @@ class NotificationsManager @Inject constructor(
     }
 
 
-    suspend fun checkForUpdates() {
+     fun checkForUpdates() {
         val notificationCountDynamo = notificationsDynamoDbRepository.getNotificationCountDynamo()
         val lastNotificationsDynamoCount = notificationsDynamoInfoDao.getNotificationDynamoCount()
 

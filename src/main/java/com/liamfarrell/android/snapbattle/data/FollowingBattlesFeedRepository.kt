@@ -8,6 +8,8 @@ import com.liamfarrell.android.snapbattle.db.BattleDao
 import com.liamfarrell.android.snapbattle.db.FollowingBattleDao
 import com.liamfarrell.android.snapbattle.model.BattlesSearchResult
 import com.liamfarrell.android.snapbattle.model.FollowingBattlesSearchResult
+import io.reactivex.Completable
+import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.CoroutineScope
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -18,12 +20,12 @@ class FollowingBattlesFeedRepository @Inject constructor(
         private val followingBattleDao: FollowingBattleDao)
 {
 
-    private val _networkErrors = MutableLiveData<String>()
+    private val _networkErrors = MutableLiveData<Throwable>()
     private val _isLoadingMoreBattles = followingBattlesFeedCacheManager.loadingMoreBattles
     private val _isNoMoreOlderBattles = followingBattlesFeedCacheManager.noMoreBattles
 
     // LiveData of network errors.
-    val networkErrors: LiveData<String>
+    val networkErrors: LiveData<Throwable>
         get() = _networkErrors
 
     val isLoadingMoreBattles : LiveData<Boolean>
@@ -34,7 +36,7 @@ class FollowingBattlesFeedRepository @Inject constructor(
 
 
 
-      fun loadAllBattles(coroutineScope: CoroutineScope) : FollowingBattlesSearchResult {
+      fun loadAllBattles(compositeDisposable: CompositeDisposable) : FollowingBattlesSearchResult {
 
         // Get data source factory from the local cache
         val dataSourceFactory = followingBattleDao.getAllBattles()
@@ -42,7 +44,8 @@ class FollowingBattlesFeedRepository @Inject constructor(
         // every new query creates a new BoundaryCallback
         // The BoundaryCallback will observe when the user reaches to the edges of
         // the list and update the database with extra data
-        val boundaryCallback = FollowingBattlesFeedBoundaryCallback(followingBattlesFeedCacheManager, coroutineScope)
+        val boundaryCallback = FollowingBattlesFeedBoundaryCallback(followingBattlesFeedCacheManager, compositeDisposable,
+                _networkErrors )
 
 
         // Get the paged list
@@ -54,8 +57,8 @@ class FollowingBattlesFeedRepository @Inject constructor(
         return FollowingBattlesSearchResult(data, networkErrors)
     }
 
-    suspend fun updateBattles(){
-        followingBattlesFeedCacheManager.checkForUpdates()
+     fun updateBattles() : Completable {
+         return Completable.fromCallable {followingBattlesFeedCacheManager.checkForUpdates()}
     }
 
 

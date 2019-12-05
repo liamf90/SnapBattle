@@ -10,7 +10,7 @@ import androidx.lifecycle.ViewModelProviders
 import com.liamfarrell.android.snapbattle.adapters.ReportedBattleCallback
 import com.liamfarrell.android.snapbattle.adapters.ReportedBattleListAdapter
 import com.liamfarrell.android.snapbattle.databinding.FragmentReportingsBinding
-import com.liamfarrell.android.snapbattle.di.AWSLambdaModule
+import com.liamfarrell.android.snapbattle.di.ContextModule
 import com.liamfarrell.android.snapbattle.di.DaggerBattlesReportedComponent
 import com.liamfarrell.android.snapbattle.viewmodel.BattlesReportedViewModel
 
@@ -24,7 +24,7 @@ class BattlesReportedFragment : Fragment(), ReportedBattleCallback {
         binding.lifecycleOwner = viewLifecycleOwner
 
         val appComponent = DaggerBattlesReportedComponent.builder()
-                .aWSLambdaModule(AWSLambdaModule(requireContext()))
+                .contextModule(ContextModule(activity?.application!!))
                 .build()
 
 

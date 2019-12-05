@@ -47,7 +47,7 @@ class BattleChallengesListFragment : Fragment(), BattleChallengesAdapterCallback
         val binding = FragmentChallengesListBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = viewLifecycleOwner
 
-        viewModel = ViewModelProviders.of(this, viewModelFactory).get(BattleChallengesViewModel::class.java)
+        viewModel = ViewModelProvider(this, viewModelFactory).get(BattleChallengesViewModel::class.java)
         binding.recyclerList.adapter = adapter
         binding.recyclerList.addItemDecoration(DividerItemDecoration(context, LinearLayoutManager.VERTICAL))
         binding.viewModel = viewModel

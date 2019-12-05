@@ -1,15 +1,13 @@
 package com.liamfarrell.android.snapbattle.db
 
-import android.util.Log
+import androidx.lifecycle.MutableLiveData
 import androidx.paging.PagedList
-import com.liamfarrell.android.snapbattle.data.AllBattlesCacheManager
 import com.liamfarrell.android.snapbattle.data.NotificationsManager
-import com.liamfarrell.android.snapbattle.model.Battle
-import com.liamfarrell.android.snapbattle.notifications.Notification
 import com.liamfarrell.android.snapbattle.notifications.NotificationDb
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import io.reactivex.Completable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 
 /**
@@ -18,8 +16,9 @@ import timber.log.Timber
  **/
 class NotificationsBoundaryCallback(
         private val notificationsManager: NotificationsManager,
-        private val coroutineScope: CoroutineScope
-) : PagedList.BoundaryCallback<NotificationDb>() {
+        private val compositeDisposable: CompositeDisposable,
+        private val errorLiveData : MutableLiveData<Throwable>
+        ) : PagedList.BoundaryCallback<NotificationDb>() {
 
 
     override fun onZeroItemsLoaded() {
@@ -30,8 +29,9 @@ class NotificationsBoundaryCallback(
      * When all items in the database were loaded, we need to query the backend for more items.
      */
     override fun onItemAtEndLoaded(itemAtEnd: NotificationDb) {
-        Timber.d("onItemAtEndLoaded")
-        coroutineScope.launch(Dispatchers.IO) { notificationsManager.requestMoreBattles()}
+        compositeDisposable.add(Completable.fromCallable { notificationsManager.requestMoreNotifications()}.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .subscribe({},{onError: Throwable ->
+                    errorLiveData.value = onError}))
     }
 
 }

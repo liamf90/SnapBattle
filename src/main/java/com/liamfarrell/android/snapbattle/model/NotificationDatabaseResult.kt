@@ -11,5 +11,5 @@ import com.liamfarrell.android.snapbattle.notifications.NotificationDb
  */
 data class NotificationsDatabaseResult(
         val data: LiveData<PagedList<NotificationDb>>,
-        val networkErrors: LiveData<String>
+        val networkErrors: LiveData<Throwable>
 )

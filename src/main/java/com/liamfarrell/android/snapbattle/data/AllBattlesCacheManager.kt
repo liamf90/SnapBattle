@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.liamfarrell.android.snapbattle.db.AllBattlesDynamoDataDao
 import com.liamfarrell.android.snapbattle.db.BattleDao
+import io.reactivex.schedulers.Schedulers.single
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -133,33 +134,25 @@ class AllBattlesCacheManager @Inject constructor(
     }
 
     fun increaseLikeCount(battleId: Int){
-        GlobalScope.launch (Dispatchers.IO) {
-            battleDao.increaseLikeCount (battleId)
-        }
+        battleDao.increaseLikeCount (battleId).subscribeOn(single()).subscribe()
     }
 
     fun decreaseLikeCount(battleId: Int){
-        GlobalScope.launch (Dispatchers.IO) {
-            battleDao.decreaseLikeCount (battleId)
-        }
+         battleDao.decreaseLikeCount (battleId).subscribeOn(single()).subscribe()
     }
 
     fun increaseDislikeCount(battleId: Int){
-        GlobalScope.launch (Dispatchers.IO) {
-            battleDao.increaseDislikeCount (battleId)
-        }
+        battleDao.increaseDislikeCount (battleId).subscribeOn(single()).subscribe()
+
     }
 
     fun decreaseDislikeCount(battleId: Int){
-        GlobalScope.launch (Dispatchers.IO) {
-            battleDao.decreaseDislikeCount (battleId)
-        }
+        battleDao.decreaseDislikeCount (battleId).subscribeOn(single()).subscribe()
     }
 
     fun setHasVoted(battleId: Int) {
-        GlobalScope.launch (Dispatchers.IO) {
-            battleDao.setHasVoted(battleId)
-        }
+        battleDao.setHasVoted(battleId).subscribeOn(single()).subscribe()
+
     }
 
     companion object {
