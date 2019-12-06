@@ -41,9 +41,8 @@ class CompletedBattlesViewModel @Inject constructor(private val context: Applica
                 .doOnSubscribe{_spinner.value = true}
                 .subscribe(
                         { onSuccessResponse ->
-                            //TODO response.result.sqlResult = getThumbnailSignedUrls(response.result.sqlResult)
                             _spinner.value = false
-                            _battles.value = onSuccessResponse.sqlResult
+                            _battles.value = getThumbnailSignedUrls(onSuccessResponse.sqlResult)
                         },
                         {onError : Throwable ->
                             _spinner.value = false
@@ -52,9 +51,9 @@ class CompletedBattlesViewModel @Inject constructor(private val context: Applica
                 ))
     }
 
-    private suspend fun getThumbnailSignedUrls(battleList: List<Battle>) : List<Battle>{
+    private fun getThumbnailSignedUrls(battleList: List<Battle>) : List<Battle>{
         battleList.forEach {
-            it.signedThumbnailUrl = thumbnailSignedUrlCacheRepository.getThumbnailSignedUrl(it)
+            it.signedThumbnailUrl = thumbnailSignedUrlCacheRepository.getThumbnailSignedUrlRx(it)
         }
         return battleList
     }

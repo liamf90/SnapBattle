@@ -51,9 +51,10 @@ class CommentViewModel @Inject constructor(private val context: Application, pri
     fun getComments(battleID: Int){
         compositeDisposable.add(  commentRepository.getCommentsRx(battleID)
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(Schedulers.io())
                 .doOnSubscribe{_spinner.value = true}
                 .map { getProfilePicSignedUrls(it.sql_result).toMutableList() }
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         { onSuccessResponse ->
                             _spinner.value = false
