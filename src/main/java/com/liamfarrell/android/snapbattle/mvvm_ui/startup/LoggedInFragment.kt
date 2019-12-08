@@ -20,6 +20,8 @@ import com.liamfarrell.android.snapbattle.di.Injectable
 import com.liamfarrell.android.snapbattle.service.RegistrationIntentService
 import com.liamfarrell.android.snapbattle.util.getErrorMessage
 import dagger.android.DispatchingAndroidInjector
+import io.reactivex.Completable
+import io.reactivex.schedulers.Schedulers.io
 import kotlinx.coroutines.*
 import java.lang.ClassCastException
 import javax.inject.Inject
@@ -90,7 +92,7 @@ class LoggedInFragment  : Fragment() , Injectable {
             return }
 
         //reset all the room databases for the new logged in user
-        resetDatabases()
+        Completable.fromCallable {resetDatabases()}.subscribeOn(io()).subscribe()
 
         //register the user for google cloud messaging
         Intent(requireContext(), RegistrationIntentService::class.java).also { intent ->
@@ -113,14 +115,12 @@ class LoggedInFragment  : Fragment() , Injectable {
     }
 
 
-    private suspend fun resetDatabases(){
-        withContext(Dispatchers.IO) {
+    private fun resetDatabases() {
+
             followingUserCacheManager.loadFromScratch()
             notificationsManager.deleteAllNotifications()
             followingBattlesFeedCacheManager.deleteBattles()
             allBattlesCacheManager.deleteBattles()
-        }
-
     }
 
 

@@ -136,11 +136,9 @@ class FollowingBattlesFeedCacheManager @Inject constructor(
         }
     }
 
-     suspend fun deleteBattles(){
-         withContext(Dispatchers.IO) {
+      fun deleteBattles(){
              followingBattlesFeedDynamoInfoDao.insert(FollowingBattlesDynamoCount())
              followingBattleDao.deleteAllBattles()
-         }
      }
 
     fun increaseLikeCount(battleId: Int){

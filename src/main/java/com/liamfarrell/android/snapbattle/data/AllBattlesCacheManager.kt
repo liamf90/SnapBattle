@@ -126,11 +126,9 @@ class AllBattlesCacheManager @Inject constructor(
         }
     }
 
-    suspend fun deleteBattles(){
-        withContext(Dispatchers.IO) {
+     fun deleteBattles(){
             allBattlesDynamoInfoDao.insert(AllBattlesDynamoCount())
             battleDao.deleteAllBattles()
-        }
     }
 
     fun increaseLikeCount(battleId: Int){

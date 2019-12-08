@@ -109,7 +109,7 @@ class AddFacebookFriendsAsFollowersViewModel @Inject constructor(private val con
                     .subscribe(
                             { _ ->
                                 _spinner.value = false
-                                //TODO followingUserCacheManager.checkForUpdates()
+                                followingUserCacheManager.checkForUpdates().subscribeOn(io()).subscribe()
 
                                 //go to next fragment
                                 nextFragmentCallback()
@@ -139,7 +139,7 @@ class AddFacebookFriendsAsFollowersViewModel @Inject constructor(private val con
                             _following.value?.find { it.cognitoId == cognitoIDUnfollow }?.isFollowingChangeInProgress = false
                             _following.notifyObserver()
 
-                            //TODO followingUserCacheManager.checkForUpdates()
+                            followingUserCacheManager.checkForUpdates().subscribeOn(io()).subscribe()
                         },
                         { onError : Throwable ->
                             _following.value?.find { it.cognitoId == cognitoIDUnfollow }?.run {

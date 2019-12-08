@@ -5,6 +5,7 @@ import com.liamfarrell.android.snapbattle.db.NotificationDao
 import com.liamfarrell.android.snapbattle.db.NotificationDynamoInfoDao
 import com.liamfarrell.android.snapbattle.db.NotificationsDynamoInfo
 import com.liamfarrell.android.snapbattle.notifications.NotificationDb
+import io.reactivex.Completable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -90,11 +91,9 @@ class NotificationsManager @Inject constructor(
         loadingNewNotifications.postValue(false)
     }
 
-    suspend fun deleteAllNotifications(){
-        withContext(Dispatchers.IO) {
-            notificationsDao.deleteAllNotifications()
-            notificationsDynamoInfoDao.insert(NotificationsDynamoInfo())
-        }
+     fun deleteAllNotifications() {
+             notificationsDao.deleteAllNotifications()
+             notificationsDynamoInfoDao.insert(NotificationsDynamoInfo())
     }
 
 

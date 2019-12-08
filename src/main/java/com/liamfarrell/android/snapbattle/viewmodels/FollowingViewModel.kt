@@ -12,6 +12,7 @@ import com.liamfarrell.android.snapbattle.util.getErrorMessage
 import com.liamfarrell.android.snapbattle.util.notifyObserver
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import io.reactivex.schedulers.Schedulers.io
 import javax.inject.Inject
 
 /**
@@ -131,13 +132,15 @@ class FollowingViewModel @Inject constructor(private val context: Application, p
                             }
                             _following.notifyObserver()
 
-                            //TODO followingUserCacheManager.checkForUpdates()
+                            followingUserCacheManager.checkForUpdates().subscribeOn(io()).subscribe()
                         },
                         { onError : Throwable ->
                             error.value = onError
                         }
                 ))
     }
+
+
 
 
      private fun getProfilePicSignedUrls(userList: List<User>) : List<User>{

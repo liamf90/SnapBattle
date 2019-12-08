@@ -33,7 +33,6 @@ class ChooseNameStartupViewModel @Inject constructor(private val context : Appli
     fun updateName(newName : String, nextFragmentCallback : ()-> Unit){
         compositeDisposable.add( userUpdateRepository.updateNameRx(newName)
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe{_spinner.value = true}
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
