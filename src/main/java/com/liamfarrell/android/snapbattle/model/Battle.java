@@ -373,7 +373,7 @@ public class Battle implements Serializable
 
 
 
-    public void setVideosUploaded(int videosUploaded) {
+    public void setVideosUploaded(Integer videosUploaded) {
         mVideosUploaded = videosUploaded;
     }
 

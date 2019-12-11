@@ -34,6 +34,7 @@ class BattleNameSuggestionsAdapter(context: Context, var battleNameList: List<Su
             return results
         }
 
+        @Suppress("UNCHECKED_CAST")
         override fun publishResults(constraint: CharSequence?, results: Filter.FilterResults?) {
             clear()
             if (results != null && results.count > 0) {

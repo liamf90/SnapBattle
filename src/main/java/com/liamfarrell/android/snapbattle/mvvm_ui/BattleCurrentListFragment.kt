@@ -8,7 +8,6 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -42,7 +41,7 @@ class BattleCurrentListFragment : Fragment(), Injectable {
         binding = FragmentCurrentBattleListBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = viewLifecycleOwner
 
-        viewModel = ViewModelProviders.of(this, viewModelFactory).get(CurrentBattlesViewModel::class.java)
+        viewModel = ViewModelProvider(this, viewModelFactory).get(CurrentBattlesViewModel::class.java)
         val adapter = CurrentBattlesListAdapter(getCognitoId())
         binding.recyclerView.adapter = adapter
         binding.recyclerView.addItemDecoration(DividerItemDecoration(context, LinearLayoutManager.VERTICAL))

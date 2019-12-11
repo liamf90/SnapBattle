@@ -31,4 +31,6 @@ interface AllBattlesDynamoDataDao {
     suspend fun insert(allBattlesInfo : AllBattlesDynamoCount)
 
 
+
+
 }

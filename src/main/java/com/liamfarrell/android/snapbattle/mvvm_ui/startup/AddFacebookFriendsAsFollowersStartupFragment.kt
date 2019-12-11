@@ -8,7 +8,6 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import com.liamfarrell.android.snapbattle.R
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -52,7 +51,7 @@ class AddFacebookFriendsAsFollowersStartupFragment : Fragment(), Injectable {
         setHasOptionsMenu(true)
         val binding = FragmentAddFollowersSelectBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = viewLifecycleOwner
-        viewModel = ViewModelProviders.of(this, viewModelFactory).get(AddFacebookFriendsAsFollowersViewModel::class.java)
+        viewModel = ViewModelProvider(this, viewModelFactory).get(AddFacebookFriendsAsFollowersViewModel::class.java)
         binding.recyclerList.adapter = adapter
         binding.recyclerList.addItemDecoration(DividerItemDecoration(context, LinearLayoutManager.VERTICAL))
         binding.viewModel = viewModel

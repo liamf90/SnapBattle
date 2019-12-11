@@ -3,10 +3,7 @@ package com.liamfarrell.android.snapbattle.util
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
-import android.widget.ImageView
 import com.liamfarrell.android.snapbattle.R
-import com.liamfarrell.android.snapbattle.app.SnapBattleApp
-import com.squareup.picasso.Callback
 import com.squareup.picasso.NetworkPolicy
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.Target
@@ -20,11 +17,9 @@ import kotlin.coroutines.suspendCoroutine
 
 
 fun mysqlDateStringToDate(dateString : String) : Date {
-    var timeBanEnds = Date()
     val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.ENGLISH)
     sdf.timeZone = TimeZone.getTimeZone("UTC")
-    timeBanEnds = sdf.parse(dateString)
-    return timeBanEnds
+    return sdf.parse(dateString)
 }
 
 fun getTimeUntil(context: Context, dateAfterNow: Date): String {

@@ -34,7 +34,7 @@ class UsersBattleRepository @Inject constructor
     }
 
     suspend fun uploadVideo (context: Context, battle : Battle, fileName : String, cognitoIDOpponent : String, videoID : Int, videoRotationLock: String?) : AsyncTaskResult<VideoSubmittedResponse>{
-        val asyncResult = uploadVideoJob(context, battle, fileName, cognitoIDOpponent, videoID)
+        val asyncResult = uploadVideoJob(context, fileName, cognitoIDOpponent)
         if (asyncResult.error != null) return AsyncTaskResult(asyncResult.error)
         return videoSubmitted(videoID, battle.battleID, videoRotationLock)
     }

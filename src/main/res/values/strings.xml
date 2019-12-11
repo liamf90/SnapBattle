@@ -15,8 +15,6 @@
     <string name="all_battles_tab_title">All Battles</string>
     <string name="following_battles_tab_title">Following Battles</string>
 
-
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="follow">Follow</string>
     <string name="unfollow">Unfollow</string>
     <string name="title_activity_main">MainActivity</string>

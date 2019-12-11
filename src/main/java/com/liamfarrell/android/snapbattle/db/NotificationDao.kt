@@ -1,10 +1,7 @@
 package com.liamfarrell.android.snapbattle.db
 
 import androidx.paging.DataSource
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import com.liamfarrell.android.snapbattle.notifications.Notification
 import com.liamfarrell.android.snapbattle.notifications.NotificationDb
 
@@ -32,9 +29,27 @@ interface NotificationDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(notifications: List<NotificationDb>)
 
-    @Query("DELETE FROM notifications")
-    suspend fun deleteAllNotifications()
+    @Transaction
+    suspend fun insertNotifications(notifications: List<NotificationDb>, notificationCountDynamo: Int) {
+        insertAll(notifications)
+        updateNotificationsDynamoCount(notificationCountDynamo)
+    }
+
+    @Query("UPDATE notifications_dynamo_info SET notifications_dynamo_count = :notificationsDynamoCount")
+    suspend fun updateNotificationsDynamoCount(notificationsDynamoCount: Int)
 
     @Query("SELECT COUNT(*) FROM notifications")
     suspend fun getCountAllNotifications(): Int
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+     suspend fun resetNotificationsDynamoInfo(notificationsInfo : NotificationsDynamoInfo)
+
+    @Query("DELETE FROM notifications")
+     suspend fun deleteNotifications()
+
+    @Transaction
+    suspend fun deleteAllNotifications(){
+        deleteNotifications()
+        resetNotificationsDynamoInfo(NotificationsDynamoInfo())
+    }
 }

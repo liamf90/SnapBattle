@@ -8,7 +8,6 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import com.liamfarrell.android.snapbattle.databinding.FragmentCreateBattleBinding
 import com.liamfarrell.android.snapbattle.di.Injectable
 import com.liamfarrell.android.snapbattle.model.Battle
@@ -45,7 +44,7 @@ class VerifyBattleFragment : Fragment(), Injectable {
         val binding = FragmentCreateBattleBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = viewLifecycleOwner
 
-        viewModel = ViewModelProviders.of(this, viewModelFactory).get(VerifyBattleViewModel::class.java)
+        viewModel = ViewModelProvider(this, viewModelFactory).get(VerifyBattleViewModel::class.java)
         viewModel.battle.value = battle
         binding.viewModel = viewModel
         subscribeUi()

@@ -9,7 +9,6 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import com.liamfarrell.android.snapbattle.R
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -22,7 +21,6 @@ import com.liamfarrell.android.snapbattle.adapters.FollowFacebookFriendsListAdap
 import com.liamfarrell.android.snapbattle.databinding.FragmentAddFollowersBinding
 import com.liamfarrell.android.snapbattle.di.*
 import com.liamfarrell.android.snapbattle.viewmodels.AddFacebookFriendsAsFollowersViewModel
-import kotlinx.android.synthetic.main.fragment_add_followers.*
 import java.util.*
 import javax.inject.Inject
 
@@ -40,7 +38,7 @@ class FollowFacebookFriendsFragment : Fragment() , Injectable {
         val binding = FragmentAddFollowersBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = viewLifecycleOwner
 
-        viewModel = ViewModelProviders.of(this, viewModelFactory).get(AddFacebookFriendsAsFollowersViewModel::class.java)
+        viewModel = ViewModelProvider(this, viewModelFactory).get(AddFacebookFriendsAsFollowersViewModel::class.java)
         val adapter = FollowFacebookFriendsListAdapter(::addFollower, ::removeFollower)
         binding.recyclerList.adapter = adapter
         binding.recyclerList.addItemDecoration(DividerItemDecoration(context, LinearLayoutManager.VERTICAL))

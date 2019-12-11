@@ -61,7 +61,6 @@ fun graphResponseToOpponentList(response: GraphResponse): ArrayList<User> {
         }
 
     } catch (e: JSONException) {
-        // TODO Auto-generated catch block
         e.printStackTrace()
     }
     return opponentListFromGraph

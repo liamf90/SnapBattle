@@ -21,18 +21,6 @@ public abstract class Notification implements Serializable{
     private String signedUrlProfilePicOpponent;
     private int mOpponentProfilePicCount;
 
-    //TODO DELETE THIS METHOD
-   // public Notification()
-    {
-        mBattleId = -1;
-    }
-
-    //TODO DELETE THIS METHOD
-//    public Notification(int BattleId)
-//    {
-//        mBattleId = BattleId;
-//        mOpponentProfilePicCount = -1;
-//    }
 
     public Notification(int notificationIndex)
     {

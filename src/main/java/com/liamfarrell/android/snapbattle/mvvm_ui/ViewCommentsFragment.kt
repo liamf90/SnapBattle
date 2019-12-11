@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import com.liamfarrell.android.snapbattle.databinding.FragmentViewCommentsBinding
 import com.liamfarrell.android.snapbattle.viewmodels.CommentViewModel
 import com.liamfarrell.android.snapbattle.adapters.CommentsListAdapter
@@ -53,7 +52,7 @@ class ViewCommentsFragment : Fragment(), Injectable {
         binding.lifecycleOwner = viewLifecycleOwner
         battleId = arguments?.getInt("battleId") ?: throw IllegalStateException("battle id is not set")
 
-        viewModel = ViewModelProviders.of(this, viewModelFactory).get(CommentViewModel::class.java)
+        viewModel = ViewModelProvider(this, viewModelFactory).get(CommentViewModel::class.java)
         val adapter = CommentsListAdapter(viewModel, ::listItemViewHolderOnClick)
         binding.commentsList.adapter = adapter
         binding.viewModel = viewModel

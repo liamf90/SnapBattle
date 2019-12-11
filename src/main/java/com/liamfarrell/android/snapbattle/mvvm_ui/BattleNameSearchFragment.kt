@@ -8,7 +8,6 @@ import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import com.liamfarrell.android.snapbattle.adapters.BattleNameSearchSuggestionAdapter
 import com.liamfarrell.android.snapbattle.databinding.FragmentBattleNameSearchBinding
 import com.liamfarrell.android.snapbattle.di.Injectable
@@ -31,7 +30,7 @@ class BattleNameSearchFragment : Fragment(), Injectable {
         val binding = FragmentBattleNameSearchBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = viewLifecycleOwner
 
-        viewModel = ViewModelProviders.of(this, viewModelFactory).get(BattleNameSearchViewModel::class.java)
+        viewModel = ViewModelProvider(this, viewModelFactory).get(BattleNameSearchViewModel::class.java)
         binding.recyclerList.adapter = adapter
         subscribeUi()
         return binding.root

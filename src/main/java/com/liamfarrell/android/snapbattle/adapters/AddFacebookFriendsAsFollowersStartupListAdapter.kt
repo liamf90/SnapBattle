@@ -36,7 +36,7 @@ class AddFacebookFriendsAsFollowersStartupListAdapter(val onCheckedChanged: (ena
     }
 
     private fun getOnCheckboxChangedListener() : CompoundButton.OnCheckedChangeListener {
-        return CompoundButton.OnCheckedChangeListener{compoundButton: CompoundButton, b: Boolean ->
+        return CompoundButton.OnCheckedChangeListener{ _: CompoundButton, b: Boolean ->
             val checkedInitial = checkedCount
             if (b) checkedCount ++
             else checkedCount --

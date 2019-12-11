@@ -11,7 +11,7 @@ import com.liamfarrell.android.snapbattle.mvvm_ui.host_fragments.NavigationHostF
 import com.liamfarrell.android.snapbattle.mvvm_ui.host_fragments.NotificationHostFragment
 import com.liamfarrell.android.snapbattle.mvvm_ui.host_fragments.SearchHostFragment
 import dagger.android.DispatchingAndroidInjector
-import dagger.android.support.HasSupportFragmentInjector
+import dagger.android.HasAndroidInjector
 import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
 
@@ -23,14 +23,15 @@ interface HideAndShowBottomNavigation{
 }
 
 
-class MainActivity : AppCompatActivity(), HasSupportFragmentInjector, HideAndShowBottomNavigation {
+class MainActivity : AppCompatActivity(), HasAndroidInjector, HideAndShowBottomNavigation {
+
     companion object {
         val HOME_BUTTON_PRESSED_INTENT = "com.liamfarrell.android.snapbattle.MainActivity.HOME_BUTTON_PRESSED"
         val SEARCH_BUTTON_PRESSED_INTENT = "com.liamfarrell.android.snapbattle.MainActivity.SEARCH_BUTTON_PRESSED"
     }
 
     @Inject
-    lateinit var dispatchingAndroidInjector: DispatchingAndroidInjector<Fragment>
+    lateinit var dispatchingAndroidInjector: DispatchingAndroidInjector<Any>
 
 
     private val notificationHostFragment : NotificationHostFragment by lazy {NotificationHostFragment()}
@@ -111,6 +112,6 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector, HideAndSho
     }
 
 
-    override fun supportFragmentInjector() = dispatchingAndroidInjector
+    override fun androidInjector() = dispatchingAndroidInjector
 }
 

@@ -17,7 +17,6 @@ import androidx.core.content.PermissionChecker.checkSelfPermission
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.amazonaws.mobile.auth.core.IdentityManager
@@ -69,7 +68,7 @@ class ViewBattleFragment : Fragment(), Injectable {
         binding = FragmentViewBattleBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = viewLifecycleOwner
         battleID = args.battleId
-        viewModel = ViewModelProviders.of(this, viewModelFactory).get(ViewOwnBattleViewModel::class.java)
+        viewModel = ViewModelProvider(this, viewModelFactory).get(ViewOwnBattleViewModel::class.java)
         binding.viewModel = viewModel
         binding.included.saveToDeviceButton.setOnClickListener {onSaveToDeviceButtonClicked()}
         binding.included.playWholeBattleButton.setOnClickListener {onPlayButtonClicked()}
@@ -280,11 +279,11 @@ class ViewBattleFragment : Fragment(), Injectable {
         val builder = AlertDialog.Builder(activity!!)
         builder.setTitle(R.string.app_permission_dialog_title)
         builder.setMessage(R.string.app_need_permissions_not_given)
-        builder.setPositiveButton(R.string.app_permission_goto_settings) { dialog, which ->
+        builder.setPositiveButton(R.string.app_permission_goto_settings) { dialog, _ ->
             dialog.cancel()
             openSettings()
         }
-        builder.setNegativeButton(R.string.app_permission_cancel) { dialog, which -> dialog.cancel() }
+        builder.setNegativeButton(R.string.app_permission_cancel) { dialog, _ -> dialog.cancel() }
         builder.show()
 
     }

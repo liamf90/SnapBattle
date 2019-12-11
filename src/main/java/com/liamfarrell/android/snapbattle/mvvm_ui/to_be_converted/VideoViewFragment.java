@@ -51,7 +51,6 @@ public class VideoViewFragment extends VideoPlayerAbstractFragment
 
             @Override
             public void onCompletion(MediaPlayer mp) {
-                // TODO Auto-generated method stub
                 getActivity().finish();
             }
 

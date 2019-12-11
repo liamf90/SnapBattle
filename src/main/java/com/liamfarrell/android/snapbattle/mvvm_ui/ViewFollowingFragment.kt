@@ -10,7 +10,6 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import com.liamfarrell.android.snapbattle.R
 import com.liamfarrell.android.snapbattle.adapters.FollowingListAdapter
 import com.liamfarrell.android.snapbattle.databinding.FragmentViewFollowersBinding
@@ -36,7 +35,7 @@ class ViewFollowingFragment : Fragment() , Injectable {
         val binding = FragmentViewFollowersBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = viewLifecycleOwner
 
-        viewModel = ViewModelProviders.of(this, viewModelFactory).get(FollowingViewModel::class.java)
+        viewModel = ViewModelProvider(this, viewModelFactory).get(FollowingViewModel::class.java)
         val adapter = FollowingListAdapter(::removeFollowing, ::addFollowing)
         binding.recyclerList.adapter = adapter
         binding.recyclerList.addItemDecoration(DividerItemDecoration(context, LinearLayoutManager.VERTICAL))

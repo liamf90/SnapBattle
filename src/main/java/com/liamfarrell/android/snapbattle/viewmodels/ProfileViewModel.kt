@@ -85,8 +85,6 @@ class ProfileViewModel @Inject constructor(private val context: Application, pri
                         if (response.result.result == UpdateUsernameResponse.resultUsernameUpdated) {
                             val sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context)
                             sharedPrefs.edit().putString(LoggedInFragment.USERNAME_SHAREDPREFS, username).commit()
-                            //update textview in main callbacks showing username
-                            //TODO(callbacks as ActivityMainNavigationDrawer).loadUsernameAndName()
                             _snackBarMessage.value = context.getString(R.string.username_updated_snackbar_message)
 
                         } else if (response.result.result == ChooseUsernameStartupFragment.usernamameNotValidErorrCode) {

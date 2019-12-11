@@ -143,8 +143,7 @@ class FollowingBattlesFeedCacheManager @Inject constructor(
 
      suspend fun deleteBattles(){
          withContext(Dispatchers.IO) {
-             followingBattlesFeedDynamoInfoDao.insert(FollowingBattlesDynamoCount())
-             followingBattleDao.deleteAllBattles()
+             followingBattleDao.resetFollowingBattles()
          }
      }
 

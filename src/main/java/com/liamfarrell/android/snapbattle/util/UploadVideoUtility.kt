@@ -18,7 +18,7 @@ import java.io.File
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
-suspend fun uploadVideoJob(context: Context, b : Battle, fileName : String, cognitoIDOpponent : String, videoID : Int) : AsyncTaskResult<Boolean> {
+suspend fun uploadVideoJob(context: Context, fileName : String, cognitoIDOpponent : String) : AsyncTaskResult<Boolean> {
 
         val s3 = AmazonS3Client(IdentityManager.getDefaultIdentityManager().credentialsProvider)
         val bucketName = "snapbattlevideos"
@@ -26,7 +26,6 @@ suspend fun uploadVideoJob(context: Context, b : Battle, fileName : String, cogn
         val file = File(context.getFilesDir().getAbsolutePath() + "/" + fileName)
         val key = CognitoID + "/" + file.getName()
         val CognitoIDUser = IdentityManager.getDefaultIdentityManager().cachedUserID
-        val orientationLock = Video.orientationHintToLock(Integer.parseInt(Video.getVideoRotation(context, b.videos.get(b.videosUploaded))))
     Timber.i("Here3")
         println("Uploading a new object to S3 from a file\n")
         val por = PutObjectRequest(bucketName, key, file)

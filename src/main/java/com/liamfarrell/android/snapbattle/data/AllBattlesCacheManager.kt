@@ -138,7 +138,6 @@ class AllBattlesCacheManager @Inject constructor(
 
     suspend fun deleteBattles(){
         withContext(Dispatchers.IO) {
-            allBattlesDynamoInfoDao.insert(AllBattlesDynamoCount())
             battleDao.deleteAllBattles()
         }
     }

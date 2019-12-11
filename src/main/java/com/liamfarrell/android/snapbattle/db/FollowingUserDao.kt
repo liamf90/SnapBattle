@@ -2,10 +2,7 @@ package com.liamfarrell.android.snapbattle.db
 
 import androidx.lifecycle.LiveData
 import androidx.paging.DataSource
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import com.liamfarrell.android.snapbattle.model.Battle
 import com.liamfarrell.android.snapbattle.model.User
 
@@ -28,10 +25,19 @@ interface FollowingUserDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(users: List<User>)
 
+    @Transaction
+    suspend fun insert(users: List<User>, dynamoDbCount: Int) {
+        insertAll(users)
+        insertFollowingUserDynamoInfo(FollowingUserDynamoCount(dynamoDbCount))
+    }
+
     @Query("DELETE FROM user WHERE mCognitoId = :userCognitoID")
     suspend fun deleteFromUser(userCognitoID: String)
 
     @Query("SELECT * FROM user WHERE LOWER(mUsername) LIKE LOWER(:searchQuery) || '%' OR LOWER(mFacebookName) LIKE LOWER(:searchQuery) || '%' OR LOWER(mFacebookName) LIKE '% ' || LOWER(:searchQuery) || '%'")
     suspend fun searchUsersInCache(searchQuery: String): List<User>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertFollowingUserDynamoInfo(followingUserDynamoInfo : FollowingUserDynamoCount)
 
 }

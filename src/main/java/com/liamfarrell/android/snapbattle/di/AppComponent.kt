@@ -43,5 +43,5 @@ interface AppComponent {
         fun build(): AppComponent
     }
 
-    fun inject(snapBattleApp: SnapBattleApp)
+      fun inject(snapBattleApp: SnapBattleApp)
 }
