@@ -12,7 +12,6 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import com.liamfarrell.android.snapbattle.MainActivity
 import com.liamfarrell.android.snapbattle.R
@@ -20,7 +19,6 @@ import com.liamfarrell.android.snapbattle.adapters.BattlesByNamePagedListAdapter
 import com.liamfarrell.android.snapbattle.databinding.FragmentFriendsBattleListBinding
 import com.liamfarrell.android.snapbattle.di.*
 import com.liamfarrell.android.snapbattle.viewmodels.BattlesByNameViewModel
-import timber.log.Timber
 import javax.inject.Inject
 
 class BattlesFromNameFragment : Fragment() , Injectable {
@@ -42,7 +40,7 @@ class BattlesFromNameFragment : Fragment() , Injectable {
 
         val binding = FragmentFriendsBattleListBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = viewLifecycleOwner
-        viewModel = ViewModelProviders.of(this, viewModelFactory).get(BattlesByNameViewModel::class.java)
+        viewModel = ViewModelProvider(this, viewModelFactory).get(BattlesByNameViewModel::class.java)
         if (viewModel.battleName.value == null){viewModel.setBattleName(battleName)}
         val adapter = BattlesByNamePagedListAdapter()
         binding.recyclerView.adapter = adapter

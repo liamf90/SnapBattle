@@ -4,13 +4,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
-import androidx.navigation.fragment.findNavController
 import com.liamfarrell.android.snapbattle.adapters.NotificationPagedListAdapter
 import com.liamfarrell.android.snapbattle.databinding.FragmentNotificationListBinding
 import com.liamfarrell.android.snapbattle.di.Injectable
@@ -32,7 +28,7 @@ class NotificationListFragment : Fragment(), Injectable {
         val binding = FragmentNotificationListBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = viewLifecycleOwner
 
-        viewModel = ViewModelProviders.of(this, viewModelFactory).get(NotificationsViewModel::class.java)
+        viewModel = ViewModelProvider(this, viewModelFactory).get(NotificationsViewModel::class.java)
         val adapter = NotificationPagedListAdapter(::onNotificationLoadedByAdapter)
         adapter.setHasStableIds(true)
 

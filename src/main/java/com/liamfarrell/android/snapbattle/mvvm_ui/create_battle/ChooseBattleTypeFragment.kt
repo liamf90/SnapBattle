@@ -17,7 +17,6 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import com.liamfarrell.android.snapbattle.R
 import com.liamfarrell.android.snapbattle.adapters.BattleNameSuggestionsAdapter
@@ -42,7 +41,7 @@ class ChooseBattleTypeFragment : Fragment() , Injectable {
         binding.lifecycleOwner = viewLifecycleOwner
 
 
-        viewModel = ViewModelProviders.of(this, viewModelFactory).get(ChooseBattleTypeViewModel::class.java)
+        viewModel = ViewModelProvider(this, viewModelFactory).get(ChooseBattleTypeViewModel::class.java)
         val adapter = BattleNameSuggestionsAdapter(requireContext(), mutableListOf())
         binding.onSuggestionTextClick = View.OnClickListener {view->   viewModel.battleName.value = (view as TextView).text.toString()
             battleTypeEditText.setSelection(battleTypeEditText.text.length)}

@@ -14,7 +14,7 @@ import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
+import com.amazonaws.mobile.auth.core.IdentityManager
 import com.google.android.material.snackbar.Snackbar
 import com.liamfarrell.android.snapbattle.R
 import com.liamfarrell.android.snapbattle.data.ProfilePicRepository
@@ -24,6 +24,7 @@ import com.liamfarrell.android.snapbattle.util.hideKeyboard
 import com.liamfarrell.android.snapbattle.viewmodels.ProfileViewModel
 import com.squareup.picasso.Picasso
 import com.theartofdev.edmodo.cropper.CropImage
+import timber.log.Timber
 import java.io.File
 import javax.inject.Inject
 
@@ -49,7 +50,7 @@ class ProfileFragment : Fragment(), Injectable {
         val binding = FragmentProfileBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = viewLifecycleOwner
 
-        viewModel = ViewModelProviders.of(this, viewModelFactory).get(ProfileViewModel::class.java)
+        viewModel = ViewModelProvider(this, viewModelFactory).get(ProfileViewModel::class.java)
 
         nameEditText = binding.nameEditText
         usernameEditText = binding.usernameEditText

@@ -30,6 +30,12 @@ interface FollowingBattleDao {
     @Query("DELETE FROM following_battle")
     suspend fun deleteAllBattles()
 
+    @Transaction
+    suspend fun resetFollowingBattles(){
+        deleteAllBattles()
+        insertFollowingBattlesInfo(FollowingBattlesDynamoCount())
+
+    }
 
     @Query("UPDATE following_battle SET mUserHasVoted = 1 WHERE battle_id = :battleId")
     suspend fun setHasVoted(battleId: Int)
@@ -45,6 +51,9 @@ interface FollowingBattleDao {
 
     @Query("UPDATE following_battle SET mDislikeCount = mDislikeCount - 1 WHERE battle_id = :battleId")
     suspend fun decreaseDislikeCount(battleId: Int)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertFollowingBattlesInfo(followingBattlesInfo : FollowingBattlesDynamoCount)
 
 
 }

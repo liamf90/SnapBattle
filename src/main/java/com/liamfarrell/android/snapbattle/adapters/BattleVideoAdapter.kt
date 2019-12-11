@@ -44,7 +44,7 @@ class BattleVideoAdapter (val battle: Battle, val recordButtonOnClickCallback: (
         viewModel.errorMessage.observeForever(Observer { Toast.makeText(holder.itemView.context, it, Toast.LENGTH_SHORT).show() })
 
         holder.apply {
-            bind(video,battle, viewModel,
+            bind(video, viewModel,
                     createRecordButtonOnClickListener(video),
                     createPlayButtonOnClickListener(video),
                     createSubmitButtonOnClickListener(viewModel))
@@ -56,7 +56,7 @@ class BattleVideoAdapter (val battle: Battle, val recordButtonOnClickCallback: (
              val binding: ListItemVideoUserBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(item: Video, battle: Battle,
+        fun bind(item: Video,
                  videoViewModel: BattleVideoItemViewModel,
                  recordButtonOnClickListener: View.OnClickListener,
                  playButtonOnClickListener : View.OnClickListener,

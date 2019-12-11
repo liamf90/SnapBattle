@@ -168,7 +168,7 @@
 		android:text="@string/accept"
 		android:onClick="@{acceptButtonOnClickListener}"
 		android:textColor="@color/secondary_text_light"
-		android:enabled="@{enableAcceptButton}"
+		android:enabled="@{safeUnbox(enableAcceptButton)}"
 		app:layout_constraintBottom_toBottomOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toBottomOf="@+id/linearLayout4" />
@@ -183,7 +183,7 @@
 		android:text="@string/decline"
 		android:textColor="@color/secondary_text_light"
 		android:onClick="@{declineButtonOnClickListener}"
-		android:enabled="@{enableDeclineButton}"
+		android:enabled="@{safeUnbox(enableDeclineButton)}"
 		app:layout_constraintBaseline_toBaselineOf="@+id/battle_list_item_accept_button"
 		app:layout_constraintEnd_toEndOf="parent" />
 

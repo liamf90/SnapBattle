@@ -47,7 +47,7 @@ class NotificationsDynamoDbRepository @Inject constructor(val ddbClient : Amazon
             notificationsDynamo?.let {
                 val pairs = notificationIndexList zip (notificationsDynamo)
 
-                return@withContext pairs.map { it ->
+                return@withContext pairs.map {
                     val index = it.first
                     when (NotificationType.valueOf(it.second.m["TYPE"]?.s
                             ?: throw IllegalArgumentException())) {

@@ -8,7 +8,6 @@ import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import com.liamfarrell.android.snapbattle.adapters.UserSearchSuggestionAdapter
 import com.liamfarrell.android.snapbattle.databinding.FragmentUserSearchBinding
 import com.liamfarrell.android.snapbattle.di.*
@@ -35,7 +34,7 @@ class UserSearchFragment : Fragment(), Injectable {
         binding.lifecycleOwner = viewLifecycleOwner
 
 
-        viewModel = ViewModelProviders.of(this, viewModelFactory).get(UserSearchViewModel::class.java)
+        viewModel = ViewModelProvider(this, viewModelFactory).get(UserSearchViewModel::class.java)
         binding.recyclerList.adapter = adapter
         binding.recyclerList.setItemAnimator(null);
         subscribeUi()
@@ -43,7 +42,7 @@ class UserSearchFragment : Fragment(), Injectable {
     }
 
     private fun subscribeUi() {
-        viewModel.searchResult.observe(viewLifecycleOwner, Observer { searchResult ->
+        viewModel.searchList.observe(viewLifecycleOwner, Observer { searchResult ->
             adapter.submitList(searchResult)
             adapter.notifyDataSetChanged()
         })

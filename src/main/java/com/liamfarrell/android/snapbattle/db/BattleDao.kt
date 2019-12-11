@@ -3,6 +3,7 @@ package com.liamfarrell.android.snapbattle.db
 import com.liamfarrell.android.snapbattle.model.Battle
 import androidx.paging.DataSource
 import androidx.room.*
+import com.liamfarrell.android.snapbattle.data.AllBattlesDynamoCount
 import com.liamfarrell.android.snapbattle.model.Video
 
 
@@ -30,7 +31,13 @@ interface BattleDao {
     suspend fun insertAll(battles: List<Battle>)
 
     @Query("DELETE FROM all_battles")
-    suspend fun deleteAllBattles()
+    suspend fun deleteBattles()
+
+    @Transaction
+    suspend fun deleteAllBattles(){
+        deleteBattles()
+        insertAllBattlesInfo(AllBattlesDynamoCount())
+    }
 
     @Query("UPDATE all_battles SET mUserHasVoted = 1 WHERE battle_id = :battleId")
     suspend fun setHasVoted(battleId: Int)
@@ -46,4 +53,7 @@ interface BattleDao {
 
     @Query("UPDATE all_battles SET mDislikeCount = mDislikeCount - 1 WHERE battle_id = :battleId")
     suspend fun decreaseDislikeCount(battleId: Int)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAllBattlesInfo(allBattlesInfo : AllBattlesDynamoCount)
 }

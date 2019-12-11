@@ -47,7 +47,7 @@
             android:layout_marginEnd="@dimen/user_info_header_margins_default"
             android:layout_marginTop="@dimen/user_info_header_margins_default"
             android:layout_toEndOf="@id/profileImageView"
-            android:clickable="@{user.isFollowingChangeInProgress ? false : true}"
+            android:clickable="@{safeUnbox(user.isFollowingChangeInProgress) ? false : true}"
             android:onClick="@{user.isFollowing ? unfollowUserClickListener : followUserClickListener}"
             android:text="@{user.isFollowing ? @string/unfollow : @string/follow}"
             app:layout_constraintEnd_toEndOf="parent"

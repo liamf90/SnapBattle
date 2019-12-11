@@ -51,7 +51,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/modifyFollowerButton"
-            android:clickable="@{user.isFollowingChangeInProgress ? false : true}"
+            android:clickable="@{safeUnbox(user.isFollowingChangeInProgress) ? false : true}"
             android:text="@{user.isFollowing ? @string/unfollow : @string/follow}"
             android:onClick="@{onModifyClickListener}"/>
 

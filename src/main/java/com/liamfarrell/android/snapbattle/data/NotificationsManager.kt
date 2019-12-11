@@ -83,9 +83,7 @@ class NotificationsManager @Inject constructor(
             }
 
             val newNotificationsList = notificationsDynamoDbRepository.getNotificationListFromDynamo(startIndex, endIndex)
-            //TODO: make the below two Room updates in a transaction
-            notificationsDao.insertAll(newNotificationsList.map { NotificationDb(it) })
-            notificationsDynamoInfoDao.updateNotificationsDynamoCount(notificationCountDynamo)
+            notificationsDao.insertNotifications(newNotificationsList.map { NotificationDb(it) },notificationCountDynamo)
         }
         loadingNewNotifications.postValue(false)
     }
@@ -93,7 +91,6 @@ class NotificationsManager @Inject constructor(
     suspend fun deleteAllNotifications(){
         withContext(Dispatchers.IO) {
             notificationsDao.deleteAllNotifications()
-            notificationsDynamoInfoDao.insert(NotificationsDynamoInfo())
         }
     }
 

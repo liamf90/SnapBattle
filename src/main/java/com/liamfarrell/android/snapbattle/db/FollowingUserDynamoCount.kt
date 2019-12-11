@@ -15,5 +15,5 @@ class  FollowingUserDynamoCount(val following_user_update_dynamo_count: Int = 0)
     @PrimaryKey
     @ColumnInfo(name = "id")
      var id = 1
-        set(value) {field = 1}
+        set(_) {field = 1}
 }

@@ -29,8 +29,7 @@ class FollowingUserCacheManager @Inject constructor(
             throw usersFollowing.error
         } else{
             withContext(Dispatchers.IO) {
-                userDao.insertAll(usersFollowing.result.sqlResult)
-                followingUserDynamoDataDao.insert(FollowingUserDynamoCount(usersFollowingDynamoDbCount))
+                userDao.insert(usersFollowing.result.sqlResult,usersFollowingDynamoDbCount)
             }
         }
     }

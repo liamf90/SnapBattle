@@ -8,7 +8,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.liamfarrell.android.snapbattle.R
 import dagger.android.DispatchingAndroidInjector
-import dagger.android.support.HasSupportFragmentInjector
+import dagger.android.HasAndroidInjector
 import kotlinx.android.synthetic.main.activity_startup.*
 import kotlinx.android.synthetic.main.toolbar.view.*
 import javax.inject.Inject
@@ -21,11 +21,11 @@ interface SetupToolbarInterface {
     fun showToolbar()
 }
 
-class StartupActivity : AppCompatActivity(), SetupToolbarInterface, HasSupportFragmentInjector {
+class StartupActivity : AppCompatActivity(), SetupToolbarInterface, HasAndroidInjector {
 
 
     @Inject
-    lateinit var dispatchingAndroidInjector: DispatchingAndroidInjector<Fragment>
+    lateinit var dispatchingAndroidInjector: DispatchingAndroidInjector<Any>
 
     private var enableNextButton = false
 
@@ -35,7 +35,7 @@ class StartupActivity : AppCompatActivity(), SetupToolbarInterface, HasSupportFr
         setToolbar(toolbar.toolbar)
     }
 
-    override fun supportFragmentInjector() = dispatchingAndroidInjector
+    override fun androidInjector() = dispatchingAndroidInjector
 
     private fun setToolbar(toolbar : androidx.appcompat.widget.Toolbar){
         setSupportActionBar(toolbar)

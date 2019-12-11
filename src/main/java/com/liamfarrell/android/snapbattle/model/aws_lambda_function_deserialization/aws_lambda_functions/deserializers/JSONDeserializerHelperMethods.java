@@ -13,7 +13,6 @@ public class JSONDeserializerHelperMethods {
         try {
             return sdf.parse(dateFromMysql);
         } catch (ParseException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         catch (java.lang.NullPointerException e){

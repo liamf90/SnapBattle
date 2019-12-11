@@ -111,7 +111,6 @@ public class Voting implements Serializable {
         try {
             mVotingTimeEnd = sdf.parse(votingTimeEnd);
         } catch (ParseException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 

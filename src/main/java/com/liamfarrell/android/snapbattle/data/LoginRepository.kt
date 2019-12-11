@@ -32,7 +32,7 @@ class LoginRepository @Inject constructor
                 /* make the API call */
                 val request = GraphRequest.newMeRequest(
                         AccessToken.getCurrentAccessToken()
-                ) { `object`, response ->
+                ) { `object`, _ ->
                     try {
                         continuation.resume(AsyncTaskResult(`object`.getString("name")))
 

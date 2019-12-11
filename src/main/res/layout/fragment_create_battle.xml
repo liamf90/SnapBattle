@@ -131,7 +131,7 @@
 	</LinearLayout>
 	<FrameLayout
 	android:id="@+id/progressContainer"
-	android:visibility="@{viewModel.spinner ? View.VISIBLE : View.GONE}"
+	android:visibility="@{safeUnbox(viewModel.spinner) ? View.VISIBLE : View.GONE}"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
 	android:clickable="true"
