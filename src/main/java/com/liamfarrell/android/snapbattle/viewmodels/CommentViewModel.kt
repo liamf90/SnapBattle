@@ -5,11 +5,9 @@ import com.liamfarrell.android.snapbattle.data.CommentRepository
 import com.liamfarrell.android.snapbattle.model.Comment
 import androidx.lifecycle.*
 import com.facebook.AccessToken
-import com.liamfarrell.android.snapbattle.app.SnapBattleApp
 import com.liamfarrell.android.snapbattle.R
 import com.liamfarrell.android.snapbattle.data.OtherUsersProfilePicUrlRepository
 import com.liamfarrell.android.snapbattle.model.AsyncTaskResult
-import com.liamfarrell.android.snapbattle.model.User
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.VerifyUserResponse
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.AddCommentResponse
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.GetCommentsResponse
@@ -17,14 +15,13 @@ import com.liamfarrell.android.snapbattle.util.AlreadyFollowingError
 import com.liamfarrell.android.snapbattle.util.BannedError
 import com.liamfarrell.android.snapbattle.util.getErrorMessage
 import com.liamfarrell.android.snapbattle.util.notifyObserver
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
 /**
  * The ViewModel used in [ViewCommentFragment].
  */
-class CommentViewModel @Inject constructor(private val context: Application, private val commentRepository : CommentRepository,  private val otherUsersProfilePicUrlRepository: OtherUsersProfilePicUrlRepository) : ViewModelLaunch() {
+class CommentViewModel @Inject constructor(private val context: Application, private val commentRepository : CommentRepository,  private val otherUsersProfilePicUrlRepository: OtherUsersProfilePicUrlRepository) : ViewModelBase() {
 
     private val commentsResult = MutableLiveData<AsyncTaskResult<GetCommentsResponse>>()
 

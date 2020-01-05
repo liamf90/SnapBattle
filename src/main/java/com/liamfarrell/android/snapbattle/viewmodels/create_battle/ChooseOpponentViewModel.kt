@@ -15,7 +15,7 @@ import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserializat
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.ResponseFollowing
 import com.liamfarrell.android.snapbattle.util.CustomError
 import com.liamfarrell.android.snapbattle.util.getErrorMessage
-import com.liamfarrell.android.snapbattle.viewmodels.ViewModelLaunch
+import com.liamfarrell.android.snapbattle.viewmodels.ViewModelBase
 import javax.inject.Inject
 
 
@@ -23,7 +23,7 @@ import javax.inject.Inject
  * The ViewModel used in [ChooseOpponentFragment].
  */
 class ChooseOpponentViewModel @Inject constructor(private val context: Application, val chooseOpponentRepository: ChooseOpponentRepository, val followingRepository : FollowingRepository,
-                                                  private val otherUsersProfilePicUrlRepository: OtherUsersProfilePicUrlRepository) : ViewModelLaunch() {
+                                                  private val otherUsersProfilePicUrlRepository: OtherUsersProfilePicUrlRepository) : ViewModelBase() {
 
     private val profilePicMap = mutableMapOf<String, String>()
 

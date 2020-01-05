@@ -19,7 +19,7 @@ import javax.inject.Inject
  * The ViewModel used in [BattleNameSearchFragment].
  */
 class BattleNameSearchViewModel @Inject constructor(private val context: Application, private val searchRepository: BattleNameSearchRepository
-                                                 ) : ViewModelLaunch() {
+                                                 ) : ViewModelBase() {
 
 
     private var searchQueryText = ""

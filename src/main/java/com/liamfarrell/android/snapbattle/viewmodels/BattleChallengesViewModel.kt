@@ -1,43 +1,22 @@
 package com.liamfarrell.android.snapbattle.viewmodels
 
-import android.app.Activity
 import android.app.Application
-import android.content.Context
-import android.os.Bundle
-import android.view.View
 import androidx.lifecycle.*
 import androidx.navigation.NavController
-import androidx.navigation.findNavController
-import com.liamfarrell.android.snapbattle.R
-import com.liamfarrell.android.snapbattle.adapters.BattleChallengesListAdapter
-import com.liamfarrell.android.snapbattle.app.SnapBattleApp
 import com.liamfarrell.android.snapbattle.data.BattleChallengesRepository
 import com.liamfarrell.android.snapbattle.data.OtherUsersProfilePicUrlRepository
 import com.liamfarrell.android.snapbattle.model.AsyncTaskResult
 import com.liamfarrell.android.snapbattle.model.Battle
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.GetChallengesResponse
 import com.liamfarrell.android.snapbattle.mvvm_ui.BattleChallengesListFragmentDirections
-import com.liamfarrell.android.snapbattle.mvvm_ui.create_battle.ChooseOpponentFragmentDirections
 import com.liamfarrell.android.snapbattle.util.getErrorMessage
-import io.reactivex.Scheduler
-import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.launch
 import javax.inject.Inject
-import io.reactivex.observers.DisposableSingleObserver
-import android.icu.lang.UCharacter.GraphemeClusterBreak.T
-import io.reactivex.disposables.CompositeDisposable
-import android.icu.lang.UCharacter.GraphemeClusterBreak.T
-import androidx.databinding.adapters.NumberPickerBindingAdapter.setValue
-import io.reactivex.schedulers.Schedulers.io
-import android.os.AsyncTask.execute
-import android.icu.lang.UCharacter.GraphemeClusterBreak.T
-import io.reactivex.android.schedulers.AndroidSchedulers
 
 
 /**
  * The ViewModel used in [BattleChallengesListFragment].
  */
-class BattleChallengesViewModel @Inject constructor(private val context: Application, private val battleChallengesRepository: BattleChallengesRepository, private val otherUsersProfilePicUrlRepository: OtherUsersProfilePicUrlRepository) : ViewModelLaunch() {
+class BattleChallengesViewModel @Inject constructor(private val context: Application, private val battleChallengesRepository: BattleChallengesRepository, private val otherUsersProfilePicUrlRepository: OtherUsersProfilePicUrlRepository) : ViewModelBase() {
 
     private val battlesResponse = MutableLiveData<AsyncTaskResult<GetChallengesResponse>>()
 

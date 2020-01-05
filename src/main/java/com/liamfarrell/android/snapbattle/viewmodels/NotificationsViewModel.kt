@@ -16,7 +16,7 @@ import javax.inject.Inject
 /**
  * The ViewModel used in [NotificationsListFragment].
  */
-class NotificationsViewModel @Inject constructor(private val notificationsRepository: NotificationsRepository, private val otherUsersProfilePicUrlRepository: OtherUsersProfilePicUrlRepository) : ViewModelLaunch() {
+class NotificationsViewModel @Inject constructor(private val notificationsRepository: NotificationsRepository, private val otherUsersProfilePicUrlRepository: OtherUsersProfilePicUrlRepository) : ViewModelBase() {
 
     private val notificationsResult = MutableLiveData<NotificationsDatabaseResult>()
     private val _noMoreOlderNotifications =  notificationsRepository.isNoMoreOlderNotifications

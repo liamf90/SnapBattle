@@ -4,13 +4,11 @@ import android.app.Application
 import androidx.lifecycle.*
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
-import com.liamfarrell.android.snapbattle.app.SnapBattleApp
 import com.liamfarrell.android.snapbattle.data.BattlesByNameDataSourceFactory
 import com.liamfarrell.android.snapbattle.data.BattlesFromNameRepository
 import com.liamfarrell.android.snapbattle.data.ThumbnailSignedUrlCacheRepository
 import com.liamfarrell.android.snapbattle.model.Battle
 import com.liamfarrell.android.snapbattle.util.getErrorMessage
-import io.reactivex.Observable
 import java.lang.Exception
 import javax.inject.Inject
 
@@ -18,7 +16,7 @@ import javax.inject.Inject
  * The ViewModel used in [BattlesByNameFragment].
  */
 class BattlesByNameViewModel @Inject constructor(private val context: Application, private val battlesRepository: BattlesFromNameRepository,
-                                                 thumbnailSignedUrlCacheRepository: ThumbnailSignedUrlCacheRepository) : ViewModelLaunch() {
+                                                 thumbnailSignedUrlCacheRepository: ThumbnailSignedUrlCacheRepository) : ViewModelBase() {
 
     private val _battleName = MutableLiveData<String>()
     val battleName : LiveData<String> = _battleName

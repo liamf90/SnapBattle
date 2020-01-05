@@ -17,7 +17,7 @@ import javax.inject.Inject
 /**
  * The ViewModel used in [FollowingBattlesFeedFragment].
  */
-class FollowingBattlesFeedViewModel @Inject constructor(private val followingBattlesFeedRepository: FollowingBattlesFeedRepository, val thumbnailSignedUrlCacheRepository: ThumbnailSignedUrlCacheRepository) : ViewModelLaunch() {
+class FollowingBattlesFeedViewModel @Inject constructor(private val followingBattlesFeedRepository: FollowingBattlesFeedRepository, val thumbnailSignedUrlCacheRepository: ThumbnailSignedUrlCacheRepository) : ViewModelBase() {
 
     private val followingBattlesResult = MutableLiveData<FollowingBattlesSearchResult>()
     private val _noMoreOlderBattles =  followingBattlesFeedRepository.isNoMoreOlderBattles

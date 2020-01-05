@@ -17,7 +17,7 @@ import javax.inject.Inject
  * The ViewModel used in [FollowFacebookFriendsFragment] and [AddFacebookFriendsAsFollowersStartupFragment].
  */
 class AddFacebookFriendsAsFollowersViewModel @Inject constructor(private val context: Application, private val followingRepository : FollowingRepository,
-                                                                 private val followingUserCacheManager: FollowingUserCacheManager) : ViewModelLaunch() {
+                                                                 private val followingUserCacheManager: FollowingUserCacheManager) : ViewModelBase() {
 
     private val followingUsers = MutableLiveData<AsyncTaskResult<MutableList<User>>>()
 

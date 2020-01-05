@@ -2,7 +2,6 @@ package com.liamfarrell.android.snapbattle.viewmodels
 
 import android.app.Application
 import androidx.lifecycle.*
-import com.liamfarrell.android.snapbattle.app.SnapBattleApp
 import com.liamfarrell.android.snapbattle.data.OtherUsersProfilePicUrlRepository
 import com.liamfarrell.android.snapbattle.data.ThumbnailSignedUrlCacheRepository
 import com.liamfarrell.android.snapbattle.data.UsersBattlesRepository
@@ -12,14 +11,13 @@ import com.liamfarrell.android.snapbattle.model.User
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.GetUsersBattlesResponse
 import com.liamfarrell.android.snapbattle.util.getErrorMessage
 import com.liamfarrell.android.snapbattle.util.notifyObserver
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
  * The ViewModel used in [UsersBattlesFragment].
  */
 class UsersBattlesViewModel @Inject constructor(private val context: Application, private val usersBattlesRepository: UsersBattlesRepository
-                                                ,  private val otherUsersProfilePicUrlRepository: OtherUsersProfilePicUrlRepository, val thumbnailSignedUrlCacheRepository: ThumbnailSignedUrlCacheRepository) : ViewModelLaunch() {
+                                                ,  private val otherUsersProfilePicUrlRepository: OtherUsersProfilePicUrlRepository, val thumbnailSignedUrlCacheRepository: ThumbnailSignedUrlCacheRepository) : ViewModelBase() {
 
     private lateinit var cognitoId : String
 

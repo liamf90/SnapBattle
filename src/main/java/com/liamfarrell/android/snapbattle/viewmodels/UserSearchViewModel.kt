@@ -2,18 +2,15 @@ package com.liamfarrell.android.snapbattle.viewmodels
 
 import android.app.Application
 import androidx.lifecycle.*
-import com.liamfarrell.android.snapbattle.app.SnapBattleApp
 import com.liamfarrell.android.snapbattle.data.FollowingUserCacheManager
 import com.liamfarrell.android.snapbattle.data.OtherUsersProfilePicUrlRepository
 import com.liamfarrell.android.snapbattle.data.UserSearchRepository
 import com.liamfarrell.android.snapbattle.model.AsyncTaskResult
-import com.liamfarrell.android.snapbattle.model.Battle
 import com.liamfarrell.android.snapbattle.model.User
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.GetUsersResponse
 import com.liamfarrell.android.snapbattle.util.getErrorMessage
 import javax.inject.Inject
 import kotlinx.coroutines.*
-import timber.log.Timber
 
 
 /**
@@ -21,7 +18,7 @@ import timber.log.Timber
  */
 class UserSearchViewModel @Inject constructor(private val context: Application, private val searchRepository: UserSearchRepository,
                                               private val followingUserCacheManager: FollowingUserCacheManager, private val otherUsersProfilePicUrlRepository: OtherUsersProfilePicUrlRepository
-                                                 ) : ViewModelLaunch() {
+                                                 ) : ViewModelBase() {
 
     enum class State{
         CACHE_RESULT,

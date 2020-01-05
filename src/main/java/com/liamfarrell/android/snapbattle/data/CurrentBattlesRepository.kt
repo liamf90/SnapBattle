@@ -9,7 +9,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-@OpenForTesting
+
 class CurrentBattlesRepository @Inject constructor
 (private val snapBattleApiService: SnapBattleApiService) {
 
