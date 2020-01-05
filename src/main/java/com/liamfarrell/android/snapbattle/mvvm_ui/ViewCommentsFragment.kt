@@ -58,15 +58,18 @@ class ViewCommentsFragment : Fragment(), Injectable {
         binding.viewModel = viewModel
         binding.commentEditText.addTextChangedListener(onAddCommentEditTextChanged)
         binding.addACommentButton.setOnClickListener(addCommentButtonClicked())
-        subscribeUi(adapter)
+        subscribeUi(binding, adapter)
         viewModel.getComments(battleId)
         return binding.root
     }
 
 
-    private fun subscribeUi(adapter: CommentsListAdapter) {
+    private fun subscribeUi( binding : FragmentViewCommentsBinding, adapter: CommentsListAdapter) {
         viewModel.comments.observe(viewLifecycleOwner, Observer {commentsList ->
             adapter.submitList(commentsList.toList())
+
+            if (commentsList.isEmpty()) binding.noCommentsTextView.visibility = View.VISIBLE
+            else binding.noCommentsTextView.visibility = View.GONE
         })
 
         viewModel.snackBarMessage.observe(viewLifecycleOwner, Observer {snackBarMessage ->

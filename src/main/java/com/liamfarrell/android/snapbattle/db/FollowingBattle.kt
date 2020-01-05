@@ -1,15 +1,12 @@
 package com.liamfarrell.android.snapbattle.db
 
-import androidx.room.*
-import com.liamfarrell.android.snapbattle.model.Battle
+import androidx.room.ColumnInfo
+import androidx.room.Embedded
+import androidx.room.Entity
 
-//Following Battle
-
-@SuppressWarnings(RoomWarnings.PRIMARY_KEY_FROM_EMBEDDED_IS_DROPPED)
-@Entity(tableName = "following_battle")
+//Since last_saved_signed_url is retrieved from the Room Database in a LEFT JOIN call, this class is created to hold that query
 data class FollowingBattle (
-        @PrimaryKey @ColumnInfo(name = "battle_id_following") val id : Int,
         @Embedded
-        val battle: Battle,
+        val followingBattleDb: FollowingBattleDb,
         @ColumnInfo(name="last_saved_signed_url") val lastSavedSignedUrl : String? = null
 )

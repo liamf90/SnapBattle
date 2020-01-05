@@ -19,12 +19,12 @@ import javax.inject.Inject
  */
 class FollowingBattlesFeedViewModel @Inject constructor(private val followingBattlesFeedRepository: FollowingBattlesFeedRepository, val thumbnailSignedUrlCacheRepository: ThumbnailSignedUrlCacheRepository) : ViewModelLaunch() {
 
-    private val allBattlesResult = MutableLiveData<FollowingBattlesSearchResult>()
+    private val followingBattlesResult = MutableLiveData<FollowingBattlesSearchResult>()
     private val _noMoreOlderBattles =  followingBattlesFeedRepository.isNoMoreOlderBattles
     private val _loadingMoreBattles = followingBattlesFeedRepository.isLoadingMoreBattles
 
-    val battles: LiveData<PagedList<FollowingBattle>> = Transformations.switchMap(allBattlesResult) { it -> it.data }
-    val networkErrors: LiveData<String> = Transformations.switchMap(allBattlesResult) { it ->
+    val battles: LiveData<PagedList<FollowingBattle>> = Transformations.switchMap(followingBattlesResult) { it -> it.data }
+    val networkErrors: LiveData<String> = Transformations.switchMap(followingBattlesResult) { it ->
         it.networkErrors
     }
 
@@ -40,7 +40,7 @@ class FollowingBattlesFeedViewModel @Inject constructor(private val followingBat
 
 
     init {
-        allBattlesResult.value = followingBattlesFeedRepository.loadAllBattles(viewModelScope)
+        followingBattlesResult.value = followingBattlesFeedRepository.loadAllBattles(viewModelScope)
         updateFollowingBattlesRepeating()
     }
 

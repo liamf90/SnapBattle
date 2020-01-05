@@ -69,7 +69,7 @@ class AddFacebookFriendsAsFollowersViewModel @Inject constructor(private val con
             val following = followingUsersResponseDeferred.await()
             if (facebookFriends.error == null && following.error == null){
                 facebookFriends.result.forEach {
-                    val followingUser = following.result.find {u -> u.facebookUserId == it.facebookUserId}
+                    val followingUser = following.result.sqlResult.find {u -> u.facebookUserId == it.facebookUserId}
                     if (followingUser != null){
                         it.isFollowing = true
                         it.cognitoId = followingUser.cognitoId
@@ -172,12 +172,11 @@ class AddFacebookFriendsAsFollowersViewModel @Inject constructor(private val con
                     }
     }
 
-
-
     private fun doesUserHaveUserFriendsPermission(): Boolean {
-        val declinedPermissions = AccessToken.getCurrentAccessToken().declinedPermissions
-        return !declinedPermissions.contains("user_friends")
+        val grantedPermissions =  AccessToken.getCurrentAccessToken().permissions
+        return grantedPermissions.contains("user_friends")
     }
+
 
 
 

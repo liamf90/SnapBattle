@@ -55,6 +55,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:indeterminateTint="@color/video_player_spinner_tint"
                 android:theme="@style/MyMaterialTheme.Base"
                 />
 
@@ -101,7 +102,7 @@
             android:id="@+id/mediacontroller_progress"
             style="?android:attr/progressBarStyleHorizontal"
 
-            android:progressTint="@color/colorAccent"
+            android:progressTint="@color/video_player_spinner_tint"
             android:progressBackgroundTint="@color/media_controller_progress_background_tint"
             android:thumbTint="@color/colorPrimary"
             android:secondaryProgressTint="@color/media_controler_secondary_progress_tint"

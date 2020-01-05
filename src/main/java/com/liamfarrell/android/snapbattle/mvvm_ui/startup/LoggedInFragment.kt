@@ -22,7 +22,11 @@ import com.liamfarrell.android.snapbattle.util.getErrorMessage
 import dagger.android.DispatchingAndroidInjector
 import kotlinx.coroutines.*
 import java.lang.ClassCastException
+import java.lang.IllegalStateException
 import javax.inject.Inject
+import androidx.core.content.ContextCompat.startActivity
+import com.liamfarrell.android.snapbattle.mvvm_ui.AuthenticatorActivity
+
 
 class LoggedInFragment  : Fragment() , Injectable {
 
@@ -73,7 +77,21 @@ class LoggedInFragment  : Fragment() , Injectable {
 
     @SuppressLint("ApplySharedPref")
     suspend fun checkIfUserIsRegistered(){
-        val facebookId = AccessToken.getCurrentAccessToken().userId
+        val facebookId: String
+        try{
+             facebookId = AccessToken.getCurrentAccessToken().userId
+        } catch (e: IllegalStateException){
+            //This happens when there is no internet connection during login
+            Toast.makeText(activity, com.liamfarrell.android.snapbattle.R.string.no_internet_connection_toast, Toast.LENGTH_SHORT).show()
+            IdentityManager.getDefaultIdentityManager().signOut()
+            val i = Intent(activity, AuthenticatorActivity::class.java)
+            i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(i)
+            activity?.finish()
+            return
+        }
+
         val facebookNameAsyc = GlobalScope.async(Dispatchers.IO) { loginRepository.getFacebookName() }
         val facebookNameResponse = facebookNameAsyc.await()
 
@@ -101,13 +119,13 @@ class LoggedInFragment  : Fragment() , Injectable {
             val sharedPref = PreferenceManager.getDefaultSharedPreferences(requireContext().getApplicationContext())
             sharedPref.edit().putString(NAME_SHAREDPREFS, response.result.name).commit()
             sharedPref.edit().putString(USERNAME_SHAREDPREFS, response.result.username).commit()
-            findNavController().navigate(R.id.action_loggedInFragment_to_mainActivity)
+            findNavController().navigate(com.liamfarrell.android.snapbattle.R.id.action_loggedInFragment_to_mainActivity)
             activity?.finish()
 
         } else if (response.result.userExists == USER_ADDED_RESULT) {
             startupActivity.showToolbar()
             val bundle = bundleOf("defaultName" to facebookNameResponse.result, "defaultUsername" to response.result.username)
-            findNavController().navigate(R.id.action_loggedInFragment_to_addFacebookFriendsAsFollowersStartupFragment, bundle)
+            findNavController().navigate(com.liamfarrell.android.snapbattle.R.id.action_loggedInFragment_to_addFacebookFriendsAsFollowersStartupFragment, bundle)
         }
 
     }

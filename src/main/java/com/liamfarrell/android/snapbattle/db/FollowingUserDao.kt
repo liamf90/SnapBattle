@@ -34,8 +34,10 @@ interface FollowingUserDao {
     @Query("DELETE FROM user WHERE mCognitoId = :userCognitoID")
     suspend fun deleteFromUser(userCognitoID: String)
 
+
     @Query("SELECT * FROM user WHERE LOWER(mUsername) LIKE LOWER(:searchQuery) || '%' OR LOWER(mFacebookName) LIKE LOWER(:searchQuery) || '%' OR LOWER(mFacebookName) LIKE '% ' || LOWER(:searchQuery) || '%'")
     suspend fun searchUsersInCache(searchQuery: String): List<User>
+
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertFollowingUserDynamoInfo(followingUserDynamoInfo : FollowingUserDynamoCount)

@@ -2,18 +2,18 @@ package com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserializa
 
 public class GetUsersBattlesRequest
 {
-    private String cognitoIDUser;
+//    private String cognitoIDUser;
     private int fetchLimit;
     private int getAfterBattleID;
     private String facebookId;
 
-    public String getCognitoIDUser() {
-        return cognitoIDUser;
-    }
-
-    public void setCognitoIDUser(String cognitoIDUser) {
-        this.cognitoIDUser = cognitoIDUser;
-    }
+//    public String getCognitoIDUser() {
+//        return cognitoIDUser;
+//    }
+//
+//    public void setCognitoIDUser(String cognitoIDUser) {
+//        this.cognitoIDUser = cognitoIDUser;
+//    }
 
     public int getFetchLimit() {
         return fetchLimit;

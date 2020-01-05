@@ -145,6 +145,7 @@ class AllBattlesCacheManager @Inject constructor(
     fun increaseLikeCount(battleId: Int){
         GlobalScope.launch (Dispatchers.IO) {
             battleDao.increaseLikeCount (battleId)
+
         }
     }
 

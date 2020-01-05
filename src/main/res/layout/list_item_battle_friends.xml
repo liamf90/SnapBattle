@@ -216,8 +216,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/list_item_elements_default_spacing"
-                        android:visibility="@{viewModel.canVoteLiveData != null ? View.VISIBLE : View.GONE}"
-                        android:text="@{viewModel.canVoteLiveData == UserCanVote.HAS_VOTED ? @string/have_voted : (viewModel.canVoteLiveData == UserCanVote.CANNOT_VOTE ? @string/can_not_vote : @string/can_vote)}"
+                        android:visibility="@{viewModel.canVote != null ? View.VISIBLE : View.GONE}"
+                        android:text="@{viewModel.canVote == UserCanVote.HAS_VOTED ? @string/have_voted : (viewModel.canVote == UserCanVote.CANNOT_VOTE ? @string/can_not_vote : @string/can_vote)}"
                         card_view:layout_constraintBaseline_toBaselineOf="@+id/time_until_vote_endsTextView"
                         card_view:layout_constraintStart_toStartOf="parent" />
 

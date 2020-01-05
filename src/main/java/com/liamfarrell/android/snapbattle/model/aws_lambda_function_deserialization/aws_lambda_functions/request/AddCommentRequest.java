@@ -5,7 +5,6 @@ import java.util.List;
 public class AddCommentRequest
 {
     private String comment;
-    private int battleID;
     private List<String> usernames_to_tag;
 
     public String getComment() {
@@ -16,13 +15,6 @@ public class AddCommentRequest
         this.comment = comment;
     }
 
-    public int getBattleID() {
-        return battleID;
-    }
-
-    public void setBattleID(int battleID) {
-        this.battleID = battleID;
-    }
 
     public List<String> getUsernamesToTag() {
         return usernames_to_tag;

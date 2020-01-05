@@ -10,7 +10,7 @@ public class CreateBattleRequest
     private String votingLength;
     private int numberOfRounds;
     private String battleName;
-    private List<String> selectedJudgesArray;
+    //private List<String> selectedJudgesArray;
 
     public String getChallengedCognitoID() {
         return challengedCognitoID;
@@ -60,11 +60,11 @@ public class CreateBattleRequest
         this.battleName = battleName;
     }
 
-    public List<String> getSelectedJudgesArray() {
-        return selectedJudgesArray;
-    }
-
-    public void setSelectedJudgesArray(List<String> selectedJudgesArray) {
-        this.selectedJudgesArray = selectedJudgesArray;
-    }
+//    public List<String> getSelectedJudgesArray() {
+//        return selectedJudgesArray;
+//    }
+//
+//    public void setSelectedJudgesArray(List<String> selectedJudgesArray) {
+//        this.selectedJudgesArray = selectedJudgesArray;
+//    }
 }

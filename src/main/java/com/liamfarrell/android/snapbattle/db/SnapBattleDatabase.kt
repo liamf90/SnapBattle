@@ -1,13 +1,8 @@
 package com.liamfarrell.android.snapbattle.db
 
 import androidx.room.Database
-import androidx.room.Room
 import androidx.room.RoomDatabase
-import android.content.Context
 import androidx.room.TypeConverters
-import androidx.sqlite.db.SupportSQLiteDatabase
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkManager
 import com.liamfarrell.android.snapbattle.data.AllBattlesDynamoCount
 import com.liamfarrell.android.snapbattle.model.Battle
 import com.liamfarrell.android.snapbattle.model.User
@@ -20,7 +15,7 @@ import com.liamfarrell.android.snapbattle.notifications.NotificationDb
         entities = [ Battle::class, AllBattlesDynamoCount::class, OtherUsersProfilePicUrlCache::class,
             ThumbnailSignedUrlCache::class,
             NotificationDb::class, NotificationsDynamoInfo::class,
-            User::class, FollowingUserDynamoCount::class, FollowingBattlesDynamoCount::class, FollowingBattle::class
+            User::class, FollowingUserDynamoCount::class, FollowingBattlesDynamoCount::class, FollowingBattleDb::class
         ],
         version = 1,
         exportSchema = false

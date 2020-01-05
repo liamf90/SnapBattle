@@ -1,20 +1,18 @@
 package com.liamfarrell.android.snapbattle.db
 
-import com.liamfarrell.android.snapbattle.model.Battle
 import androidx.paging.DataSource
 import androidx.room.*
-import com.liamfarrell.android.snapbattle.model.Video
 
 
 /**
- * The Data Access Object for the [Battle] class.
+ * The Data Access Object for the [FollowingBattle] / [FollowingBattleDb] class.
  */
 @Dao
 interface FollowingBattleDao {
 
     @Query("SELECT * FROM following_battle " +
             " LEFT JOIN  thumbnail_signed_url " +
-            " ON thumbnail_signed_url.battle_id = following_battle.battle_id "  +
+            " ON thumbnail_signed_url.battle_id = following_battle.battle_id_following "  +
             " ORDER BY mLastVideoUploadTime DESC")
     fun getAllBattles(): DataSource.Factory<Int,FollowingBattle>
 
@@ -25,7 +23,7 @@ interface FollowingBattleDao {
     suspend fun getCountAllBattles(): Int
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(battles: List<FollowingBattle>)
+    suspend fun insertAll(battles: List<FollowingBattleDb>)
 
     @Query("DELETE FROM following_battle")
     suspend fun deleteAllBattles()

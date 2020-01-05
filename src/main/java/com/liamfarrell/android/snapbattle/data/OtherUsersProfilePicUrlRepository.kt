@@ -1,32 +1,22 @@
 package com.liamfarrell.android.snapbattle.data
 
+import com.google.gson.Gson
+import com.liamfarrell.android.snapbattle.api.SnapBattleApiService
 import com.liamfarrell.android.snapbattle.db.OtherUsersProfilePicUrlCache
 import com.liamfarrell.android.snapbattle.db.OtherUsersProfilePicUrlDao
 import com.liamfarrell.android.snapbattle.model.AsyncTaskResult
-import com.liamfarrell.android.snapbattle.model.Battle
-import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.LambdaFunctionsInterface
-import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.BattleTypeSuggestionsSearchRequest
-import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.SignedUrlsRequest
-import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.BattleTypeSuggestionsSearchResponse
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.GetSignedUrlsResponse
 import com.liamfarrell.android.snapbattle.testing.OpenForTesting
-import com.liamfarrell.android.snapbattle.util.executeAWSFunction
+import com.liamfarrell.android.snapbattle.util.executeRestApiFunction
 import com.liamfarrell.android.snapbattle.util.isSignedUrlInPicassoCache
-import com.squareup.picasso.Callback
-import com.squareup.picasso.NetworkPolicy
-import com.squareup.picasso.Picasso
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
-import timber.log.Timber
-import java.lang.Exception
-import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlin.coroutines.suspendCoroutine
 
 @Singleton
 @OpenForTesting
-class OtherUsersProfilePicUrlRepository @Inject constructor(private val otherUsersProfilePicUrlDao: OtherUsersProfilePicUrlDao, private val lambdaFunctionsInterface: LambdaFunctionsInterface){
+class OtherUsersProfilePicUrlRepository @Inject constructor(private val otherUsersProfilePicUrlDao: OtherUsersProfilePicUrlDao, val snapBattleApiService: SnapBattleApiService){
 
     suspend fun getOrUpdateProfilePicSignedUrl(cognitoID: String, profilePicCount: Int, signedUrlNew: String) : String {
         val profilePicCountSignedUrlDb = getUserSignedUrlAndProfilePicCount(cognitoID)
@@ -82,9 +72,7 @@ class OtherUsersProfilePicUrlRepository @Inject constructor(private val otherUse
 
 
     suspend fun getSignedUrlsFromServer(cognitoIdList : List<String>) : AsyncTaskResult<GetSignedUrlsResponse> {
-        val request = SignedUrlsRequest()
-        request.cognitoIdToGetSignedUrlList = cognitoIdList
-        return executeAWSFunction {lambdaFunctionsInterface.GetProfilePicSignedUrls(request)}
+        return executeRestApiFunction(snapBattleApiService.getSignedUrlsProfilePictures (Gson().toJson(cognitoIdList).toString()))
     }
 
 }

@@ -16,7 +16,6 @@
     </data>
 
 <androidx.constraintlayout.widget.ConstraintLayout
-    android:background="#41454E"
     android:id="@+id/completed_battle_constraint_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -49,7 +48,7 @@
         android:scaleType="fitXY"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_play_arrow_white_24px" />
+        app:srcCompat="@drawable/ic_play_arrow_black_24px" />
 
 
 
@@ -67,7 +66,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/element_horizontal_spacing_default"
-            android:textColor="@android:color/white"
             android:textSize="16sp"
             android:textStyle="bold"
             android:text="@{battle.voting.votingState == VotingState.VOTING_FINISHED ? battle.voting.getChallengerVotingResult(context) : null}"
@@ -81,7 +79,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/element_horizontal_spacing_default"
-            android:textColor="@android:color/white"
             android:textSize="16sp"
             android:textStyle="bold"
             android:text="@{battle.voting.votingState == VotingState.VOTING_FINISHED ? battle.voting.getChallengedVotingResult(context) : null}"
@@ -95,7 +92,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/element_horizontal_spacing_default"
-            android:textColor="@android:color/white"
             android:textSize="14sp"
             android:text="@{battle.voting.votingState == VotingState.VOTING_FINISHED ? @plurals/votes(battle.voting.voteChallenger, battle.voting.voteChallenger) : null}"
             android:visibility="@{battle.voting.votingState == VotingState.VOTING_FINISHED ? View.VISIBLE : View.GONE}"
@@ -110,7 +106,6 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
-            android:textColor="@android:color/white"
             android:textSize="14sp"
             android:text="@{battle.voting.votingState == VotingState.VOTING_FINISHED ? @plurals/votes(battle.voting.voteChallenged, battle.voting.voteChallenged) : null}"
             android:visibility="@{battle.voting.votingState == VotingState.VOTING_FINISHED ? View.VISIBLE : View.GONE}"
@@ -123,7 +118,6 @@
             android:id="@+id/time_until_vote_endsTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@android:color/white"
             android:textSize="12sp"
             android:text="@{battle.voting.votingState == VotingState.VOTING_STILL_GOING ? @string/voting_time_left(UtilFunctionsKt.getTimeUntil(context, battle.voting.votingTimeEnd)) : null}"
             android:visibility="@{battle.voting.votingState == VotingState.VOTING_STILL_GOING ? View.VISIBLE : View.GONE}"
@@ -145,53 +139,39 @@
 
         >
 
-        <ImageButton
-            android:id="@+id/likeButton"
-            style="@style/NotLikedButton"
-            android:scaleType="fitXY"
-            app:srcCompat="@drawable/thumb_up_outline"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/like_button_comment_spacing"
-            android:background="@android:color/transparent" />
+        <LinearLayout
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/primary_text"
-            android:layout_marginStart="@dimen/text_view_to_text_padding"
+            android:layout_marginStart="@dimen/like_button_comment_spacing"
             android:layout_gravity="center_vertical"
             android:text="@{@plurals/likes(safeUnbox(battle.likeCount), safeUnbox(battle.likeCount))}"
             tools:text="5 Likes"
             android:id="@+id/likeCountTextView"/>
 
-        <ImageButton
-            android:id="@+id/dislikeButton"
-            android:scaleType="fitXY"
-            style="@style/NotDislikedButton"
-            app:srcCompat="@drawable/thumb_down_outline"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/like_button_comment_spacing"
-            android:background="@android:color/transparent" />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/text_view_to_text_padding"
-             android:textColor="@color/primary_text"
+            android:layout_marginStart="@dimen/like_button_comment_spacing"
             android:layout_gravity="center_vertical"
             android:id="@+id/dislikeCountTextView"
             android:text="@{@plurals/dislikes(safeUnbox(battle.dislikeCount), safeUnbox(battle.dislikeCount))}"
             tools:text="5 dislikes"
             />
+    </LinearLayout>
         <Button
             android:id="@+id/viewCommentsButton"
             android:background="@android:color/transparent"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/view_comments_button_height"
-            android:layout_gravity="center_horizontal|center_vertical"
-            android:layout_marginStart="@dimen/like_button_comment_spacing"
+            android:layout_gravity="end|center_vertical"
+            android:layout_marginEnd="@dimen/like_button_comment_spacing"
             android:text="@{@plurals/view_comments_button(safeUnbox(battle.commentCount), safeUnbox(battle.commentCount))}"
-            android:textColor="@color/primary_text"
             android:textSize="12sp"
             tools:text="View 4 comments"
             />

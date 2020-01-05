@@ -12,6 +12,7 @@ import com.liamfarrell.android.snapbattle.R
 import com.liamfarrell.android.snapbattle.databinding.ListItemBattleFriendsBinding
 import com.liamfarrell.android.snapbattle.model.Battle
 import com.liamfarrell.android.snapbattle.mvvm_ui.BattleCompletedListFragmentDirections
+import com.liamfarrell.android.snapbattle.mvvm_ui.HomeFragmentDirections
 
 
 /**
@@ -32,7 +33,10 @@ class CompletedBattlesListAdapter :
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val battle = getItem(position)
         holder.apply {
-            bind(battle, getOnClickListener(battle.battleId))
+            bind(battle, getOnClickListener(battle.battleId),
+                    createChallengerOnClickListener(battle.challengerCognitoID),
+                    createChallengedOnClickListener(battle.challengedCognitoID)
+                    )
             itemView.tag = battle
         }
     }
@@ -45,17 +49,34 @@ class CompletedBattlesListAdapter :
         }
     }
 
+    private fun createChallengerOnClickListener(challengerCognitoID: String): View.OnClickListener {
+        return View.OnClickListener {
+            val direction = BattleCompletedListFragmentDirections.actionBattleCompletedListFragmentToNavigationUsersBattles(challengerCognitoID)
+            it.findNavController().navigate(direction)
+        }
+    }
+
+    private fun createChallengedOnClickListener(challengedCognitoID: String): View.OnClickListener {
+        return View.OnClickListener {
+            val direction = BattleCompletedListFragmentDirections.actionBattleCompletedListFragmentToNavigationUsersBattles(challengedCognitoID)
+            it.findNavController().navigate(direction)
+        }
+    }
+
 
 
     class ViewHolder(
             private val binding: ListItemBattleFriendsBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(item: Battle, thumbnailClickListener : View.OnClickListener) {
+        fun bind(item: Battle, thumbnailClickListener : View.OnClickListener,
+                 challengerOnClick : View.OnClickListener, challengedOnClick : View.OnClickListener) {
             with(binding) {
                 battle = item
                 thumbnailSignedUrl = item.signedThumbnailUrl
                 this.thumbnailClickListener  = thumbnailClickListener
+                challengerUsernameClickListener =  challengerOnClick
+                challengedUsernameClickListener =  challengedOnClick
                 executePendingBindings()
             }
         }

@@ -1,13 +1,14 @@
 package com.liamfarrell.android.snapbattle.data
 
 import android.content.Context
+import com.liamfarrell.android.snapbattle.api.SnapBattleApiService
 import com.liamfarrell.android.snapbattle.model.AsyncTaskResult
 import com.liamfarrell.android.snapbattle.model.Battle
-import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.LambdaFunctionsInterface
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.BattleRequest
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.VideoSubmittedRequest
+import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.ResponseBattle
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.VideoSubmittedResponse
-import com.liamfarrell.android.snapbattle.util.executeAWSFunction
+import com.liamfarrell.android.snapbattle.util.executeRestApiFunction
 import com.liamfarrell.android.snapbattle.util.uploadVideoJob
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -15,22 +16,21 @@ import javax.inject.Singleton
 
 @Singleton
 class UsersBattleRepository @Inject constructor
-( val lambdaFunctionsInterface: LambdaFunctionsInterface) {
+( private val snapBattleApiService: SnapBattleApiService) {
 
 
-    suspend fun getBattle(battleID: Int) :  AsyncTaskResult<Battle> {
+    suspend fun getBattle(battleID: Int) :  AsyncTaskResult<ResponseBattle> {
         val request = BattleRequest()
         request.battleID = battleID.toString()
-        return executeAWSFunction { lambdaFunctionsInterface.getBattleFunction(request).sqlResult}
+        return executeRestApiFunction(snapBattleApiService.getBattle(battleID))
     }
 
 
     suspend fun videoSubmitted(videoID: Int, battleID: Int, videoRotationLock: String?) : AsyncTaskResult<VideoSubmittedResponse> {
         val request = VideoSubmittedRequest()
-        request.battleID = battleID
         request.videoID = videoID
         videoRotationLock?.let { request.videoRotationLock = it }
-        return executeAWSFunction { lambdaFunctionsInterface.VideoSubmitted(request)}
+        return executeRestApiFunction(snapBattleApiService.videoSubmitted(battleID, request))
     }
 
     suspend fun uploadVideo (context: Context, battle : Battle, fileName : String, cognitoIDOpponent : String, videoID : Int, videoRotationLock: String?) : AsyncTaskResult<VideoSubmittedResponse>{

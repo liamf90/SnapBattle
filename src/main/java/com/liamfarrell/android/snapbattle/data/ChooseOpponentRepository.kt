@@ -1,33 +1,30 @@
 package com.liamfarrell.android.snapbattle.data
 
+import com.liamfarrell.android.snapbattle.api.SnapBattleApiService
 import com.liamfarrell.android.snapbattle.model.AsyncTaskResult
-import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.LambdaFunctionsInterface
-import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.FollowingRequest
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.UsernameToFacebookIDRequest
-import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.BattleTypeSuggestionsSearchResponse
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.GetUsersResponse
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.ResponseFollowing
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.UsernameToFacebookIDResponse
-import com.liamfarrell.android.snapbattle.util.executeAWSFunction
+import com.liamfarrell.android.snapbattle.util.executeRestApiFunction
 import javax.inject.Inject
 
 class ChooseOpponentRepository @Inject constructor
-(private val lambdaFunctionsInterface: LambdaFunctionsInterface) {
+(private val snapBattleApiService: SnapBattleApiService) {
 
     suspend fun getFollowing(): AsyncTaskResult<ResponseFollowing> {
-        val request = FollowingRequest()
-        request.isShouldGetProfilePic = true
-        return executeAWSFunction { lambdaFunctionsInterface.GetFollowing(request) }
+        return executeRestApiFunction(snapBattleApiService.getFollowing(true)) 
     }
 
     suspend fun getRecentOpponents(): AsyncTaskResult<GetUsersResponse> {
-        return executeAWSFunction { lambdaFunctionsInterface.GetRecentBattleUsers() }
+        return executeRestApiFunction(snapBattleApiService.getRecentBattleUsers())
+        
     }
 
     suspend fun getUsernameToCognitoId(username: String): AsyncTaskResult<UsernameToFacebookIDResponse> {
         val request = UsernameToFacebookIDRequest()
         request.username = username
-        return executeAWSFunction { lambdaFunctionsInterface.UsernameToFacebookID(request)}
+        return executeRestApiFunction(snapBattleApiService.usernameToFacebookId(username))
     }
 
 

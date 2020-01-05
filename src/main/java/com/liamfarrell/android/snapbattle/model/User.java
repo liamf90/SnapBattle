@@ -16,6 +16,7 @@ public class User implements Serializable {
     @NonNull @PrimaryKey @SerializedName("CognitoId")  private String mCognitoId;
     @SerializedName("battle_count") private int mBattleCount;
     @SerializedName("following_count")  private int mFollowingCount;
+    @SerializedName("followers_count") private int mFollowersCount;
     @SerializedName("Username") private String mUsername;
     @SerializedName("Facebook_Name") private String mFacebookName;
     @SerializedName("FacebookUserId") private String mFacebookUserId;
@@ -47,6 +48,7 @@ public class User implements Serializable {
         mIsFollowingChangeInProgress = followingChangeInProgress;
     }
 
+
     public void setCognitoId(String cognitoId) {
         mCognitoId = cognitoId;
     }
@@ -69,6 +71,14 @@ public class User implements Serializable {
 
     public int getFollowingCount() {
         return mFollowingCount;
+    }
+
+    public int getFollowersCount() {
+        return mFollowersCount;
+    }
+
+    public void setFollowersCount(int followersCount) {
+        mFollowersCount = followersCount;
     }
 
     public String getUsername() {
@@ -126,6 +136,7 @@ public class User implements Serializable {
         User user = (User) o;
         return mBattleCount == user.mBattleCount &&
                 mFollowingCount == user.mFollowingCount &&
+                mFollowersCount == user.mFollowersCount &&
                 mProfilePicCount == user.mProfilePicCount &&
                 mIsFollowing == user.mIsFollowing &&
                 Objects.equals(mCognitoId, user.mCognitoId) &&

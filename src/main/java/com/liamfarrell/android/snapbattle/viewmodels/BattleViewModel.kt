@@ -1,6 +1,6 @@
 package com.liamfarrell.android.snapbattle.viewmodels
 
-import androidx.lifecycle.MutableLiveData
+import androidx.databinding.ObservableField
 import androidx.lifecycle.ViewModel
 import com.amazonaws.mobile.auth.core.IdentityManager
 import com.liamfarrell.android.snapbattle.model.Battle
@@ -15,26 +15,28 @@ class BattleViewModel(val battle: Battle) : ViewModel() {
         CAN_VOTE
     }
 
-    val canVoteLiveData = MutableLiveData<UserCanVote>()
+    var canVote = ObservableField<UserCanVote>()
 
 
     init {
         if (battle.voting.votingState == Voting.VotingState.VOTING_STILL_GOING){
             if (battle.userHasVoted == true){
-                canVoteLiveData.value = UserCanVote.HAS_VOTED
+                canVote.set(UserCanVote.HAS_VOTED)
             } else{
                 battle.voting.canUserVote(IdentityManager.getDefaultIdentityManager().cachedUserID, battle.challengerCognitoID, battle.challengedCognitoID, battle.challengerFacebookUserId, battle.challengedFacebookUserId, object : Voting.MutualFriendCallbacks {
                     override fun onCanVote() {
-                        canVoteLiveData.value = UserCanVote.CAN_VOTE
+                        canVote.set(UserCanVote.CAN_VOTE)
                     }
 
                     override fun onCannotVote() {
-                        canVoteLiveData.value = UserCanVote.CANNOT_VOTE
+                        canVote.set(UserCanVote.CANNOT_VOTE)
                     }
                 })
 
             }
         }
+
+
 
     }
 }

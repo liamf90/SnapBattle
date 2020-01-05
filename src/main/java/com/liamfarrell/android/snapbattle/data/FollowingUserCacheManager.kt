@@ -65,9 +65,10 @@ class FollowingUserCacheManager @Inject constructor(
 
                     }
                 }
+                //update the following update count
+                followingUserDynamoDataDao.updateFollowingUserDynamoCount(followingUpdateCountServer)
             }
-            //update the following update count
-            followingUserDynamoDataDao.updateFollowingUserDynamoCount(followingUpdateCountServer)
+
         }
     }
 

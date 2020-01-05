@@ -44,8 +44,8 @@ class UsersBattlesFragment : Fragment(), Injectable {
         viewModel = ViewModelProvider(this, viewModelFactory).get(UsersBattlesViewModel::class.java)
         val adapter = UsersBattlesListAdapter()
         binding.includedList.recyclerList.adapter = adapter
-        binding.userInfo.followUserClickListener = View.OnClickListener{viewModel.followUser()}
-        binding.userInfo.unfollowUserClickListener = View.OnClickListener{viewModel.unfollowUser()}
+        binding.includedList.userInfo.followUserClickListener = View.OnClickListener{viewModel.followUser()}
+        binding.includedList.userInfo.unfollowUserClickListener = View.OnClickListener{viewModel.unfollowUser()}
         subscribeUi(binding, adapter)
         registerReceivers()
         if (viewModel.battles.value == null) {
@@ -68,7 +68,7 @@ class UsersBattlesFragment : Fragment(), Injectable {
         })
 
         viewModel.user.observe(viewLifecycleOwner, Observer {
-            binding.userInfo.user = it
+            binding.includedList.userInfo.user = it
             binding.toolbar.title = it.username
         })
 

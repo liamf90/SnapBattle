@@ -28,6 +28,9 @@ import javax.inject.Singleton
 
 @Module(includes = [ViewModelModule::class])
 class AppModule {
+
+
+
     @Singleton
     @Provides
     fun provideDb(app: Application): SnapBattleDatabase {

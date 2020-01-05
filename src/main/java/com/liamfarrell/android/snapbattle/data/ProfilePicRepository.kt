@@ -2,21 +2,18 @@ package com.liamfarrell.android.snapbattle.data
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.net.Uri
-import com.amazonaws.AmazonClientException
-import com.amazonaws.AmazonServiceException
 import com.amazonaws.event.ProgressListener
 import com.amazonaws.mobile.auth.core.IdentityManager
-import com.amazonaws.mobileconnectors.lambdainvoker.LambdaFunctionException
+import com.amazonaws.services.cognitoidentity.model.NotAuthorizedException
 import com.amazonaws.services.s3.AmazonS3Client
 import com.amazonaws.services.s3.model.GetObjectRequest
 import com.amazonaws.services.s3.model.PutObjectRequest
+import com.liamfarrell.android.snapbattle.api.SnapBattleApiService
 import com.liamfarrell.android.snapbattle.model.AsyncTaskResult
-import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.LambdaFunctionsInterface
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.UpdateProfilePictureRequest
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.DefaultResponse
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.GetProfileResponse
-import com.liamfarrell.android.snapbattle.util.executeAWSFunction
+import com.liamfarrell.android.snapbattle.util.executeRestApiFunction
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
@@ -24,10 +21,9 @@ import timber.log.Timber
 import java.io.File
 import java.io.IOException
 import javax.inject.Inject
-import kotlin.coroutines.suspendCoroutine
 
 class ProfilePicRepository @Inject constructor
-(private val lambdaFunctionsInterface: LambdaFunctionsInterface){
+(private val snapBattleApiService: SnapBattleApiService) {
 
     suspend fun uploadProfilePicRepository(context: Context, newPhotoPath: String, profilePicCount: Int)  : AsyncTaskResult<DefaultResponse>  {
 
@@ -61,14 +57,12 @@ class ProfilePicRepository @Inject constructor
 
 
     private suspend fun updateProfilePicCount(uploadedProfilePicCount: Int): AsyncTaskResult<DefaultResponse> {
-        val request = UpdateProfilePictureRequest()
-        request.profilePicCountUploaded = uploadedProfilePicCount
-        return executeAWSFunction { lambdaFunctionsInterface.updateProfilePicture(request) }
+        return executeRestApiFunction(snapBattleApiService.updateProfilePictureCount  (UpdateProfilePictureRequest().apply{profilePicCountUploaded = uploadedProfilePicCount}))
     }
 
 
     private suspend fun getProfilePicCount(): AsyncTaskResult<GetProfileResponse> {
-        return executeAWSFunction { lambdaFunctionsInterface.GetProfile() }
+        return executeRestApiFunction(snapBattleApiService.getProfile ())
     }
 
     @SuppressLint("ApplySharedPref")
@@ -133,7 +127,7 @@ class ProfilePicRepository @Inject constructor
     private fun getProfilePicturePathS3(currentProfilePicCount: Int): String {
         try {
             return IdentityManager.getDefaultIdentityManager().cachedUserID + "/" + IdentityManager.getDefaultIdentityManager().cachedUserID + "-" + currentProfilePicCount + "-ProfilePic.png"
-        } catch (e: com.amazonaws.services.cognitoidentity.model.NotAuthorizedException) {
+        } catch (e: NotAuthorizedException) {
             return ""
         }
     }

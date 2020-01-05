@@ -8,6 +8,7 @@ import android.preference.PreferenceManager
 import androidx.lifecycle.*
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.liamfarrell.android.snapbattle.R
+import com.liamfarrell.android.snapbattle.api.SnapBattleApiService
 import com.liamfarrell.android.snapbattle.data.ProfilePicRepository
 import com.liamfarrell.android.snapbattle.data.ProfileRepository
 import com.liamfarrell.android.snapbattle.model.AsyncTaskResult
@@ -27,7 +28,7 @@ import javax.inject.Inject
 /**
  * The ViewModel used in [ProfileFragment].
  */
-class ProfileViewModel @Inject constructor(private val context: Application, private val profileRepository: ProfileRepository, private val profilePicRepository : ProfilePicRepository) : ViewModelLaunch() {
+class ProfileViewModel @Inject constructor(private val context: Application, private val snapBattleApiService: SnapBattleApiService,  private val profileRepository: ProfileRepository, private val profilePicRepository : ProfilePicRepository) : ViewModelLaunch() {
 
     private val profileResult = MutableLiveData<AsyncTaskResult<GetProfileResponse>>()
 
@@ -46,6 +47,8 @@ class ProfileViewModel @Inject constructor(private val context: Application, pri
                 errorMessage.value = getErrorMessage(context.applicationContext, result.error)
             }
         }
+
+
     }
 
     fun getProfile(updateProfilePicImage : ()->Unit){

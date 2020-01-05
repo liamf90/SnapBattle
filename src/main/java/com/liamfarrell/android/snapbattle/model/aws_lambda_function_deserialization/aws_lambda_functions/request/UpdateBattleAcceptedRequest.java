@@ -3,7 +3,6 @@ package com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserializa
 public class UpdateBattleAcceptedRequest
 {
     private boolean battleAccepted;
-    private int battleID;
 
     public boolean isBattleAccepted() {
         return battleAccepted;
@@ -13,11 +12,4 @@ public class UpdateBattleAcceptedRequest
         this.battleAccepted = battleAccepted;
     }
 
-    public int getBattleID() {
-        return battleID;
-    }
-
-    public void setBattleID(int battleID) {
-        this.battleID = battleID;
-    }
 }

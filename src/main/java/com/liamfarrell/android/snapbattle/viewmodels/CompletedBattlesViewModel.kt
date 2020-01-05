@@ -38,7 +38,9 @@ class CompletedBattlesViewModel @Inject constructor(private val context: Applica
         awsLambdaFunctionCall(true,
                 suspend {
                     val response = completedBattlesRepository.getCompletedBattles()
-                    response.result.sqlResult = getThumbnailSignedUrls(response.result.sqlResult)
+                    if (response.error == null) {
+                        response.result.sqlResult = getThumbnailSignedUrls(response.result.sqlResult)
+                    }
                     battlesResult.value = response
                 })
     }

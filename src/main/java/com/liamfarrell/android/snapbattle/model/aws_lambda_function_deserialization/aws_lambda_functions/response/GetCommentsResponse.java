@@ -17,6 +17,10 @@ public class GetCommentsResponse
         this.sql_result = sql_result;
     }
 
+    public void setSql_result(List<Comment> sql_result) {
+        this.sql_result = sql_result;
+    }
+
     public int getBattle_deleted() {
         return battle_deleted;
     }

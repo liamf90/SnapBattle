@@ -26,6 +26,7 @@
             android:layout_height="wrap_content"
             android:text="@string/set_profile_picture"
             android:background="@drawable/button_main_selector"
+            android:textColor="@color/primary_text"
             android:layout_gravity="center_horizontal"/>
 
     </LinearLayout>

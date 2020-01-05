@@ -3,11 +3,11 @@ package com.liamfarrell.android.snapbattle.data
 import android.os.Bundle
 import com.facebook.AccessToken
 import com.facebook.GraphRequest
+import com.liamfarrell.android.snapbattle.api.SnapBattleApiService
 import com.liamfarrell.android.snapbattle.model.AsyncTaskResult
-import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.LambdaFunctionsInterface
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.CreateUserRequest
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.CreateUserResponse
-import com.liamfarrell.android.snapbattle.util.executeAWSFunction
+import com.liamfarrell.android.snapbattle.util.executeRestApiFunction
 import org.json.JSONException
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -16,14 +16,14 @@ import kotlin.coroutines.suspendCoroutine
 
 @Singleton
 class LoginRepository @Inject constructor
-(val lambdaFunctionsInterface: LambdaFunctionsInterface) {
+(val snapBattleApiService: SnapBattleApiService) {
 
     suspend fun createUser(facebookID: String, facebookName: String): AsyncTaskResult<CreateUserResponse> {
         val request = CreateUserRequest()
         request.facebookID = facebookID
         request.facebookName = facebookName
         request.facebookID = AccessToken.getCurrentAccessToken().userId
-        return executeAWSFunction { lambdaFunctionsInterface.createUser(request) }
+        return executeRestApiFunction(snapBattleApiService.createUser (request))
     }
 
     suspend fun getFacebookName() : AsyncTaskResult<String> =
