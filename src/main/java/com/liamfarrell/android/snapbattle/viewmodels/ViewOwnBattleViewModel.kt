@@ -2,7 +2,6 @@ package com.liamfarrell.android.snapbattle.viewmodels
 
 import android.app.Application
 import androidx.lifecycle.*
-import com.liamfarrell.android.snapbattle.app.SnapBattleApp
 import com.liamfarrell.android.snapbattle.data.UsersBattleRepository
 import com.liamfarrell.android.snapbattle.model.AsyncTaskResult
 import com.liamfarrell.android.snapbattle.model.Battle
@@ -13,7 +12,7 @@ import javax.inject.Inject
 /**
  * The ViewModel used in [ViewOwnBattleFragment].
  */
-class ViewOwnBattleViewModel @Inject constructor(private val context: Application, private val usersBattleRepository: UsersBattleRepository) : ViewModelLaunch() {
+class ViewOwnBattleViewModel @Inject constructor(private val context: Application, private val usersBattleRepository: UsersBattleRepository) : ViewModelBase() {
 
     private val battleResult = MutableLiveData<AsyncTaskResult<ResponseBattle>>()
 

@@ -1,13 +1,11 @@
 package com.liamfarrell.android.snapbattle.viewmodels.create_battle
 
 import android.app.Application
-import android.view.View
 import android.widget.TextView
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
-import com.liamfarrell.android.snapbattle.app.SnapBattleApp
 import com.liamfarrell.android.snapbattle.data.ChooseBattleTypeRepository
 import com.liamfarrell.android.snapbattle.data.TopBattlesRepository
 import com.liamfarrell.android.snapbattle.model.AsyncTaskResult
@@ -16,13 +14,13 @@ import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserializat
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.RecentBattleResponse
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.SuggestionsResponse
 import com.liamfarrell.android.snapbattle.util.getErrorMessage
-import com.liamfarrell.android.snapbattle.viewmodels.ViewModelLaunch
+import com.liamfarrell.android.snapbattle.viewmodels.ViewModelBase
 import javax.inject.Inject
 
 /**
  * The ViewModel used in [BattleCompletedListFragment].
  */
-class ChooseBattleTypeViewModel @Inject constructor(private val context: Application, private val chooseBattleTypeRepository: ChooseBattleTypeRepository, private val topBattlesRepository: TopBattlesRepository) : ViewModelLaunch() {
+class ChooseBattleTypeViewModel @Inject constructor(private val context: Application, private val chooseBattleTypeRepository: ChooseBattleTypeRepository, private val topBattlesRepository: TopBattlesRepository) : ViewModelBase() {
 
     val battleName = MutableLiveData<String>()
 

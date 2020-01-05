@@ -6,16 +6,7 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
-import com.amazonaws.AmazonClientException
-import com.amazonaws.AmazonServiceException
-import com.amazonaws.mobileconnectors.lambdainvoker.LambdaFunctionException
-import com.google.gson.JsonParser
-import com.liamfarrell.android.snapbattle.R
-import com.liamfarrell.android.snapbattle.api.SnapBattleApiService
 import com.liamfarrell.android.snapbattle.model.AsyncTaskResult
-import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.LambdaFunctionsInterface
-import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.GetProfileResponse
-import com.liamfarrell.android.snapbattle.viewmodels.ViewModelLaunch
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.Call

@@ -13,13 +13,12 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
-import kotlin.concurrent.fixedRateTimer
 
 
 /**
  * The ViewModel used in [AllBattlesFragment].
  */
-class AllBattlesViewModel @Inject constructor(private val allBattlesRepository: AllBattlesRepository, val thumbnailSignedUrlCacheRepository: ThumbnailSignedUrlCacheRepository) : ViewModelLaunch() {
+class AllBattlesViewModel @Inject constructor(private val allBattlesRepository: AllBattlesRepository, val thumbnailSignedUrlCacheRepository: ThumbnailSignedUrlCacheRepository) : ViewModelBase() {
 
     private val allBattlesResult = MutableLiveData<BattlesSearchResult>()
     private val _noMoreOlderBattles =  allBattlesRepository.isNoMoreOlderBattles

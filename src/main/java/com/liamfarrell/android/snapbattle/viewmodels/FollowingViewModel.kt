@@ -19,7 +19,7 @@ import javax.inject.Inject
  * The ViewModel used in [ViewFollowingFragment].
  */
 class FollowingViewModel @Inject constructor(private val context: Application, private val followingRepository : FollowingRepository,
-                                             private val otherUsersProfilePicUrlRepository: OtherUsersProfilePicUrlRepository, private val followingUserCacheManager: FollowingUserCacheManager) : ViewModelLaunch() {
+                                             private val otherUsersProfilePicUrlRepository: OtherUsersProfilePicUrlRepository, private val followingUserCacheManager: FollowingUserCacheManager) : ViewModelBase() {
 
     private val profilePicMap = mutableMapOf<String, String>()
 

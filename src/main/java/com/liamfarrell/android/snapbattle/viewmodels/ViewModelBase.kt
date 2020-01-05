@@ -9,7 +9,7 @@ import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.*
 
 @OpenForTesting
-open class ViewModelLaunch : ViewModel() {
+open class ViewModelBase : ViewModel() {
 
 
 

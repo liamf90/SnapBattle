@@ -1,11 +1,8 @@
 package com.liamfarrell.android.snapbattle.viewmodels
 
 import android.app.Application
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
-import com.liamfarrell.android.snapbattle.app.SnapBattleApp
 import com.liamfarrell.android.snapbattle.data.CompletedBattlesRepository
 import com.liamfarrell.android.snapbattle.data.ThumbnailSignedUrlCacheRepository
 import com.liamfarrell.android.snapbattle.model.AsyncTaskResult
@@ -18,7 +15,7 @@ import javax.inject.Inject
 /**
  * The ViewModel used in [BattleCompletedListFragment].
  */
-class CompletedBattlesViewModel @Inject constructor(private val context: Application, private val completedBattlesRepository: CompletedBattlesRepository, val thumbnailSignedUrlCacheRepository: ThumbnailSignedUrlCacheRepository) : ViewModelLaunch() {
+class CompletedBattlesViewModel @Inject constructor(private val context: Application, private val completedBattlesRepository: CompletedBattlesRepository, val thumbnailSignedUrlCacheRepository: ThumbnailSignedUrlCacheRepository) : ViewModelBase() {
 
     private val battlesResult = MutableLiveData<AsyncTaskResult<CompletedBattlesResponse>>()
 

@@ -1,4 +1,4 @@
-package com.liamfarrell.android
+package com.liamfarrell.android.snapbattle.testing
 
 @Target(AnnotationTarget.CLASS)
 annotation class OpenForTesting

@@ -4,11 +4,8 @@ import android.app.Application
 import android.content.Context
 import android.view.View
 import androidx.lifecycle.*
-import androidx.navigation.Navigation.findNavController
 import androidx.navigation.findNavController
-import androidx.navigation.fragment.findNavController
 import com.liamfarrell.android.snapbattle.R
-import com.liamfarrell.android.snapbattle.app.SnapBattleApp
 import com.liamfarrell.android.snapbattle.data.BattlesRepository
 import com.liamfarrell.android.snapbattle.model.Battle
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.CreateBattleResponse
@@ -22,7 +19,7 @@ import javax.inject.Inject
 /**
  * The ViewModel used in [VerifyBattleFragment].
  */
-class VerifyBattleViewModel @Inject constructor(private val context: Application, private val battlesRepository: BattlesRepository) : ViewModelLaunch() {
+class VerifyBattleViewModel @Inject constructor(private val context: Application, private val battlesRepository: BattlesRepository) : ViewModelBase() {
 
     val battle = MutableLiveData<Battle>()
 

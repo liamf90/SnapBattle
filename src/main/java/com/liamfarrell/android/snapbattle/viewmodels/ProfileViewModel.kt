@@ -28,7 +28,7 @@ import javax.inject.Inject
 /**
  * The ViewModel used in [ProfileFragment].
  */
-class ProfileViewModel @Inject constructor(private val context: Application, private val snapBattleApiService: SnapBattleApiService,  private val profileRepository: ProfileRepository, private val profilePicRepository : ProfilePicRepository) : ViewModelLaunch() {
+class ProfileViewModel @Inject constructor(private val context: Application, private val snapBattleApiService: SnapBattleApiService,  private val profileRepository: ProfileRepository, private val profilePicRepository : ProfilePicRepository) : ViewModelBase() {
 
     private val profileResult = MutableLiveData<AsyncTaskResult<GetProfileResponse>>()
 

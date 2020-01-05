@@ -14,14 +14,14 @@ import com.liamfarrell.android.snapbattle.mvvm_ui.startup.ChooseUsernameStartupF
 import com.liamfarrell.android.snapbattle.mvvm_ui.startup.LoggedInFragment
 import com.liamfarrell.android.snapbattle.util.CustomError
 import com.liamfarrell.android.snapbattle.util.getErrorMessage
-import com.liamfarrell.android.snapbattle.viewmodels.ViewModelLaunch
+import com.liamfarrell.android.snapbattle.viewmodels.ViewModelBase
 import java.lang.Exception
 import javax.inject.Inject
 
 /**
  * The ViewModel used in [FollowFacebookFriendsFragment].
  */
-class ChooseUsernameStartupViewModel @Inject constructor(val context : Application, val userUpdateRepository: UserUpdateRepository) : ViewModelLaunch() {
+class ChooseUsernameStartupViewModel @Inject constructor(val context : Application, val userUpdateRepository: UserUpdateRepository) : ViewModelBase() {
 
     val error = MutableLiveData<Exception>()
     val errorMessage : LiveData<String?> = Transformations.map(error) { error ->
