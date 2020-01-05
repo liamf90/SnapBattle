@@ -126,9 +126,11 @@
     <dimen name="user_info_header_profile_pic_margin_start">32dp</dimen>
     <dimen name="user_info_header_margins_default">8dp</dimen>
     <dimen name="name_text_view_margin_top">28dp</dimen>
+    <dimen name="profile_meta">24dp</dimen>
+    <dimen name="profile_meta_label">10dp</dimen>
 
     <!-- username dialog -->
-    <dimen name="username_edit_text_width">120dp</dimen>
+    <dimen name="username_edit_text_width">200dp</dimen>
 
     <!-- video battle list item -->
     <dimen name="left_margin_current_user">32dp</dimen>

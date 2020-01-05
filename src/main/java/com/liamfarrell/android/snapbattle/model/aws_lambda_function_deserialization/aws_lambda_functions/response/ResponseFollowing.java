@@ -6,7 +6,18 @@ import java.util.List;
 
 public class ResponseFollowing
 {
+    public static String userNotExistErrorMessage = "USER_DOES_NOT_EXIST";
     private List<User> sql_result;
+
+    private String error;
+
+    public String getError() {
+        return error;
+    }
+
+    public void setError(String error) {
+        this.error = error;
+    }
 
     public List<User> getSqlResult() {
         return sql_result;

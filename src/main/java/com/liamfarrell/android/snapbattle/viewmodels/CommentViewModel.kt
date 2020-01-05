@@ -12,6 +12,7 @@ import com.liamfarrell.android.snapbattle.model.AsyncTaskResult
 import com.liamfarrell.android.snapbattle.model.User
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.VerifyUserResponse
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.AddCommentResponse
+import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.GetCommentsResponse
 import com.liamfarrell.android.snapbattle.util.AlreadyFollowingError
 import com.liamfarrell.android.snapbattle.util.BannedError
 import com.liamfarrell.android.snapbattle.util.getErrorMessage
@@ -25,13 +26,13 @@ import javax.inject.Inject
  */
 class CommentViewModel @Inject constructor(private val context: Application, private val commentRepository : CommentRepository,  private val otherUsersProfilePicUrlRepository: OtherUsersProfilePicUrlRepository) : ViewModelLaunch() {
 
-    private val commentsResult = MutableLiveData<AsyncTaskResult<MutableList<Comment>>>()
+    private val commentsResult = MutableLiveData<AsyncTaskResult<GetCommentsResponse>>()
 
     val errorMessage : LiveData<String?> = Transformations.map(commentsResult) { result ->
         result.error?.let{getErrorMessage(context, it)}
     }
 
-    val comments = MediatorLiveData<MutableList<Comment>>()
+    final val comments = MediatorLiveData<MutableList<Comment>>()
 
     private val profilePicMap = mutableMapOf<String, String>()
 
@@ -42,7 +43,7 @@ class CommentViewModel @Inject constructor(private val context: Application, pri
     init {
         comments.addSource(commentsResult){
             if (it.error == null){
-                    comments.value = it.result
+                    comments.value = it.result.sql_result
             }
         }
         _showAddCommentProgressBar.value = false
@@ -52,21 +53,21 @@ class CommentViewModel @Inject constructor(private val context: Application, pri
         awsLambdaFunctionCall(true) {
             val response = commentRepository.getComments(battleID)
             if (response.error == null) {
-                response.result = getProfilePicSignedUrls(response.result).toMutableList()
+                response.result.sql_result = getProfilePicSignedUrls(response.result.sql_result)
             }
             commentsResult.value = response
         }
     }
 
-    fun deleteComment(commentID: Int) {
+    fun deleteComment(commentID: Int, battleID: Int) {
         awsLambdaFunctionCall(false
         ) {
-            val result = commentRepository.deleteComment(commentID)
+            val result = commentRepository.deleteComment(commentID, battleID)
             if (result.error != null) {
                 commentsResult.value = AsyncTaskResult(result.error)
             } else {
                 if (result.result.affectedRows == 1) {
-                    val deletedComment = commentsResult.value?.result?.find { commentID == commentID }
+                    val deletedComment = commentsResult.value?.result?.sql_result?.find { commentID == commentID }
                     deletedComment?.let {
                         comments.value?.find { it.commentId == commentID}?.isDeleted = true
                         comments.notifyObserver()}}
@@ -104,10 +105,10 @@ class CommentViewModel @Inject constructor(private val context: Application, pri
         }
     }
 
-    fun reportComment(commentID: Int) {
+    fun reportComment(commentID: Int, battleID: Int) {
         awsLambdaFunctionCall(true
         ) {
-            val asyncResult = commentRepository.reportComment(commentID)
+            val asyncResult = commentRepository.reportComment(commentID, battleID)
             if (asyncResult.result.affectedRows == 1) {
                 _snackBarMessage.value = context.getString(R.string.comment_reported_toast)
             } else {
@@ -143,8 +144,8 @@ class CommentViewModel @Inject constructor(private val context: Application, pri
     }
 
     private fun doesUserHaveUserFriendsPermission(): Boolean {
-        val declinedPermissions =  AccessToken.getCurrentAccessToken().declinedPermissions
-        return !declinedPermissions.contains("user_friends")
+        val grantedPermissions =  AccessToken.getCurrentAccessToken().permissions
+        return grantedPermissions.contains("user_friends")
     }
 
 }

@@ -19,13 +19,12 @@ class UserFollowingDynamodbRepository @Inject constructor(val ddbClient : Amazon
         return withContext(Dispatchers.IO) {
             // DynamoDBMapper mapper = new DynamoDBMapper(ddbClient);
             // BattleFeed selectedBattle = mapper.load(BattleFeed.class, "45");
-
             val key = hashMapOf<String, AttributeValue>()
-            key["table"] = AttributeValue().apply { s = "main" }
+            key["CognitoID"] = AttributeValue().apply { s = IdentityManager.getDefaultIdentityManager().cachedUserID }
 
             var projectionExpression = ""
             for (i in startIndex..endIndex) {
-                projectionExpression = projectionExpression + "BattleID[" + i + "].battleid"
+                projectionExpression = projectionExpression + "Following_Action_List[" + i + "]"
                 if (i != endIndex) {
                     projectionExpression = "$projectionExpression,"
                 }
@@ -33,7 +32,7 @@ class UserFollowingDynamodbRepository @Inject constructor(val ddbClient : Amazon
 
             val spec = GetItemRequest()
                     .withProjectionExpression(projectionExpression)
-                    .withTableName("All_Battles_Feed").withKey(key)
+                    .withTableName("Battle_Activity_Feed").withKey(key)
 
             val result = ddbClient.getItem(spec)
             val res = result.item

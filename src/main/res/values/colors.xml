@@ -27,6 +27,7 @@
 <color name="media_controller_background">#47000000</color>
 <color name="media_controller_progress_background_tint">#cfd8dc</color>
 <color name="media_controler_secondary_progress_tint">#9498a7</color>
+<color name="video_player_spinner_tint">#FFFFFF</color>
 
     <!-- DRAWABLES -->
     <color name="vote_button">#FFFFFF</color>
@@ -48,5 +49,6 @@
 
     <color name="main_button_background">#03A9F4</color>
 
+    <color name="profile_meta">#333</color>
 
 </resources>

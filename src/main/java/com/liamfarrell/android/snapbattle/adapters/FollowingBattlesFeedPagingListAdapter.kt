@@ -13,7 +13,6 @@ import com.liamfarrell.android.snapbattle.databinding.ListItemBattleFriendsBindi
 import com.liamfarrell.android.snapbattle.db.FollowingBattle
 import com.liamfarrell.android.snapbattle.model.Battle
 import com.liamfarrell.android.snapbattle.mvvm_ui.HomeFragmentDirections
-import com.liamfarrell.android.snapbattle.viewmodels.AllBattlesViewModel
 import com.liamfarrell.android.snapbattle.viewmodels.BattleViewModel
 
 
@@ -24,7 +23,7 @@ class FollowingBattlesFeedPagingListAdapter(val onBattleLoadedByAdapter : (b : B
         PagedListAdapter<FollowingBattle, FollowingBattlesFeedPagingListAdapter.ViewHolder>(FollowingBattleDiffCallback()) {
 
     override fun getItemId(position: Int): Long {
-        return super.getItem(position)?.battle?.battleId?.toLong() ?: 0
+        return super.getItem(position)?.followingBattleDb?.id?.toLong() ?: 0
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -38,12 +37,12 @@ class FollowingBattlesFeedPagingListAdapter(val onBattleLoadedByAdapter : (b : B
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val battle = getItem(position)
-        battle?.let {onBattleLoadedByAdapter(it.battle) }
+        battle?.let {onBattleLoadedByAdapter(it.followingBattleDb.battle) }
         holder.apply {
-            battle?.let { bind(it.battle,
-                    createChallengerOnClickListener(it.battle.challengerCognitoID),
-                    createChallengedOnClickListener(it.battle.challengedCognitoID),
-                    createThumbnailOnClickListener(it.battle),
+            battle?.let { bind(it.followingBattleDb.battle,
+                    createChallengerOnClickListener(it.followingBattleDb.battle.challengerCognitoID),
+                    createChallengedOnClickListener(it.followingBattleDb.battle.challengedCognitoID),
+                    createThumbnailOnClickListener(it.followingBattleDb.battle),
                     it.lastSavedSignedUrl)
                 itemView.tag = it}
         }
@@ -93,7 +92,7 @@ class FollowingBattlesFeedPagingListAdapter(val onBattleLoadedByAdapter : (b : B
 private class FollowingBattleDiffCallback : DiffUtil.ItemCallback<FollowingBattle>() {
 
     override fun areItemsTheSame(oldItem: FollowingBattle, newItem: FollowingBattle): Boolean {
-        return oldItem.id == newItem.id
+        return oldItem.followingBattleDb.id == newItem.followingBattleDb.id
     }
 
     override fun areContentsTheSame(oldItem: FollowingBattle, newItem: FollowingBattle): Boolean {

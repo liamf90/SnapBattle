@@ -123,7 +123,7 @@
     <string name="public_voting_long">Public Voting - Anyone can vote</string>
     <string name="mutual_facebook_friends_long">Mutual Facebook friends of opponents can only vote</string>
 
-
+    <string name="voting_length_with_length">Voting Length: %1$s</string>
     <string name="voting_length">Voting Length</string>
     <string name="opponent">Opponent</string>
     <string name="voting_submitting">Voting...</string>
@@ -152,6 +152,7 @@
     <string name="username_too_long_toast">Username cannot contain more than 25 characters</string>
     <string name="username_wrong_characters_toast">Username can only contain  letters, numbers, periods and underscores</string>
     <string name="username_already_exists_toast">The username already exists</string>
+    <string name="username_not_exists_toast">The username does not exist</string>
     <plurals name="view_comments_button">
         <item quantity="one">View %1$d Comment</item>
         <item quantity="other">View %1$d Comments</item>
@@ -270,4 +271,5 @@
     <string name="user_no_battles">User has no battles</string>
     <string name="no_battles">There are no battles in your feed</string>
     <string name="no_notifications">You have no notifications</string>
+    <string name="no_comments">There are no comments</string>
 </resources>

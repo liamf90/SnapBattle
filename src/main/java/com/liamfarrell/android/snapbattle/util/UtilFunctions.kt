@@ -16,6 +16,19 @@ import java.util.*
 import kotlin.coroutines.suspendCoroutine
 
 
+
+// https://stackoverflow.com/questions/9769554/how-to-convert-number-into-k-thousands-m-million-and-b-billion-suffix-in-jsp
+// Converts the number to K, M suffix
+// Ex: 5500 will be displayed as 5.5k
+fun convertToSuffix(count: Long): String {
+    if (count < 1000) return "" + count
+    val exp = (Math.log(count.toDouble()) / Math.log(1000.0)).toInt()
+    return String.format("%.1f%c",
+            count / Math.pow(1000.0, exp.toDouble()),
+            "kmgtpe"[exp - 1])
+}
+
+
 fun mysqlDateStringToDate(dateString : String) : Date {
     val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.ENGLISH)
     sdf.timeZone = TimeZone.getTimeZone("UTC")

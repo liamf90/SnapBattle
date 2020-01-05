@@ -1,12 +1,16 @@
 package com.liamfarrell.android.snapbattle.viewmodels
 
 import android.app.Application
+import android.content.Context
 import androidx.lifecycle.*
+import com.liamfarrell.android.snapbattle.R
 import com.liamfarrell.android.snapbattle.data.FollowingRepository
 import com.liamfarrell.android.snapbattle.data.FollowingUserCacheManager
 import com.liamfarrell.android.snapbattle.data.OtherUsersProfilePicUrlRepository
 import com.liamfarrell.android.snapbattle.model.AsyncTaskResult
 import com.liamfarrell.android.snapbattle.model.User
+import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.ResponseFollowing
+import com.liamfarrell.android.snapbattle.util.CustomError
 import com.liamfarrell.android.snapbattle.util.getErrorMessage
 import com.liamfarrell.android.snapbattle.util.notifyObserver
 import javax.inject.Inject
@@ -19,7 +23,7 @@ class FollowingViewModel @Inject constructor(private val context: Application, p
 
     private val profilePicMap = mutableMapOf<String, String>()
 
-    private val followingUsersResponse = MutableLiveData<AsyncTaskResult<MutableList<User>>>()
+    private val followingUsersResponse = MutableLiveData<AsyncTaskResult<ResponseFollowing>>()
 
     val following = MediatorLiveData<MutableList<User>>()
 
@@ -34,7 +38,7 @@ class FollowingViewModel @Inject constructor(private val context: Application, p
     init {
         following.addSource(followingUsersResponse){
             if (it.error == null) {
-               following.value = it.result
+               following.value = it.result.sqlResult
             }
         }
 
@@ -43,9 +47,9 @@ class FollowingViewModel @Inject constructor(private val context: Application, p
                     val response = followingRepository.getFollowing()
                     if (response.error == null) {
                         //set all users as following
-                        response.result.forEach { it.isFollowing = true }
+                        response.result.sqlResult.forEach { it.isFollowing = true }
                         //get profile pic signed urls from either db cache (if they exist + are current pics) or use the new signed urls
-                        response.result = getProfilePicSignedUrls(response.result).toMutableList()
+                        response.result.sqlResult = getProfilePicSignedUrls(response.result.sqlResult)
                         followingUsersResponse.value = response
                     }
                     followingUsersResponse.value = response})
@@ -93,7 +97,8 @@ class FollowingViewModel @Inject constructor(private val context: Application, p
                         isFollowingChangeInProgress = false
                     }
                     following.notifyObserver()
-                } else {
+                }
+                else {
                     following.value?.find{it.cognitoId == cognitoID}?.isFollowingChangeInProgress = false
                     following.notifyObserver()
 
@@ -108,12 +113,23 @@ class FollowingViewModel @Inject constructor(private val context: Application, p
                     val asyncResult = followingRepository.addFollowing(username)
                     if (asyncResult.error != null){
                         followingUsersResponse.value = AsyncTaskResult(asyncResult.error)
-                    } else {
+                    }
+                    else if (asyncResult.result.error == ResponseFollowing.userNotExistErrorMessage) {
+                        followingUsersResponse.value = AsyncTaskResult<ResponseFollowing>(object : CustomError() {
+                            override fun getErrorToastMessage(context: Context): String {
+                                return context.getString(R.string.username_not_exists_toast)
+                            }
+                        })
+                    }
+                    else {
                         //Get the profle pic signed urls to use
                         asyncResult.result?.sqlResult?.let { asyncResult.result.sqlResult = getProfilePicSignedUrls(it.toList())}
 
+
+
                         //Add the added user to the list
                         asyncResult.result?.sqlResult?.forEach {
+                            it.isFollowing = true
                             following.value?.add(it)
                         }
 

@@ -13,6 +13,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.PermissionChecker
 import androidx.core.content.PermissionChecker.checkSelfPermission
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -81,6 +83,12 @@ class ViewBattleFragment : Fragment(), Injectable {
         return binding.root
     }
 
+    private fun setToolbar(toolbar : androidx.appcompat.widget.Toolbar, title: String){
+        (activity as AppCompatActivity).setSupportActionBar(toolbar)
+        (activity as AppCompatActivity).supportActionBar?.title = title
+        (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
+    }
+
     private fun subscribeUi() {
         viewModel.battle.observe(viewLifecycleOwner, Observer {
             it?.let{
@@ -88,6 +96,7 @@ class ViewBattleFragment : Fragment(), Injectable {
             adapter = BattleVideoAdapter(battle, ::getRecordButtonOnClick, ::onVideoSubmitted, usersBattleRepository )
             binding.recyclerView.adapter = adapter
             binding.battleStatus = battle.getBattleStatus(requireContext())
+            setToolbar(binding.includeToolbar.toolbar,  context?.getString(R.string.battle_name, it.battleName) ?: "")
             adapter.submitList(it.videos.toList())}
         })
 
@@ -173,7 +182,7 @@ class ViewBattleFragment : Fragment(), Injectable {
     private fun isStoragePermissionGranted(): Boolean {
         return context?.let {
             if (Build.VERSION.SDK_INT >= 23) {
-                if (checkSelfPermission(it, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                if (checkSelfPermission(it, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PermissionChecker.PERMISSION_GRANTED) {
                     return true
                 } else {
                     requestPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), WRITE_EXTERNAL_REQUEST_CODE)

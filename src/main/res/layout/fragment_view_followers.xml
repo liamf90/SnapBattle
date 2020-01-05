@@ -48,6 +48,7 @@
 			android:layout_marginStart="24dp"
 			android:layout_marginEnd="24dp"
 			android:layout_gravity="center_vertical|center_horizontal"
+			android:gravity="center"
 			android:text="@string/not_following_anyone"
 			android:textColor="@android:color/black"
 			android:visibility="gone"

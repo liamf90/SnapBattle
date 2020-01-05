@@ -39,9 +39,9 @@ class CommentsListAdapter (private  val viewModel : CommentViewModel, val viewHo
             itemView.tag = comment
             holder.itemView.setOnClickListener{viewHolderOnClick(comment.username)}
             if (comment.cognitoIdCommenter == IdentityManager.getDefaultIdentityManager().getCachedUserID()){
-                holder.itemView.setOnLongClickListener(getOnLongClickListenerOwnComment(comment.commentId))
+                holder.itemView.setOnLongClickListener(getOnLongClickListenerOwnComment(comment.commentId, comment.battleId))
             } else{
-                holder.itemView.setOnLongClickListener(getOnLongClickListenerNotOwnComment(comment.commentId))
+                holder.itemView.setOnLongClickListener(getOnLongClickListenerNotOwnComment(comment.commentId, comment.battleId))
             }
 
         }
@@ -55,7 +55,7 @@ class CommentsListAdapter (private  val viewModel : CommentViewModel, val viewHo
         }
     }
 
-    private fun getOnLongClickListenerOwnComment(commentID: Int): View.OnLongClickListener {
+    private fun getOnLongClickListenerOwnComment(commentID: Int, battleId: Int): View.OnLongClickListener {
         return View.OnLongClickListener {
             //Creating the instance of PopupMenu
             val popup = PopupMenu(it.context, it)
@@ -63,7 +63,7 @@ class CommentsListAdapter (private  val viewModel : CommentViewModel, val viewHo
             popup.getMenuInflater().inflate(R.menu.comment_delete_popup_menu, popup.getMenu())
             //registering popup with OnMenuItemClickListener
             popup.setOnMenuItemClickListener {
-                viewModel.deleteComment(commentID)
+                viewModel.deleteComment(commentID, battleId)
                 true
             }
             popup.show()//showing popup menu
@@ -71,7 +71,7 @@ class CommentsListAdapter (private  val viewModel : CommentViewModel, val viewHo
         }
     }
 
-    private fun getOnLongClickListenerNotOwnComment(commentID: Int): View.OnLongClickListener {
+    private fun getOnLongClickListenerNotOwnComment(commentID: Int, battleId: Int): View.OnLongClickListener {
         return View.OnLongClickListener {
             //Creating the instance of PopupMenu
             val popup = PopupMenu(it.context, it)
@@ -79,7 +79,7 @@ class CommentsListAdapter (private  val viewModel : CommentViewModel, val viewHo
             popup.getMenuInflater().inflate(R.menu.comment_report_popup_menu, popup.getMenu())
             //registering popup with OnMenuItemClickListener
             popup.setOnMenuItemClickListener {
-                viewModel.reportComment(commentID)
+                viewModel.reportComment(commentID, battleId)
                 true
             }
             popup.show()//showing popup menu

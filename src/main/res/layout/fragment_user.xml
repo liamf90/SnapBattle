@@ -1,53 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<layout>
-
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
+<layout xmlns:local="http://schemas.android.com/apk/res-auto">
+    <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:elevation="@dimen/elevation_user_header">
+        android:clipChildren="false"
+        tools:context=".view.MainActivity">
 
-        <com.google.android.material.appbar.AppBarLayout
-            android:fitsSystemWindows="true"
-            android:background="@drawable/user_info"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <com.google.android.material.appbar.CollapsingToolbarLayout
-                xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
-                android:id="@+id/collapsing_toolbar"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <com.google.android.material.appbar.AppBarLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:fitsSystemWindows="true"
-                app:expandedTitleTextAppearance="@style/userTitleExpanded"
-                app:layout_scrollFlags="scroll|exitUntilCollapsed">
+                android:layout_height="wrap_content"
+                app:elevation="1dp">
 
                 <androidx.appcompat.widget.Toolbar
                     android:id="@+id/toolbar"
                     android:layout_width="match_parent"
-                    android:layout_height="?android:attr/actionBarSize"
-                    android:background="@android:color/transparent"
-                    app:layout_collapseMode="pin"
-                    />
+                    android:layout_height="?attr/actionBarSize"
+                    android:background="?attr/colorPrimary"
+                    local:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+                    local:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+            </com.google.android.material.appbar.AppBarLayout>
 
-                <include
-                    android:id="@+id/userInfo"
-                    layout="@layout/user_info_header"/>
-
-
-            </com.google.android.material.appbar.CollapsingToolbarLayout>
-
-        </com.google.android.material.appbar.AppBarLayout>
-
-        <include
-            android:id="@+id/includedList"
-            layout="@layout/fragment_completed_list"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            />
+            <include
+                android:id="@+id/includedList"
+                layout="@layout/fragment_completed_list"
+                />
+        </LinearLayout>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
 
 </layout>
 

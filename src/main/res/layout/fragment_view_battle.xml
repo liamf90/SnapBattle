@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<layout xmlns:bind="http://schemas.android.com/tools">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:bind="http://schemas.android.com/tools"
+    xmlns:tools="http://schemas.android.com/tools">
 
 
     <data>
         <import type="androidx.lifecycle.LiveData" />
         <import type="android.view.View"/>
+        <import type="com.liamfarrell.android.snapbattle.mvvm_ui.create_battle.ChooseVotingFragment.VotingChoice" />
         <variable
             name="viewModel"
             type="com.liamfarrell.android.snapbattle.viewmodels.ViewOwnBattleViewModel" />
@@ -17,125 +21,113 @@
     </data>
 
 
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
     android:id="@+id/parentCoordinatorLayout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_height="match_parent">
 
     <LinearLayout 
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+        <include
+            android:id="@+id/includeToolbar"
+            layout="@layout/toolbar" />
 
-		<androidx.constraintlayout.widget.ConstraintLayout
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:layout_marginTop="@dimen/activity_vertical_margin"
-			android:background="@drawable/view_battle_header_background"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:elevation="@dimen/view_battle_header_elevation"
-			android:gravity="center_horizontal"
-			android:orientation="vertical">
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/battle_name_TextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/header_element_spacing"
-                android:layout_marginTop="@dimen/header_element_spacing"
-                android:textColor="@android:color/white"
-                android:textSize="25sp"
-                android:text='@{viewModel.battle != null ? @string/battle_name(viewModel.battle.battleName) : ""}'
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
             <TextView
                 android:id="@+id/challenger_name_TextView"
-                android:textStyle="bold"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginEnd="@dimen/header_element_spacing"
                 android:layout_marginStart="@dimen/header_element_spacing"
                 android:layout_marginTop="@dimen/header_element_spacing"
-                android:textColor="@android:color/white"
-                android:textSize="14sp"
+                android:layout_marginEnd="@dimen/header_element_spacing"
                 android:text="@{viewModel.battle.challengerUsername}"
+                android:textColor="@android:color/black"
+                android:textSize="14sp"
+                android:textStyle="bold"
                 app:layout_constraintEnd_toStartOf="@+id/vs_TextView"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/voting_length_TextView" />
+                app:layout_constraintTop_toBottomOf="@+id/voting_length_TextView"
+                tools:text="person2" />
 
             <TextView
                 android:id="@+id/vs_TextView"
-                android:visibility="@{viewModel.battle != null ? View.VISIBLE : View.GONE}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginBottom="@dimen/header_element_spacing"
-                android:layout_marginEnd="@dimen/header_element_spacing"
                 android:layout_marginStart="@dimen/header_element_spacing"
                 android:layout_marginTop="@dimen/header_element_spacing"
+                android:layout_marginEnd="@dimen/header_element_spacing"
+                android:layout_marginBottom="@dimen/header_element_spacing"
                 android:text="@string/vs"
-                android:textColor="@android:color/white"
                 android:textSize="14sp"
+                android:visibility="@{viewModel.battle != null ? View.VISIBLE : View.GONE}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/voting_length_TextView" />
 
             <TextView
                 android:id="@+id/challenged_name_TextView"
-                android:textStyle="bold"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/header_element_spacing"
                 android:layout_marginStart="@dimen/header_element_spacing"
                 android:layout_marginTop="@dimen/header_element_spacing"
+                android:layout_marginEnd="@dimen/header_element_spacing"
                 android:gravity="end"
-                android:textColor="@android:color/white"
-                android:textSize="14sp"
                 android:text="@{viewModel.battle.challengedUsername}"
+                android:textColor="@android:color/black"
+                android:textSize="14sp"
+                android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/vs_TextView"
-                app:layout_constraintTop_toBottomOf="@+id/voting_length_TextView" />
+                app:layout_constraintTop_toBottomOf="@+id/voting_length_TextView"
+                tools:text="person1" />
 
             <TextView
                 android:id="@+id/battle_rounds_TextView"
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/battle_rounds_textview_height"
-                android:layout_below="@id/battle_name_TextView"
-                android:layout_marginStart="@dimen/header_element_spacing"
-                android:layout_marginTop="@dimen/header_element_spacing"
-                android:textColor="@android:color/white"
-                android:textSize="12sp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="16dp"
                 android:text='@{viewModel.battle != null ? @plurals/rounds(safeUnbox(viewModel.battle.rounds), safeUnbox(viewModel.battle.rounds)) : ""}'
+                android:textSize="14sp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/battle_name_TextView" />
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="2 Rounds" />
 
             <TextView
                 android:id="@+id/voting_type_TextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/header_element_spacing"
-                android:layout_marginTop="@dimen/header_element_spacing"
-                android:textColor="@android:color/white"
-                android:textSize="12sp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
                 android:text="@{viewModel.battle.voting.votingChoice.toLongStyleString(context)}"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/battle_name_TextView" />
+                android:textSize="12sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/battle_rounds_TextView"
+                tools:text="Mutual Facebook Friends" />
 
             <TextView
                 android:id="@+id/voting_length_TextView"
-                android:visibility="gone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/header_element_spacing"
+                android:layout_marginStart="8dp"
                 android:layout_marginTop="@dimen/header_element_spacing"
-                android:textColor="@android:color/white"
+                android:text="@{@string/voting_length_with_length(viewModel.battle.voting.votingLength.toString(context))}"
                 android:textSize="12sp"
-                android:text="@{viewModel.battle.voting.votingLength.toString(context)}"
+                android:visibility="@{viewModel.battle != null &amp;&amp; viewModel.battle.voting.votingChoice != VotingChoice.NONE ? View.VISIBLE : View.GONE}"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/voting_type_TextView" />
+                app:layout_constraintTop_toBottomOf="@+id/voting_type_TextView"
+                tools:text="1 Day" />
 
             <LinearLayout
                 android:id="@+id/statusTextViewLinearLayout"
@@ -151,33 +143,37 @@
 
                 <TextView
                     android:id="@+id/statusTextView"
-                    android:visibility="@{(!viewModel.battle.isBattleAccepted ||  viewModel.battle.isBattleDone()) ? View.VISIBLE : View.GONE}"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@{battleStatus}"
-                    android:textColor="@color/primary_text" />
+                    android:visibility="@{(!viewModel.battle.isBattleAccepted ||  viewModel.battle.isBattleDone()) ? View.VISIBLE : View.GONE}" />
 
                 <ProgressBar
                     android:id="@+id/finalTranscodingProgressBar"
-                    android:visibility='@{viewModel.battle.isBattleDone() &amp;&amp; !viewModel.battle.isFinalVideoReady ? View.VISIBLE : View.GONE}'
                     android:layout_width="@dimen/transcoding_progress_spinner_width_height"
                     android:layout_height="@dimen/transcoding_progress_spinner_width_height"
                     android:layout_marginStart="@dimen/element_horizontal_spacing_default"
-                    android:theme="@style/MyMaterialTheme.Base" />
+                    android:theme="@style/MyMaterialTheme.Base"
+                    android:visibility='@{viewModel.battle.isBattleDone() &amp;&amp; !viewModel.battle.isFinalVideoReady ? View.VISIBLE : View.GONE}' />
 
             </LinearLayout>
 
 
             <include
-                layout="@layout/completed_battle_layout"
                 android:id="@+id/included"
-                bind:battle="@{viewModel.battle}"
-                android:layout_marginTop="@dimen/header_element_spacing"
+                layout="@layout/completed_battle_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:visibility="@{viewModel.battle.isFinalVideoReady ? View.VISIBLE : View.GONE}"
-                app:layout_constraintTop_toBottomOf="@+id/statusTextViewLinearLayout" />
-		</androidx.constraintlayout.widget.ConstraintLayout>
+                app:layout_constraintTop_toBottomOf="@+id/statusTextViewLinearLayout"
+                bind:battle="@{viewModel.battle}" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="8dp"
+            android:visibility="@{viewModel.battle != null ? View.VISIBLE : View.GONE}"
+            android:background="@android:color/darker_gray"/>
 
         <FrameLayout
             android:layout_width="match_parent"

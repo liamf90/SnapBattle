@@ -6,6 +6,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -45,7 +46,7 @@ class FollowingBattlesFeedCacheManager @Inject constructor(
             val moreBattlesIDList = followingBattlesFeedDynamoRepository.loadListFromDynamo(startIndex, endIndex)
             val moreBattlesResponse = battlesApi.getFriendsBattles(moreBattlesIDList)
             if (moreBattlesResponse.error == null) {
-                followingBattleDao.insertAll( moreBattlesResponse.result.sqlResult.map { FollowingBattle(it.battleId, battle = it)})
+                followingBattleDao.insertAll( moreBattlesResponse.result.sqlResult.map { FollowingBattleDb(it.battleId, battle = it)})
 
                 if (moreBattlesResponse.result.sqlResult.size != NETWORK_PAGE_SIZE) {
                     noMoreBattles.postValue(true)
@@ -105,9 +106,10 @@ class FollowingBattlesFeedCacheManager @Inject constructor(
                 }
 
                 val newBattlesList = followingBattlesFeedDynamoRepository.loadListFromDynamo(startIndex, endIndex)
+                Timber.i("newBattlesList : " + newBattlesList.toString())
                 val moreBattlesResponse = battlesApi.getFriendsBattles(newBattlesList)
                 if (moreBattlesResponse.error == null) {
-                    followingBattleDao.insertAll(moreBattlesResponse.result.sqlResult.map { FollowingBattle(it.battleId, it) })
+                    followingBattleDao.insertAll(moreBattlesResponse.result.sqlResult.map { FollowingBattleDb(it.battleId, it) })
                     followingBattlesFeedDynamoInfoDao.updateFollowingBattlesDynamoCount(battleCountDynamo)
                 } else {
                     //ERROR
@@ -131,7 +133,7 @@ class FollowingBattlesFeedCacheManager @Inject constructor(
             } ?:   battlesApi.getFriendsBattles(battlesIDsToUpdate)
 
             if (resultList.error == null) {
-                followingBattleDao.insertAll(resultList.result.sqlResult.map { FollowingBattle(it.battleId, it) })
+                followingBattleDao.insertAll(resultList.result.sqlResult.map { FollowingBattleDb(it.battleId, it) })
                 //update last update time
                 followingBattlesFeedDynamoInfoDao.updateLastTimeBattlesUpdated(Calendar.getInstance().time)
 

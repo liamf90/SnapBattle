@@ -65,7 +65,9 @@ class AddFacebookFriendsAsFollowersStartupFragment : Fragment(), Injectable {
     private fun subscribeUi(binding: FragmentAddFollowersSelectBinding, adapter: AddFacebookFriendsAsFollowersStartupListAdapter) {
         viewModel.following.observe(viewLifecycleOwner, Observer { followingList ->
             followingList?.let {
-                adapter.submitList(followingList) }
+                adapter.submitList(followingList)
+                if (followingList.isEmpty()) binding.noFacebookFriendsTextView.visibility = View.VISIBLE
+            }
         })
 
         viewModel.errorMessage.observe(viewLifecycleOwner, Observer {

@@ -90,6 +90,8 @@ class UserSearchViewModel @Inject constructor(private val context: Application, 
      * When the query length >= 3, a search is done on the server as well, with the the result appended to the Following Cache search users for distinct users only
      */
     fun searchQueryChange(searchQuery: String) {
+
+
         searchServerJob?.cancel()
         searchCacheJob?.cancel()
 

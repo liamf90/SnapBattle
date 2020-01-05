@@ -4,10 +4,8 @@ import com.amazonaws.AmazonClientException
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient
 import com.amazonaws.services.dynamodbv2.model.AttributeValue
 import com.amazonaws.services.dynamodbv2.model.GetItemRequest
-import com.liamfarrell.android.snapbattle.util.executeAWSFunction
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import java.util.ArrayList
 import java.util.HashMap
 import javax.inject.Inject
 

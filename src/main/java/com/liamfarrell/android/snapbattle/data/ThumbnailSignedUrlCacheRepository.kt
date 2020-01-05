@@ -1,28 +1,21 @@
 package com.liamfarrell.android.snapbattle.data
 
-import com.liamfarrell.android.snapbattle.db.OtherUsersProfilePicUrlCache
-import com.liamfarrell.android.snapbattle.db.OtherUsersProfilePicUrlDao
+import com.liamfarrell.android.snapbattle.api.SnapBattleApiService
 import com.liamfarrell.android.snapbattle.db.ThumbnailSignedUrlCache
 import com.liamfarrell.android.snapbattle.db.ThumbnailSignedUrlDao
 import com.liamfarrell.android.snapbattle.model.AsyncTaskResult
 import com.liamfarrell.android.snapbattle.model.Battle
-import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.LambdaFunctionsInterface
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.UrlLambdaRequest
-import com.liamfarrell.android.snapbattle.util.executeAWSFunction
+import com.liamfarrell.android.snapbattle.util.executeRestApiFunction
 import com.liamfarrell.android.snapbattle.util.isSignedUrlInPicassoCache
-import com.squareup.picasso.Callback
-import com.squareup.picasso.NetworkPolicy
-import com.squareup.picasso.Picasso
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
-import java.lang.Exception
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlin.coroutines.suspendCoroutine
 
 @Singleton
 class ThumbnailSignedUrlCacheRepository @Inject constructor(private val thumbnailSignedUrlDao: ThumbnailSignedUrlDao,
-                                                            private val lambdaFunctionsInterface: LambdaFunctionsInterface)
+                                                            private val  snapBattleApiService: SnapBattleApiService)
 {
     suspend fun getThumbnailSignedUrl(battle: Battle) : String? {
         val signedUrlDb = getLastSavedThumbnailSignedUrl(battle.battleID)
@@ -52,7 +45,7 @@ class ThumbnailSignedUrlCacheRepository @Inject constructor(private val thumbnai
     private suspend fun getSignedUrlFromServer(battle: Battle) : AsyncTaskResult<String>{
         val request = UrlLambdaRequest()
         request.url = battle.thumbnailServerUrl
-        return executeAWSFunction { lambdaFunctionsInterface.getSignedUrl(request) }
+        return executeRestApiFunction(snapBattleApiService.getCloudfrontSignedUrl(battle.thumbnailServerUrl))
     }
 
     suspend fun deleteOtherUsersProfilePicCache(){

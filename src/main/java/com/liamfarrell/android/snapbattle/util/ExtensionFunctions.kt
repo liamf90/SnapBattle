@@ -11,49 +11,39 @@ import com.amazonaws.AmazonServiceException
 import com.amazonaws.mobileconnectors.lambdainvoker.LambdaFunctionException
 import com.google.gson.JsonParser
 import com.liamfarrell.android.snapbattle.R
+import com.liamfarrell.android.snapbattle.api.SnapBattleApiService
 import com.liamfarrell.android.snapbattle.model.AsyncTaskResult
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.LambdaFunctionsInterface
+import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.GetProfileResponse
 import com.liamfarrell.android.snapbattle.viewmodels.ViewModelLaunch
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import retrofit2.Call
 import timber.log.Timber
+import java.net.UnknownHostException
 
-suspend fun <R> executeAWSFunction(awsFunctionCall : () -> R ) : AsyncTaskResult<R> {
+suspend fun <R> executeRestApiFunction(sbServiceCall: Call<R>) : AsyncTaskResult<R> {
     return withContext(Dispatchers.IO) {
+
         try{
-            AsyncTaskResult<R>(awsFunctionCall())
+            val response = sbServiceCall.execute()
+            if (response.isSuccessful){
+                return@withContext AsyncTaskResult<R>(response.body())
+            } else if (response.code() == 500) {
+                return@withContext AsyncTaskResult<R>(LambdaServerError())
+            }
+            else {
+                return@withContext AsyncTaskResult<R>(LambdaServerError())
+            }
         }
-        catch (lfe : LambdaFunctionException){
-            Timber.i(lfe)
-            AsyncTaskResult<R>(lfe)
-        }
-        catch ( ase: AmazonServiceException){
-            Timber.i(ase)
-            AsyncTaskResult<R>(ase)
-        }
-        catch (ace : AmazonClientException){
-            Timber.i(ace)
-            AsyncTaskResult<R>(ace)
+        catch (uhe : UnknownHostException){
+            Timber.i(uhe)
+            return@withContext AsyncTaskResult<R>(uhe)
         }
     }
 }
 
-suspend fun <R> executeAWSFunction2(awsFunctionCall : () -> R ) : AsyncTaskResult<R> {
-    return withContext(Dispatchers.IO) {
-        try{
-            AsyncTaskResult<R>(awsFunctionCall())
-        }
-        catch (lfe : LambdaFunctionException){
-            AsyncTaskResult<R>(lfe)
-        }
-        catch ( ase: AmazonServiceException){
-            AsyncTaskResult<R>(ase)
-        }
-        catch (ace : AmazonClientException){
-            AsyncTaskResult<R>(ace)
-        }
-    }
-}
+
 
 
 

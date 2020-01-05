@@ -47,12 +47,10 @@
 
         	<RelativeLayout
   		    android:id="@+id/rotateMessageLayout"
-  		   
-  		    
   		    android:layout_width="fill_parent"
   		    android:layout_height="fill_parent"
   		    android:elevation="@dimen/rotate_message_elevation"
-  		    android:visibility="invisible"
+			android:visibility="invisible"
   		    android:layout_margin="@dimen/rotate_message_margin"
   		    android:background="@color/rotate_camera_icon_background"
   		    android:alpha="0.65">
@@ -63,6 +61,7 @@
   		        android:layout_height="wrap_content"
   		        android:layout_centerInParent="true"
   		        android:textStyle="bold"
+				android:textColor="@color/white"
   		        android:text="@string/rotate_device"/>
   		   
   		</RelativeLayout>

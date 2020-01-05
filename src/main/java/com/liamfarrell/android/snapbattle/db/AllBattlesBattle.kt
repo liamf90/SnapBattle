@@ -6,7 +6,6 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.liamfarrell.android.snapbattle.model.Battle
 
-@Entity(tableName = "all_battles_battle")
 data class AllBattlesBattle (
         @Embedded
         val battle: Battle,

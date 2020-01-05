@@ -12,6 +12,9 @@ import com.amazonaws.mobile.auth.ui.AuthUIConfiguration
 
 import com.amazonaws.mobile.auth.ui.SignInUI;
 import com.amazonaws.mobile.client.AWSMobileClient;
+import com.facebook.AccessToken
+import com.facebook.login.LoginBehavior
+import com.facebook.login.LoginManager
 import com.liamfarrell.android.snapbattle.MainActivity
 import com.liamfarrell.android.snapbattle.R
 import com.liamfarrell.android.snapbattle.mvvm_ui.startup.StartupActivity
@@ -22,7 +25,7 @@ class AuthenticatorActivity : Activity() {
         super.onCreate(savedInstanceState)
         //java.util.logging.Logger.getLogger("com.amazonaws").level = Level.ALL
          setContentView(R.layout.fragment_logged_in)
-        window.statusBarColor = ContextCompat.getColor(this, R.color.Black)
+        //LoginManager.getInstance().setLoginBehavior(LoginBehavior.WEB_ONLY)
         AWSMobileClient.getInstance().initialize(this) {
             if (it.isIdentityIdAvailable){
                 val i = Intent(this, MainActivity::class.java)

@@ -32,7 +32,6 @@ class BattleCompletedListFragment : Fragment(), Injectable {
         val adapter = CompletedBattlesListAdapter()
         binding.recyclerView.adapter = adapter
         binding.showSpinner = viewModel.spinner
-
         subscribeUi(binding, adapter)
         return binding.root
     }

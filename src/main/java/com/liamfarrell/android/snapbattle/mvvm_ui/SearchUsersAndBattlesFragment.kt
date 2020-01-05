@@ -26,7 +26,7 @@ class SearchUsersAndBattlesFragment : Fragment(){
         setHasOptionsMenu(true)
         val toolbar = view.findViewById(R.id.toolbar) as Toolbar
         (activity as AppCompatActivity).setSupportActionBar(toolbar)
-        (activity as AppCompatActivity).title = ""
+        (activity as AppCompatActivity).title = null
         viewPager = view.findViewById(R.id.view_pager)
         tabs = view.findViewById(R.id.tabs)
         return view
@@ -38,6 +38,7 @@ class SearchUsersAndBattlesFragment : Fragment(){
         val searchItem =  menu.findItem(R.id.action_search)
         searchItem.expandActionView()
         val searchView = searchItem.actionView as SearchView
+        searchView.maxWidth = Integer.MAX_VALUE
         setupViewPager(searchView)
     }
 

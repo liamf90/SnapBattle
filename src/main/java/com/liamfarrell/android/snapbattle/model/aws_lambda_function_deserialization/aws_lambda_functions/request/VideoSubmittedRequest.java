@@ -2,17 +2,17 @@ package com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserializa
 
 public class VideoSubmittedRequest
 {
-    private int battleID;
+//    private int battleID;
     private int videoID;
     private String videoRotationLock;
 
-    public int getBattleID() {
-        return battleID;
-    }
-
-    public void setBattleID(int battleID) {
-        this.battleID = battleID;
-    }
+//    public int getBattleID() {
+//        return battleID;
+//    }
+//
+//    public void setBattleID(int battleID) {
+//        this.battleID = battleID;
+//    }
 
     public int getVideoID() {
         return videoID;
