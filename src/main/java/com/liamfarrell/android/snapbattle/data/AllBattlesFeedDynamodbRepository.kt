@@ -5,7 +5,7 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient
 import com.amazonaws.services.dynamodbv2.model.AttributeValue
 import com.amazonaws.services.dynamodbv2.model.GetItemRequest
 import com.liamfarrell.android.snapbattle.testing.OpenForTesting
-import java.util.HashMap
+import java.util.*
 import javax.inject.Inject
 
 @OpenForTesting

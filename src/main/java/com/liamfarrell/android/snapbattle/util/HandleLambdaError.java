@@ -3,6 +3,7 @@ package com.liamfarrell.android.snapbattle.util;
 import android.content.Context;
 import android.view.View;
 import android.widget.Toast;
+
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.mobileconnectors.lambdainvoker.LambdaFunctionException;

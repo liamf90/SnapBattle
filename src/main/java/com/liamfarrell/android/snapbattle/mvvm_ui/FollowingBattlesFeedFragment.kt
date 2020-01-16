@@ -18,11 +18,10 @@ import com.google.android.material.snackbar.Snackbar
 import com.liamfarrell.android.snapbattle.MainActivity
 import com.liamfarrell.android.snapbattle.adapters.FollowingBattlesFeedPagingListAdapter
 import com.liamfarrell.android.snapbattle.databinding.FragmentFriendsBattleListBinding
-import com.liamfarrell.android.snapbattle.di.*
+import com.liamfarrell.android.snapbattle.di.Injectable
 import com.liamfarrell.android.snapbattle.model.Battle
 import com.liamfarrell.android.snapbattle.viewmodels.FollowingBattlesFeedViewModel
 import kotlinx.android.synthetic.main.fragment_friends_battle_list.*
-import timber.log.Timber
 import javax.inject.Inject
 
 class FollowingBattlesFeedFragment : Fragment() , Injectable {

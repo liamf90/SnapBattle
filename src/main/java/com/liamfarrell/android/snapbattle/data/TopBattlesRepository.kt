@@ -6,7 +6,7 @@ import com.amazonaws.services.dynamodbv2.model.AttributeValue
 import com.amazonaws.services.dynamodbv2.model.GetItemRequest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import java.util.HashMap
+import java.util.*
 import javax.inject.Inject
 
 class TopBattlesRepository @Inject constructor(val ddbClient : AmazonDynamoDBClient) {

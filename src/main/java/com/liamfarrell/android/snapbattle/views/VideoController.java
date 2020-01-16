@@ -19,7 +19,6 @@ package com.liamfarrell.android.snapbattle.views;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
-import androidx.appcompat.widget.AppCompatSeekBar;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -37,6 +36,8 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import android.widget.VideoView;
+
+import androidx.appcompat.widget.AppCompatSeekBar;
 
 import com.liamfarrell.android.snapbattle.R;
 

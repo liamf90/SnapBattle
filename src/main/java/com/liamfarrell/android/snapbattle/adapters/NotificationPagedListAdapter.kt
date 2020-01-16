@@ -11,10 +11,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.liamfarrell.android.snapbattle.R
 import com.liamfarrell.android.snapbattle.databinding.ListItemNotificationBinding
 import com.liamfarrell.android.snapbattle.model.Battle
-import com.liamfarrell.android.snapbattle.model.Video
 import com.liamfarrell.android.snapbattle.mvvm_ui.NotificationListFragmentDirections
 import com.liamfarrell.android.snapbattle.notifications.*
-import java.lang.IllegalArgumentException
 
 /**
  * Adapter for the [RecyclerView] in [NotificationListFragment].

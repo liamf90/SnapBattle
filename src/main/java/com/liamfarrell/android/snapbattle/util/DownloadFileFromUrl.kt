@@ -1,11 +1,9 @@
 package com.liamfarrell.android.snapbattle.util
 
+import android.app.DownloadManager
 import android.content.Context
 import android.net.Uri
 import android.os.Environment
-import android.app.DownloadManager
-
-
 
 
 //this function is used to download the battle video before saving it to device

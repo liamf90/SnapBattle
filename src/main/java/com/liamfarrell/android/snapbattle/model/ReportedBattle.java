@@ -1,7 +1,5 @@
 package com.liamfarrell.android.snapbattle.model;
 
-import com.liamfarrell.android.snapbattle.model.Battle;
-
 public class ReportedBattle extends Battle
 {
 

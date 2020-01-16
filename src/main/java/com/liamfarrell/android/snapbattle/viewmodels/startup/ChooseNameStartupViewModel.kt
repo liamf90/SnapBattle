@@ -14,7 +14,6 @@ import com.liamfarrell.android.snapbattle.mvvm_ui.startup.LoggedInFragment
 import com.liamfarrell.android.snapbattle.util.CustomError
 import com.liamfarrell.android.snapbattle.util.getErrorMessage
 import com.liamfarrell.android.snapbattle.viewmodels.ViewModelBase
-import java.lang.Exception
 import javax.inject.Inject
 
 /**
@@ -45,7 +44,7 @@ class ChooseNameStartupViewModel @Inject constructor(private val context : Appli
                 })
     }
 
-    private object NameTooLongError : CustomError(){
+     object NameTooLongError : CustomError(){
     override fun getErrorToastMessage(context: Context): String {
         return context.getString(R.string.name_too_long_toast)
     }}

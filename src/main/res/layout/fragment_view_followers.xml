@@ -11,13 +11,16 @@
 	<androidx.coordinatorlayout.widget.CoordinatorLayout
 		android:id="@+id/parentCoordinatorLayout"
 		android:layout_width="match_parent"
-		android:layout_height="match_parent"
-		android:layout_marginTop="@dimen/activity_vertical_margin">
+		android:layout_height="match_parent">
 			<LinearLayout
 				android:layout_width="match_parent"
 				android:layout_height="match_parent"
 				android:orientation="vertical">
+				<include
+					android:id="@+id/includeToolbar"
+					layout="@layout/toolbar" />
 				<Button
+					android:layout_marginTop="@dimen/activity_vertical_margin"
 					android:id="@+id/EnterUsernameManuallyButton"
 					android:layout_marginBottom="@dimen/element_vertical_spacing_default"
 					android:layout_width = "wrap_content"
@@ -31,11 +34,13 @@
 				<FrameLayout
 					android:layout_width="match_parent"
 					android:layout_height="match_parent">
+
 				  <androidx.recyclerview.widget.RecyclerView
 					  android:id="@+id/recyclerList"
 						android:layout_width="match_parent"
 						android:layout_height="wrap_content"
 					  app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+					  android:background="@android:color/white"
 					  android:drawSelectorOnTop="false" />
 				  </FrameLayout>
 

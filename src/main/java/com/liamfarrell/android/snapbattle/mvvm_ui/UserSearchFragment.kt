@@ -2,7 +2,9 @@ package com.liamfarrell.android.snapbattle.mvvm_ui
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
@@ -10,7 +12,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.liamfarrell.android.snapbattle.adapters.UserSearchSuggestionAdapter
 import com.liamfarrell.android.snapbattle.databinding.FragmentUserSearchBinding
-import com.liamfarrell.android.snapbattle.di.*
+import com.liamfarrell.android.snapbattle.di.Injectable
 import com.liamfarrell.android.snapbattle.viewmodels.UserSearchViewModel
 import javax.inject.Inject
 

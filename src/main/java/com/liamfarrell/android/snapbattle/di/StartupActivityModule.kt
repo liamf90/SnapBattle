@@ -16,7 +16,6 @@
 
 package com.liamfarrell.android.snapbattle.di
 
-import com.liamfarrell.android.snapbattle.MainActivity
 import com.liamfarrell.android.snapbattle.mvvm_ui.startup.StartupActivity
 import dagger.Module
 import dagger.android.ContributesAndroidInjector

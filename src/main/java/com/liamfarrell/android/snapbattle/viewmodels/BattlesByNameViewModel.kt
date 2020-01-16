@@ -9,7 +9,6 @@ import com.liamfarrell.android.snapbattle.data.BattlesFromNameRepository
 import com.liamfarrell.android.snapbattle.data.ThumbnailSignedUrlCacheRepository
 import com.liamfarrell.android.snapbattle.model.Battle
 import com.liamfarrell.android.snapbattle.util.getErrorMessage
-import java.lang.Exception
 import javax.inject.Inject
 
 /**

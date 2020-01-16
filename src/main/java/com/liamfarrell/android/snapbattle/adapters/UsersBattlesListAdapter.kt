@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.liamfarrell.android.snapbattle.R
 import com.liamfarrell.android.snapbattle.databinding.ListItemBattleFriendsBinding
 import com.liamfarrell.android.snapbattle.model.Battle
-import com.liamfarrell.android.snapbattle.mvvm_ui.SearchUsersAndBattlesFragmentDirections
 import com.liamfarrell.android.snapbattle.mvvm_ui.UsersBattlesFragmentDirections
 
 /**

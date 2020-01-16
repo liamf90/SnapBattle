@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.preference.PreferenceManager
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,19 +14,18 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.amazonaws.mobile.auth.core.IdentityManager
+import com.amazonaws.mobile.client.AWSMobileClient
+import com.amazonaws.mobile.config.AWSConfiguration
 import com.facebook.AccessToken
 import com.liamfarrell.android.snapbattle.R
 import com.liamfarrell.android.snapbattle.data.*
 import com.liamfarrell.android.snapbattle.di.Injectable
+import com.liamfarrell.android.snapbattle.mvvm_ui.AuthenticatorActivity
 import com.liamfarrell.android.snapbattle.service.RegistrationIntentService
 import com.liamfarrell.android.snapbattle.util.getErrorMessage
 import dagger.android.DispatchingAndroidInjector
 import kotlinx.coroutines.*
-import java.lang.ClassCastException
-import java.lang.IllegalStateException
 import javax.inject.Inject
-import androidx.core.content.ContextCompat.startActivity
-import com.liamfarrell.android.snapbattle.mvvm_ui.AuthenticatorActivity
 
 
 class LoggedInFragment  : Fragment() , Injectable {
@@ -83,7 +83,7 @@ class LoggedInFragment  : Fragment() , Injectable {
         } catch (e: IllegalStateException){
             //This happens when there is no internet connection during login
             Toast.makeText(activity, com.liamfarrell.android.snapbattle.R.string.no_internet_connection_toast, Toast.LENGTH_SHORT).show()
-            IdentityManager.getDefaultIdentityManager().signOut()
+            AWSMobileClient.getInstance().signOut()
             val i = Intent(activity, AuthenticatorActivity::class.java)
             i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
             i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -97,14 +97,14 @@ class LoggedInFragment  : Fragment() , Injectable {
 
         if (facebookNameResponse.error != null){
             Toast.makeText(requireContext(), getErrorMessage(requireContext(), facebookNameResponse.error), Toast.LENGTH_SHORT).show()
-            IdentityManager.getDefaultIdentityManager().signOut()
+            AWSMobileClient.getInstance().signOut()
             return
         }
         val responseDeferred = GlobalScope.async(Dispatchers.IO) {loginRepository.createUser(facebookId, facebookNameResponse.result)}
         val response = responseDeferred.await()
         if (response.error != null){
             Toast.makeText(requireContext(), getErrorMessage(requireContext(), response.error), Toast.LENGTH_SHORT).show()
-            IdentityManager.getDefaultIdentityManager().signOut()
+            AWSMobileClient.getInstance().signOut()
             return }
 
         //reset all the room databases for the new logged in user

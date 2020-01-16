@@ -4,10 +4,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import androidx.navigation.findNavController
 import com.liamfarrell.android.snapbattle.R
 import com.liamfarrell.android.snapbattle.databinding.ListItemBattleCurrentBinding
 import com.liamfarrell.android.snapbattle.model.Battle

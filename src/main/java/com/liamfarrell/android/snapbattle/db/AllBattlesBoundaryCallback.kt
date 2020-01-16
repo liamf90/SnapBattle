@@ -1,9 +1,8 @@
 package com.liamfarrell.android.snapbattle.db
 
-import androidx.paging.PagedList
 import android.util.Log
+import androidx.paging.PagedList
 import com.liamfarrell.android.snapbattle.data.AllBattlesCacheManager
-import com.liamfarrell.android.snapbattle.model.Battle
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

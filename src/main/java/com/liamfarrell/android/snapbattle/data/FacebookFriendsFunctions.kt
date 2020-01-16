@@ -5,10 +5,9 @@ import com.liamfarrell.android.snapbattle.model.AsyncTaskResult
 import com.liamfarrell.android.snapbattle.model.User
 import org.json.JSONException
 import org.json.JSONObject
-import java.util.ArrayList
+import java.util.*
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
-
 
 
 suspend fun getFriendsList() : AsyncTaskResult<List<User>> =

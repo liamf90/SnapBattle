@@ -10,10 +10,8 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.liamfarrell.android.snapbattle.R
 import com.liamfarrell.android.snapbattle.adapters.VotingLengthAdapter
-import com.liamfarrell.android.snapbattle.app.SnapBattleApp
 import com.liamfarrell.android.snapbattle.databinding.FragmentChooseVotingBinding
 import kotlinx.android.synthetic.main.fragment_choose_voting.*
-import kotlinx.android.synthetic.main.toolbar.view.*
 
 class ChooseVotingFragment : Fragment(), View.OnClickListener{
 

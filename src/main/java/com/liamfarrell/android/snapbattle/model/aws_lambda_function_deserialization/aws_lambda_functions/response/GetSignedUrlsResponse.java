@@ -1,7 +1,5 @@
 package com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response;
 
-import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.GetNewSignedUrlResponse;
-
 import java.util.List;
 
 public class GetSignedUrlsResponse {

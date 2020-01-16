@@ -1,6 +1,5 @@
 package com.liamfarrell.android.snapbattle.adapters
 
-import com.liamfarrell.android.snapbattle.mvvm_ui.SearchUsersAndBattlesFragmentDirections
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup

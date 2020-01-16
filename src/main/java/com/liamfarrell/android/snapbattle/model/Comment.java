@@ -1,17 +1,8 @@
 package com.liamfarrell.android.snapbattle.model;
 
-import android.widget.ImageView;
-
-import androidx.databinding.BindingAdapter;
-
 import com.google.gson.annotations.SerializedName;
-import com.liamfarrell.android.snapbattle.R;
-import com.squareup.picasso.Picasso;
 
 import java.util.Date;
-import java.util.Objects;
-
-import de.hdodenhof.circleimageview.CircleImageView;
 
 public class Comment {
     @SerializedName("COMMENT_ID")   private int mCommentId;

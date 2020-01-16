@@ -1,9 +1,6 @@
 package com.liamfarrell.android.snapbattle.db
 
-import androidx.lifecycle.LiveData
-import androidx.paging.DataSource
 import androidx.room.*
-import com.liamfarrell.android.snapbattle.model.Battle
 import com.liamfarrell.android.snapbattle.model.User
 
 

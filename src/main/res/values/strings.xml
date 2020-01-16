@@ -37,6 +37,10 @@
     <string name="nav_view_followers">View And Edit Following</string>
     <string name="nav_create_battle">Create Battle</string>
 
+    <!-- Extra Nav Toolbar names -->
+    <string name="notifications_title">Notifications</string>
+    <string name="comments_title">Comments</string>
+
     <!-- Toolbar titles when navigation menu item is selected -->
     <string-array name="nav_item_activity_titles">
         <item>Home Feed</item>
@@ -237,7 +241,7 @@
     <string name="skip_menu_item_title">skip</string>
     <string name="next_menu_item_title">next</string>
 
-
+    <string name="name_updated_snackbar_message">Name Updated</string>
     <string name="username_updated_snackbar_message">Username Updated</string>
 
     <string name="comment_deleted">comment deleted</string>

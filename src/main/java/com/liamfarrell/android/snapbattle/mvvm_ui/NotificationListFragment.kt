@@ -4,16 +4,18 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.DividerItemDecoration
+import com.liamfarrell.android.snapbattle.R
 import com.liamfarrell.android.snapbattle.adapters.NotificationPagedListAdapter
 import com.liamfarrell.android.snapbattle.databinding.FragmentNotificationListBinding
 import com.liamfarrell.android.snapbattle.di.Injectable
+import com.liamfarrell.android.snapbattle.notifications.Notification
 import com.liamfarrell.android.snapbattle.viewmodels.NotificationsViewModel
 import javax.inject.Inject
-import androidx.recyclerview.widget.DividerItemDecoration
-import com.liamfarrell.android.snapbattle.notifications.Notification
 
 
 class NotificationListFragment : Fragment(), Injectable {
@@ -31,11 +33,11 @@ class NotificationListFragment : Fragment(), Injectable {
         viewModel = ViewModelProvider(this, viewModelFactory).get(NotificationsViewModel::class.java)
         val adapter = NotificationPagedListAdapter(::onNotificationLoadedByAdapter)
         adapter.setHasStableIds(true)
-
         binding.recyclerView.adapter = adapter
         binding.recyclerView.addItemDecoration(DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL));
         binding.viewModel = viewModel
         subscribeUi(binding, adapter)
+        setToolbar(binding.includeToolbar.toolbar,  context?.getString(R.string.notifications_title) ?: "")
         return binding.root
     }
 
@@ -55,6 +57,12 @@ class NotificationListFragment : Fragment(), Injectable {
 
     private fun onNotificationLoadedByAdapter(notification: Notification){
         viewModel.getProfilePic(notification.opponentCognitoId)
+    }
+
+    private fun setToolbar(toolbar : androidx.appcompat.widget.Toolbar, title: String){
+        (activity as AppCompatActivity).setSupportActionBar(toolbar)
+        (activity as AppCompatActivity).supportActionBar?.title = title
+        (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
     }
 
 

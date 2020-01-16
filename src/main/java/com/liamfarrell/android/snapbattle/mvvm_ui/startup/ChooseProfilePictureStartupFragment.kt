@@ -4,20 +4,25 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
+import android.view.LayoutInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import android.view.*
-import android.widget.Toast
 import androidx.navigation.fragment.findNavController
-
 import com.liamfarrell.android.snapbattle.R
 import com.liamfarrell.android.snapbattle.data.ProfilePicRepository
 import com.liamfarrell.android.snapbattle.di.Injectable
 import com.liamfarrell.android.snapbattle.util.getErrorMessage
 import com.theartofdev.edmodo.cropper.CropImage
 import kotlinx.android.synthetic.main.fragment_choose_profile_picture_startup.*
-import kotlinx.coroutines.*
-import java.lang.ClassCastException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 

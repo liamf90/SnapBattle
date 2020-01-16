@@ -10,11 +10,17 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 
+
+import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
+
 import com.liamfarrell.android.snapbattle.HideAndShowBottomNavigation;
 import com.liamfarrell.android.snapbattle.R;
 import com.liamfarrell.android.snapbattle.views.VideoController;
 
 import timber.log.Timber;
+
 
 
 public class VideoViewFragment extends VideoPlayerAbstractFragment
@@ -38,6 +44,7 @@ public class VideoViewFragment extends VideoPlayerAbstractFragment
         getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         //filepath = getActivity().getIntent().getStringExtra(VIDEO_FILEPATH_EXTRA);
         filepath = getArguments().getString("filepath");
+
     }
 
 
@@ -51,7 +58,7 @@ public class VideoViewFragment extends VideoPlayerAbstractFragment
 
             @Override
             public void onCompletion(MediaPlayer mp) {
-                getActivity().finish();
+                Navigation.findNavController(mVideoView).navigateUp();
             }
 
         });
@@ -65,10 +72,11 @@ public class VideoViewFragment extends VideoPlayerAbstractFragment
 
                 //if the signed url has expired. reset the video filepath. else exit callbacks
                 if (what == 1) {
-                    getActivity().finish();
+
+                    Navigation.findNavController(mVideoView).navigateUp();
                 }
                 else {
-                    getActivity().finish();
+                    Navigation.findNavController(mVideoView).navigateUp();
                 }
                 return true;
             }

@@ -1,9 +1,7 @@
 package com.liamfarrell.android.snapbattle.api
 
-import com.amazonaws.mobileconnectors.lambdainvoker.LambdaFunction
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.*
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.*
-import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.*
 import java.util.*

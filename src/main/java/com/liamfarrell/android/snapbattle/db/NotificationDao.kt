@@ -2,7 +2,6 @@ package com.liamfarrell.android.snapbattle.db
 
 import androidx.paging.DataSource
 import androidx.room.*
-import com.liamfarrell.android.snapbattle.notifications.Notification
 import com.liamfarrell.android.snapbattle.notifications.NotificationDb
 
 /**

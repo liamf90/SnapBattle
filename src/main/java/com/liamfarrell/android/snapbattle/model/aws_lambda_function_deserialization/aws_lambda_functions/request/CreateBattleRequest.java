@@ -1,7 +1,5 @@
 package com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request;
 
-import java.util.List;
-
 public class CreateBattleRequest
 {
     private String challengedCognitoID;

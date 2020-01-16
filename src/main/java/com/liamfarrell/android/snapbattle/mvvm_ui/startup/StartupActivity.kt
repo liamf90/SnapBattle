@@ -1,11 +1,9 @@
 package com.liamfarrell.android.snapbattle.mvvm_ui.startup
 
 import android.annotation.SuppressLint
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
-import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
+import androidx.appcompat.app.AppCompatActivity
 import com.liamfarrell.android.snapbattle.R
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasAndroidInjector

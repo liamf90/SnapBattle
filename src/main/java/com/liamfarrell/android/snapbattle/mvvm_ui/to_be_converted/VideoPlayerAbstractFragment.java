@@ -1,19 +1,17 @@
 package com.liamfarrell.android.snapbattle.mvvm_ui.to_be_converted;
 
-import android.content.pm.ActivityInfo;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
-import androidx.fragment.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.VideoView;
 
-import com.liamfarrell.android.snapbattle.HideAndShowBottomNavigation;
+import androidx.fragment.app.Fragment;
+
 import com.liamfarrell.android.snapbattle.R;
 import com.liamfarrell.android.snapbattle.views.VideoController;
 

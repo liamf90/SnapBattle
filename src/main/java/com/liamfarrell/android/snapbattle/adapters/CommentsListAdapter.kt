@@ -3,16 +3,16 @@ package com.liamfarrell.android.snapbattle.adapters
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.PopupMenu
 import androidx.databinding.DataBindingUtil
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.amazonaws.mobile.client.AWSMobileClient
+import com.liamfarrell.android.snapbattle.R
 import com.liamfarrell.android.snapbattle.databinding.ListItemCommentBinding
 import com.liamfarrell.android.snapbattle.model.Comment
-import androidx.appcompat.widget.PopupMenu
-import androidx.navigation.findNavController
-import com.amazonaws.mobile.auth.core.IdentityManager
-import com.liamfarrell.android.snapbattle.R
 import com.liamfarrell.android.snapbattle.mvvm_ui.ViewCommentsFragmentDirections
 import com.liamfarrell.android.snapbattle.viewmodels.CommentViewModel
 
@@ -38,7 +38,7 @@ class CommentsListAdapter (private  val viewModel : CommentViewModel, val viewHo
             bind(comment,  getProfilePicOnClickListener(comment.cognitoIdCommenter))
             itemView.tag = comment
             holder.itemView.setOnClickListener{viewHolderOnClick(comment.username)}
-            if (comment.cognitoIdCommenter == IdentityManager.getDefaultIdentityManager().getCachedUserID()){
+            if (comment.cognitoIdCommenter == AWSMobileClient.getInstance().identityId){
                 holder.itemView.setOnLongClickListener(getOnLongClickListenerOwnComment(comment.commentId, comment.battleId))
             } else{
                 holder.itemView.setOnLongClickListener(getOnLongClickListenerNotOwnComment(comment.commentId, comment.battleId))

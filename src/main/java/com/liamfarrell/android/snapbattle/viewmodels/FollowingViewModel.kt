@@ -2,7 +2,10 @@ package com.liamfarrell.android.snapbattle.viewmodels
 
 import android.app.Application
 import android.content.Context
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
 import com.liamfarrell.android.snapbattle.R
 import com.liamfarrell.android.snapbattle.data.FollowingRepository
 import com.liamfarrell.android.snapbattle.data.FollowingUserCacheManager

@@ -1,13 +1,16 @@
 package com.liamfarrell.android.snapbattle.data
 
-import com.liamfarrell.android.snapbattle.model.AsyncTaskResult
-import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.*
-import javax.inject.Inject
-import javax.inject.Singleton
 import com.facebook.AccessToken
 import com.liamfarrell.android.snapbattle.api.SnapBattleApiService
-import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.*
+import com.liamfarrell.android.snapbattle.model.AsyncTaskResult
+import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.AddCommentRequest
+import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.DeleteCommentRequest
+import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.ReportCommentRequest
+import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.VerifyUserRequest
+import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.*
 import com.liamfarrell.android.snapbattle.util.executeRestApiFunction
+import javax.inject.Inject
+import javax.inject.Singleton
 
 
 @Singleton

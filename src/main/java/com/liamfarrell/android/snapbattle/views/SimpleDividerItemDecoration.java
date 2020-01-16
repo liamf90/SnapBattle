@@ -3,8 +3,9 @@ package com.liamfarrell.android.snapbattle.views;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.liamfarrell.android.snapbattle.R;
 

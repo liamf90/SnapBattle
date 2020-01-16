@@ -6,10 +6,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -27,8 +27,6 @@ import com.liamfarrell.android.snapbattle.di.Injectable
 import com.liamfarrell.android.snapbattle.model.Battle
 import com.liamfarrell.android.snapbattle.mvvm_ui.create_battle.ChooseVotingFragment
 import com.liamfarrell.android.snapbattle.viewmodels.BattleChallengesViewModel
-import kotlinx.android.synthetic.main.fragment_challenges_list.*
-import kotlinx.android.synthetic.main.fragment_friends_battle_list.*
 import java.util.*
 import javax.inject.Inject
 
@@ -49,6 +47,7 @@ class BattleChallengesListFragment : Fragment(), BattleChallengesAdapterCallback
         binding.recyclerList.adapter = adapter
         binding.recyclerList.addItemDecoration(DividerItemDecoration(context, LinearLayoutManager.VERTICAL))
         binding.viewModel = viewModel
+        setToolbar(binding.includeToolbar.toolbar,  context?.getString(R.string.nav_challenges) ?: "")
         subscribeUi(binding, adapter)
         return binding.root
     }
@@ -116,6 +115,12 @@ class BattleChallengesListFragment : Fragment(), BattleChallengesAdapterCallback
                 this,
                 Arrays.asList("user_friends"))
 
+    }
+
+    private fun setToolbar(toolbar : androidx.appcompat.widget.Toolbar, title: String){
+        (activity as AppCompatActivity).setSupportActionBar(toolbar)
+        (activity as AppCompatActivity).supportActionBar?.title = title
+        (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
     }
 
 }

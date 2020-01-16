@@ -13,6 +13,7 @@ import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.rule.ActivityTestRule
 import androidx.test.runner.AndroidJUnit4
 import com.amazonaws.mobile.auth.core.IdentityManager
+import com.amazonaws.mobile.client.AWSMobileClient
 import com.android.example.github.util.DataBindingIdlingResourceRule
 import com.android.example.github.util.TaskExecutorWithIdlingResourceRule
 import com.liamfarrell.android.snapbattle.R
@@ -63,10 +64,10 @@ class BattleCurrentListFragmentTest {
         `when`(viewModel.battles).thenReturn(battles)
         `when`(viewModel.errorMessage).thenReturn(errorMessage)
         `when`(viewModel.spinner).thenReturn(spinner)
-        val identityManager = mock(IdentityManager::class.java)
-        `when`(identityManager.cachedUserID).thenReturn("13123111")
+        val awsMobileClient = mock(AWSMobileClient::class.java)
+        `when`(awsMobileClient.identityId).thenReturn("13123111")
         currentFragment.viewModelFactory = ViewModelUtil.createFor(viewModel)
-        currentFragment.identityManager = identityManager
+        currentFragment.awsMobileClient = awsMobileClient
         activityRule.activity.setFragment(currentFragment)
         activityRule.runOnUiThread {
             currentFragment.binding.recyclerView.itemAnimator = null

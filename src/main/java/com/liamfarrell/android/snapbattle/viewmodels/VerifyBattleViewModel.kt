@@ -3,7 +3,7 @@ package com.liamfarrell.android.snapbattle.viewmodels
 import android.app.Application
 import android.content.Context
 import android.view.View
-import androidx.lifecycle.*
+import androidx.lifecycle.MutableLiveData
 import androidx.navigation.findNavController
 import com.liamfarrell.android.snapbattle.R
 import com.liamfarrell.android.snapbattle.data.BattlesRepository

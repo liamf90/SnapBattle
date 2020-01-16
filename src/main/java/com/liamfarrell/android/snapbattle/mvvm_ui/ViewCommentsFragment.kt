@@ -1,31 +1,34 @@
 package com.liamfarrell.android.snapbattle.mvvm_ui
 
+import android.content.Intent
 import android.os.Bundle
-import android.text.*
-import androidx.fragment.app.Fragment
+import android.text.Editable
+import android.text.Spannable
+import android.text.SpannableStringBuilder
+import android.text.TextWatcher
+import android.text.style.ForegroundColorSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.lifecycle.Observer
-import com.liamfarrell.android.snapbattle.databinding.FragmentViewCommentsBinding
-import com.liamfarrell.android.snapbattle.viewmodels.CommentViewModel
-import com.liamfarrell.android.snapbattle.adapters.CommentsListAdapter
 import android.widget.TextView
-import android.text.style.ForegroundColorSpan
-import com.liamfarrell.android.snapbattle.util.hideKeyboard
-import kotlinx.android.synthetic.main.fragment_view_comments.*
-import com.facebook.login.LoginManager
-import com.facebook.FacebookException
-import com.facebook.login.LoginResult
-import com.facebook.FacebookCallback
-import com.facebook.CallbackManager
-import android.content.Intent
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.facebook.CallbackManager
+import com.facebook.FacebookCallback
+import com.facebook.FacebookException
+import com.facebook.login.LoginManager
+import com.facebook.login.LoginResult
 import com.google.android.material.snackbar.Snackbar
 import com.liamfarrell.android.snapbattle.R
+import com.liamfarrell.android.snapbattle.adapters.CommentsListAdapter
+import com.liamfarrell.android.snapbattle.databinding.FragmentViewCommentsBinding
 import com.liamfarrell.android.snapbattle.di.Injectable
-import java.lang.IllegalStateException
+import com.liamfarrell.android.snapbattle.util.hideKeyboard
+import com.liamfarrell.android.snapbattle.viewmodels.CommentViewModel
+import kotlinx.android.synthetic.main.fragment_view_comments.*
 import java.util.*
 import javax.inject.Inject
 
@@ -58,6 +61,7 @@ class ViewCommentsFragment : Fragment(), Injectable {
         binding.viewModel = viewModel
         binding.commentEditText.addTextChangedListener(onAddCommentEditTextChanged)
         binding.addACommentButton.setOnClickListener(addCommentButtonClicked())
+        setToolbar(binding.includeToolbar.toolbar,  context?.getString(R.string.comments_title) ?: "")
         subscribeUi(binding, adapter)
         viewModel.getComments(battleId)
         return binding.root
@@ -172,7 +176,11 @@ class ViewCommentsFragment : Fragment(), Injectable {
         }
     }
 
-
+    private fun setToolbar(toolbar : androidx.appcompat.widget.Toolbar, title: String){
+        (activity as AppCompatActivity).setSupportActionBar(toolbar)
+        (activity as AppCompatActivity).supportActionBar?.title = title
+        (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
+    }
 
     /**
      * Methods for verifying that user has over 100 facebook friends, which is required to add a comment

@@ -27,7 +27,7 @@
 					android:layout_height="match_parent"
 					android:drawSelectorOnTop="false"
 					app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-					android:background="@color/completed_list_background"
+					android:background="@color/list_background"
 					/>
 			</LinearLayout>
 

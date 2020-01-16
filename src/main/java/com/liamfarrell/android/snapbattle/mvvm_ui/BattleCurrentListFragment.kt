@@ -5,22 +5,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.amazonaws.mobile.auth.core.IdentityManager
+import com.amazonaws.mobile.client.AWSMobileClient
+import com.liamfarrell.android.snapbattle.R
 import com.liamfarrell.android.snapbattle.adapters.CurrentBattlesListAdapter
-import com.liamfarrell.android.snapbattle.data.OtherUsersProfilePicUrlRepository
 import com.liamfarrell.android.snapbattle.databinding.FragmentCurrentBattleListBinding
-import com.liamfarrell.android.snapbattle.databinding.FragmentFriendsBattleListBinding
 import com.liamfarrell.android.snapbattle.di.Injectable
-import com.liamfarrell.android.snapbattle.model.Battle
 import com.liamfarrell.android.snapbattle.testing.OpenForTesting
 import com.liamfarrell.android.snapbattle.viewmodels.CurrentBattlesViewModel
-import kotlinx.android.synthetic.main.fragment_friends_battle_list.*
 import javax.inject.Inject
 
 @OpenForTesting
@@ -33,7 +31,7 @@ class BattleCurrentListFragment : Fragment(), Injectable {
     lateinit var binding : FragmentCurrentBattleListBinding
 
     @Inject
-    lateinit var identityManager: IdentityManager
+    lateinit var awsMobileClient: AWSMobileClient
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -46,7 +44,7 @@ class BattleCurrentListFragment : Fragment(), Injectable {
         binding.recyclerView.adapter = adapter
         binding.recyclerView.addItemDecoration(DividerItemDecoration(context, LinearLayoutManager.VERTICAL))
         binding.showSpinner = viewModel.spinner
-
+        setToolbar(binding.includeToolbar.toolbar,  context?.getString(R.string.nav_current_battles) ?: "")
         subscribeUi(binding, adapter)
         return binding.root
     }
@@ -66,10 +64,17 @@ class BattleCurrentListFragment : Fragment(), Injectable {
         })
     }
 
+    private fun setToolbar(toolbar : androidx.appcompat.widget.Toolbar, title: String){
+        (activity as AppCompatActivity).setSupportActionBar(toolbar)
+        (activity as AppCompatActivity).supportActionBar?.title = title
+        (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
+    }
 
     fun getCognitoId() : String {
-        return identityManager.cachedUserID
+        return awsMobileClient.identityId
     }
+
+
 
     /**
      * Created to be able to override in tests

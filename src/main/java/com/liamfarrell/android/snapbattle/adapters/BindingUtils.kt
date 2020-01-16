@@ -2,24 +2,19 @@ package com.liamfarrell.android.snapbattle.adapters
 
 import android.text.SpannableStringBuilder
 import android.view.View
+import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.core.text.bold
 import androidx.core.text.italic
 import androidx.databinding.BindingAdapter
-
-import com.liamfarrell.android.snapbattle.model.Comment
-import com.squareup.picasso.Picasso
-import de.hdodenhof.circleimageview.CircleImageView
-import android.view.ViewGroup
 import com.liamfarrell.android.snapbattle.R
-import com.liamfarrell.android.snapbattle.db.SnapBattleDatabase
+import com.liamfarrell.android.snapbattle.model.Comment
 import com.squareup.picasso.Callback
 import com.squareup.picasso.NetworkPolicy
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import com.squareup.picasso.Picasso
+import de.hdodenhof.circleimageview.CircleImageView
 import timber.log.Timber
-import java.lang.Exception
 
 @BindingAdapter("profileImage")
 fun loadImage(view: CircleImageView, imageUrl: String?) {

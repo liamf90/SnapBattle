@@ -10,7 +10,7 @@ import android.text.style.StyleSpan;
 
 import androidx.navigation.NavDeepLinkBuilder;
 
-import com.amazonaws.mobile.auth.core.IdentityManager;
+import com.amazonaws.mobile.client.AWSMobileClient;
 import com.liamfarrell.android.snapbattle.R;
 
 public class TaggedInCommentNotification extends Notification {
@@ -40,7 +40,7 @@ public class TaggedInCommentNotification extends Notification {
         Bundle args = new Bundle();
         args.putInt("battleId", super.getBattleId());
 
-        String cognitoID = IdentityManager.getDefaultIdentityManager().getCachedUserID();
+        String cognitoID = AWSMobileClient.getInstance().getIdentityId();
         if (cognitoID.equals(mChallengerCognitoId) || cognitoID.equals(mChallengedCognitoId)) {
             return new NavDeepLinkBuilder(context)
                     .setGraph(R.navigation.navigation_menu)

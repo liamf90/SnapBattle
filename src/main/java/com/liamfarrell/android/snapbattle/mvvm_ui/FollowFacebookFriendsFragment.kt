@@ -6,20 +6,21 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.liamfarrell.android.snapbattle.R
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.facebook.CallbackManager
 import com.facebook.FacebookCallback
 import com.facebook.FacebookException
 import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
+import com.liamfarrell.android.snapbattle.R
 import com.liamfarrell.android.snapbattle.adapters.FollowFacebookFriendsListAdapter
 import com.liamfarrell.android.snapbattle.databinding.FragmentAddFollowersBinding
-import com.liamfarrell.android.snapbattle.di.*
+import com.liamfarrell.android.snapbattle.di.Injectable
 import com.liamfarrell.android.snapbattle.viewmodels.AddFacebookFriendsAsFollowersViewModel
 import java.util.*
 import javax.inject.Inject
@@ -43,7 +44,7 @@ class FollowFacebookFriendsFragment : Fragment() , Injectable {
         binding.recyclerList.adapter = adapter
         binding.recyclerList.addItemDecoration(DividerItemDecoration(context, LinearLayoutManager.VERTICAL))
         binding.viewModel = viewModel
-
+        setToolbar(binding.includeToolbar.toolbar,  context?.getString(R.string.nav_add_followers) ?: "")
         subscribeUi(binding, adapter)
         viewModel.getFacebookFriendsWithFollowing (::requestUserFriendsPermission)
         return binding.root
@@ -77,6 +78,12 @@ class FollowFacebookFriendsFragment : Fragment() , Injectable {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         callbackManager.onActivityResult(requestCode, resultCode, data)
+    }
+
+    private fun setToolbar(toolbar : androidx.appcompat.widget.Toolbar, title: String){
+        (activity as AppCompatActivity).setSupportActionBar(toolbar)
+        (activity as AppCompatActivity).supportActionBar?.title = title
+        (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
     }
 
     private fun requestUserFriendsPermission() {
