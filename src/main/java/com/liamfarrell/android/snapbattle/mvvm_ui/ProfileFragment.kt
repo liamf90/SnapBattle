@@ -10,21 +10,23 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
-import android.widget.*
+import android.widget.Button
+import android.widget.EditText
+import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.amazonaws.mobile.auth.core.IdentityManager
 import com.google.android.material.snackbar.Snackbar
 import com.liamfarrell.android.snapbattle.R
 import com.liamfarrell.android.snapbattle.data.ProfilePicRepository
 import com.liamfarrell.android.snapbattle.databinding.FragmentProfileBinding
-import com.liamfarrell.android.snapbattle.di.*
+import com.liamfarrell.android.snapbattle.di.Injectable
 import com.liamfarrell.android.snapbattle.util.hideKeyboard
 import com.liamfarrell.android.snapbattle.viewmodels.ProfileViewModel
 import com.squareup.picasso.Picasso
 import com.theartofdev.edmodo.cropper.CropImage
-import timber.log.Timber
 import java.io.File
 import javax.inject.Inject
 
@@ -57,14 +59,14 @@ class ProfileFragment : Fragment(), Injectable {
         changeNameButton = binding.changeNameButton
         changeUsernameButton = binding.changeUsernameButton
         profileImageView = binding.profileImageView
-
+        setToolbar(binding.includeToolbar.toolbar,  context?.getString(R.string.nav_profile) ?: "")
         binding.viewModel = viewModel
         binding.updateProfilePicOnClickListener = View.OnClickListener {
             CropImage.activity().setAspectRatio(200, 200).start(requireContext(), this)
         }
         binding.updateNameOnClickListener = View.OnClickListener{
             changeNameButton.visibility = View.GONE
-            viewModel.updateName(binding.usernameEditText.text.toString())
+            viewModel.updateName(binding.nameEditText.text.toString())
         }
 
         binding.updateUsernameOnClickListener = View.OnClickListener{
@@ -151,6 +153,11 @@ class ProfileFragment : Fragment(), Injectable {
         })
     }
 
+    private fun setToolbar(toolbar : androidx.appcompat.widget.Toolbar, title: String){
+        (activity as AppCompatActivity).setSupportActionBar(toolbar)
+        (activity as AppCompatActivity).supportActionBar?.title = title
+        (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
+    }
 
 
     object DoneOnEditorActionListener : TextView.OnEditorActionListener {

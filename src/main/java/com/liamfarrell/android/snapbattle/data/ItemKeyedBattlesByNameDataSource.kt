@@ -5,7 +5,6 @@ import androidx.paging.ItemKeyedDataSource
 import com.liamfarrell.android.snapbattle.model.Battle
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import java.lang.Exception
 import javax.inject.Inject
 
 /**

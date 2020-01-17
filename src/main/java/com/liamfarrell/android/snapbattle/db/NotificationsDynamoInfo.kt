@@ -3,7 +3,6 @@ package com.liamfarrell.android.snapbattle.db
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import java.util.*
 
 /*
 This class stores a single value indicating the total amount of notifications in the notifications feed for the user stored on the dynamo db server.

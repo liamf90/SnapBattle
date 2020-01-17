@@ -1,8 +1,10 @@
 package com.liamfarrell.android.snapbattle.viewmodels
 
 import android.app.Application
-import androidx.lifecycle.*
+import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.MutableLiveData
 import com.amazonaws.mobile.auth.core.IdentityManager
+import com.amazonaws.mobile.client.AWSMobileClient
 import com.liamfarrell.android.snapbattle.data.CurrentBattlesRepository
 import com.liamfarrell.android.snapbattle.data.OtherUsersProfilePicUrlRepository
 import com.liamfarrell.android.snapbattle.model.AsyncTaskResult
@@ -11,13 +13,18 @@ import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserializat
 import com.liamfarrell.android.snapbattle.testing.OpenForTesting
 import com.liamfarrell.android.snapbattle.util.getErrorMessage
 import javax.inject.Inject
+import kotlin.collections.List
+import kotlin.collections.distinctBy
+import kotlin.collections.forEach
+import kotlin.collections.mutableMapOf
+import kotlin.collections.set
 
 /**
  * The ViewModel used in [BattleCurrentListFragment].
  */
 
 @OpenForTesting
-class CurrentBattlesViewModel @Inject constructor(private val context: Application, private val identityManager: IdentityManager, private val currentBattlesRepository: CurrentBattlesRepository, private val otherUsersProfilePicUrlRepository: OtherUsersProfilePicUrlRepository) : ViewModelBase() {
+class CurrentBattlesViewModel @Inject constructor(private val context: Application, private val awsMobileClient: AWSMobileClient, private val currentBattlesRepository: CurrentBattlesRepository, private val otherUsersProfilePicUrlRepository: OtherUsersProfilePicUrlRepository) : ViewModelBase() {
 
 
     private val battlesResult = MutableLiveData<AsyncTaskResult<CurrentBattleResponse>>()
@@ -50,7 +57,7 @@ class CurrentBattlesViewModel @Inject constructor(private val context: Applicati
 
 
      private suspend fun getProfilePicSignedUrls(battleList: List<Battle>) : List<Battle>{
-        val currentCognitoId = identityManager.cachedUserID
+        val currentCognitoId = awsMobileClient.identityId
         val cognitoIdList = battleList.distinctBy { it.getOpponentCognitoID(currentCognitoId)}
         val signedUrlMap = mutableMapOf<String, String>()
         cognitoIdList.forEach {

@@ -1,10 +1,7 @@
 package com.liamfarrell.android.snapbattle.data
 
-import androidx.lifecycle.LiveData
 import com.liamfarrell.android.snapbattle.db.FollowingUserDao
-import com.liamfarrell.android.snapbattle.db.FollowingUserDynamoCount
 import com.liamfarrell.android.snapbattle.db.FollowingUserDynamoDataDao
-import com.liamfarrell.android.snapbattle.model.AsyncTaskResult
 import com.liamfarrell.android.snapbattle.model.User
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

@@ -21,7 +21,6 @@ package com.liamfarrell.android.snapbattle.di
 import android.app.Application
 import androidx.room.Room
 import com.liamfarrell.android.snapbattle.db.*
-import com.liamfarrell.android.snapbattle.di.ViewModelModule
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton

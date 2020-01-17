@@ -3,7 +3,8 @@ package com.liamfarrell.android.snapbattle.data
 import android.annotation.SuppressLint
 import android.content.Context
 import com.amazonaws.event.ProgressListener
-import com.amazonaws.mobile.auth.core.IdentityManager
+import com.amazonaws.mobile.client.AWSMobileClient
+import com.amazonaws.regions.Region
 import com.amazonaws.services.cognitoidentity.model.NotAuthorizedException
 import com.amazonaws.services.s3.AmazonS3Client
 import com.amazonaws.services.s3.model.GetObjectRequest
@@ -23,7 +24,7 @@ import java.io.IOException
 import javax.inject.Inject
 
 class ProfilePicRepository @Inject constructor
-(private val snapBattleApiService: SnapBattleApiService) {
+(private val snapBattleApiService: SnapBattleApiService, private val awsMobileClient: AWSMobileClient) {
 
     suspend fun uploadProfilePicRepository(context: Context, newPhotoPath: String, profilePicCount: Int)  : AsyncTaskResult<DefaultResponse>  {
 
@@ -39,7 +40,7 @@ class ProfilePicRepository @Inject constructor
 
 
     fun getProfilePictureSavePath(context: Context): String {
-        return context.filesDir.absolutePath + "/" + IdentityManager.getDefaultIdentityManager().cachedUserID + "-ProfilePic.png"
+        return context.filesDir.absolutePath + "/" + awsMobileClient.identityId + "-ProfilePic.png"
     }
 
     suspend fun checkForUpdate(context: Context, profilePicCount : Int) : Boolean {
@@ -67,20 +68,20 @@ class ProfilePicRepository @Inject constructor
 
     @SuppressLint("ApplySharedPref")
     private fun updateProfilePicCountSharedPrefs(context: Context, profilePicCount: Int) {
-        val sharedPref = context.getSharedPreferences(IdentityManager.getDefaultIdentityManager().cachedUserID, Context.MODE_PRIVATE)
+        val sharedPref = context.getSharedPreferences(awsMobileClient.identityId, Context.MODE_PRIVATE)
         val editor = sharedPref.edit()
         editor.putInt("PROFILE_PIC_COUNT", profilePicCount)
         editor.commit()
     }
 
     private fun getProfilePicCountSharedPrefs(context: Context): Int {
-        val sharedPref = context.getSharedPreferences(IdentityManager.getDefaultIdentityManager().cachedUserID, Context.MODE_PRIVATE)
+        val sharedPref = context.getSharedPreferences(awsMobileClient.identityId, Context.MODE_PRIVATE)
         return sharedPref.getInt("PROFILE_PIC_COUNT", 0)
     }
 
     private suspend fun uploadProfilePicture(context: Context, newPhotoPath: String, currentProfilePicCount: Int) =
             suspendCancellableCoroutine<Unit> { continuation ->
-                val s3 = AmazonS3Client(IdentityManager.getDefaultIdentityManager().credentialsProvider)
+                val s3 = AmazonS3Client(awsMobileClient, Region.getRegion("us-east-1"))
                 val bucketName = "snapbattlevideos"
                 val newProfilePicFile = File(newPhotoPath)
                 val fileName = getNextProfilePicturePathS3(currentProfilePicCount)
@@ -108,7 +109,7 @@ class ProfilePicRepository @Inject constructor
                 suspendCancellableCoroutine<Unit> { continuation ->
                     val file = File(getProfilePictureSavePath(context))
                     val s3Path = getProfilePicturePathS3(currentProfilePicCount)
-                    val s3 = AmazonS3Client(IdentityManager.getDefaultIdentityManager().credentialsProvider)
+                    val s3 = AmazonS3Client(awsMobileClient, Region.getRegion("us-east-1"))
                     val bucketName = "snapbattlevideos"
                     val gor = GetObjectRequest(bucketName, s3Path)
                     gor.generalProgressListener = ProgressListener { arg0 ->
@@ -126,7 +127,7 @@ class ProfilePicRepository @Inject constructor
 
     private fun getProfilePicturePathS3(currentProfilePicCount: Int): String {
         try {
-            return IdentityManager.getDefaultIdentityManager().cachedUserID + "/" + IdentityManager.getDefaultIdentityManager().cachedUserID + "-" + currentProfilePicCount + "-ProfilePic.png"
+            return awsMobileClient.identityId + "/" + awsMobileClient.identityId + "-" + currentProfilePicCount + "-ProfilePic.png"
         } catch (e: NotAuthorizedException) {
             return ""
         }
@@ -134,7 +135,7 @@ class ProfilePicRepository @Inject constructor
 
     private fun getNextProfilePicturePathS3(currentProfilePicCount: Int): String {
         val nextProfilePicCount = currentProfilePicCount + 1
-        return IdentityManager.getDefaultIdentityManager().cachedUserID + "/" + IdentityManager.getDefaultIdentityManager().cachedUserID + "-" + nextProfilePicCount + "-ProfilePic.png"
+        return awsMobileClient.identityId + "/" + awsMobileClient.identityId + "-" + nextProfilePicCount + "-ProfilePic.png"
     }
 
 

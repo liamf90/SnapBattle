@@ -2,25 +2,25 @@ package com.liamfarrell.android.snapbattle.data
 
 import com.amazonaws.AmazonClientException
 import com.amazonaws.mobile.auth.core.IdentityManager
+import com.amazonaws.mobile.client.AWSMobileClient
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient
 import com.amazonaws.services.dynamodbv2.model.AttributeValue
 import com.amazonaws.services.dynamodbv2.model.GetItemRequest
 import com.amazonaws.services.dynamodbv2.model.UpdateItemRequest
-import com.liamfarrell.android.snapbattle.notifications.NotificationType
 import com.liamfarrell.android.snapbattle.notifications.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import java.util.HashMap
+import java.util.*
 import javax.inject.Inject
 
-class NotificationsDynamoDbRepository @Inject constructor(val ddbClient : AmazonDynamoDBClient){
+class NotificationsDynamoDbRepository @Inject constructor(val ddbClient : AmazonDynamoDBClient, val awsMobileClient: AWSMobileClient){
 
 
     @Throws(AmazonClientException::class)
     suspend fun getNotificationListFromDynamo(startIndex: Int, endIndex: Int): List<Notification> {
         return withContext(Dispatchers.IO) {
             val key = hashMapOf<String, AttributeValue>()
-            key["CognitoID"] = AttributeValue().apply { s = IdentityManager.getDefaultIdentityManager().cachedUserID }
+            key["CognitoID"] = AttributeValue().apply { s = awsMobileClient.identityId }
 
             var projectionExpression = ""
             for (i in startIndex..endIndex) {
@@ -124,7 +124,7 @@ class NotificationsDynamoDbRepository @Inject constructor(val ddbClient : Amazon
     suspend fun getNotificationCountDynamo(): Int {
         return withContext(Dispatchers.IO) {
             val key = HashMap<String, AttributeValue>()
-            key["CognitoID"] = AttributeValue().apply { s = IdentityManager.getDefaultIdentityManager().cachedUserID }
+            key["CognitoID"] = AttributeValue().apply { s = awsMobileClient.identityId }
 
             val projectionExpression = "notification_count"
             val spec = GetItemRequest()
@@ -149,7 +149,7 @@ class NotificationsDynamoDbRepository @Inject constructor(val ddbClient : Amazon
     suspend fun getDynamoHasSeenAllNotifications(): Boolean {
         return withContext(Dispatchers.IO) {
             val key = HashMap<String, AttributeValue>()
-            key["CognitoID"] = AttributeValue().apply { s = IdentityManager.getDefaultIdentityManager().cachedUserID }
+            key["CognitoID"] = AttributeValue().apply { s = awsMobileClient.identityId }
 
             val projectionExpression = "notifications_seen"
             val spec = GetItemRequest()
@@ -176,7 +176,7 @@ class NotificationsDynamoDbRepository @Inject constructor(val ddbClient : Amazon
     suspend fun updateDynamoSeenAllNotifications(){
         withContext(Dispatchers.IO) {
             val key = HashMap<String, AttributeValue>()
-            key["CognitoID"] = AttributeValue().apply { s = IdentityManager.getDefaultIdentityManager().cachedUserID }
+            key["CognitoID"] = AttributeValue().apply { s = awsMobileClient.identityId }
             val notificationSeenAttribute = HashMap<String, AttributeValue>()
             val notificationsSeenFalse = AttributeValue()
             notificationsSeenFalse.isBOOL = true

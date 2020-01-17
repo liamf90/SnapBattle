@@ -3,8 +3,9 @@ package com.liamfarrell.android.snapbattle.views;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 public class LinearDividerItemDecoration extends RecyclerView.ItemDecoration{
     private Drawable mDivider;

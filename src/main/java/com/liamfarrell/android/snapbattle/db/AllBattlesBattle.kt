@@ -2,8 +2,6 @@ package com.liamfarrell.android.snapbattle.db
 
 import androidx.room.ColumnInfo
 import androidx.room.Embedded
-import androidx.room.Entity
-import androidx.room.PrimaryKey
 import com.liamfarrell.android.snapbattle.model.Battle
 
 data class AllBattlesBattle (

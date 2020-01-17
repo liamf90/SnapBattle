@@ -2,7 +2,6 @@ package com.liamfarrell.android.snapbattle.model
 
 import androidx.lifecycle.LiveData
 import androidx.paging.PagedList
-import com.liamfarrell.android.snapbattle.notifications.Notification
 import com.liamfarrell.android.snapbattle.notifications.NotificationDb
 
 /**

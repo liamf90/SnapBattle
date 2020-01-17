@@ -3,10 +3,16 @@ package com.liamfarrell.android.snapbattle.viewmodels
 import android.view.View
 import android.widget.FrameLayout
 import androidx.databinding.BindingAdapter
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.liamfarrell.android.snapbattle.testing.OpenForTesting
 import io.reactivex.disposables.CompositeDisposable
-import kotlinx.coroutines.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 
 @OpenForTesting
 open class ViewModelBase : ViewModel() {

@@ -17,17 +17,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.liamfarrell.android.snapbattle.MainActivity.Companion.HOME_BUTTON_PRESSED_INTENT
 import com.liamfarrell.android.snapbattle.adapters.AllBattlesFeedPagingListAdapter
-import com.liamfarrell.android.snapbattle.adapters.FollowingListAdapter
 import com.liamfarrell.android.snapbattle.databinding.FragmentFriendsBattleListBinding
-import com.liamfarrell.android.snapbattle.databinding.FragmentViewFollowersBinding
-import com.liamfarrell.android.snapbattle.di.*
+import com.liamfarrell.android.snapbattle.di.Injectable
 import com.liamfarrell.android.snapbattle.model.Battle
-import com.liamfarrell.android.snapbattle.service.MyGcmListenerService
 import com.liamfarrell.android.snapbattle.viewmodels.AllBattlesViewModel
-import com.liamfarrell.android.snapbattle.viewmodels.FollowingViewModel
 import kotlinx.android.synthetic.main.fragment_friends_battle_list.*
-import kotlinx.android.synthetic.main.fragment_friends_battle_list.parentCoordinatorLayout
-import kotlinx.android.synthetic.main.fragment_view_comments.*
 import javax.inject.Inject
 
 class AllBattlesFragment : Fragment(), Injectable {

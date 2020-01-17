@@ -3,10 +3,8 @@ package com.liamfarrell.android.snapbattle.data
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.LivePagedListBuilder
-import com.liamfarrell.android.snapbattle.db.FollowingBattlesFeedBoundaryCallback
-import com.liamfarrell.android.snapbattle.db.BattleDao
 import com.liamfarrell.android.snapbattle.db.FollowingBattleDao
-import com.liamfarrell.android.snapbattle.model.BattlesSearchResult
+import com.liamfarrell.android.snapbattle.db.FollowingBattlesFeedBoundaryCallback
 import com.liamfarrell.android.snapbattle.model.FollowingBattlesSearchResult
 import kotlinx.coroutines.CoroutineScope
 import javax.inject.Inject

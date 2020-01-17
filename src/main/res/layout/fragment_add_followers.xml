@@ -10,12 +10,23 @@
 	<FrameLayout
 		android:layout_width="match_parent"
 		android:layout_height="match_parent">
-		  <androidx.recyclerview.widget.RecyclerView
-			  android:id="@+id/recyclerList"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-			  	app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-				android:drawSelectorOnTop="false" />
+
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:orientation="vertical">
+			<include
+				android:id="@+id/includeToolbar"
+				layout="@layout/toolbar" />
+			  <androidx.recyclerview.widget.RecyclerView
+				  android:id="@+id/recyclerList"
+				  android:layout_width="match_parent"
+				  android:layout_height="wrap_content"
+				  app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+				  android:background="@android:color/white"
+				  android:drawSelectorOnTop="false" />
+		</LinearLayout>
+
 			<FrameLayout
 				android:id="@+id/opponent_list_progressContainer"
 				android:layout_width="match_parent"

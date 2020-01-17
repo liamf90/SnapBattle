@@ -1,16 +1,16 @@
 package com.liamfarrell.android.snapbattle.data
 import com.amazonaws.AmazonClientException
-import com.amazonaws.mobile.auth.core.IdentityManager
+import com.amazonaws.mobile.client.AWSMobileClient
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient
 import com.amazonaws.services.dynamodbv2.model.AttributeValue
 import com.amazonaws.services.dynamodbv2.model.GetItemRequest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import java.util.HashMap
+import java.util.*
 import javax.inject.Inject
 
 
-class UserFollowingDynamodbRepository @Inject constructor(val ddbClient : AmazonDynamoDBClient){
+class UserFollowingDynamodbRepository @Inject constructor(val ddbClient : AmazonDynamoDBClient, val awsMobileClient: AWSMobileClient){
 
 
 
@@ -20,7 +20,7 @@ class UserFollowingDynamodbRepository @Inject constructor(val ddbClient : Amazon
             // DynamoDBMapper mapper = new DynamoDBMapper(ddbClient);
             // BattleFeed selectedBattle = mapper.load(BattleFeed.class, "45");
             val key = hashMapOf<String, AttributeValue>()
-            key["CognitoID"] = AttributeValue().apply { s = IdentityManager.getDefaultIdentityManager().cachedUserID }
+            key["CognitoID"] = AttributeValue().apply { s = awsMobileClient.identityId }
 
             var projectionExpression = ""
             for (i in startIndex..endIndex) {
@@ -52,7 +52,7 @@ class UserFollowingDynamodbRepository @Inject constructor(val ddbClient : Amazon
     suspend fun getFollowingUpdateCountDynamo(): Int {
         return withContext(Dispatchers.IO) {
             val key = HashMap<String, AttributeValue>()
-            key["CognitoID"] = AttributeValue().apply { s = IdentityManager.getDefaultIdentityManager().cachedUserID }
+            key["CognitoID"] = AttributeValue().apply { s = awsMobileClient.identityId }
 
             val projectionExpression = "Following_updated_count"
             val spec = GetItemRequest()

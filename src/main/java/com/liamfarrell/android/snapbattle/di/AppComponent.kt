@@ -40,8 +40,10 @@ interface AppComponent {
         @BindsInstance
         fun application(application: Application): Builder
 
+
         fun build(): AppComponent
     }
 
-      fun inject(snapBattleApp: SnapBattleApp)
+     fun inject(snapBattleApp: SnapBattleApp)
+
 }

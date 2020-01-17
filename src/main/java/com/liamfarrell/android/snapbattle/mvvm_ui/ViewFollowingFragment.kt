@@ -7,18 +7,17 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.liamfarrell.android.snapbattle.R
 import com.liamfarrell.android.snapbattle.adapters.FollowingListAdapter
 import com.liamfarrell.android.snapbattle.databinding.FragmentViewFollowersBinding
-import com.liamfarrell.android.snapbattle.viewmodels.FollowingViewModel
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.DividerItemDecoration
 import com.liamfarrell.android.snapbattle.di.Injectable
-import kotlinx.android.synthetic.main.fragment_completed_list.view.*
-import kotlinx.android.synthetic.main.fragment_view_followers.*
+import com.liamfarrell.android.snapbattle.viewmodels.FollowingViewModel
 import javax.inject.Inject
 
 
@@ -41,7 +40,7 @@ class ViewFollowingFragment : Fragment() , Injectable {
         binding.recyclerList.addItemDecoration(DividerItemDecoration(context, LinearLayoutManager.VERTICAL))
         binding.EnterUsernameManuallyButton.setOnClickListener{launchEnterUsernameDialog()}
         binding.viewModel = viewModel
-
+        setToolbar(binding.includeToolbar.toolbar,  context?.getString(R.string.nav_view_followers) ?: "")
         subscribeUi(binding, adapter)
         return binding.root
     }
@@ -82,6 +81,12 @@ class ViewFollowingFragment : Fragment() , Injectable {
 
     private fun removeFollowing(cognitoId: String) {
         viewModel.removeFollowing(cognitoId)
+    }
+
+    private fun setToolbar(toolbar : androidx.appcompat.widget.Toolbar, title: String){
+        (activity as AppCompatActivity).setSupportActionBar(toolbar)
+        (activity as AppCompatActivity).supportActionBar?.title = title
+        (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
     }
 
 

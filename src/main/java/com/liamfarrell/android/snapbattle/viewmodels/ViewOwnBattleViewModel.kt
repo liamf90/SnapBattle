@@ -1,7 +1,9 @@
 package com.liamfarrell.android.snapbattle.viewmodels
 
 import android.app.Application
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
 import com.liamfarrell.android.snapbattle.data.UsersBattleRepository
 import com.liamfarrell.android.snapbattle.model.AsyncTaskResult
 import com.liamfarrell.android.snapbattle.model.Battle

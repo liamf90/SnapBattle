@@ -9,18 +9,18 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.navigation.NavDirections;
-import androidx.navigation.Navigation;
-
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.Fragment;
+import androidx.navigation.NavDirections;
+import androidx.navigation.Navigation;
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
@@ -33,16 +33,18 @@ import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.liamfarrell.android.snapbattle.HideAndShowBottomNavigation;
+import com.liamfarrell.android.snapbattle.R;
 import com.liamfarrell.android.snapbattle.data.AllBattlesCacheManager;
 import com.liamfarrell.android.snapbattle.data.FollowingBattlesFeedCacheManager;
 import com.liamfarrell.android.snapbattle.di.Injectable;
+import com.liamfarrell.android.snapbattle.model.AsyncTaskResult;
+import com.liamfarrell.android.snapbattle.model.Battle;
+import com.liamfarrell.android.snapbattle.model.Voting;
+import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.LambdaFunctionsInterface;
+import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.pjos.FollowingBattleVideoViewPOJO;
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.AddDislikeRequest;
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.DoVoteRequest;
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.FriendBattleRequest;
-import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.LambdaFunctionsInterface;
-import com.liamfarrell.android.snapbattle.R;
-import com.liamfarrell.android.snapbattle.model.Voting;
-import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.pjos.FollowingBattleVideoViewPOJO;
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.IncreaseVideoViewCountRequest;
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.ReportBattleRequest;
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.DefaultResponse;
@@ -52,11 +54,9 @@ import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserializat
 import com.liamfarrell.android.snapbattle.model.lambda_function_request_objects.AddLikeRequest;
 import com.liamfarrell.android.snapbattle.model.lambda_function_request_objects.UndoDislikeRequest;
 import com.liamfarrell.android.snapbattle.model.lambda_function_request_objects.UndoLikeRequest;
+import com.liamfarrell.android.snapbattle.mvvm_ui.create_battle.ChooseVotingFragment;
 import com.liamfarrell.android.snapbattle.util.HandleLambdaError;
 import com.liamfarrell.android.snapbattle.views.VideoControllerView;
-import com.liamfarrell.android.snapbattle.mvvm_ui.create_battle.ChooseVotingFragment;
-import com.liamfarrell.android.snapbattle.model.AsyncTaskResult;
-import com.liamfarrell.android.snapbattle.model.Battle;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -71,6 +71,8 @@ import java.util.TimeZone;
 import javax.inject.Inject;
 
 import timber.log.Timber;
+
+import static androidx.navigation.fragment.NavHostFragment.findNavController;
 
 /**
  * Created by Liam on 20/01/2018.
@@ -99,7 +101,7 @@ public class FullBattleVideoPlayerFragment extends VideoPlayerAbstractFragment i
 
     private boolean isStartingCommentsFragment = false;
 
-    private static AWSCredentialsProvider credentialsProvider = AWSMobileClient.getInstance().getCredentialsProvider();
+    private static AWSCredentialsProvider credentialsProvider = AWSMobileClient.getInstance();
 
     public static final String EXTRA_BATTLEID = "com.liamfarrell.android.snapbattle.videoplayeractivity.battleIDextra";
 
@@ -288,7 +290,7 @@ public class FullBattleVideoPlayerFragment extends VideoPlayerAbstractFragment i
                         setVideoFilepath();
                     }
                     else {
-                        getActivity().finish();
+                        Navigation.findNavController(mVideoView).navigateUp();
                     }
                     return true;
                 }
@@ -1086,7 +1088,7 @@ public class FullBattleVideoPlayerFragment extends VideoPlayerAbstractFragment i
                 if (followingBattleVideoViewPOJO.getDeleted() == 1)
                 {
                     Toast.makeText(activity, R.string.error_battle_deleted, Toast.LENGTH_LONG).show();
-                    activity.finish();
+                    findNavController(fragment).navigateUp();
                 }
 
 

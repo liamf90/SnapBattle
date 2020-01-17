@@ -1,11 +1,7 @@
 package com.liamfarrell.android.snapbattle.db
 
-import android.util.Log
 import androidx.paging.PagedList
-import com.liamfarrell.android.snapbattle.data.AllBattlesCacheManager
 import com.liamfarrell.android.snapbattle.data.NotificationsManager
-import com.liamfarrell.android.snapbattle.model.Battle
-import com.liamfarrell.android.snapbattle.notifications.Notification
 import com.liamfarrell.android.snapbattle.notifications.NotificationDb
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

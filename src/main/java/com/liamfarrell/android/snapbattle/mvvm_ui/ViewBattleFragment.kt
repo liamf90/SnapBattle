@@ -2,7 +2,10 @@ package com.liamfarrell.android.snapbattle.mvvm_ui
 
 import android.Manifest
 import android.app.Activity
-import android.content.*
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
@@ -21,7 +24,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import com.amazonaws.mobile.auth.core.IdentityManager
+import com.amazonaws.mobile.client.AWSMobileClient
 import com.google.android.material.snackbar.Snackbar
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
@@ -32,7 +35,7 @@ import com.liamfarrell.android.snapbattle.R
 import com.liamfarrell.android.snapbattle.adapters.BattleVideoAdapter
 import com.liamfarrell.android.snapbattle.data.UsersBattleRepository
 import com.liamfarrell.android.snapbattle.databinding.FragmentViewBattleBinding
-import com.liamfarrell.android.snapbattle.di.*
+import com.liamfarrell.android.snapbattle.di.Injectable
 import com.liamfarrell.android.snapbattle.model.Battle
 import com.liamfarrell.android.snapbattle.model.Video
 import com.liamfarrell.android.snapbattle.mvvm_ui.to_be_converted.VideoRecordActivity
@@ -48,6 +51,9 @@ class ViewBattleFragment : Fragment(), Injectable {
 
     @Inject
     lateinit var usersBattleRepository : UsersBattleRepository
+
+    @Inject
+    lateinit var awsMobileClient : AWSMobileClient
 
     companion object{
         const val BATTLE_ID_EXTRA = "com.liamfarrell.android.snapbattle.battle_id_extra"
@@ -204,7 +210,7 @@ class ViewBattleFragment : Fragment(), Injectable {
 
 
     private fun saveFileToDevice() {
-        val filepath = battle.getServerFinalVideoUrl(IdentityManager.getDefaultIdentityManager().cachedUserID)
+        val filepath = battle.getServerFinalVideoUrl(awsMobileClient.identityId)
         val callback = Battle.SignedUrlCallback { signedUrl ->
             context?.let{downloadFileFromURL(it, signedUrl, battle.finalVideoFilename, null, battle.battleName)}
         }
@@ -234,7 +240,7 @@ class ViewBattleFragment : Fragment(), Injectable {
     private fun onPlayButtonClicked() {
         activity?.let {
                 //Stream the file
-                val filepath = battle.getServerFinalVideoUrl(IdentityManager.getDefaultIdentityManager().cachedUserID)
+                val filepath = battle.getServerFinalVideoUrl(awsMobileClient.identityId)
                 val callback = Battle.SignedUrlCallback { signedUrl ->
                     progressContainer.setVisibility(View.GONE)
                     val direction =  ViewBattleFragmentDirections.actionViewBattleFragmentToVideoViewFragment(signedUrl)

@@ -1,7 +1,10 @@
 package com.liamfarrell.android.snapbattle.data
 
 import androidx.lifecycle.MutableLiveData
-import com.liamfarrell.android.snapbattle.db.*
+import com.liamfarrell.android.snapbattle.db.FollowingBattleDao
+import com.liamfarrell.android.snapbattle.db.FollowingBattleDb
+import com.liamfarrell.android.snapbattle.db.FollowingBattlesDynamoCount
+import com.liamfarrell.android.snapbattle.db.FollowingBattlesFeedDynamoDataDao
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch

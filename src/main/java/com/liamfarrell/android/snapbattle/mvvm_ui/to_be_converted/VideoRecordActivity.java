@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.hardware.Camera;
@@ -28,9 +29,9 @@ import android.widget.Toast;
 
 import com.liamfarrell.android.snapbattle.R;
 import com.liamfarrell.android.snapbattle.model.Battle;
+import com.liamfarrell.android.snapbattle.model.Video;
 import com.liamfarrell.android.snapbattle.mvvm_ui.ViewBattleFragment;
 import com.liamfarrell.android.snapbattle.views.CameraPreview;
-import com.liamfarrell.android.snapbattle.model.Video;
 
 import java.io.File;
 import java.io.IOException;
@@ -76,7 +77,7 @@ public class VideoRecordActivity extends Activity {
     @Override
     public void onConfigurationChanged(Configuration newConfig)
     {
-        super.onConfigurationChanged(newConfig);
+            super.onConfigurationChanged(newConfig);
     }
 
     private void deleteFile()
@@ -323,6 +324,7 @@ public class VideoRecordActivity extends Activity {
                 stopRecording();
 
             } else {
+                lockScreenOrientation();
                 if (!prepareMediaRecorder()) {
 
                     Toast.makeText(VideoRecordActivity.this, R.string.generic_error_toast, Toast.LENGTH_LONG).show();
@@ -366,12 +368,6 @@ public class VideoRecordActivity extends Activity {
                         {
                             mCaptureButton.setBackground(getResources().getDrawable(R.drawable.stop_button));
                         }
-
-
-
-
-
-
                     }
                 });
 
@@ -489,15 +485,10 @@ public class VideoRecordActivity extends Activity {
 
     private void deactivateRotateBlock()
     {
-
         RelativeLayout lin =  findViewById(R.id.rotateMessageLayout);
 
         lin.setVisibility(View.INVISIBLE);
         mCaptureButton.setVisibility(View.VISIBLE);
-
-
-
-
     }
 
     private void setRotateTextViewGoLandscape()
@@ -539,6 +530,16 @@ public class VideoRecordActivity extends Activity {
             result = (info.orientation - degrees + 360) % 360;
         }
         return result;
+    }
+
+
+    private void lockScreenOrientation(){
+        int currentOrientation = getResources().getConfiguration().orientation;
+        if (currentOrientation == Configuration.ORIENTATION_PORTRAIT) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }else {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        }
     }
 
 

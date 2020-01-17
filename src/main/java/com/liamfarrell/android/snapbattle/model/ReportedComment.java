@@ -1,7 +1,5 @@
 package com.liamfarrell.android.snapbattle.model;
 
-import com.liamfarrell.android.snapbattle.model.Comment;
-
 import java.util.Date;
 
 public class ReportedComment extends Comment

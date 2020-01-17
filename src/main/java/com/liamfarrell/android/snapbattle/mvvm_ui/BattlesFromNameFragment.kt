@@ -17,7 +17,7 @@ import com.liamfarrell.android.snapbattle.MainActivity
 import com.liamfarrell.android.snapbattle.R
 import com.liamfarrell.android.snapbattle.adapters.BattlesByNamePagedListAdapter
 import com.liamfarrell.android.snapbattle.databinding.FragmentFriendsBattleListBinding
-import com.liamfarrell.android.snapbattle.di.*
+import com.liamfarrell.android.snapbattle.di.Injectable
 import com.liamfarrell.android.snapbattle.viewmodels.BattlesByNameViewModel
 import javax.inject.Inject
 

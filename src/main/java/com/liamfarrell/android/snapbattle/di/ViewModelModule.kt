@@ -23,10 +23,8 @@ import androidx.lifecycle.ViewModelProvider
 import com.liamfarrell.android.snapbattle.viewmodels.*
 import com.liamfarrell.android.snapbattle.viewmodels.create_battle.ChooseBattleTypeViewModel
 import com.liamfarrell.android.snapbattle.viewmodels.create_battle.ChooseOpponentViewModel
-import com.liamfarrell.android.snapbattle.viewmodels.AddFacebookFriendsAsFollowersViewModel
 import com.liamfarrell.android.snapbattle.viewmodels.startup.ChooseNameStartupViewModel
 import com.liamfarrell.android.snapbattle.viewmodels.startup.ChooseUsernameStartupViewModel
-
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap

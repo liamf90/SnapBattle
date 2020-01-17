@@ -1,17 +1,12 @@
 package com.liamfarrell.android.snapbattle.adapters
 
-import android.graphics.Bitmap
-import android.graphics.drawable.Drawable
 import android.widget.ImageView
 import androidx.databinding.BindingAdapter
 import com.liamfarrell.android.snapbattle.R
 import com.squareup.picasso.Callback
 import com.squareup.picasso.NetworkPolicy
 import com.squareup.picasso.Picasso
-import com.squareup.picasso.Target
-import de.hdodenhof.circleimageview.CircleImageView
 import timber.log.Timber
-import java.lang.Exception
 
 @BindingAdapter("battleThumbnail")
 fun loadImage(view: ImageView, imageUrl: String?) {

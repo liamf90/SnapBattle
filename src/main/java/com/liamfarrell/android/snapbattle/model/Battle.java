@@ -2,7 +2,6 @@ package com.liamfarrell.android.snapbattle.model;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Embedded;
@@ -12,14 +11,13 @@ import androidx.room.PrimaryKey;
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
-import com.amazonaws.mobile.auth.core.IdentityManager;
+import com.amazonaws.mobile.client.AWSMobileClient;
 import com.amazonaws.mobileconnectors.lambdainvoker.LambdaFunctionException;
 import com.amazonaws.mobileconnectors.lambdainvoker.LambdaInvokerFactory;
 import com.amazonaws.regions.Regions;
 import com.liamfarrell.android.snapbattle.R;
-import com.liamfarrell.android.snapbattle.app.SnapBattleApp;
-import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.UrlLambdaRequest;
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.LambdaFunctionsInterface;
+import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.UrlLambdaRequest;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -350,7 +348,7 @@ public class Battle implements Serializable
 
     public Integer getOpponentProfilePicCount()
     {
-        String cognitoIDCurrent = IdentityManager.getDefaultIdentityManager().getCachedUserID();
+        String cognitoIDCurrent = AWSMobileClient.getInstance().getIdentityId();
         if (mChallengerCognitoId.equals(cognitoIDCurrent))
         {
             return mChallengedProfilePicCount;
@@ -559,7 +557,7 @@ public class Battle implements Serializable
 
 				context.getApplicationContext(),
 				Regions.US_EAST_1,
-                IdentityManager.getDefaultIdentityManager().getCredentialsProvider());
+                AWSMobileClient.getInstance());
 
 		// Create the Lambda proxy object with default Json data binder.
 		// You can provide your own data binder by implementing

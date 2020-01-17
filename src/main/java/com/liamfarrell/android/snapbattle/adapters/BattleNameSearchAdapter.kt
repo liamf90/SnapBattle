@@ -9,7 +9,7 @@ import android.widget.Filter
 import android.widget.TextView
 import com.liamfarrell.android.snapbattle.R
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.SuggestionsResponse
-import java.util.ArrayList
+import java.util.*
 
 class BattleNameSuggestionsAdapter(context: Context, var battleNameList: List<SuggestionsResponse>) : ArrayAdapter<SuggestionsResponse>(context, 0, battleNameList) {
 

@@ -1,10 +1,9 @@
 package com.liamfarrell.android.snapbattle.db
 
-import com.liamfarrell.android.snapbattle.model.Battle
 import androidx.paging.DataSource
 import androidx.room.*
 import com.liamfarrell.android.snapbattle.data.AllBattlesDynamoCount
-import com.liamfarrell.android.snapbattle.model.Video
+import com.liamfarrell.android.snapbattle.model.Battle
 
 
 /**

@@ -5,6 +5,7 @@ import android.content.Context
 //import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.amazonaws.mobile.auth.core.IdentityManager
+import com.amazonaws.mobile.client.AWSMobileClient
 import com.liamfarrell.android.snapbattle.data.CurrentBattlesRepository
 import com.liamfarrell.android.snapbattle.data.OtherUsersProfilePicUrlRepository
 import com.liamfarrell.android.snapbattle.model.AsyncTaskResult
@@ -63,8 +64,8 @@ class CurrentBattlesViewModelTest{
     fun currentBattlesTest() {
         testDispatcher.runBlockingTest  {
             val context = mock(Application::class.java)
-            val identityManager = mock<IdentityManager>()
-            `when`(identityManager.cachedUserID).thenReturn("111")
+            val awsMobileClient = mock<AWSMobileClient>()
+            `when`(awsMobileClient.identityId).thenReturn("111")
             `when`(otherUsersProfilePicRepository.getOrUpdateProfilePicSignedUrl(anyString(), anyInt(), anyString())).thenReturn("")
             val battleList = mutableListOf<Battle>()
             battleList.add(Battle(2, "111", "222", "foo", 3).apply { profilePicSmallSignedUrl = "333"; challengerProfilePicCount = 0; challengedProfilePicCount = 0 })
@@ -73,7 +74,7 @@ class CurrentBattlesViewModelTest{
             val sqlResult = CurrentBattleResponse().apply { sqlResult = battleList }
             val response = AsyncTaskResult<CurrentBattleResponse>(sqlResult)
             `when`(repository.getCurrentBattles()).thenReturn(response)
-            viewModel = CurrentBattlesViewModel(context, identityManager, repository, otherUsersProfilePicRepository)
+            viewModel = CurrentBattlesViewModel(context, awsMobileClient, repository, otherUsersProfilePicRepository)
             viewModel.battles.observeForever(mock())
             verify(repository).getCurrentBattles()
             assertThat(viewModel.battles.value, `is`(battleList.toList()))
@@ -88,8 +89,8 @@ class CurrentBattlesViewModelTest{
         testDispatcher.runBlockingTest  {
             val context = mock(Application::class.java)
             `when`(context.applicationContext).thenReturn(mock())
-            val identityManager = mock<IdentityManager>()
-            `when`(identityManager.cachedUserID).thenReturn("111")
+            val awsMobileClient = mock<AWSMobileClient>()
+            `when`(awsMobileClient.identityId).thenReturn("111")
             val errorResult = object : CustomError(){
                 override fun getErrorToastMessage(context: Context): String {
                     return "error test"
@@ -97,7 +98,7 @@ class CurrentBattlesViewModelTest{
             }
             val response = AsyncTaskResult<CurrentBattleResponse>(errorResult)
             `when`(repository.getCurrentBattles()).thenReturn(response)
-            viewModel = CurrentBattlesViewModel(context, identityManager, repository, otherUsersProfilePicRepository)
+            viewModel = CurrentBattlesViewModel(context, awsMobileClient, repository, otherUsersProfilePicRepository)
             viewModel.errorMessage.observeForever(mock())
             verify(repository).getCurrentBattles()
             verify(otherUsersProfilePicRepository, never()).getOrUpdateProfilePicSignedUrl(anyString(), anyInt(), anyString())

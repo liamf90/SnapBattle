@@ -4,21 +4,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
-import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.amazonaws.mobile.client.AWSMobileClient
 import com.liamfarrell.android.snapbattle.R
 import com.liamfarrell.android.snapbattle.databinding.ListItemBattleFriendsBinding
 import com.liamfarrell.android.snapbattle.db.AllBattlesBattle
 import com.liamfarrell.android.snapbattle.model.Battle
 import com.liamfarrell.android.snapbattle.mvvm_ui.HomeFragmentDirections
-import com.liamfarrell.android.snapbattle.viewmodels.AllBattlesViewModel
 import com.liamfarrell.android.snapbattle.viewmodels.BattleViewModel
-
-
 
 
 /**

@@ -2,12 +2,7 @@ package com.liamfarrell.android.snapbattle.notifications;
 
 import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
 import android.text.SpannableStringBuilder;
-
-import androidx.room.ColumnInfo;
-import androidx.room.Entity;
-import androidx.room.PrimaryKey;
 
 import java.io.Serializable;
 

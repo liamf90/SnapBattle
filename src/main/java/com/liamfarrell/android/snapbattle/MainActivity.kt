@@ -1,11 +1,11 @@
 package com.liamfarrell.android.snapbattle
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
-import com.google.android.material.bottomnavigation.BottomNavigationView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.liamfarrell.android.snapbattle.mvvm_ui.host_fragments.HomeHostFragment
 import com.liamfarrell.android.snapbattle.mvvm_ui.host_fragments.NavigationHostFragment
 import com.liamfarrell.android.snapbattle.mvvm_ui.host_fragments.NotificationHostFragment
@@ -14,7 +14,6 @@ import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasAndroidInjector
 import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
-
 
 
 interface HideAndShowBottomNavigation{

@@ -1,27 +1,34 @@
 package com.liamfarrell.android.snapbattle.di
 
+//import retrofit2.Retrofit
+import android.app.Application
 import com.amazonaws.auth.AWSCredentialsProvider
 import com.amazonaws.mobile.auth.core.IdentityManager
 import com.amazonaws.mobile.client.AWSMobileClient
+import com.amazonaws.mobile.client.Callback
+import com.amazonaws.mobile.client.UserStateDetails
+import com.amazonaws.mobile.config.AWSConfiguration
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient
-import dagger.Module
-import dagger.Provides
-//import retrofit2.Retrofit
-import javax.inject.Singleton
-import okhttp3.OkHttpClient
-import com.liamfarrell.android.snapbattle.api.SnapBattleApiService
-import retrofit2.Retrofit
 import com.ghedeon.AwsInterceptor
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.liamfarrell.android.snapbattle.api.SnapBattleApiService
 import com.liamfarrell.android.snapbattle.model.Battle
 import com.liamfarrell.android.snapbattle.model.ReportedBattle
 import com.liamfarrell.android.snapbattle.model.ReportedComment
-import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.LambdaFunctionsInterface
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.deserializers.*
+import dagger.Module
+import dagger.Provides
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
+import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.*
+import javax.inject.Singleton
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 
 @Module
@@ -61,34 +68,43 @@ class AWSModule{
     }
 
 
-
-    @Provides
-    fun identityManager() : IdentityManager {
-        return IdentityManager.getDefaultIdentityManager()
-    }
-
     @Provides
     fun amazonDynamoDBClient(credentialsProvider: AWSCredentialsProvider): AmazonDynamoDBClient {
         return AmazonDynamoDBClient(credentialsProvider);
     }
 
-//    @Provides
-//    @Singleton
-//    fun lambdaInterface(factory: LambdaInvokerFactory) : LambdaFunctionsInterface{
-//       return  factory.build(LambdaFunctionsInterface::class.java, CustomLambdaDataBinder())
-//    }
-//
-//    @Provides
-//    @Singleton
-//    fun lambdaFactory(context: Application, cognitoCachingCredentialsProvider: AWSCredentialsProvider ) : LambdaInvokerFactory {
-//        return LambdaInvokerFactory(
-//                context,
-//                Regions.US_EAST_1,
-//                cognitoCachingCredentialsProvider)
-//    }
 
     @Provides
-    fun credentialsProvider() : AWSCredentialsProvider {
-        return AWSMobileClient.getInstance().credentialsProvider
+    fun awsCredentialsProvider(mobileClient: AWSMobileClient) : AWSCredentialsProvider{
+        return mobileClient
     }
+
+    @Provides
+     fun awsMobileClient(application: Application) : AWSMobileClient = runBlocking(Dispatchers.IO) {
+        try {
+            AWSMobileClient.getInstance().isSignedIn
+            return@runBlocking AWSMobileClient.getInstance()
+        } catch (e: java.lang.NullPointerException) {
+            val aws = getContinuation(application)
+            return@runBlocking aws
+        }
+    }
+
+    private suspend fun getContinuation(application: Application) : AWSMobileClient {
+        return suspendCoroutine<AWSMobileClient>{continuation ->
+                val awsConfig = AWSConfiguration(application)
+                AWSMobileClient.getInstance().initialize(application.applicationContext, awsConfig,
+                        object : Callback<UserStateDetails> {
+                            override fun onResult(result: UserStateDetails?) {
+                                continuation.resume(AWSMobileClient.getInstance())
+                            }
+
+                            override fun onError(e: Exception?) {
+                                e?.cause?.let { continuation.resumeWith(Result.failure(it)) }
+                            }
+                        })
+            }
+    }
+
+
 }

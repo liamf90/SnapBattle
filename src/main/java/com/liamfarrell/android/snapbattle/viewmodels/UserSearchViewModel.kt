@@ -9,8 +9,8 @@ import com.liamfarrell.android.snapbattle.model.AsyncTaskResult
 import com.liamfarrell.android.snapbattle.model.User
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.GetUsersResponse
 import com.liamfarrell.android.snapbattle.util.getErrorMessage
-import javax.inject.Inject
 import kotlinx.coroutines.*
+import javax.inject.Inject
 
 
 /**

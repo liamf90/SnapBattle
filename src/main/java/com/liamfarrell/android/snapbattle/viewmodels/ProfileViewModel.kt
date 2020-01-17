@@ -5,7 +5,8 @@ import android.app.Application
 import android.content.Context
 import android.content.Intent
 import android.preference.PreferenceManager
-import androidx.lifecycle.*
+import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.liamfarrell.android.snapbattle.R
 import com.liamfarrell.android.snapbattle.api.SnapBattleApiService
@@ -14,12 +15,14 @@ import com.liamfarrell.android.snapbattle.data.ProfileRepository
 import com.liamfarrell.android.snapbattle.model.AsyncTaskResult
 import com.liamfarrell.android.snapbattle.model.User
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.GetProfileResponse
+import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.UpdateNameResponse
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.response.UpdateUsernameResponse
 import com.liamfarrell.android.snapbattle.mvvm_ui.startup.ChooseProfilePictureStartupFragment
 import com.liamfarrell.android.snapbattle.mvvm_ui.startup.ChooseUsernameStartupFragment
 import com.liamfarrell.android.snapbattle.mvvm_ui.startup.LoggedInFragment
 import com.liamfarrell.android.snapbattle.util.CustomError
 import com.liamfarrell.android.snapbattle.util.getErrorMessage
+import com.liamfarrell.android.snapbattle.viewmodels.startup.ChooseNameStartupViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -65,12 +68,19 @@ class ProfileViewModel @Inject constructor(private val context: Application, pri
 
 
 
+    @SuppressLint("ApplySharedPref")
     fun updateName(name: String){
         awsLambdaFunctionCall(true,
                 suspend {
                     val response = profileRepository.updateName(name)
                     if (response.error != null) {
                         profileResult.value = AsyncTaskResult(response.error)
+                    } else if (response.result.result == UpdateNameResponse.getNameTooLongErrorCode()){
+                        profileResult.value = AsyncTaskResult(ChooseNameStartupViewModel.NameTooLongError)
+                    } else if (response.result.result == UpdateNameResponse.getResultNameUpdated()){
+                        val sharedPref = PreferenceManager.getDefaultSharedPreferences(context.applicationContext)
+                        sharedPref.edit().putString(LoggedInFragment.NAME_SHAREDPREFS, name).commit()
+                        _snackBarMessage.value = context.getString(R.string.name_updated_snackbar_message)
                     }
                 })
     }

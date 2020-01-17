@@ -15,12 +15,21 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         tools:showIn="@layout/activity_video_capture">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_view"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            android:scrollbars="vertical" />
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <include
+                android:id="@+id/includeToolbar"
+                layout="@layout/toolbar" />
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                android:background="@color/list_background"
+                android:scrollbars="vertical" />
+        </LinearLayout>
 
         <TextView
             android:id="@+id/noNotificationsTextView"

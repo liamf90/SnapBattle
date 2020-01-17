@@ -1,14 +1,14 @@
 package com.liamfarrell.android.snapbattle.mvvm_ui
 
 import android.os.Bundle
-import android.view.*
-import com.google.android.material.tabs.TabLayout
-import androidx.viewpager.widget.ViewPager
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.viewpager.widget.ViewPager
+import com.google.android.material.tabs.TabLayout
 import com.liamfarrell.android.snapbattle.R
 import com.liamfarrell.android.snapbattle.adapters.HomePagerAdapter
-import android.view.ViewGroup
-import androidx.navigation.fragment.findNavController
 
 
 class HomeFragment : Fragment() {

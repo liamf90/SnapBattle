@@ -1,17 +1,16 @@
 package com.liamfarrell.android.snapbattle.data
 
 import android.app.Application
-import android.content.Context
 import com.amazonaws.AmazonClientException
-import com.amazonaws.mobile.auth.core.IdentityManager
+import com.amazonaws.mobile.client.AWSMobileClient
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient
 import com.amazonaws.services.dynamodbv2.model.AttributeValue
 import com.amazonaws.services.dynamodbv2.model.GetItemRequest
-import java.util.HashMap
+import java.util.*
 import javax.inject.Inject
 
 
-class FollowingBattlesFeedDynamodbRepository @Inject constructor(val context: Application, val ddbClient : AmazonDynamoDBClient){
+class FollowingBattlesFeedDynamodbRepository @Inject constructor(val context: Application, val ddbClient : AmazonDynamoDBClient, val awsMobileClient: AWSMobileClient){
 
 
     @Throws(AmazonClientException::class)
@@ -19,7 +18,7 @@ class FollowingBattlesFeedDynamodbRepository @Inject constructor(val context: Ap
         // DynamoDBMapper mapper = new DynamoDBMapper(ddbClient);
         // BattleFeed selectedBattle = mapper.load(BattleFeed.class, "45");
 
-        val cognitoID = IdentityManager.getDefaultIdentityManager().cachedUserID
+        val cognitoID = awsMobileClient.identityId
         val key = hashMapOf<String, AttributeValue>()
         key["CognitoID"] = AttributeValue().apply {s = cognitoID}
 
@@ -47,7 +46,7 @@ class FollowingBattlesFeedDynamodbRepository @Inject constructor(val context: Ap
 
     @Throws(AmazonClientException::class)
     suspend fun getBattlesCountDynamo(): Int {
-        val cognitoID = IdentityManager.getDefaultIdentityManager().cachedUserID
+        val cognitoID = awsMobileClient.identityId
         val key = HashMap<String, AttributeValue>()
         key["CognitoID"] = AttributeValue().apply {s = cognitoID}
 
@@ -69,7 +68,7 @@ class FollowingBattlesFeedDynamodbRepository @Inject constructor(val context: Ap
 
     @Throws(AmazonClientException::class)
     suspend fun getFullFeedUpdateCount(): Int {
-        val cognitoID = IdentityManager.getDefaultIdentityManager().cachedUserID
+        val cognitoID = awsMobileClient.identityId
         val key = HashMap<String, AttributeValue>()
         key["CognitoID"] = AttributeValue().apply {s = cognitoID}
 

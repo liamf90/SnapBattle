@@ -1,12 +1,10 @@
 package com.liamfarrell.android.snapbattle.db
 
-import androidx.paging.DataSource
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.liamfarrell.android.snapbattle.data.AllBattlesDynamoCount
-import com.liamfarrell.android.snapbattle.model.Battle
 import java.util.*
 
 

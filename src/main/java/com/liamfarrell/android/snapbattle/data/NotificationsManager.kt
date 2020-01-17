@@ -3,7 +3,6 @@ package com.liamfarrell.android.snapbattle.data
 import androidx.lifecycle.MutableLiveData
 import com.liamfarrell.android.snapbattle.db.NotificationDao
 import com.liamfarrell.android.snapbattle.db.NotificationDynamoInfoDao
-import com.liamfarrell.android.snapbattle.db.NotificationsDynamoInfo
 import com.liamfarrell.android.snapbattle.notifications.NotificationDb
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

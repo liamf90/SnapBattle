@@ -3,6 +3,7 @@ package com.liamfarrell.android.snapbattle.viewmodels
 import androidx.databinding.ObservableField
 import androidx.lifecycle.ViewModel
 import com.amazonaws.mobile.auth.core.IdentityManager
+import com.amazonaws.mobile.client.AWSMobileClient
 import com.liamfarrell.android.snapbattle.model.Battle
 import com.liamfarrell.android.snapbattle.model.Voting
 
@@ -23,7 +24,7 @@ class BattleViewModel(val battle: Battle) : ViewModel() {
             if (battle.userHasVoted == true){
                 canVote.set(UserCanVote.HAS_VOTED)
             } else{
-                battle.voting.canUserVote(IdentityManager.getDefaultIdentityManager().cachedUserID, battle.challengerCognitoID, battle.challengedCognitoID, battle.challengerFacebookUserId, battle.challengedFacebookUserId, object : Voting.MutualFriendCallbacks {
+                battle.voting.canUserVote(AWSMobileClient.getInstance().identityId, battle.challengerCognitoID, battle.challengedCognitoID, battle.challengerFacebookUserId, battle.challengedFacebookUserId, object : Voting.MutualFriendCallbacks {
                     override fun onCanVote() {
                         canVote.set(UserCanVote.CAN_VOTE)
                     }

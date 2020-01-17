@@ -7,17 +7,14 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
-import com.amazonaws.mobile.auth.core.IdentityManager
+import com.amazonaws.mobile.client.AWSMobileClient
 import com.liamfarrell.android.snapbattle.R
 import com.liamfarrell.android.snapbattle.data.UsersBattleRepository
 import com.liamfarrell.android.snapbattle.model.Battle
 import com.liamfarrell.android.snapbattle.model.Video
 import com.liamfarrell.android.snapbattle.util.getErrorMessage
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import timber.log.Timber
 
 class BattleVideoItemViewModel(val context: Context, val battle: Battle, _video: Video, val usersBattleRepository: UsersBattleRepository) : ViewModel(){
 
@@ -27,12 +24,12 @@ class BattleVideoItemViewModel(val context: Context, val battle: Battle, _video:
     }
 
     val video = ObservableField<Video>(_video)
-    val isCurrentUser = ObservableField<Boolean>(_video.isCurrentUser(IdentityManager.getDefaultIdentityManager().cachedUserID))
+    val isCurrentUser = ObservableField<Boolean>(_video.isCurrentUser(AWSMobileClient.getInstance().identityId))
     val videosUploaded = ObservableInt(battle.videosUploaded)
     val videoStatus = ObservableField<String>(getVideoStatus(battle.videosUploaded, _video, context))
-    val displayRecordButton = ObservableField<Boolean>(_video.displayRecordButton(battle.videosUploaded, IdentityManager.getDefaultIdentityManager().cachedUserID))
+    val displayRecordButton = ObservableField<Boolean>(_video.displayRecordButton(battle.videosUploaded, AWSMobileClient.getInstance().identityId))
     val displayPlayButton = ObservableField<Boolean>(_video.displayPlayButton(context))
-    val displaySubmitButton = ObservableField<Boolean>(_video.displaySubmitButton(context, battle.videosUploaded, IdentityManager.getDefaultIdentityManager().cachedUserID))
+    val displaySubmitButton = ObservableField<Boolean>(_video.displaySubmitButton(context, battle.videosUploaded, AWSMobileClient.getInstance().identityId))
     val nameText = ObservableField<String>(videoStatus.get())
     val submitButtonEnabled = ObservableField<Boolean>(true)
 
@@ -52,7 +49,7 @@ class BattleVideoItemViewModel(val context: Context, val battle: Battle, _video:
 
             val asyncResult = video.get()?.let {
                 usersBattleRepository.uploadVideo(context, battle, it.videoFilename,
-                        battle.getOpponentCognitoID(IdentityManager.getDefaultIdentityManager().cachedUserID), it.videoID, orientationLock)
+                        battle.getOpponentCognitoID(AWSMobileClient.getInstance().identityId), it.videoID, orientationLock)
             }
             if (asyncResult?.error != null) {
                 _error.value = asyncResult.error
@@ -63,7 +60,7 @@ class BattleVideoItemViewModel(val context: Context, val battle: Battle, _video:
 
 
      fun getVideoStatus(videosUploaded: Int, video: Video, context: Context) : String {
-        return when (video.getVideoStatus(videosUploaded, IdentityManager.getDefaultIdentityManager().cachedUserID)) {
+        return when (video.getVideoStatus(videosUploaded, AWSMobileClient.getInstance().identityId)) {
             Video.videoStatus.RECEIVED -> context.resources.getString(R.string.received, video.getTimeSinceUploaded(context))
             Video.videoStatus.SENT -> context.resources.getString(R.string.sent, video.getTimeSinceUploaded(context))
             Video.videoStatus.YOUR_TURN -> context.resources.getString(R.string.your_turn)

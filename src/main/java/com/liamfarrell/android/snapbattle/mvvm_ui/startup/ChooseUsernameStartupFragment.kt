@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.preference.PreferenceManager
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -21,11 +22,7 @@ import com.liamfarrell.android.snapbattle.di.Injectable
 import com.liamfarrell.android.snapbattle.model.aws_lambda_function_deserialization.aws_lambda_functions.request.UpdateUsernameRequest
 import com.liamfarrell.android.snapbattle.viewmodels.startup.ChooseUsernameStartupViewModel
 import kotlinx.android.synthetic.main.fragment_choose_username_startup.*
-import java.lang.ClassCastException
 import javax.inject.Inject
-
-
-
 
 
 class ChooseUsernameStartupFragment : Fragment() , Injectable {
@@ -54,6 +51,7 @@ class ChooseUsernameStartupFragment : Fragment() , Injectable {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        Log.i("JAN9", "Choose Username Startup")
         defaultUsername = arguments?.getString("defaultUsername") ?: ""
         setHasOptionsMenu(true)
         (activity as StartupActivity).disableNextButton()
@@ -85,6 +83,7 @@ class ChooseUsernameStartupFragment : Fragment() , Injectable {
 
     private fun nextActivity() {
         findNavController().navigate(R.id.action_chooseUsernameStartupFragment_to_mainActivity)
+        activity?.finish()
     }
 
     @SuppressLint("ApplySharedPref")

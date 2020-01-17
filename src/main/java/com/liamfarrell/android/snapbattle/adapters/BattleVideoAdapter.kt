@@ -10,7 +10,7 @@ import androidx.navigation.findNavController
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.amazonaws.mobile.auth.core.IdentityManager
+import com.amazonaws.mobile.client.AWSMobileClient
 import com.liamfarrell.android.snapbattle.R
 import com.liamfarrell.android.snapbattle.data.UsersBattleRepository
 import com.liamfarrell.android.snapbattle.databinding.ListItemVideoUserBinding
@@ -107,7 +107,7 @@ class BattleVideoAdapter (val battle: Battle, val recordButtonOnClickCallback: (
 
 
     private fun playWithCloudFrontSignedUrl(view: View, s3Path: String) {
-        val url = "https://djbj27vmux1mw.cloudfront.net/" + IdentityManager.getDefaultIdentityManager().getCachedUserID() + "/" + s3Path
+        val url = "https://djbj27vmux1mw.cloudfront.net/" + AWSMobileClient.getInstance().identityId + "/" + s3Path
         Battle.getSignedUrlFromServer(url, view.context) { signedUrl ->
             val direction =  ViewBattleFragmentDirections.actionViewBattleFragmentToVideoViewFragment(signedUrl)
             view.findNavController().navigate(direction)

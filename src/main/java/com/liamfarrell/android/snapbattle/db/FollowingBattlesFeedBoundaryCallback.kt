@@ -1,7 +1,7 @@
 package com.liamfarrell.android.snapbattle.db
 
-import androidx.paging.PagedList
 import android.util.Log
+import androidx.paging.PagedList
 import com.liamfarrell.android.snapbattle.data.FollowingBattlesFeedCacheManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

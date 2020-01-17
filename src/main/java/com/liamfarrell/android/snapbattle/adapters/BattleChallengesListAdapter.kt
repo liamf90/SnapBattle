@@ -8,7 +8,7 @@ import androidx.navigation.findNavController
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.amazonaws.mobile.auth.core.IdentityManager
+import com.amazonaws.mobile.client.AWSMobileClient
 import com.liamfarrell.android.snapbattle.R
 import com.liamfarrell.android.snapbattle.databinding.ListItemBattleChallengeBinding
 import com.liamfarrell.android.snapbattle.model.Battle
@@ -40,7 +40,7 @@ class BattleChallengesListAdapter(val callbacks: BattleChallengesAdapterCallback
         val battle = getItem(position)
         holder.apply {
             bind(battle, getOnAcceptButtonClickListener(this, battle), getOnDeclineButtonOnClickListener(this, battle),
-                    getProfilePicOnClickListener(battle.getOpponentCognitoID(IdentityManager.getDefaultIdentityManager().cachedUserID)))
+                    getProfilePicOnClickListener(battle.getOpponentCognitoID(AWSMobileClient.getInstance().identityId)))
             itemView.tag = battle
         }
     }

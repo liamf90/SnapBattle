@@ -17,7 +17,6 @@ package com.liamfarrell.android.snapbattle.service;
  */
 
 
-
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -27,17 +26,18 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import androidx.core.app.NotificationCompat;
 import android.util.Log;
 
-import com.amazonaws.mobile.auth.core.IdentityManager;
+import androidx.core.app.NotificationCompat;
+
+import com.amazonaws.mobile.client.AWSMobileClient;
 import com.google.android.gms.gcm.GcmListenerService;
 import com.liamfarrell.android.snapbattle.R;
 import com.liamfarrell.android.snapbattle.notifications.BattleAcceptedNotification;
-import com.liamfarrell.android.snapbattle.notifications.TaggedInCommentNotification;
 import com.liamfarrell.android.snapbattle.notifications.NewBattleRequestNotification;
 import com.liamfarrell.android.snapbattle.notifications.NewCommentNotification;
 import com.liamfarrell.android.snapbattle.notifications.NewFollowerNotification;
+import com.liamfarrell.android.snapbattle.notifications.TaggedInCommentNotification;
 import com.liamfarrell.android.snapbattle.notifications.VideoSubmittedNotification;
 import com.liamfarrell.android.snapbattle.notifications.VotingCompleteNotification;
 
@@ -82,7 +82,7 @@ public class MyGcmListenerService extends GcmListenerService {
     	//{
 		//Initialize Facebook SDK
         Log.i(TAG, "GCM MESSAGE RECEIVED");
-        String cognitoID = IdentityManager.getDefaultIdentityManager().getCachedUserID();
+        String cognitoID = AWSMobileClient.getInstance().getIdentityId();
 
         if (cognitoID != null) {
             String message = data.getString("message");
@@ -90,7 +90,7 @@ public class MyGcmListenerService extends GcmListenerService {
             switch (data.getString("type")) {
                 case BATTLE_CHALLENGES_LIST_CLASS:
 
-                    if (data.getString("challenged_cognito_id").equals(IdentityManager.getDefaultIdentityManager().getCachedUserID())) {
+                    if (data.getString("challenged_cognito_id").equals(AWSMobileClient.getInstance().getIdentityId())) {
                         NewBattleRequestNotification nrn = new NewBattleRequestNotification(-1, Integer.parseInt(data.getString("battleID")), data.getString("mChallengerCognitoId"), data.getString("challenger_username"));
                         message = nrn.getMessage(getApplicationContext()).toString();
                         updateNotificationFragmentList();

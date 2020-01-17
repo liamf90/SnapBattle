@@ -1,10 +1,10 @@
 package com.liamfarrell.android.snapbattle.db
 
 import androidx.room.TypeConverter
-import com.liamfarrell.android.snapbattle.notifications.NotificationType
 import com.liamfarrell.android.snapbattle.model.Battle
-import com.liamfarrell.android.snapbattle.notifications.VotingCompleteNotification
 import com.liamfarrell.android.snapbattle.mvvm_ui.create_battle.ChooseVotingFragment
+import com.liamfarrell.android.snapbattle.notifications.NotificationType
+import com.liamfarrell.android.snapbattle.notifications.VotingCompleteNotification
 import java.util.*
 
 

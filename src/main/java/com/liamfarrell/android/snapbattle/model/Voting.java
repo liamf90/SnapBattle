@@ -7,7 +7,6 @@ import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.HttpMethod;
 import com.liamfarrell.android.snapbattle.R;
-import com.liamfarrell.android.snapbattle.app.SnapBattleApp;
 import com.liamfarrell.android.snapbattle.mvvm_ui.create_battle.ChooseVotingFragment;
 
 import org.json.JSONArray;
